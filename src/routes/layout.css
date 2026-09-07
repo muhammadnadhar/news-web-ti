@@ -1,0 +1,109 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/forms';
+@plugin '@tailwindcss/typography';
+
+:root {
+	--bg-primary: #0b192c; /* Deep Navy - Latar belakang utama (Dark mode) */
+	--bg-secondary: #1e293b; /* Charcoal - Card, sidebar, atau elemen sekunder */
+	--accent-primary: #a7f3d0; /* Mint/Bio-Green - Warna aksen utama (Sains/Tech) */
+	--border-light: #e2e8f0; /* Silver Grey - Garis pembatas atau kontainer terang */
+	--pure-white: #ffffff; /* Putih Steril - Teks utama atau latar terang */
+
+	/* Varian dari Deep Navy (#0B192C) */
+	--bg-primary-glare: #15263f; /* Lebih terang sedikit untuk efek hover pada bg gelap */
+
+	/* Varian dari Charcoal (#1E293B) */
+	--bg-secondary-hover: #334155; /* Efek hover untuk tombol atau card sekunder */
+
+	/* Varian dari Mint Green (#A7F3D0) */
+	--accent-primary-hover: #86efac; /* Mint yang lebih matang untuk hover tombol aksen */
+	--accent-primary-dim: #1e3a3a; /* Mint versi gelap, bagus untuk bg badge/label */
+
+	--text-main: #ffffff; /* Teks utama pada latar belakang gelap */
+	--text-muted: #94a3b8; /* Teks sekunder/keterangan (Abu-abu kebiruan) */
+	--text-dark: #0b192c; /* Teks gelap, khusus digunakan di atas warna --accent-primary */
+
+	--accent-cyan: #22d3ee; /* Data/Tech - Melengkapi Mint Green untuk grafik/hologram */
+	--accent-purple: #818cf8; /* Kuantum/Inovasi - Memberikan variasi warna teknologi */
+	--status-error: #f43f5e; /* Merah Lab - Untuk indikator error, bahaya, atau stop */
+}
+
+html {
+	scroll-behavior: smooth;
+}
+
+body {
+	background-color: var(--bg-primary);
+	color: var(--text-main);
+	font-family: sans-serif;
+}
+
+::-webkit-scrollbar {
+	width: 8px;
+}
+::-webkit-scrollbar-track {
+	background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+	background: var(--bg-secondary);
+	border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+	background: var(--bg-secondary-hover);
+}
+
+.card {
+	background-color: var(--bg-secondary);
+	border: 1px solid rgba(226, 232, 240, 0.1);
+	border-radius: 8px;
+	padding: 20px;
+}
+
+.btn-primary {
+	background-color: var(--accent-primary);
+	color: var(--text-dark);
+	font-weight: bold;
+	border: none;
+	transition: background 0.3s;
+}
+
+.btn-primary:hover {
+	background-color: var(--accent-primary-hover);
+}
+
+.text-keterangan {
+	color: var(--text-muted);
+}
+
+/* skeleton animation  */
+
+/* Custom Scrollbar */
+
+/* Pulse Skeleton Animation */
+@keyframes skeleton-pulse {
+	0%,
+	100% {
+		opacity: 0.4;
+	}
+	50% {
+		opacity: 0.8;
+	}
+}
+.animate-skeleton {
+	animation: skeleton-pulse 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Glassmorphism utility */
+.glass-card {
+	background: rgba(30, 41, 59, 0.75);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	border: 1px solid rgba(167, 243, 208, 0.15);
+}
+
+.glass-nav {
+	background: rgba(11, 25, 44, 0.85);
+	backdrop-filter: blur(16px);
+	-webkit-backdrop-filter: blur(16px);
+	border: 1px solid rgba(226, 232, 240, 0.1);
+}
