@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { fly, fade, slide } from 'svelte/transition';
 	import { backOut } from 'svelte/easing';
-	import { Menu, X, ChevronDown } from 'lucide-svelte';
+	import { Menu, X, ChevronDown, Moon, Sun } from 'lucide-svelte';
 	import { menuItems } from '$lib/data/menu';
 	import { type MenuItem } from '$lib/types/navbar';
 
 	import NavbarSub from '$lib/components/navbar.sub.svelte';
+	import ThemeActionBtn from './themeActionBtn.svelte';
 
 	//  State Svelte 5 untuk menangkap posisi scroll Y
 	let scrollY = $state(0);
@@ -59,10 +60,8 @@
 			<button
 				title={item.label}
 				onclick={() => handleDesktopClick(item)}
-				class="group relative flex items-center justify-center rounded-xl p-2.5 transition-all duration-200 {item.bgClass} {activeDesktopMenu?.id ===
-				item.id
-					? 'ring-scitech-mint scale-105 ring-2'
-					: ''}"
+				class="group relative flex items-center justify-center rounded-xl p-2.5 transition-all duration-200 {item.bgClass ??
+					''} {activeDesktopMenu?.id === item.id ? 'ring-scitech-mint scale-105 ring-2' : ''}"
 			>
 				<item.icon class="h-5 w-5 transition-transform group-hover:scale-110" />
 
@@ -75,6 +74,9 @@
 				{/if}
 			</button>
 		{/each}
+
+		<!-- action button: theme toggle switcher -->
+		<ThemeActionBtn />
 	</nav>
 
 	<!-- Overlay Penutup Dropdown Desktop saat diklik di luar -->
@@ -122,7 +124,8 @@
 					<!-- Tombol Menu Utama -->
 					<button
 						onclick={() => handleMobileClick(item)}
-						class="flex items-center justify-between gap-3 p-3 transition-all duration-150 active:scale-98 {item.bgClass}"
+						class="flex items-center justify-between gap-3 p-3 transition-all duration-150 active:scale-98 {item.bgClass ??
+							''}"
 					>
 						<span class="pl-1 text-xs font-semibold">{item.label}</span>
 
@@ -149,12 +152,15 @@
 					</button>
 
 					<!-- Tampilan Submenu Mobile (Accordion dengan NavbarSub) -->
-					{#if activeMobileMenuId === item.id}
+					{#if activeDesktopMenu || activeMobileMenuId === item.id}
 						<div transition:slide={{ duration: 200 }} class="pt-2">
 							<NavbarSub {item} />
 						</div>
 					{/if}
 				</div>
+
+				<!-- action button: theme toggle switcher -->
+				<ThemeActionBtn />
 			{/each}
 		</div>
 	{/if}

@@ -17,7 +17,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 	// Menjalankan request untuk mendapatkan response
 	const response = await resolve(event);
 
-	// 2. Logika SESUDAH request diproses (misal: Menambahkan custom header)
+	// Logika SESUDAH request diproses (misal: Menambahkan custom header)
 	response.headers.set('x-custom-header', 'Halo-Dari-Middleware');
 
 	return response;

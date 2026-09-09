@@ -1,2 +1,10 @@
-first commit desian , structure awal , and template 
-- add : halaman utama
+commit 2 structere fix and add all about pages
+- add : menambhakna semua halaman yang ada di admin panel
+- add : database mysql for handle save data for this news app
+- add : fiture dark and light theme
+- add : seeder untuk table table yang akan di gunakan
+- add : structure router 
+- add : excalidraw desian app structure
+- update : memisahkan navbar yg di file utama "/" ke layout agar bsai di guaknad di setipa halaman
+- update : structure projek dan admin memiliki lingkupan folder terisah
+- update : memindahkan btntheme ke component

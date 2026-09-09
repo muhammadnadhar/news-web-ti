@@ -6,6 +6,8 @@
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
+		"db:seed:bun": "bun src/lib/seeder/main.ts",
+		"db:seed:npm": "tsx src/lib/seeder/main.ts",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -37,7 +39,9 @@
 		"vite": "^8.0.16"
 	},
 	"dependencies": {
+		"googleapis": "^178.1.1",
 		"l": "^0.6.0",
-		"lucide-svelte": "^1.0.1"
+		"lucide-svelte": "^1.0.1",
+		"mysql2": "^3.24.3"
 	}
 }

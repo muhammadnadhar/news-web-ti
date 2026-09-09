@@ -2,42 +2,81 @@
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
 
-:root {
-	--bg-primary: #0b192c; /* Deep Navy - Latar belakang utama (Dark mode) */
-	--bg-secondary: #1e293b; /* Charcoal - Card, sidebar, atau elemen sekunder */
-	--accent-primary: #a7f3d0; /* Mint/Bio-Green - Warna aksen utama (Sains/Tech) */
-	--border-light: #e2e8f0; /* Silver Grey - Garis pembatas atau kontainer terang */
-	--pure-white: #ffffff; /* Putih Steril - Teks utama atau latar terang */
-
-	/* Varian dari Deep Navy (#0B192C) */
-	--bg-primary-glare: #15263f; /* Lebih terang sedikit untuk efek hover pada bg gelap */
-
-	/* Varian dari Charcoal (#1E293B) */
-	--bg-secondary-hover: #334155; /* Efek hover untuk tombol atau card sekunder */
-
-	/* Varian dari Mint Green (#A7F3D0) */
-	--accent-primary-hover: #86efac; /* Mint yang lebih matang untuk hover tombol aksen */
-	--accent-primary-dim: #1e3a3a; /* Mint versi gelap, bagus untuk bg badge/label */
-
-	--text-main: #ffffff; /* Teks utama pada latar belakang gelap */
-	--text-muted: #94a3b8; /* Teks sekunder/keterangan (Abu-abu kebiruan) */
-	--text-dark: #0b192c; /* Teks gelap, khusus digunakan di atas warna --accent-primary */
-
-	--accent-cyan: #22d3ee; /* Data/Tech - Melengkapi Mint Green untuk grafik/hologram */
-	--accent-purple: #818cf8; /* Kuantum/Inovasi - Memberikan variasi warna teknologi */
-	--status-error: #f43f5e; /* Merah Lab - Untuk indikator error, bahaya, atau stop */
+/* 
+   Memetakan variabel CSS agar bisa digunakan sebagai class Tailwind
+   */
+@theme {
+	--color-bg-primary: var(--bg-primary);
+	--color-bg-secondary: var(--bg-secondary);
+	--color-bg-primary-glare: var(--bg-primary-glare);
+	--color-bg-secondary-hover: var(--bg-secondary-hover);
+	--color-accent-primary: var(--accent-primary);
+	--color-accent-primary-hover: var(--accent-primary-hover);
+	--color-accent-primary-dim: var(--accent-primary-dim);
+	--color-text-main: var(--text-main);
+	--color-text-muted: var(--text-muted);
+	--color-text-dark: var(--text-dark);
+	--color-border-light: var(--border-light);
+	--color-border-color: var(--border-color);
+	--color-accent-cyan: var(--accent-cyan);
+	--color-accent-purple: var(--accent-purple);
+	--color-status-error: var(--status-error);
 }
 
+@layer base {
+	:root {
+		/* --- LIGHT MODE (Default) --- */
+		--bg-primary: #f8fafc; /* Deep Navy - Latar belakang utama (Dark mode) */
+		--bg-secondary: #ffffff; /* Charcoal - Card, sidebar, atau elemen sekunder */
+		--accent-primary: #a7f3d0; /* Mint/Bio-Green - Warna aksen utama (Sains/Tech) */
+		--border-light: #e2e8f0; /* Silver Grey - Garis pembatas atau kontainer terang */
+		--border-color: rgba(0, 0, 0, 0.1);
+		--pure-white: #ffffff; /* Putih Steril - Teks utama atau latar terang */
+
+		/* Varian dari Deep Navy (#0B192C) */
+		--bg-primary-glare: #f1f5f9; /* Lebih terang sedikit untuk efek hover pada bg gelap */
+		/* Varian dari Charcoal (#1E293B) */
+		--bg-secondary-hover: #e2e8f0; /* Efek hover untuk tombol atau card sekunder */
+		/* Varian dari Mint Green (#A7F3D0) */
+		--accent-primary-hover: #86efac; /* Mint yang lebih matang untuk hover tombol aksen */
+		--accent-primary-dim: #dcfce7; /* Mint versi gelap, bagus untuk bg badge/label */
+
+		--text-main: #0f172a; /* Teks utama pada latar belakang gelap */
+		--text-muted: #64748b; /* Teks sekunder/keterangan (Abu-abu kebiruan) */
+		--text-dark: #0b192c; /* Teks gelap, khusus digunakan di atas warna --accent-primary */
+
+		--accent-cyan: #06b6d4; /* Data/Tech - Melengkapi Mint Green untuk grafik/hologram */
+		--accent-purple: #6366f1; /* Kuantum/Inovasi - Memberikan variasi warna teknologi */
+		--status-error: #f43f5e; /* Merah Lab - Untuk indikator error, bahaya, atau stop */
+	}
+
+	/* overrite property */
+	html.dark {
+		/* --- dark mode --- */
+		--bg-primary: #0b192c; /* Deep Navy */
+		--bg-secondary: #1e293b; /* Charcoal */
+		--bg-secondary-hover: #334155;
+		--bg-primary-glare: #15263f;
+		--accent-primary-dim: #1e3a3a;
+		--text-main: #ffffff; /* Teks utama putih */
+		--text-muted: #94a3b8; /* Teks sekunder abu kebiruan */
+		--border-color: rgba(255, 255, 255, 0.1);
+		--border-light: rgba(255, 255, 255, 0.15);
+		--accent-cyan: #22d3ee;
+		--accent-purple: #818cf8;
+	}
+}
 html {
 	scroll-behavior: smooth;
 }
-
 body {
 	background-color: var(--bg-primary);
 	color: var(--text-main);
 	font-family: sans-serif;
+	transition:
+		background-color 0.3s ease,
+		color 0.3s ease;
 }
-
 ::-webkit-scrollbar {
 	width: 8px;
 }
@@ -106,4 +145,36 @@ body {
 	backdrop-filter: blur(16px);
 	-webkit-backdrop-filter: blur(16px);
 	border: 1px solid rgba(226, 232, 240, 0.1);
+}
+
+@keyframes heroZoom {
+	0% {
+		transform: scale(1);
+	}
+	100% {
+		transform: scale(1.12); /* Zoom kedepan secara konstan sampai 112% */
+	}
+}
+
+.animate-hero-zoom {
+	/* Durasi 5s disesuaikan dengan interval pergantian gambar */
+	animation: heroZoom 5s linear forwards;
+}
+@keyframes charAppear {
+	0% {
+		opacity: 0;
+		transform: translateY(12px) rotateX(-60deg);
+	}
+	100% {
+		opacity: 1;
+		transform: translateY(0) rotateX(0deg);
+	}
+}
+
+.animate-char {
+	display: inline-block;
+	white-space: pre;
+	will-change: transform, opacity;
+	backface-visibility: hidden;
+	animation: charAppear 0.35s cubic-bezier(0.2, 0.65, 0.3, 0.9) forwards;
 }

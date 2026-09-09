@@ -27,10 +27,11 @@
 		Newspaper
 	};
 	import { page } from '$app/stores'; // Import store page dari SvelteKit
+	import uinIcon from '$lib/assets/uin-icon.webp';
+	import ThemeActionBtn from '../themeActionBtn.svelte';
 
 	let currentPath = $derived($page.url.pathname);
 
-	// Svelte 5 Runes State
 	let isMobileOpen = $state(false);
 	let isCollapsed = $state(false);
 	let activePath = $state('/dashboard'); // Halaman aktif saat ini
@@ -44,19 +45,14 @@
 	}
 </script>
 
-<!-- topbar mobile (tampil hanya di layar kecil < lg) -->
 <header
 	class="bg-scitech-navy/95 sticky top-0 z-50 flex items-center justify-between border-b border-white/10 px-4 py-3 backdrop-blur-md lg:hidden"
 >
 	<div class="flex items-center gap-3">
-		<img
-			src="https://upload.wikimedia.org/wikipedia/commons/2/23/Logo_UIN_Ar-Raniry.png"
-			alt="UIN Ar-Raniry"
-			class="h-8 w-8 object-contain"
-		/>
+		<img src={uinIcon} alt="UIN Ar-Raniry" class="h-8 w-8 object-contain" />
 		<div>
 			<span class="text-scitech-mint block text-xs font-bold tracking-wider">TI UIN AR-RANIRY</span>
-			<span class="text-text-muted -mt-0.5 block text-[10px]">Control Panel</span>
+			<span class="-mt-0.5 block text-[10px] text-text-muted">Control Panel</span>
 		</div>
 	</div>
 
@@ -83,7 +79,7 @@
 	></div>
 {/if}
 
-<!-- SIDEBAR UTAMA (Sticky & Responsive Drawer) -->
+<!-- sidebar utama (sticky & responsive drawer) -->
 <aside
 	class="bg-scitech-navy/95 fixed top-0 left-0 z-40 flex h-screen scrollbar-none flex-col justify-between
          overflow-y-auto border-r border-white/10 backdrop-blur-xl transition-all duration-300 ease-in-out lg:sticky
@@ -92,9 +88,9 @@
 >
 	<!-- Sidebar Header / Logo -->
 	<div>
-		<div class="flex items-center gap-3.5 border-b border-white/10 p-5">
+		<div class="flex items-center gap-3.5 border-b border-white/10 p-5" onclick={() => goto('/')}>
 			<img
-				src="https://upload.wikimedia.org/wikipedia/commons/2/23/Logo_UIN_Ar-Raniry.png"
+				src={uinIcon}
 				alt="Logo UIN Ar-Raniry"
 				class="h-10 w-10 shrink-0 object-contain drop-shadow-[0_0_8px_rgba(79,209,197,0.3)] filter"
 			/>
@@ -121,7 +117,7 @@
 							{section.category}
 						</h2>
 					{:else}
-						<div class="mx-2 my-3 h-px bg-white/10"></div>
+						<div class="mx-2 my-3 h-px bg-bg-secondary"></div>
 					{/if}
 
 					<!-- Menu Items -->
@@ -132,18 +128,18 @@
 							{#if !isCollapsed}
 								<details class="group/details">
 									<summary
-										class="text-text-muted hover:bg-scitech-slate/80 flex cursor-pointer list-none items-center justify-between rounded-xl px-3 py-2.5 text-xs font-semibold transition-all select-none hover:text-white"
+										class="hover:bg-scitech-slate/80 flex cursor-pointer list-none items-center justify-between rounded-xl px-3 py-2.5 text-xs font-semibold text-text-muted transition-all select-none hover:text-text-muted"
 									>
 										<div class="flex items-center gap-3">
 											<IconComponent class="text-scitech-cyan h-4 w-4 shrink-0" />
 											<span>{item.title}</span>
 										</div>
 										<ChevronRight
-											class="text-text-muted h-3.5 w-3.5 transition-transform duration-300 group-open/details:rotate-90"
+											class="h-3.5 w-3.5 text-text-muted transition-transform duration-300 group-open/details:rotate-90"
 										/>
 									</summary>
 
-									<div class="relative mt-1 ml-5 space-y-1 border-l-2 border-white/10 pl-3">
+									<div class="relative mt-1 ml-5 space-y-1 border-l-2 border-border-color pl-3">
 										{#each item.children as sub}
 											{@const isSubActive = currentPath === sub.href}
 
@@ -168,7 +164,7 @@
 								<!-- Tampilan saat Collapsed (Icon Only) -->
 								<button
 									title={item.title}
-									class="text-text-muted hover:bg-scitech-slate flex w-full items-center justify-center rounded-xl p-3 hover:text-white"
+									class="hover:bg-scitech-slate flex w-full items-center justify-center rounded-xl p-3 text-text-muted hover:text-text-muted"
 								>
 									<IconComponent class="text-scitech-cyan h-5 w-5" />
 								</button>
@@ -187,7 +183,7 @@
 								class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-semibold transition-all duration-200
                        {isActive
 									? 'bg-scitech-mint/15 text-scitech-mint border-scitech-mint/40 shadow-scitech-mint/5 border shadow-lg'
-									: 'text-text-muted hover:bg-scitech-slate/80 hover:text-white'}"
+									: 'hover:bg-scitech-slate/80 text-text-muted hover:text-white'}"
 							>
 								<IconComponent
 									class="h-4 w-4 shrink-0 {isActive ? 'text-scitech-mint' : 'text-scitech-cyan'}"
@@ -201,15 +197,17 @@
 					{/each}
 				</div>
 			{/each}
+
+			<ThemeActionBtn onlyIcon={isCollapsed} />
 		</nav>
 	</div>
 
 	<!-- Sidebar Footer / Collapse Toggle (Desktop Only) -->
-	<div class="hidden justify-center border-t border-white/10 p-3 lg:flex">
+	<div class="hidden justify-center gap-1.5 border-t border-border-color p-3 lg:flex">
 		<button
 			onclick={toggleCollapse}
 			aria-label="Toggle Sidebar"
-			class="bg-scitech-slate hover:bg-scitech-slate-hover text-text-muted hover:text-scitech-mint rounded-full border border-white/10 p-2.5 shadow-md transition-all duration-200 active:scale-95"
+			class="bg-scitech-slate hover:bg-scitech-slate-hover hover:text-scitech-mint rounded-full border border-border-color p-2.5 text-text-muted shadow-md transition-all duration-200 active:scale-95"
 		>
 			<ChevronLeft
 				class="h-5 w-5 transition-transform duration-300 {isCollapsed ? 'rotate-180' : ''}"

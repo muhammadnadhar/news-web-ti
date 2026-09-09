@@ -37,72 +37,79 @@ export const sidebarMenu: MenuCategory[] = [
 		]
 	},
 	{
-		category: 'ARTIKEL',
+		category: 'article',
 		items: [
 			{
 				title: 'Home',
 				iconName: 'Home',
-				href: AdminUrl + '/artikel/home'
+				href: AdminUrl + '/article/home'
 			},
 			{
 				title: 'Profil',
 				iconName: 'BadgeIdentity',
 				children: [
-					{ title: 'Visi & Misi', href: AdminUrl + '/artikel/profil/visi-misi' },
-					{ title: 'Sejarah Singkat', href: AdminUrl + '/artikel/profil/sejarah' },
-					{ title: 'Dosen & Staf', href: AdminUrl + '/artikel/profil/dosen' },
-					{ title: 'Fasilitas Lab', href: AdminUrl + '/artikel/profil/fasilitas' }
+					{ title: 'Visi & Misi', href: AdminUrl + '/article/profil/visi-misi' },
+					{ title: 'Sejarah Singkat', href: AdminUrl + '/article/profil/sejarah' },
+					{ title: 'Struktur Organisasi', href: AdminUrl + '/article/profil/struktur-organisasi' },
+					{ title: 'Dosen & Staf', href: AdminUrl + '/article/profil/dosen' },
+					{ title: 'Akreditasi', href: AdminUrl + '/article/profil/akreditasi' },
+					{ title: 'Fasilitas Lab', href: AdminUrl + '/article/profil/fasilitas' }
 				]
 			},
 			{
 				title: 'Akademik',
 				iconName: 'GraduationCap',
 				children: [
-					{ title: 'Kalender Akademik', href: AdminUrl + '/artikel/akademik/kalender' },
-					{ title: 'Jadwal Kuliah', href: AdminUrl + '/artikel/akademik/jadwal' },
-					{ title: 'Akreditasi', href: AdminUrl + '/artikel/akademik/akreditasi' }
+					{ title: 'Kalender Akademik', href: AdminUrl + '/article/akademik/kalender' },
+					{ title: 'Pedoman Tugas Akhir', href: AdminUrl + '/article/akademik/pedoman-ta' },
+					{ title: 'Pedoman KKP', href: AdminUrl + '/article/akademik/pedoman-kkp' },
+					{
+						title: 'Ketentuan Komprehensif',
+						href: AdminUrl + '/article/akademik/ketentuan-komprehensif'
+					},
+					{ title: 'Modul Praktikum', href: AdminUrl + '/article/akademik/modul-praktikum' }
 				]
 			},
 			{
 				title: 'Kurikulum',
 				iconName: 'BookOpen',
 				children: [
-					{ title: 'Capaian Pembelajaran', href: AdminUrl + '/artikel/kurikulum/cpl' },
-					{ title: 'Daftar Mata Kuliah', href: AdminUrl + '/artikel/kurikulum/matakuliah' }
+					{ title: 'Capaian Pembelajaran', href: AdminUrl + '/article/kurikulum/cpl' },
+					{ title: 'Daftar Mata Kuliah', href: AdminUrl + '/article/kurikulum/matakuliah' }
 				]
 			},
 			{
 				title: 'Kemahasiswaan',
 				iconName: 'Users',
 				children: [
-					{ title: 'Himpunan (HMTI)', href: AdminUrl + '/artikel/kemahasiswaan/hmti' },
-					{ title: 'Beasiswa', href: AdminUrl + '/artikel/kemahasiswaan/beasiswa' },
-					{ title: 'Prestasi', href: AdminUrl + '/artikel/kemahasiswaan/prestasi' }
+					{ title: 'Himpunan (HMTI)', href: AdminUrl + '/article/kemahasiswaan/hmti' },
+					{ title: 'Beasiswa', href: AdminUrl + '/article/kemahasiswaan/beasiswa' },
+					{ title: 'Prestasi', href: AdminUrl + '/article/kemahasiswaan/prestasi' }
 				]
 			},
 			{
 				title: 'Penelitian',
 				iconName: 'Microscope',
 				children: [
-					{ title: 'Riset Dosen', href: AdminUrl + '/artikel/penelitian/riset' },
-					{ title: 'Jurnal TI', href: AdminUrl + '/artikel/penelitian/jurnal' }
+					{ title: 'Riset Dosen', href: AdminUrl + '/article/penelitian/riset' },
+					{ title: 'Jurnal TI', href: AdminUrl + '/article/penelitian/jurnal' }
 				]
 			},
 			{
 				title: 'Kerjasama',
 				iconName: 'Handshake',
 				children: [
-					{ title: 'Mitra Industri', href: AdminUrl + '/artikel/kerjasama/industri' },
-					{ title: 'Universitas Mitra', href: AdminUrl + '/artikel/kerjasama/universitas' }
+					{ title: 'Mitra Industri', href: AdminUrl + '/article/kerjasama/industri' },
+					{ title: 'Universitas Mitra', href: AdminUrl + '/article/kerjasama/universitas' }
 				]
 			},
 			{
 				title: 'Berita',
-				iconName: 'Newspaper',
-				children: [
-					{ title: 'Pengumuman', href: AdminUrl + '/artikel/berita/pengumuman' },
-					{ title: 'Agenda Kegiatan', href: AdminUrl + '/artikel/berita/agenda' }
-				]
+				iconName: 'Newspaper'
+				// children: [
+				// 	{ title: 'Pengumuman', href: AdminUrl + '/article/berita/pengumuman' },
+				// 	{ title: 'Agenda Kegiatan', href: AdminUrl + '/article/berita/agenda' }
+				// ]
 			}
 		]
 	}

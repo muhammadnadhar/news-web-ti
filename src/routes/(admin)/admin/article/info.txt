@@ -1,0 +1,3 @@
+
+
+setiap 1 halaman di tentukan compoenntnya berdasarkan page ( nama ppages nya )
