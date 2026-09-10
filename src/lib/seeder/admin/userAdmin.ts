@@ -1,4 +1,4 @@
-import { query } from '$lib/server/db';
+import { query } from '$lib/server/database/runtimeDb'; // di gunakan oleh runntime bawaah
 import type { UserAdminItem } from '$lib/types/admin/user';
 
 export const tableAdminUser = 'usersAdmin';

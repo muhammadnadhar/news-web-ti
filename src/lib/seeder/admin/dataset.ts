@@ -1,7 +1,7 @@
-import { query } from '$lib/server/db';
+import { query } from '$lib/server/database/runtimeDb';
 
 export const tableAngkatan = 'dataset_angkatan';
-export const tableSemester = 'semester';
+export const tableSemester = 'dataset_semester';
 
 // Fungsi seed untuk tabel Angkatan
 export async function AngkatanTableSeed() {

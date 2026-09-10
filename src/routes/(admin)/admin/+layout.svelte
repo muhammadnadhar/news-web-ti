@@ -23,7 +23,7 @@
 
 			<div class="flex items-center gap-5">
 				<button
-					class="bg-scitech-slate relative rounded-xl border border-border-color p-2 text-text-muted transition-all hover:bg-white/10 hover:text-text-muted"
+					class="bg-scitech-slate relative rounded-xl border border-border-color p-2 text-text-muted transition-all hover:bg-bg-primary hover:text-text-muted"
 				>
 					<Bell class="h-4 w-4" />
 					<span class="bg-scitech-mint absolute top-1.5 right-1.5 h-2 w-2 animate-ping rounded-full"
@@ -32,7 +32,7 @@
 				</button>
 
 				<!-- Profile Badge -->
-				<div class="flex items-center gap-3 border-l border-white/10 pl-4">
+				<div class="flex items-center gap-3 border-l border-border-color pl-4">
 					<div class="text-right">
 						<span class="block text-xs font-bold text-white">M. Fadhlan</span>
 						<span class="text-scitech-mint block font-mono text-[10px]">Administrator</span>

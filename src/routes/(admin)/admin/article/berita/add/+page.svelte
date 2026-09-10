@@ -2,12 +2,12 @@
 	import { enhance } from '$app/forms';
 	import type { ActionData } from './$types';
 
-	export let form: ActionData;
+	let form: ActionData = $props();
 
 	let title = form?.values?.title ?? '';
 	let category = form?.values?.category ?? '';
 	let content = form?.values?.content ?? '';
-	let isSubmitting = false;
+	let isSubmitting = $state(false);
 
 	// Daftar Kategori sesuai kebutuhan
 	const categories = [
@@ -26,7 +26,7 @@
 
 	<!-- Card Form -->
 	<div
-		class="overflow-hidden rounded-lg border border-[var(--color-border-light)] bg-[var(--color-bg-secondary)] shadow-sm"
+		class="border-color-border-light overflow-hidden rounded-lg border bg-bg-secondary shadow-sm"
 	>
 		<!-- Header Card -->
 		<div
@@ -37,7 +37,6 @@
 			</h2>
 		</div>
 
-		<!-- Body Form -->
 		<form
 			method="POST"
 			enctype="multipart/form-data"

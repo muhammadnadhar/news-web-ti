@@ -1,12 +1,12 @@
 import { tableNews } from '$lib/seeder/admin/article/berita';
-import { query } from '$lib/server/db';
-import type { NewsItemDTO } from '$lib/types/admin/berita';
+import { query } from '$lib/server/database/svelteDb';
+import type { NewsItemDTO } from '$lib/types/admin/article/berita';
 
 export type CreateNewsData = Omit<NewsItemDTO, 'id' | 'created_at' | 'updated_at'>;
 export type UpdateNewsData = Partial<CreateNewsData>;
 
 /**
- * 1. TAMBAH BERITA BARU (Create)
+ * tambah berita baru (create)
  */
 export async function createNews(id: string, data: CreateNewsData): Promise<boolean> {
 	const sql = `
@@ -20,7 +20,7 @@ export async function createNews(id: string, data: CreateNewsData): Promise<bool
 }
 
 /**
- * 2. MENDAPATKAN SEMUA BERITA (Read All)
+ *  mendapatkan semua berita (read all)
  * Diurutkan berdasarkan tanggal terbit terbaru
  */
 export async function getAllNews(): Promise<NewsItemDTO[]> {
@@ -30,7 +30,7 @@ export async function getAllNews(): Promise<NewsItemDTO[]> {
 }
 
 /**
- * 3. MENDAPATKAN BERITA BERDASARKAN ID (Read One)
+ * 3. mendapatkan berita berdasarkan id (read one)
  */
 export async function getNewsById(id: string): Promise<NewsItemDTO | null> {
 	const sql = `SELECT * FROM ${tableNews} WHERE id = ? LIMIT 1`;
@@ -44,6 +44,20 @@ export async function getNewsById(id: string): Promise<NewsItemDTO | null> {
 export async function getNewsByCategory(category: string): Promise<NewsItemDTO[]> {
 	const sql = `SELECT * FROM ${tableNews} WHERE category = ? ORDER BY published_at DESC`;
 	const rows = (await query(sql, [category])) as NewsItemDTO[];
+	return rows;
+}
+
+/**
+ * Mengambil 10 data berita terbaru berdasarkan tanggal publikasi (published_at)
+ */
+export async function getRecentNews(limit: number = 10): Promise<NewsItemDTO[]> {
+	const sql = `
+		SELECT id, title, category, published_at, created_at, updated_at 
+		FROM ${tableNews} 
+		ORDER BY published_at DESC 
+		LIMIT ?
+	`;
+	const rows = (await query(sql, [limit])) as NewsItemDTO[];
 	return rows;
 }
 

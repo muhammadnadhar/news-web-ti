@@ -3,64 +3,48 @@
 
 	import TableContent from '$lib/components/admin/tableContent.svelte';
 	import type { TableContentType } from '$lib/types/tableContent';
+	import { enhance } from '$app/forms';
 
 	// Data Angkatan sesuai Gambar 2
-	let angkatanList = $state<TableContentType[]>([
-		{
-			id: '1',
-			items: [{ colomn: 'Nama', row: 'Angkatan 2019' }]
-		},
-		{
-			id: '2',
-			items: [{ colomn: 'Nama', row: 'Angkatan 2020' }]
-		},
-		{
-			id: '3',
-			items: [{ colomn: 'Nama', row: 'Angkatan 2021' }]
-		},
-		{
-			id: '4',
-			items: [{ colomn: 'Nama', row: 'Angkatan 2022' }]
-		},
-		{
-			id: '5',
-			items: [{ colomn: 'Nama', row: 'Angkatan 2023' }]
-		}
-	]);
+	let { data } = $props();
+
 	// State Management
 	let searchQuery = $state('');
-	let entriesPerPage = $state(10);
-	let isAddModalOpen = $state(false);
-	let newNama = $state('');
+	let isModalOpen = $state(false);
+	let isEditMode = $state(false);
+	let selectedId = $state('');
+	let yearInput = $state('');
 
-	// Derived Filtered Data
+	// Sync local state dengan data server
+	let angkatanList = $derived<TableContentType[]>(data.angkatanList || []);
 
-	// Filter list berdasarkan nilai di dalam array `items`
+	// Filtered Data
 	let filteredList = $derived(
 		angkatanList.filter((item) =>
 			item.items.some((col) => String(col.row).toLowerCase().includes(searchQuery.toLowerCase()))
 		)
 	);
 
-	// Fungsi Tambah Data Angkatan
-	function handleAddAngkatan(e: SubmitEvent) {
-		e.preventDefault();
-		if (!newNama) return;
-
-		const newItem: TableContentType = {
-			id: Date.now().toString(),
-			items: [{ colomn: 'Nama', row: `Angkatan ${newNama}` }]
-		};
-
-		angkatanList = [...angkatanList, newItem];
-		newNama = '';
-		isAddModalOpen = false;
+	// Modal Controls
+	function openAddModal() {
+		isEditMode = false;
+		selectedId = '';
+		yearInput = '';
+		isModalOpen = true;
 	}
 
-	// Fungsi Hapus Data
-	function handleDelete(target: TableContentType | string) {
-		const targetId = typeof target === 'string' ? target : target.id;
-		angkatanList = angkatanList.filter((item) => item.id !== targetId);
+	function openEditModal(item: TableContentType) {
+		isEditMode = true;
+		selectedId = item.id;
+		const nameCol = item.items.find((col) => col.colomn === 'Nama');
+		yearInput = nameCol ? String(nameCol.row) : '';
+		isModalOpen = true;
+	}
+
+	function closeModal() {
+		isModalOpen = false;
+		yearInput = '';
+		selectedId = '';
 	}
 </script>
 
@@ -178,12 +162,11 @@
 </div>
 <!-- pindahkan ke table sekarang -->
 <TableContent
-	title="Data Angkatan"
+	title="Data Angkatan Teknologi Informasi"
 	addButtonLabel="+ Angkatan"
 	data={filteredList}
-	onAdd={() => (isAddModalOpen = true)}
-	onEdit={(item) => console.log('Edit:', item)}
-	onDelete={handleDelete}
+	onAdd={openAddModal}
+	onEdit={openEditModal}
 />
 
 <!-- Pagination Footer -->
@@ -213,28 +196,44 @@
 <!-- </div> -->
 
 <!-- Modal Tambah Angkatan -->
-{#if isAddModalOpen}
+<!-- Modal Form Tambah / Edit Angkatan -->
+{#if isModalOpen}
 	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
 		<div
 			class="bg-scitech-navy w-full max-w-md space-y-6 rounded-3xl border border-white/15 p-6 shadow-2xl sm:p-8"
 		>
 			<div class="flex items-center justify-between border-b border-white/10 pb-4">
-				<h3 class="text-base font-bold text-white">Tambah Angkatan Baru</h3>
-				<button onclick={() => (isAddModalOpen = false)} class="text-text-muted hover:text-white"
-					><X class="h-5 w-5" /></button
-				>
+				<h3 class="text-base font-bold text-white">
+					{isEditMode ? 'Edit Data Angkatan' : 'Tambah Angkatan Baru'}
+				</h3>
+				<button type="button" onclick={closeModal} class="text-text-muted hover:text-white">
+					<X class="h-5 w-5" />
+				</button>
 			</div>
 
-			<form onsubmit={handleAddAngkatan} class="space-y-4">
+			<form
+				method="POST"
+				action="?/save"
+				use:enhance={() => {
+					return async ({ result }) => {
+						if (result.type === 'success') {
+							closeModal();
+						}
+					};
+				}}
+				class="space-y-4"
+			>
+				<input type="hidden" name="id" value={selectedId} />
+				<input type="hidden" name="is_edit" value={isEditMode ? 'true' : 'false'} />
+
 				<div>
-					<label class="text-text-muted mb-1 block text-xs" for="nama_angkatan"
-						>Tahun Angkatan</label
-					>
+					<label class="mb-1 block text-xs text-text-muted" for="year">Tahun Angkatan</label>
 					<input
-						id="nama_angkatan"
-						type="text"
+						id="year"
+						name="year"
+						type="number"
 						required
-						bind:value={newNama}
+						bind:value={yearInput}
 						placeholder="Contoh: 2024"
 						class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-white/15 px-4 py-2.5 text-xs text-white focus:outline-none"
 					/>
@@ -243,15 +242,17 @@
 				<div class="flex justify-end gap-3 pt-4">
 					<button
 						type="button"
-						onclick={() => (isAddModalOpen = false)}
-						class="text-text-muted rounded-xl bg-white/5 px-4 py-2 text-xs font-semibold"
-						>Batal</button
+						onclick={closeModal}
+						class="rounded-xl bg-white/5 px-4 py-2 text-xs font-semibold text-text-muted hover:bg-white/10"
 					>
+						Batal
+					</button>
 					<button
 						type="submit"
-						class="text-scitech-navy bg-scitech-mint rounded-xl px-5 py-2 text-xs font-bold"
-						>Simpan</button
+						class="text-scitech-navy bg-scitech-mint hover:bg-scitech-mint-hover rounded-xl px-5 py-2 text-xs font-bold"
 					>
+						Simpan
+					</button>
 				</div>
 			</form>
 		</div>

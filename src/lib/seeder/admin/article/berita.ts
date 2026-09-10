@@ -1,5 +1,4 @@
-import { query } from '$lib/server/db';
-
+import { query } from '$lib/server/database/runtimeDb'; // di gunakan oleh runntime bawaah
 export const tableNews = 'berita';
 
 // Fungsi seed untuk tabel Berita (Data Berita)

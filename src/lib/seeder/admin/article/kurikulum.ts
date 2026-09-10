@@ -1,7 +1,7 @@
-import { query } from '$lib/server/db';
+import { query } from '$lib/server/database/runtimeDb'; // di gunakan oleh runntime bawaah
 
-export const tableCourseMap = 'article_course_map';
-export const tableObeCurriculum = 'article_obe_curriculum';
+export const tableCourseMap = 'kurikulum_course_map';
+export const tableObeCurriculum = 'Kurikulum_obe_curriculum';
 
 // Fungsi seed untuk tabel Peta Mata Kuliah (Peta)
 export async function CourseMapTableSeed() {

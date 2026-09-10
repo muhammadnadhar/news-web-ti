@@ -2,8 +2,8 @@
 	import { fly, fade, slide } from 'svelte/transition';
 	import { backOut } from 'svelte/easing';
 	import { Menu, X, ChevronDown, Moon, Sun } from 'lucide-svelte';
-	import { menuItems } from '$lib/data/menu';
-	import { type MenuItem } from '$lib/types/navbar';
+	import { navMenuItems } from '$lib/data/navbar';
+	import { type NavMenuItemType } from '$lib/types/navbar';
 
 	import NavbarSub from '$lib/components/navbar.sub.svelte';
 	import ThemeActionBtn from './themeActionBtn.svelte';
@@ -16,7 +16,7 @@
 
 	// State menu mobile & submenu
 	let isOpen = $state(false);
-	let activeDesktopMenu = $state<MenuItem | null>(null);
+	let activeDesktopMenu = $state<NavMenuItemType | null>(null);
 	let activeMobileMenuId = $state<string | null>(null);
 
 	// Toggle drawer floating mobile
@@ -28,7 +28,7 @@
 	}
 
 	// Handle klik menu di desktop
-	function handleDesktopClick(item: MenuItem) {
+	function handleDesktopClick(item: NavMenuItemType) {
 		if (activeDesktopMenu?.id === item.id) {
 			activeDesktopMenu = null;
 		} else {
@@ -37,7 +37,7 @@
 	}
 
 	// Handle klik menu di mobile
-	function handleMobileClick(item: MenuItem) {
+	function handleMobileClick(item: NavMenuItemType) {
 		if (item.subMenu && item.subMenu.length > 0) {
 			activeMobileMenuId = activeMobileMenuId === item.id ? null : item.id;
 		} else {
@@ -56,7 +56,7 @@
 	<nav
 		class="bg-scitech-navy/80 flex items-center gap-3 rounded-2xl border border-white/10 p-2 shadow-2xl backdrop-blur-md"
 	>
-		{#each menuItems as item (item.id)}
+		{#each navMenuItems as item (item.id)}
 			<button
 				title={item.label}
 				onclick={() => handleDesktopClick(item)}
@@ -115,10 +115,10 @@
 		<div
 			class="bg-scitech-slate/95 fixed right-6 bottom-24 z-50 flex max-h-[70vh] max-w-[calc(100vw-3rem)] min-w-[280px] flex-col gap-2.5 overflow-y-auto rounded-2xl border border-white/15 p-2.5 shadow-2xl backdrop-blur-xl"
 		>
-			{#each menuItems as item, index (item.id)}
+			{#each navMenuItems as item, index (item.id)}
 				<div
 					in:fly={{ y: 20, duration: 250, delay: index * 50, easing: backOut }}
-					out:fly={{ y: 15, duration: 150, delay: (menuItems.length - 1 - index) * 30 }}
+					out:fly={{ y: 15, duration: 150, delay: (navMenuItems.length - 1 - index) * 30 }}
 					class="flex flex-col overflow-hidden rounded-xl"
 				>
 					<!-- Tombol Menu Utama -->
@@ -159,9 +159,9 @@
 					{/if}
 				</div>
 
-				<!-- action button: theme toggle switcher -->
-				<ThemeActionBtn />
 			{/each}
+      <!-- action button: theme toggle switcher -->
+      <ThemeActionBtn />
 		</div>
 	{/if}
 

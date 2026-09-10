@@ -2,7 +2,7 @@
 	import type { PageData } from './$types';
 	import TableContent from '$lib/components/admin/tableContent.svelte';
 
-	export let data: PageData;
+	let data: PageData = $props();
 
 	// Konfigurasi Kolom untuk TableContent
 	const columns = [
@@ -20,20 +20,18 @@
 	}
 </script>
 
-<div
-	class="min-h-screen bg-[var(--color-bg-primary)] p-6 text-[var(--color-text-main)] transition-colors"
->
+<div class="min-h-screen bg-bg-primary p-6 text-[var(--color-text-main)] transition-colors">
 	<!-- Header Page & Tombol Tambah -->
 	<div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 		<div>
 			<h1 class="text-2xl font-bold tracking-tight text-[var(--color-text-main)]">Berita</h1>
-			<p class="mt-1 text-sm text-[var(--color-text-muted)]">
+			<p class="mt-1 text-sm text-text-muted">
 				Kelola daftar berita, seminar, dan pengumuman prodi.
 			</p>
 		</div>
 
 		<a
-			href="/admin/berita/create"
+			href="/admin/article/berita/add"
 			class="inline-flex items-center justify-center gap-2 rounded-lg bg-[var(--color-accent-purple)] px-4 py-2.5 text-sm font-semibold text-white shadow-md transition-all hover:opacity-90 hover:shadow-lg active:scale-95"
 		>
 			<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

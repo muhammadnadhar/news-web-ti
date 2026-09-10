@@ -1,11 +1,11 @@
-import { query } from '$lib/server/db';
+import { query } from '$lib/server/database/runtimeDb'; // di gunakan oleh runntime bawaah
 
-export const tablePedomanTa = 'pedoman_ta';
-export const tablePedomanKkp = 'pedoman_kkp';
-export const tableRecruitment = 'recruitment';
-export const tablePracticumModule = 'practicum_module';
+export const tablePedomanTa = 'akademik_pedoman_ta';
+export const tablePedomanKkp = 'akademik_pedoman_kkp';
+export const tableRecruitment = 'akademik_recruitment';
+export const tablePracticumModule = 'akademik_practicum_module';
 // ini table terpisah yang menyimpan data gambar
-export const tableKalenderAkademik = 'kalender_akademik';
+export const tableKalenderAkademik = 'akademik_kalender_akademik';
 
 // Fungsi seed untuk tabel Pedoman Tugas Akhir
 export async function PedomanTaTableSeed() {

@@ -1,5 +1,5 @@
 import { tableAdminUser } from '$lib/seeder/admin/userAdmin';
-import { query } from '$lib/server/db';
+import { query } from '$lib/server/database/svelteDb';
 
 export interface UserAdminItem {
 	id: string;
@@ -92,7 +92,7 @@ export async function getUsersAdmin(
 	`;
 
 	// Query untuk menghitung total baris (untuk keperluan pagination UI)
-	const countSql = `SELECT COUNT(*) as total FROM users ${whereClause}`;
+	const countSql = `SELECT COUNT(*) as total FROM ${tableAdminUser} ${whereClause}`;
 
 	const [items, countResult] = (await Promise.all([
 		query(itemsSql, [...params, limit, offset]),

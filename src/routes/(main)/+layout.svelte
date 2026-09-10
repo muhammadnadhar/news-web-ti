@@ -45,7 +45,8 @@
 			</div>
 		</a>
 
-		<Navbar onOpenDrawer={toggleDrawer} />
+		<!-- <Navbar onOpenDrawer={toggleDrawer} /> -->
+		<Navbar />
 	</header>
 
 	<!-- CONTENT RENDER (SvelteKit Slot) -->
@@ -65,7 +66,7 @@
 			<div class="border-scitech-slate flex items-center justify-between border-b pb-6">
 				<span class="text-lg font-bold text-white">Menu Utama</span>
 				<button
-					on:click={toggleDrawer}
+					onclick={toggleDrawer}
 					class="bg-scitech-slate hover:bg-scitech-error rounded-xl p-2 transition-all"
 				>
 					<X class="h-6 w-6" />

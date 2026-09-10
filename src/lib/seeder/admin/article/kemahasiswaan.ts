@@ -1,8 +1,7 @@
-import { query } from '$lib/server/db';
-
+import { query } from '$lib/server/database/runtimeDb'; // di gunakan oleh runntime bawaah
 export const tableScholarship = 'kemahasiswaan_scholarship';
 export const tableStudentAchievement = 'kemahasiswaan_student_achievement';
-export const tableHighGpaStudent = 'high_gpa_student';
+export const tableHighGpaStudent = 'kemahasiswaan_high_gpa_student';
 
 // Fungsi seed untuk tabel Beasiswa (Data Beasiswa Mahasiswa)
 export async function ScholarshipTableSeed() {

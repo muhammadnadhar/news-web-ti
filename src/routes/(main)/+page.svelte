@@ -7,6 +7,12 @@
 	import { fade } from 'svelte/transition';
 	import { onMount } from 'svelte';
 
+let { data } = $props();
+
+	// (Menggunakan $derived agar data tetap reaktif jika terjadi pembaruan)
+	let recentNews = $derived(data.recentNews);
+
+
 	const images = [fstImg, uinFrontImg];
 	let captions = $state([
 		'Sinergi Kebangsaan, Energi Membangun Negeri',
@@ -158,7 +164,7 @@
 </section>
 
 <main id="main" class="mx-auto max-w-7xl space-y-16 px-6 py-12 lg:px-12">
-	<NewsSection />
+	<NewsSection {recentNews} />
 
 	<!---->
 	<!-- <section class="bg-scitech-navy-glare border-scitech-slate rounded-3xl border p-8"> -->

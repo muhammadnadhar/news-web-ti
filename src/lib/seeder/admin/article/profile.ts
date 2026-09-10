@@ -1,4 +1,5 @@
-import { query } from '$lib/server/db';
+import { query } from '$lib/server/database/runtimeDb'; // di gunakan oleh runntime 
+
 
 // sejarah
 export const tableSejarahContent = 'profile_sejarah_content';

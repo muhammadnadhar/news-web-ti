@@ -13,102 +13,102 @@
 		X
 	} from 'lucide-svelte';
 
-  import TableContent from "$lib/components/admin/tableContent.svelte";
+	import TableContent from '$lib/components/admin/tableContent.svelte';
 	import type { TableContentType } from '$lib/types/tableContent';
 
-//	interface SemesterItem {
+	//	interface SemesterItem {
 	//	id: string;
 	//	nama: string;
-//		link: string;
-//	}
+	//		link: string;
+	//	}
 
 	// Data Semester sesuai Gambar 1
-let semesterList = $state<TableContentType[]>([
-  {
-    id: '1',
-    items: [
-      { colomn: 'Nama Semester', row: 'Semester Ganjil 2020/2021' },
-      { colomn: 'Tautan', row: '/ganjil20-21', isLink: true }
-    ]
-  },
-  {
-    id: '2',
-    items: [
-      { colomn: 'Nama Semester', row: 'Semester Ganjil 2021/2022' },
-      { colomn: 'Tautan', row: '/ganjil21-22', isLink: true }
-    ]
-  },
-  {
-    id: '3',
-    items: [
-      { colomn: 'Nama Semester', row: 'Semester Ganjil 2022/2023' },
-      { colomn: 'Tautan', row: '/ganjil22-23', isLink: true }
-    ]
-  },
-  {
-    id: '4',
-    items: [
-      { colomn: 'Nama Semester', row: 'Semester Ganjil 2023/2024' },
-      { colomn: 'Tautan', row: '/ganjil23-24', isLink: true }
-    ]
-  },
-  {
-    id: '5',
-    items: [
-      { colomn: 'Nama Semester', row: 'Semester Ganjil 2024/2025' },
-      { colomn: 'Tautan', row: '/ganjil24-25', isLink: true }
-    ]
-  },
-  {
-    id: '6',
-    items: [
-      { colomn: 'Nama Semester', row: 'Semester Ganjil 2025/2026' },
-      { colomn: 'Tautan', row: '/ganjil25-26', isLink: true }
-    ]
-  },
-  {
-    id: '7',
-    items: [
-      { colomn: 'Nama Semester', row: 'Semester Genap 2019/2020' },
-      { colomn: 'Tautan', row: '/genap19-20', isLink: true }
-    ]
-  },
-  {
-    id: '8',
-    items: [
-      { colomn: 'Nama Semester', row: 'Semester Genap 2020/2021' },
-      { colomn: 'Tautan', row: '/genap20-21', isLink: true }
-    ]
-  },
-  {
-    id: '9',
-    items: [
-      { colomn: 'Nama Semester', row: 'Semester Genap 2021/2022' },
-      { colomn: 'Tautan', row: '/genap21-22', isLink: true }
-    ]
-  },
-  {
-    id: '10',
-    items: [
-      { colomn: 'Nama Semester', row: 'Semester Genap 2022/2023' },
-      { colomn: 'Tautan', row: '/genap22-23', isLink: true }
-    ]
-  },
-  {
-    id: '11',
-    items: [
-      { colomn: 'Nama Semester', row: 'Semester Genap 2023/2024' },
-      { colomn: 'Tautan', row: '/genap23-24', isLink: true }
-    ]
-  },
-  {
-    id: '12',
-    items: [
-      { colomn: 'Nama Semester', row: 'Semester Genap 2024/2025' },
-      { colomn: 'Tautan', row: '/genap24-25', isLink: true }
-    ]
-  }
-]);	// State Management
+	let semesterList = $state<TableContentType[]>([
+		{
+			id: '1',
+			items: [
+				{ colomn: 'Nama Semester', row: 'Semester Ganjil 2020/2021' },
+				{ colomn: 'Tautan', row: '/ganjil20-21', isLink: true }
+			]
+		},
+		{
+			id: '2',
+			items: [
+				{ colomn: 'Nama Semester', row: 'Semester Ganjil 2021/2022' },
+				{ colomn: 'Tautan', row: '/ganjil21-22', isLink: true }
+			]
+		},
+		{
+			id: '3',
+			items: [
+				{ colomn: 'Nama Semester', row: 'Semester Ganjil 2022/2023' },
+				{ colomn: 'Tautan', row: '/ganjil22-23', isLink: true }
+			]
+		},
+		{
+			id: '4',
+			items: [
+				{ colomn: 'Nama Semester', row: 'Semester Ganjil 2023/2024' },
+				{ colomn: 'Tautan', row: '/ganjil23-24', isLink: true }
+			]
+		},
+		{
+			id: '5',
+			items: [
+				{ colomn: 'Nama Semester', row: 'Semester Ganjil 2024/2025' },
+				{ colomn: 'Tautan', row: '/ganjil24-25', isLink: true }
+			]
+		},
+		{
+			id: '6',
+			items: [
+				{ colomn: 'Nama Semester', row: 'Semester Ganjil 2025/2026' },
+				{ colomn: 'Tautan', row: '/ganjil25-26', isLink: true }
+			]
+		},
+		{
+			id: '7',
+			items: [
+				{ colomn: 'Nama Semester', row: 'Semester Genap 2019/2020' },
+				{ colomn: 'Tautan', row: '/genap19-20', isLink: true }
+			]
+		},
+		{
+			id: '8',
+			items: [
+				{ colomn: 'Nama Semester', row: 'Semester Genap 2020/2021' },
+				{ colomn: 'Tautan', row: '/genap20-21', isLink: true }
+			]
+		},
+		{
+			id: '9',
+			items: [
+				{ colomn: 'Nama Semester', row: 'Semester Genap 2021/2022' },
+				{ colomn: 'Tautan', row: '/genap21-22', isLink: true }
+			]
+		},
+		{
+			id: '10',
+			items: [
+				{ colomn: 'Nama Semester', row: 'Semester Genap 2022/2023' },
+				{ colomn: 'Tautan', row: '/genap22-23', isLink: true }
+			]
+		},
+		{
+			id: '11',
+			items: [
+				{ colomn: 'Nama Semester', row: 'Semester Genap 2023/2024' },
+				{ colomn: 'Tautan', row: '/genap23-24', isLink: true }
+			]
+		},
+		{
+			id: '12',
+			items: [
+				{ colomn: 'Nama Semester', row: 'Semester Genap 2024/2025' },
+				{ colomn: 'Tautan', row: '/genap24-25', isLink: true }
+			]
+		}
+	]); // State Management
 	let searchQuery = $state('');
 	let entriesPerPage = $state(10);
 	let currentPage = $state(1);
@@ -119,36 +119,34 @@ let semesterList = $state<TableContentType[]>([
 	let newLink = $state<string>('');
 
 	// Derived Filtered Data
-let filteredList = $derived(
-  semesterList.filter((item) =>
-    item.items.some((col) =>
-      col.row.toString().toLowerCase().includes(searchQuery.toLowerCase())
-    )
-  )
-);
+	let filteredList = $derived(
+		semesterList.filter((item) =>
+			item.items.some((col) => col.row.toString().toLowerCase().includes(searchQuery.toLowerCase()))
+		)
+	);
 
-function handleAddSemester(e: SubmitEvent) {
-  e.preventDefault();
-  if (!newNama || !newLink) return;
+	function handleAddSemester(e: SubmitEvent) {
+		e.preventDefault();
+		if (!newNama || !newLink) return;
 
-  // Membuat item baru yang sesuai dengan interface TableContentType
-  const newItem: TableContentType = {
-    id: Date.now().toString(),
-    items: [
-      { colomn: 'Nama Semester', row: newNama },
-      { colomn: 'Tautan', row: newLink, isLink: true }
-    ]
-  };
+		// Membuat item baru yang sesuai dengan interface TableContentType
+		const newItem: TableContentType = {
+			id: Date.now().toString(),
+			items: [
+				{ colomn: 'Nama Semester', row: newNama },
+				{ colomn: 'Tautan', row: newLink, isLink: true }
+			]
+		};
 
-  semesterList = [...semesterList, newItem];
-  newNama = '';
-  newLink = '';
-  isAddModalOpen = false;
-}
+		semesterList = [...semesterList, newItem];
+		newNama = '';
+		newLink = '';
+		isAddModalOpen = false;
+	}
 
-function handleDelete(id: string | number) {
-  semesterList = semesterList.filter((item) => item.id !== id);
-}
+	function handleDelete(id: string | number) {
+		semesterList = semesterList.filter((item) => item.id !== id);
+	}
 </script>
 
 <div class="mx-auto max-w-7xl space-y-8">
@@ -176,7 +174,7 @@ function handleDelete(id: string | number) {
 				</div>
 				<div>
 					<h2 class="text-base font-bold text-white sm:text-lg">Data Semester Tahun Akademik</h2>
-					<p class="text-text-muted text-xs">Kelola periode semester dan tautan sistemik</p>
+					<p class="text-xs text-text-muted">Kelola periode semester dan tautan sistemik</p>
 				</div>
 			</div>
 
@@ -191,7 +189,7 @@ function handleDelete(id: string | number) {
 
 		<!-- Controls Bar -->
 		<div class="flex flex-col justify-between gap-4 pt-2 md:flex-row md:items-center">
-			<div class="text-text-muted flex items-center gap-2 text-xs font-medium">
+			<div class="flex items-center gap-2 text-xs font-medium text-text-muted">
 				<span>Show</span>
 				<select
 					bind:value={entriesPerPage}
@@ -205,26 +203,26 @@ function handleDelete(id: string | number) {
 			</div>
 
 			<div class="relative w-full md:w-72">
-				<Search class="text-text-muted absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2" />
+				<Search class="absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-text-muted" />
 				<input
 					type="text"
 					placeholder="Search..."
 					bind:value={searchQuery}
-					class="bg-scitech-navy/80 placeholder:text-text-muted focus:border-scitech-mint/80 w-full rounded-xl border border-white/15 py-2.5 pr-4 pl-10 text-xs text-white transition-all focus:outline-none"
+					class="bg-scitech-navy/80 focus:border-scitech-mint/80 w-full rounded-xl border border-white/15 py-2.5 pr-4 pl-10 text-xs text-white transition-all placeholder:text-text-muted focus:outline-none"
 				/>
 			</div>
 		</div>
 
 		<!-- Data Table -->
 		<div class="bg-scitech-navy/40 overflow-x-auto rounded-2xl border border-white/10">
-<TableContent
-	title="Data Angkatan"
-	addButtonLabel="+ Angkatan"
-	data={filteredList}
-	onAdd={() => (isAddModalOpen = true)}
-	onEdit={(item) => console.log('Edit:', item)}
-	onDelete={() => console.info("delete")}
-/>
+			<TableContent
+				title="Data Angkatan"
+				addButtonLabel="+ Angkatan"
+				data={filteredList}
+				onAdd={() => (isAddModalOpen = true)}
+				onEdit={(item) => console.log('Edit:', item)}
+				onDelete={() => console.info('delete')}
+			/>
 
 			<!-- <table class="w-full border-collapse text-left"> -->
 			<!-- 	<thead> -->
@@ -287,14 +285,14 @@ function handleDelete(id: string | number) {
 
 		<!-- Pagination Footer -->
 		<div class="flex flex-col items-center justify-between gap-4 pt-2 sm:flex-row">
-			<span class="text-text-muted font-mono text-xs">
+			<span class="font-mono text-xs text-text-muted">
 				Showing 1 to {filteredList.length} of {filteredList.length} entries
 			</span>
 
 			<div class="flex items-center gap-1">
 				<button
 					disabled
-					class="bg-scitech-navy text-text-muted rounded-lg border border-white/10 px-3 py-1.5 font-mono text-xs opacity-40"
+					class="bg-scitech-navy rounded-lg border border-white/10 px-3 py-1.5 font-mono text-xs text-text-muted opacity-40"
 					>Previous</button
 				>
 				<button
@@ -303,7 +301,7 @@ function handleDelete(id: string | number) {
 				>
 				<button
 					disabled
-					class="bg-scitech-navy text-text-muted rounded-lg border border-white/10 px-3 py-1.5 font-mono text-xs opacity-40"
+					class="bg-scitech-navy rounded-lg border border-white/10 px-3 py-1.5 font-mono text-xs text-text-muted opacity-40"
 					>Next</button
 				>
 			</div>
@@ -326,7 +324,7 @@ function handleDelete(id: string | number) {
 
 			<form onsubmit={handleAddSemester} class="space-y-4">
 				<div>
-					<label class="text-text-muted mb-1 block text-xs" for="nama">Nama Semester</label>
+					<label class="mb-1 block text-xs text-text-muted" for="nama">Nama Semester</label>
 					<input
 						id="nama"
 						type="text"
@@ -337,7 +335,7 @@ function handleDelete(id: string | number) {
 					/>
 				</div>
 				<div>
-					<label class="text-text-muted mb-1 block text-xs" for="link">Link Slug</label>
+					<label class="mb-1 block text-xs text-text-muted" for="link">Link Slug</label>
 					<input
 						id="link"
 						type="text"
@@ -352,7 +350,7 @@ function handleDelete(id: string | number) {
 					<button
 						type="button"
 						onclick={() => (isAddModalOpen = false)}
-						class="text-text-muted rounded-xl bg-white/5 px-4 py-2 text-xs font-semibold"
+						class="rounded-xl bg-white/5 px-4 py-2 text-xs font-semibold text-text-muted"
 						>Batal</button
 					>
 					<button

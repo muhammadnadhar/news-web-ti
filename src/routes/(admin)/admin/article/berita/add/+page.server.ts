@@ -1,7 +1,7 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
-import { createNews } from '$lib/server/repository/newsRepository'; // Sesuaikan path repositori Anda
-import { crypto } from '$lib/server/utils'; // Atau modul UUID generator Anda
+import { randomUUID } from '$lib/server/crypto'; // Atau modul UUID generator Anda
+import { createNews } from '$lib/server/admin/repository/article/berita';
 
 export const actions: Actions = {
 	default: async ({ request }) => {
@@ -21,13 +21,13 @@ export const actions: Actions = {
 		}
 
 		// Contoh penanganan Upload Foto jika ada file
-		let photoUrl = '';
+		let photoUrl = $state<string>('');
 		if (photo && photo.size > 0) {
 			// Logika simpan file (misal: simpan ke static/uploads)
 			// photoUrl = await saveFile(photo);
 		}
 
-		const newsId = crypto.randomUUID();
+		const newsId = randomUUID();
 
 		try {
 			await createNews(newsId, {

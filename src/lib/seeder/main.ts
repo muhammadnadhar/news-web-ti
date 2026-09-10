@@ -1,5 +1,5 @@
 // semua seeder akan di jalkan di foler ini yang menjadi entry point data utama
-import { dbName, initializeDatabase, pool } from '$lib/server/db';
+import { dbName, initializeDatabase, pool } from '$lib/server/database/runtimeDb';
 import {
 	AcademicCalendarTableSeed,
 	PedomanKkpTableSeed,
@@ -8,6 +8,18 @@ import {
 	RecruitmentTableSeed
 } from './admin/article/akademik';
 import { NewsTableSeed } from './admin/article/berita';
+import {
+	HighGpaStudentTableSeed,
+	ScholarshipTableSeed,
+	StudentAchievementTableSeed
+} from './admin/article/kemahasiswaan';
+import { ActivityDocumentationTableSeed, PartnershipTableSeed } from './admin/article/kerjasama';
+import { CourseMapTableSeed, ObeCurriculumTableSeed } from './admin/article/kurikulum';
+import {
+	LecturerPublicationTableSeed,
+	LecturerResearchTableSeed,
+	StudentPublicationTableSeed
+} from './admin/article/penelitian';
 import {
 	AccreditationTableSeed,
 	HistoryContentTableSeed,
@@ -28,32 +40,51 @@ try {
 	// TABLE >>>>>>>>>>>
 	//
 	// --------------- Section Admin --------------
-	UserTableSeed();
-	// DATASET
+	await Promise.all([
+		// --------------- Section Admin --------------
+		UserTableSeed(),
 
-	// ARTICLE
-	// akademik
-	PedomanTaTableSeed();
-	PedomanKkpTableSeed();
-	RecruitmentTableSeed();
-	PracticumModuleTableSeed();
-	AcademicCalendarTableSeed();
-	// profile
-	HistoryContentTableSeed();
-	HistoryLeadersTableSeed();
-	VisiMisiTableSeed();
-	OrganizationalStructureTableSeed();
-	LecturerStaffTableSeed();
-	AccreditationTableSeed();
+		// ARTICLE - akademik
+		PedomanTaTableSeed(),
+		PedomanKkpTableSeed(),
+		RecruitmentTableSeed(),
+		PracticumModuleTableSeed(),
+		AcademicCalendarTableSeed(),
 
-	// berita
-	NewsTableSeed();
+		// ARTICLE - profile
+		HistoryContentTableSeed(),
+		HistoryLeadersTableSeed(),
+		VisiMisiTableSeed(),
+		OrganizationalStructureTableSeed(),
+		LecturerStaffTableSeed(),
+		AccreditationTableSeed(),
 
-	// dataset
-	AngkatanTableSeed();
-	SemesterTableSeed();
+		// ARTICLE - kemahasiswaan
+		ScholarshipTableSeed(),
+		StudentAchievementTableSeed(),
+		HighGpaStudentTableSeed(),
 
-	//
+		// ARTICLE - berita
+		NewsTableSeed(),
+
+		// ARTICLE - kerjasama
+		PartnershipTableSeed(),
+		ActivityDocumentationTableSeed(),
+
+		// ARTICLE - kurikulum
+		CourseMapTableSeed(),
+		ObeCurriculumTableSeed(),
+
+		// ARTICLE - penelitian
+		LecturerPublicationTableSeed(),
+		StudentPublicationTableSeed(),
+		LecturerResearchTableSeed(),
+
+		// DATASET
+		AngkatanTableSeed(),
+		SemesterTableSeed()
+	]);
+	// TABLE >>>>>>>>>>>	//
 	// TABLE >>>>>>>>>>>
 	//
 } catch (error) {

@@ -1,0 +1,4 @@
+
+
+
+nantik buat method method yang mengubah data ke format seperti component component 

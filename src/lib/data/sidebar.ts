@@ -74,7 +74,7 @@ export const sidebarMenu: MenuCategory[] = [
 				title: 'Kurikulum',
 				iconName: 'BookOpen',
 				children: [
-					{ title: 'Capaian Pembelajaran', href: AdminUrl + '/article/kurikulum/cpl' },
+					{ title: 'Capaian Pembelajaran', href: AdminUrl + '/article/kurikulum/obe' },
 					{ title: 'Daftar Mata Kuliah', href: AdminUrl + '/article/kurikulum/matakuliah' }
 				]
 			},
@@ -82,34 +82,35 @@ export const sidebarMenu: MenuCategory[] = [
 				title: 'Kemahasiswaan',
 				iconName: 'Users',
 				children: [
-					{ title: 'Himpunan (HMTI)', href: AdminUrl + '/article/kemahasiswaan/hmti' },
+					{ title: 'IPK Tertinggi', href: AdminUrl + '/article/kemahasiswaan/ipktertinggi' },
 					{ title: 'Beasiswa', href: AdminUrl + '/article/kemahasiswaan/beasiswa' },
-					{ title: 'Prestasi', href: AdminUrl + '/article/kemahasiswaan/prestasi' }
+					{ title: 'Mahasiswa prestasi', href: AdminUrl + '/article/kemahasiswaan/mapres' }
 				]
 			},
 			{
 				title: 'Penelitian',
 				iconName: 'Microscope',
 				children: [
-					{ title: 'Riset Dosen', href: AdminUrl + '/article/penelitian/riset' },
-					{ title: 'Jurnal TI', href: AdminUrl + '/article/penelitian/jurnal' }
+					{ title: 'Penelitian Dosen', href: AdminUrl + '/article/penelitian/penelitian-dosen' },
+						{ title: 'Publikasi Mahasiswa', href: AdminUrl + '/article/penelitian/publikasi-mahasiswa' },
+          { title: 'Publikasi Dosen', href: AdminUrl + '/article/penelitian/publikasi-dosen' }
 				]
 			},
 			{
 				title: 'Kerjasama',
 				iconName: 'Handshake',
 				children: [
-					{ title: 'Mitra Industri', href: AdminUrl + '/article/kerjasama/industri' },
-					{ title: 'Universitas Mitra', href: AdminUrl + '/article/kerjasama/universitas' }
+					{ title: 'Mitra Industri', href: AdminUrl + '/article/kerjasama/daftar-kerjasama' },
+					{ title: 'Documentasi Kegiatan', href: AdminUrl + '/article/kerjasama/documentasi' }
 				]
 			},
 			{
 				title: 'Berita',
-				iconName: 'Newspaper'
-				// children: [
-				// 	{ title: 'Pengumuman', href: AdminUrl + '/article/berita/pengumuman' },
+				iconName: 'Newspaper',
+				children: [
+					{ title: 'berita', href: AdminUrl + '/article/berita' },
 				// 	{ title: 'Agenda Kegiatan', href: AdminUrl + '/article/berita/agenda' }
-				// ]
+				]
 			}
 		]
 	}
