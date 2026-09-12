@@ -20,7 +20,7 @@
 </script>
 
 <div class="flex flex-col gap-6">
-	<div class="min-h-32.41 flex max-w-2xl items-end sm:min-h-[160px]">
+	<div class="min-h-32.41 flex max-w-2xl items-end sm:min-h-40">
 		{#key currentText}
 			<div class="animate-text-flip flex transform-gpu flex-col items-start">
 				<h2

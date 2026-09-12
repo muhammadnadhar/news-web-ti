@@ -1,5 +1,5 @@
 import { tableStudentAchievement } from '$lib/seeder/admin/article/kemahasiswaan';
-import { query } from '$lib/server/database/runtimeDb';
+import { query } from '$lib/server/database/svelteDb';
 import type { StudentAchievementDTO } from '$lib/types/admin/article/kemahasiswaan';
 
 
@@ -11,6 +11,11 @@ export async function getAllStudentAchievements(): Promise<StudentAchievementDTO
 	return (await query(sql)) as StudentAchievementDTO[];
 }
 
+export async function getAchievementSemesters(isAcademic: 'y' | 'n'): Promise<{ semester: string }[]> {
+    const sql = `SELECT DISTINCT semester FROM ${tableStudentAchievement} WHERE is_academic = ? ORDER BY semester DESC`;
+    return (await query(sql, [isAcademic])) as { semester: string }[];
+}
+
 /**
  * Mengambil 1 data Mahasiswa Prestasi berdasarkan ID
  */
@@ -18,6 +23,15 @@ export async function getStudentAchievementById(id: string): Promise<StudentAchi
 	const sql = `SELECT * FROM ${tableStudentAchievement} WHERE id = ? LIMIT 1`;
 	const rows = (await query(sql, [id])) as StudentAchievementDTO[];
 	return rows[0] || null;
+}
+
+/**
+ *   Mengambil semester unik dan mengurutkannya
+
+ */
+export async function getDistinctSemesters(): Promise<{ semester: string }[]> {
+    const sql = `SELECT DISTINCT semester FROM ${tableStudentAchievement} ORDER BY semester DESC`;
+    return (await query(sql)) as { semester: string }[];
 }
 
 /**

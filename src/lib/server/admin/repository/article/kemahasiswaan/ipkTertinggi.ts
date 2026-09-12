@@ -1,7 +1,6 @@
 import { tableHighGpaStudent } from '$lib/seeder/admin/article/kemahasiswaan';
-import { query } from '$lib/server/database/runtimeDb';
 import type { HighGpaStudentDTO } from '$lib/types/admin/article/kemahasiswaan';
-
+import { query } from '$lib/server/database/svelteDb';
 /**
  * Mengambil seluruh data Mahasiswa IPK Tertinggi
  */
@@ -10,6 +9,10 @@ export async function getAllHighGpaStudents(): Promise<HighGpaStudentDTO[]> {
 	return (await query(sql)) as HighGpaStudentDTO[];
 }
 
+export async function getHighGpaSemesters(): Promise<{ semester: string }[]> {
+    const sql = `SELECT DISTINCT semester FROM ${tableHighGpaStudent} ORDER BY semester DESC`;
+    return (await query(sql)) as { semester: string }[];
+}
 /**
  * Mengambil 1 data Mahasiswa IPK Tertinggi berdasarkan ID
  */

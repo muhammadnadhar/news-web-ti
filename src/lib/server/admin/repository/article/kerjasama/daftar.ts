@@ -1,6 +1,6 @@
 import { tablePartnership } from '$lib/seeder/admin/article/kerjasama';
-import { query } from '$lib/server/database/runtimeDb';
 import type { PartnershipDTO } from '$lib/types/admin/article/kerjasama';
+import { query } from '$lib/server/database/svelteDb';
 
 /**
  * Mengambil seluruh data Daftar Kerjasama

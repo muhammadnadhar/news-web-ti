@@ -2,6 +2,15 @@ import { query } from '$lib/server/database/svelteDb';
 import { tableAccreditation } from '$lib/seeder/admin/article/profile';
 import type { AccreditationItemDTO, CreateAccreditationData } from '$lib/types/admin/article/profile';
 
+
+/**
+ * Mengambil semua data akreditasi (Read All)
+ */
+export async function getAllAccreditations(): Promise<AccreditationItemDTO[]> {
+	const sql = `SELECT * FROM ${tableAccreditation} ORDER BY created_at DESC`;
+	const rows = (await query(sql)) as AccreditationItemDTO[];
+	return rows;
+}
 /**
  *mendapatkan data akreditasi (read singleton)
  * Mengambil baris pertama dari tabel akreditasi

@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS ${tableScholarship} (
     id VARCHAR(36) PRIMARY KEY, -- Primary key berupa UUID string
     student_name VARCHAR(255) NOT NULL, -- Nama mahasiswa penerima beasiswa
     scholarship_name VARCHAR(255) NOT NULL, -- Nama jenis/kategori beasiswa (contoh: 'Beasiswa Bidikmisi Tahun 2020')
+    image_url VARCHAR(255) NULL, -- URL/Path foto yg datap beasiswa
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Waktu pembuatan data
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP -- Waktu update data
 );

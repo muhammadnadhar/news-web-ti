@@ -6,7 +6,8 @@ import {
 	Newspaper,
 	SearchIcon,
 	HandshakeIcon,
-	Building2Icon
+	Building2Icon,
+    UsersIcon
 } from 'lucide-svelte';
 
 // dari halaman utama menggunkan sub pages
@@ -61,7 +62,7 @@ export const navMenuItems: NavMenuItemType[] = [
 	{
 		id: 'kemahasiswaan',
 		label: 'Kemahasiswaan',
-		icon: Users,
+		icon: UsersIcon,
 		bgClass: 'bg-[#23224d] text-scitech-purple hover:bg-scitech-purple hover:text-scitech-navy',
 		badge: null,
 		subMenu: [

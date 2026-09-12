@@ -1,8 +1,6 @@
 import { tablePracticumModule } from '$lib/seeder/admin/article/akademik';
-import { query } from '$lib/server/database/runtimeDb';
+import { query } from '$lib/server/database/svelteDb';
 import type { PracticumModuleDTO } from '$lib/types/admin/article/akademik';
-
-
 
 /**
  * Mengambil seluruh data Modul Praktikum

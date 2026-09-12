@@ -1,5 +1,5 @@
-commit 3 database configure && template pages
-- add : menambahkan beberapa admin panel untuk katagory halaman profile , akademik ... semuanya di adnmin
-- add : menambah beberapa template halaman di setiap folder untuk repository dan menampilkan data dari database
-- add : widgetPriview , ternyata ini global yang memampilkan informasi berita terbaru 
-- add : semau repository untuk berbicara ke table table yang aada ddi database Mysql
+commit 4 update halaman utama dan database
+- add : menambhakna semua data yang spesifik ke halamn utama untu di tampilkan
+- update : fixed beberapa repository agar bisa berkomunikasi ke Database
+- update : update table table seeder untuk semua daftar table , sesui format jenistable_namaTable
+- update : navbar sekarang akan mendapatkan data navbar baru dari layout , mengguakan rekursive agar bisa merender sedalam apapun child nya

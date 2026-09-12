@@ -2,16 +2,16 @@
 	import GetStartedCard from '$lib/components/get.started.svelte';
 
 	import NewsSection from './_components/newsSection.svelte';
+	import HomeSection from './_components/homeSection.svelte';
 	import fstImg from '$lib/assets/fst.png';
 	import uinFrontImg from '$lib/assets/uin-front.jpg';
 	import { fade } from 'svelte/transition';
 	import { onMount } from 'svelte';
 
-let { data } = $props();
+	let { data } = $props();
 
 	// (Menggunakan $derived agar data tetap reaktif jika terjadi pembaruan)
 	let recentNews = $derived(data.recentNews);
-
 
 	const images = [fstImg, uinFrontImg];
 	let captions = $state([
@@ -169,7 +169,7 @@ let { data } = $props();
 	<!---->
 	<!-- <section class="bg-scitech-navy-glare border-scitech-slate rounded-3xl border p-8"> -->
 	<!-- 	<div class="mb-6 flex items-center justify-between"> -->
-	<!-- 		<h3 class="text-xl font-bold text-white">Berita & Pengumuman Terbaru</h3> -->
+	<!-- 		<h3 class="text-xl font-bold text-text-main">Berita & Pengumuman Terbaru</h3> -->
 	<!-- 		<button -->
 	<!-- 			on:click={() => (isLoading = !isLoading)} -->
 	<!-- 			class="bg-scitech-slate hover:bg-scitech-slate-hover text-scitech-mint rounded-lg border border-white/10 px-3 py-1.5 font-mono text-xs" -->
@@ -196,7 +196,7 @@ let { data } = $props();
 	<!-- 						</span> -->
 	<!-- 					</div> -->
 	<!-- 					<h5 -->
-	<!-- 						class="group-hover:text-scitech-mint text-xs font-bold text-white transition-colors" -->
+	<!-- 						class="group-hover:text-scitech-mint text-xs font-bold text-text-main transition-colors" -->
 	<!-- 					> -->
 	<!-- 						Pengumuman Akademik #{i + 1} -->
 	<!-- 					</h5> -->
@@ -216,7 +216,7 @@ let { data } = $props();
 <!-- 			class="bg-scitech-navy/95 fixed inset-0 z-50 flex flex-col justify-between p-8 backdrop-blur-2xl lg:p-16" -->
 <!-- 		> -->
 <!-- 			<div class="border-scitech-slate flex items-center justify-between border-b pb-6"> -->
-<!-- 				<span class="text-lg font-bold text-white">Menu Utama</span> -->
+<!-- 				<span class="text-lg font-bold text-text-main">Menu Utama</span> -->
 <!-- 				<button -->
 <!-- 					on:click={toggleDrawer} -->
 <!-- 					class="bg-scitech-slate hover:bg-scitech-error rounded-xl p-2 transition-all" -->

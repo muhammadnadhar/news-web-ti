@@ -1,5 +1,5 @@
 import { tableStudentPublication } from '$lib/seeder/admin/article/penelitian';
-import { query } from '$lib/server/database/runtimeDb';
+import { query } from '$lib/server/database/svelteDb';
 import type { StudentPublicationDTO } from '$lib/types/admin/article/penelitian';
 
 /**

@@ -5,10 +5,18 @@
 	import MainFooter from './_components/mainFooter.svelte';
 	import { X } from 'lucide-svelte';
 	import uinIcon from '$lib/assets/uin-icon.svg'; // Sesuaikan path
-
+	import type { Snippet } from 'svelte';
 	import { Apptheme } from '$lib/global/theme';
+	import type { LayoutData } from '../$types';
+	import type { SubMenuItem } from '$lib/types/navbar';
+	import { navMenuItems } from '$lib/data/navbar';
 
-	let { children } = $props();
+	interface Props {
+		data: LayoutData;
+		children: Snippet;
+	}
+
+	let { data, children }: Props = $props();
 
 	onMount(() => {
 		Apptheme.init();
@@ -19,6 +27,50 @@
 	function toggleDrawer() {
 		isDrawerOpen = !isDrawerOpen;
 	}
+
+	// Helper function untuk memformat menu
+	const formatSubMenu = (semesters: { semester: string }[], basePath: string): SubMenuItem[] => {
+		return semesters.map((item) => ({
+			id: item.semester.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+			label: item.semester,
+			href: `${basePath}?semester=${encodeURIComponent(item.semester)}`
+		}));
+	};
+
+	// Gabungkan navMenuItems statis dengan data dari server secara reaktif
+	let dynamicNavMenu = $derived.by(() => {
+		// Gunakan JSON.parse(JSON.stringify) DI SINI hanya untuk data semesternya,
+		// TETAPI karena kita butuh Icon utuh, gunakan map() / spread operator untuk mutasi aman
+		const menu = navMenuItems.map((m) => ({ ...m }));
+
+		const kemahasiswaanMenu = menu.find((m) => m.id === 'kemahasiswaan');
+
+		if (kemahasiswaanMenu && kemahasiswaanMenu.subMenu) {
+			const prestasiAkademik = kemahasiswaanMenu.subMenu.find((c) => c.id === 'prestasi-akademik');
+			if (prestasiAkademik && data.semesters?.academic) {
+				prestasiAkademik.subMenu = formatSubMenu(data.semesters.academic, prestasiAkademik.href);
+			}
+
+			const prestasiNonAkademik = kemahasiswaanMenu.subMenu.find(
+				(c) => c.id === 'prestasi-non-akademik'
+			);
+			if (prestasiNonAkademik && data.semesters?.nonAcademic) {
+				prestasiNonAkademik.subMenu = formatSubMenu(
+					data.semesters.nonAcademic,
+					prestasiNonAkademik.href
+				);
+			}
+
+			const ipkTertinggi = kemahasiswaanMenu.subMenu.find(
+				(c) => c.id === 'mahasiswa-ipk-tertinggi'
+			);
+			if (ipkTertinggi && data.semesters?.gpa) {
+				ipkTertinggi.subMenu = formatSubMenu(data.semesters.gpa, ipkTertinggi.href);
+			}
+		}
+
+		return menu;
+	});
 </script>
 
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
@@ -46,7 +98,7 @@
 		</a>
 
 		<!-- <Navbar onOpenDrawer={toggleDrawer} /> -->
-		<Navbar />
+		<Navbar navMenuItems={dynamicNavMenu} />
 	</header>
 
 	<!-- CONTENT RENDER (SvelteKit Slot) -->

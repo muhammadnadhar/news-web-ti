@@ -14,7 +14,7 @@ export async function createAngkatan(id: string, year: number): Promise<boolean>
 }
 
 /**
- * 2. MENDAPATKAN SEMUA ANGKATAN (Read All)
+ * MENDAPATKAN SEMUA ANGKATAN (Read All)
  */
 export async function getAllAngkatan(): Promise<AngkatanDTO[]> {
 	const sql = `SELECT * FROM ${tableAngkatan} ORDER BY year DESC`;

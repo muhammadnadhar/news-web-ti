@@ -66,7 +66,7 @@
 			{#each filteredLecturers as item (item.id)}
 				<a
 					href={`/dosen-staff/${item.id}`}
-					class="group relative flex flex-col overflow-hidden rounded-2xl border border-[var(--color-border-light)] bg-[var(--color-bg-secondary)] p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[var(--color-accent-primary)]/50 hover:shadow-lg"
+					class="group relative flex flex-col overflow-hidden rounded-2xl border border-color-border-light bg-bg-secondary p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-color-accent-primary/50 hover:shadow-lg"
 				>
 					<!-- Photo Wrapper -->
 					<div class="relative mb-4 aspect-[4/5] w-full overflow-hidden rounded-xl bg-[var(--color-bg-primary-glare)]">
@@ -87,7 +87,7 @@
 
 						<!-- NIDN / Category Badge -->
 						<div class="absolute bottom-3 left-3 right-3 flex items-center justify-between">
-							<span class="rounded-lg bg-black/60 backdrop-blur-md px-2.5 py-1 text-[10px] font-mono font-medium text-white shadow-sm border border-white/10">
+							<span class="rounded-lg bg-black/60 backdrop-blur-md px-2.5 py-1 text-[10px] font-mono font-medium text-text-main shadow-sm border border-white/10">
 								{item.nidn && item.nidn !== '-' ? `NIDN: ${item.nidn}` : 'Staff Prodi'}
 							</span>
 						</div>

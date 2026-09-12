@@ -1,5 +1,5 @@
 import { tablePedomanTa } from '$lib/seeder/admin/article/akademik';
-import { query } from '$lib/server/database/runtimeDb';
+import { query } from '$lib/server/database/svelteDb';
 import type { PedomanTaDTO } from '$lib/types/admin/article/akademik';
 
 /**

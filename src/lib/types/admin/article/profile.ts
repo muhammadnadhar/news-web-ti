@@ -49,14 +49,18 @@ export interface HistoryContentDTO {
 	updated_at?: Date;
 }
 
-export interface HistoryLeaderDTO {
+export interface HistoryLeadersDTO {
 	id: string;
 	period: string;
+	head_name: string;
+	head_photo?: Buffer | string | null; // Buffer jika BLOB, string jika Base64 / URL
+	secretary_name: string;
+	secretary_photo?: Buffer | string | null; // Buffer jika BLOB, string jika Base64 / URL
 	created_at?: Date;
 	updated_at?: Date;
 }
 export type CreateHistoryContentData = Omit<HistoryContentDTO, 'id' | 'created_at' | 'updated_at'>;
-export type CreateHistoryLeaderData = Omit<HistoryLeaderDTO, 'id' | 'created_at' | 'updated_at'>;
+export type CreateHistoryLeaderData = Omit<HistoryLeadersDTO, 'id' | 'created_at' | 'updated_at'>;
 
 export interface OrgStructureItemDTO {
 	id: string;

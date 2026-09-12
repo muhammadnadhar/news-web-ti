@@ -1,5 +1,5 @@
 import { tableCourseMap } from '$lib/seeder/admin/article/kurikulum';
-import { query } from '$lib/server/database/runtimeDb';
+import { query } from '$lib/server/database/svelteDb';
 import type { CourseMapDTO } from '$lib/types/admin/article/kurikulum';
 
 /**

@@ -1,7 +1,6 @@
 import { tableScholarship } from '$lib/seeder/admin/article/kemahasiswaan';
-import { query } from '$lib/server/database/runtimeDb';
+import { query } from '$lib/server/database/svelteDb';
 import type { ScholarshipDTO } from '$lib/types/admin/article/kemahasiswaan';
-
 
 
 /**

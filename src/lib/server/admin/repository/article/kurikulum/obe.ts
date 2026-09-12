@@ -1,12 +1,6 @@
 import { tableObeCurriculum } from '$lib/seeder/admin/article/kurikulum';
-import { query } from '$lib/server/database/runtimeDb';
-
-export interface ObeCurriculumDTO {
-	id: string;
-	description: string;
-	created_at?: Date;
-	updated_at?: Date;
-}
+import type { ObeCurriculumDTO } from '$lib/types/admin/article/kurikulum';
+import { query } from '$lib/server/database/svelteDb';
 
 /**
  * Mengambil data Kurikulum OBE (Ambil baris pertama)

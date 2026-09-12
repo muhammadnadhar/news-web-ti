@@ -2,11 +2,17 @@
 	import { fly, fade, slide } from 'svelte/transition';
 	import { backOut } from 'svelte/easing';
 	import { Menu, X, ChevronDown, Moon, Sun } from 'lucide-svelte';
-	import { navMenuItems } from '$lib/data/navbar';
+	// import { navMenuItems } from '$lib/data/navbar'; // update mendapatkan data semester dari UI
 	import { type NavMenuItemType } from '$lib/types/navbar';
 
 	import NavbarSub from '$lib/components/navbar.sub.svelte';
 	import ThemeActionBtn from './themeActionBtn.svelte';
+
+	interface Props {
+		navMenuItems: NavMenuItemType[];
+	}
+
+	let { navMenuItems = [] }: Props = $props();
 
 	//  State Svelte 5 untuk menangkap posisi scroll Y
 	let scrollY = $state(0);
@@ -29,20 +35,26 @@
 
 	// Handle klik menu di desktop
 	function handleDesktopClick(item: NavMenuItemType) {
-		if (activeDesktopMenu?.id === item.id) {
-			activeDesktopMenu = null;
+		if (item.subMenu && item.subMenu.length > 0) {
+			// Buka/tutup dropdown
+			activeDesktopMenu = activeDesktopMenu?.id === item.id ? null : item;
 		} else {
-			activeDesktopMenu = item;
+			// Jika tidak punya submenu, langsung pindah halaman
+			activeDesktopMenu = null;
+			if (item.href) window.location.href = item.href;
 		}
 	}
 
 	// Handle klik menu di mobile
 	function handleMobileClick(item: NavMenuItemType) {
 		if (item.subMenu && item.subMenu.length > 0) {
+			// Buka/tutup accordion
 			activeMobileMenuId = activeMobileMenuId === item.id ? null : item.id;
 		} else {
+			// Jika tidak punya submenu, tutup menu mobile dan pindah halaman
 			isOpen = false;
 			activeMobileMenuId = null;
+			if (item.href) window.location.href = item.href;
 		}
 	}
 </script>
@@ -93,6 +105,7 @@
 			transition:fly={{ y: -10, duration: 200 }}
 			class="absolute top-full right-0 z-50 mt-3 w-96"
 		>
+			<!-- <NavbarSub item={activeDesktopMenu} /> -->
 			<NavbarSub item={activeDesktopMenu} />
 		</div>
 	{/if}
@@ -152,16 +165,15 @@
 					</button>
 
 					<!-- Tampilan Submenu Mobile (Accordion dengan NavbarSub) -->
-					{#if activeDesktopMenu || activeMobileMenuId === item.id}
+					{#if activeMobileMenuId === item.id}
 						<div transition:slide={{ duration: 200 }} class="pt-2">
 							<NavbarSub {item} />
 						</div>
 					{/if}
 				</div>
-
 			{/each}
-      <!-- action button: theme toggle switcher -->
-      <ThemeActionBtn />
+			<!-- action button: theme toggle switcher -->
+			<ThemeActionBtn />
 		</div>
 	{/if}
 

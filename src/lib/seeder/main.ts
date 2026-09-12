@@ -1,4 +1,5 @@
 // semua seeder akan di jalkan di foler ini yang menjadi entry point data utama
+import { createUser } from '$lib/server/admin/repository/userAdmin';
 import { dbName, initializeDatabase, pool } from '$lib/server/database/runtimeDb';
 import {
 	AcademicCalendarTableSeed,
@@ -29,7 +30,8 @@ import {
 	VisiMisiTableSeed
 } from './admin/article/profile';
 import { AngkatanTableSeed, SemesterTableSeed } from './admin/dataset';
-import { UserTableSeed } from './admin/userAdmin';
+import { DosenTableSeed, PerminatanTITableSeed, ProfilProdiTableSeed } from './admin/home';
+import { defaultUsersData, UserTableSeed } from './admin/userAdmin';
 
 try {
 	//
@@ -40,53 +42,71 @@ try {
 	// TABLE >>>>>>>>>>>
 	//
 	// --------------- Section Admin --------------
-	await Promise.all([
-		// --------------- Section Admin --------------
-		UserTableSeed(),
+	// --------------- Section Admin (Dijalankan Berurutan) --------------
+	await UserTableSeed();
 
-		// ARTICLE - akademik
-		PedomanTaTableSeed(),
-		PedomanKkpTableSeed(),
-		RecruitmentTableSeed(),
-		PracticumModuleTableSeed(),
-		AcademicCalendarTableSeed(),
+	// HOME
+	await DosenTableSeed();
+	await PerminatanTITableSeed();
+	await ProfilProdiTableSeed();
 
-		// ARTICLE - profile
-		HistoryContentTableSeed(),
-		HistoryLeadersTableSeed(),
-		VisiMisiTableSeed(),
-		OrganizationalStructureTableSeed(),
-		LecturerStaffTableSeed(),
-		AccreditationTableSeed(),
+	// ARTICLE - akademik
+	await PedomanTaTableSeed();
+	await PedomanKkpTableSeed();
+	await RecruitmentTableSeed();
+	await PracticumModuleTableSeed();
+	await AcademicCalendarTableSeed();
 
-		// ARTICLE - kemahasiswaan
-		ScholarshipTableSeed(),
-		StudentAchievementTableSeed(),
-		HighGpaStudentTableSeed(),
+	// ARTICLE - profile
+	await HistoryContentTableSeed();
+	await HistoryLeadersTableSeed();
+	await VisiMisiTableSeed();
+	await OrganizationalStructureTableSeed();
+	await LecturerStaffTableSeed();
+	await AccreditationTableSeed();
 
-		// ARTICLE - berita
-		NewsTableSeed(),
+	// ARTICLE - kemahasiswaan
+	await ScholarshipTableSeed();
+	await StudentAchievementTableSeed();
+	await HighGpaStudentTableSeed();
 
-		// ARTICLE - kerjasama
-		PartnershipTableSeed(),
-		ActivityDocumentationTableSeed(),
+	// ARTICLE - berita
+	await NewsTableSeed();
 
-		// ARTICLE - kurikulum
-		CourseMapTableSeed(),
-		ObeCurriculumTableSeed(),
+	// ARTICLE - kerjasama
+	await PartnershipTableSeed();
+	await ActivityDocumentationTableSeed();
 
-		// ARTICLE - penelitian
-		LecturerPublicationTableSeed(),
-		StudentPublicationTableSeed(),
-		LecturerResearchTableSeed(),
+	// ARTICLE - kurikulum
+	await CourseMapTableSeed();
+	await ObeCurriculumTableSeed();
 
-		// DATASET
-		AngkatanTableSeed(),
-		SemesterTableSeed()
-	]);
+	// ARTICLE - penelitian
+	await LecturerPublicationTableSeed();
+	await StudentPublicationTableSeed();
+	await LecturerResearchTableSeed();
+
+	// DATASET
+	await AngkatanTableSeed();
+	await SemesterTableSeed();
+
 	// TABLE >>>>>>>>>>>	//
-	// TABLE >>>>>>>>>>>
 	//
+
+	//
+	// Default Data in database
+	//
+
+	// Users
+	// user default loh yah
+	await createUser({
+		id: 'only-one',
+		name: 'dar',
+		username: 'muhammad nadhar',
+		role: 'Administrator',
+		status: 'Active',
+		createdAt: Date.now().toString()
+	});
 } catch (error) {
 	console.error(' Seeding gagal karena terjadi error:', error);
 } finally {

@@ -1,6 +1,15 @@
 import { tableLecturerResearch } from '$lib/seeder/admin/article/penelitian';
-import { query } from '$lib/server/database/runtimeDb';
+import { query } from '$lib/server/database/svelteDb';
 import type { LecturerResearchDTO } from '$lib/types/admin/article/penelitian';
+
+/**
+ * Mengambil semua data Penelitian Dosen (Read All)
+ */
+export async function getAllLecturerResearch(): Promise<LecturerResearchDTO[]> {
+	const sql = `SELECT * FROM ${tableLecturerResearch} ORDER BY created_at DESC`;
+	const rows = (await query(sql)) as LecturerResearchDTO[];
+	return rows;
+}
 
 /**
  * Mengambil data Penelitian Dosen (Ambil baris pertama)

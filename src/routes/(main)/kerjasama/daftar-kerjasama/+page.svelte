@@ -14,13 +14,12 @@
 
 <!-- Banner / Page Header -->
 <section class="relative overflow-hidden bg-scitech-navy/90 py-12 lg:py-16">
-	<!-- Background Ornament Glow -->
 	<div class="pointer-events-none absolute -top-24 -left-24 h-96 w-96 rounded-full bg-scitech-mint/10 blur-3xl"></div>
 	<div class="pointer-events-none absolute -bottom-24 -right-24 h-96 w-96 rounded-full bg-blue-500/10 blur-3xl"></div>
 
 	<div class="mx-auto max-w-7xl px-6 lg:px-10 relative z-10">
 		<!-- Breadcrumb -->
-		<nav class="mb-4 flex items-center gap-2 text-xs font-medium text-white/60">
+		<nav class="mb-4 flex items-center gap-2 text-xs font-medium text-text-main/60">
 			<a href="/" class="hover:text-scitech-mint transition-colors">Home</a>
 			<ChevronRight class="h-3 w-3" />
 			<a href="/kerjasama" class="hover:text-scitech-mint transition-colors">Kerjasama</a>
@@ -33,7 +32,7 @@
 				<Handshake class="h-6 w-6" />
 			</div>
 			<div>
-				<h1 class="text-2xl font-extrabold tracking-tight text-white sm:text-3xl lg:text-4xl">
+				<h1 class="text-2xl font-extrabold tracking-tight text-text-main sm:text-3xl lg:text-4xl">
 					Daftar Kerjasama
 				</h1>
 				<p class="mt-1 text-xs sm:text-sm text-text-muted">
@@ -51,7 +50,7 @@
 		<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
 			{#each partnerships as item (item.id)}
 				<div
-					class="group relative flex flex-col items-center justify-between rounded-3xl border border-white/10 bg-scitech-slate/60 p-6 text-center shadow-xl backdrop-blur-xl transition-all duration-300 hover:-translate-y-2 hover:border-scitech-mint/40 hover:shadow-scitech-mint/10"
+					class="group relative flex flex-col items-center justify-between rounded-3xl border border-border-color/10 bg-scitech-slate/60 p-6 text-center shadow-xl backdrop-blur-xl transition-all duration-300 hover:-translate-y-2 hover:border-scitech-mint/40 hover:shadow-scitech-mint/10"
 				>
 					<!-- Box Logo Instansi -->
 					<div
@@ -74,7 +73,7 @@
 
 					<!-- Nama Instansi / Mitra -->
 					<h2
-						class="text-xs font-bold leading-relaxed text-white transition-colors duration-200 group-hover:text-scitech-mint sm:text-sm"
+						class="text-xs font-bold leading-relaxed text-text-main transition-colors duration-200 group-hover:text-scitech-mint sm:text-sm"
 					>
 						{item.institution_name}
 					</h2>
@@ -86,8 +85,8 @@
 		<div
 			class="flex flex-col items-center justify-center rounded-3xl border border-white/10 bg-scitech-slate/40 py-16 text-center backdrop-blur-xl"
 		>
-			<Building2 class="h-12 w-12 text-white/30 mb-3" />
-			<h3 class="text-base font-semibold text-white">Belum Ada Data Kerjasama</h3>
+			<Building2 class="h-12 w-12 text-text-main/30 mb-3" />
+			<h3 class="text-base font-semibold text-text-main">Belum Ada Data Kerjasama</h3>
 			<p class="mt-1 text-xs text-text-muted">Data mitra kerjasama akan segera diperbarui.</p>
 		</div>
 	{/if}

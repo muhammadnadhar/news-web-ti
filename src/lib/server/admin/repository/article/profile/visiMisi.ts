@@ -13,7 +13,7 @@ export async function getVisiMisi(): Promise<VisiMisiItemDTO | null> {
 }
 
 /**
- * 2. TAMBAH / UPDATE DATA VISI MISI (Upsert)
+ * 2. tambah / update data visi misi (upsert)
  */
 export async function upsertVisiMisi(id: string, data: CreateVisiMisiData): Promise<boolean> {
 	const sql = `

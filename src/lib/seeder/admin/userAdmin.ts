@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS ${tableAdminUser}(
  * Memasukkan data user default/seed ke dalam database secara bulk
  * @param {UserAdminItem[]} data - Array berisi data user default
  */
-export async function defaultUsersData(data: UserAdminItem[]) {
+export async function defaultUsersDatas(data: UserAdminItem[]) {
 	if (!data || data.length === 0) return;
 
 	// Transformasikan array objek menjadi array kontainer nilai
@@ -55,4 +55,3 @@ export async function defaultUsersData(data: UserAdminItem[]) {
 		throw error;
 	}
 }
-

@@ -21,20 +21,27 @@ CREATE TABLE IF NOT EXISTS ${tableSejarahContent} (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Waktu pembuatan data
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP -- Waktu update data
 );
+
   `;
 	await query(sql);
 }
 
 // Tabel untuk menyimpan Data Sejarah Pimpinan Jurusan berdasarkan Periode
 export async function HistoryLeadersTableSeed() {
-	const sql = `
+const sql = `
 CREATE TABLE IF NOT EXISTS ${tableSejarahLeaders} (
     id VARCHAR(36) PRIMARY KEY, -- Primary key berupa UUID string
-    period VARCHAR(100) NOT NULL, -- Periode Jabatan (contoh: 'Periode 2018 - 2021', 'Periode 2024 - Sekarang')
+    period VARCHAR(100) NOT NULL, -- Periode Jabatan (contoh: '2018 - Sekarang')
+    -- Data Ketua Program Studi
+    head_name VARCHAR(150) NOT NULL, -- Nama Ketua Program Studi
+    head_photo LONGBLOB NULL, -- File Foto Ketua (Gunakan LONGBLOB untuk simpan file langsung, atau VARCHAR(255) jika simpan URL/Path)
+    -- Data Sekretaris Program Studi
+    secretary_name VARCHAR(150) NOT NULL, -- Nama Sekretaris Program Studi
+    secretary_photo LONGBLOB NULL, -- File Foto Sekretaris (Gunakan LONGBLOB untuk simpan file langsung, atau VARCHAR(255) jika simpan URL/Path)
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Waktu pembuatan data
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP -- Waktu update data
-);
-  `;
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP -- Waktu update data)
+    )`;
+    
 	await query(sql);
 }
 
@@ -78,20 +85,20 @@ CREATE TABLE IF NOT EXISTS ${tableLecturerStaff} (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Waktu pembuatan data
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP -- Waktu update data
 );
-  `;
+
+`;
 	await query(sql);
 }
 
 // Fungsi seed untuk tabel Akreditasi (hanya menyimpan Foto dan Isi Teks HTML)
 export async function AccreditationTableSeed() {
-	const sql = `
-CREATE TABLE IF NOT EXISTS ${tableAccreditation} (
+	const sql = `CREATE TABLE IF NOT EXISTS ${tableAccreditation} (
     id VARCHAR(36) PRIMARY KEY, -- Primary key berupa UUID string
     image_url VARCHAR(255) NULL, -- URL/Path foto sertifikat akreditasi
     description LONGTEXT NOT NULL, -- Isi Teks Akreditasi (menampung tag HTML / Rich Text)
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Waktu pembuatan data
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP -- Waktu update data
-);
-  `;
+  )`;
+
 	await query(sql);
 }

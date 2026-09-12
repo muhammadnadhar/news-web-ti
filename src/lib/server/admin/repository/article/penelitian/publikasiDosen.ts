@@ -1,5 +1,5 @@
 import { tableLecturerPublication } from '$lib/seeder/admin/article/penelitian';
-import { query } from '$lib/server/database/runtimeDb';
+import { query } from '$lib/server/database/svelteDb';
 import type { LecturerPublicationDTO } from '$lib/types/admin/article/penelitian';
 
 /**
@@ -13,7 +13,9 @@ export async function getAllLecturerPublications(): Promise<LecturerPublicationD
 /**
  * Mengambil 1 data Publikasi Dosen berdasarkan ID
  */
-export async function getLecturerPublicationById(id: string): Promise<LecturerPublicationDTO | null> {
+export async function getLecturerPublicationById(
+	id: string
+): Promise<LecturerPublicationDTO | null> {
 	const sql = `SELECT * FROM ${tableLecturerPublication} WHERE id = ? LIMIT 1`;
 	const rows = (await query(sql, [id])) as LecturerPublicationDTO[];
 	return rows[0] || null;
@@ -29,7 +31,12 @@ export async function createLecturerPublication(
 	scholarLink: string | null
 ): Promise<boolean> {
 	const sql = `INSERT INTO ${tableLecturerPublication} (id, lecturer_name, sinta_link, scholar_link) VALUES (?, ?, ?, ?)`;
-	const result = (await query(sql, [id, lecturerName, sintaLink || null, scholarLink || null])) as any;
+	const result = (await query(sql, [
+		id,
+		lecturerName,
+		sintaLink || null,
+		scholarLink || null
+	])) as any;
 	return result.affectedRows > 0;
 }
 
@@ -43,7 +50,12 @@ export async function updateLecturerPublication(
 	scholarLink: string | null
 ): Promise<boolean> {
 	const sql = `UPDATE ${tableLecturerPublication} SET lecturer_name = ?, sinta_link = ?, scholar_link = ?, updated_at = NOW() WHERE id = ?`;
-	const result = (await query(sql, [lecturerName, sintaLink || null, scholarLink || null, id])) as any;
+	const result = (await query(sql, [
+		lecturerName,
+		sintaLink || null,
+		scholarLink || null,
+		id
+	])) as any;
 	return result.affectedRows > 0;
 }
 
