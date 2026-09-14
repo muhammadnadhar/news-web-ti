@@ -28,7 +28,10 @@ export interface LecturerStaffItemDTO {
 	name: string;
 	nidn: string | null;
 	expertise: string;
+	role: 'Dosen' | 'Staff';
+	is_primary: boolean;
 	photo_url: string | null;
+	pddikti_url?: string | null;
 	created_at?: Date;
 	updated_at?: Date;
 }

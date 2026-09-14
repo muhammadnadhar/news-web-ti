@@ -1,5 +1,4 @@
-import { query } from '$lib/server/database/runtimeDb'; // di gunakan oleh runntime 
-
+import { query } from '$lib/server/database/runtimeDb'; // di gunakan oleh runntime
 
 // sejarah
 export const tableSejarahContent = 'profile_sejarah_content';
@@ -28,7 +27,7 @@ CREATE TABLE IF NOT EXISTS ${tableSejarahContent} (
 
 // Tabel untuk menyimpan Data Sejarah Pimpinan Jurusan berdasarkan Periode
 export async function HistoryLeadersTableSeed() {
-const sql = `
+	const sql = `
 CREATE TABLE IF NOT EXISTS ${tableSejarahLeaders} (
     id VARCHAR(36) PRIMARY KEY, -- Primary key berupa UUID string
     period VARCHAR(100) NOT NULL, -- Periode Jabatan (contoh: '2018 - Sekarang')
@@ -41,7 +40,7 @@ CREATE TABLE IF NOT EXISTS ${tableSejarahLeaders} (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Waktu pembuatan data
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP -- Waktu update data)
     )`;
-    
+
 	await query(sql);
 }
 
@@ -80,12 +79,13 @@ CREATE TABLE IF NOT EXISTS ${tableLecturerStaff} (
     id VARCHAR(36) PRIMARY KEY, -- Primary key berupa UUID string
     name VARCHAR(255) NOT NULL, -- Nama lengkap beserta gelar (contoh: 'Aulia Syarif Aziz, S.Kom., M.Sc')
     nidn VARCHAR(50) NULL, -- NIDN / NIP (bisa NULL / '-' jika Staff Administrasi)
-    expertise VARCHAR(150) NOT NULL, -- Bidang keahlian/tugas (contoh: 'Keamanan Siber', 'Kecerdasan Buatan', 'Staff Administrasi Prodi')
+    pddikti_url VARCHAR(255) NULL, -- Link PDDikti / DDT
+    expertise VARCHAR(150) NOT NULL, -- Bidang keahlian/tugas (contoh: 'Keamanan Siber', 'Staff Administrasi')
+    role ENUM('Dosen', 'Staff') NOT NULL DEFAULT 'Dosen', -- Penanda jenis: 'Dosen' atau 'Staff'
     photo_url VARCHAR(255) NULL, -- URL/Path foto profil (opsional)
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Waktu pembuatan data
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP -- Waktu update data
 );
-
 `;
 	await query(sql);
 }

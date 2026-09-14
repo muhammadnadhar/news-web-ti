@@ -1,5 +1,11 @@
-commit 4 update halaman utama dan database
-- add : menambhakna semua data yang spesifik ke halamn utama untu di tampilkan
-- update : fixed beberapa repository agar bisa berkomunikasi ke Database
-- update : update table table seeder untuk semua daftar table , sesui format jenistable_namaTable
-- update : navbar sekarang akan mendapatkan data navbar baru dari layout , mengguakan rekursive agar bisa merender sedalam apapun child nya
+commit 5  finish desian  and add drive foto #1
+- add : user auth , profile page 
+- update : pemisahana ide untuk menyimpan foto di drive karena kurang aman dan kurang dalam kecepatan dna keandalan di projek besar jadi di ganti ke cloudinary
+- update : menambahkan authentikasi untk login admin
+- add : halaman home untuk article untuk di tampilkan di profile home 
+- update : menyesuikan data primary table untuk menggunakan forengkey agar data di primary di ambil dari tabel dosen staff
+- update : menambah halaman untuk menambah data di bagian akademik
+- add : menambah halaman add untuk setiap jenis sub route di dataset
+- update : memisahkan skeleton loading untuk global dan user biasa yang akses
+- update : mengubaha halaman profile user agar bisa menyesuikan dengan         <!-- Widget cloudinary --> dan structure profile
+- add : menambahkan Mesage Component untuk mengahandle Flush message

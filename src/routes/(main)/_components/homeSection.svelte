@@ -3,47 +3,25 @@
 	import type { DosenItemDTO } from '$lib/types/admin/home';
 	import type { PerminatanTIItemDTO } from '$lib/types/admin/home';
 	import type { ProfilProdiItemDTO } from '$lib/types/admin/home';
-	import { User } from 'lucide-svelte';
 
 	// Props opsional dari ke-3 tabel
-
 	let {
 		listDosen = [],
 		listPerminatan = [],
-		listProfil = [],
-		activeTab = 'all'
+		listProfil = []
 	}: {
-		activeTab: 'all' | 'dosen' | 'perminatan' | 'profil';
 		listDosen: DosenItemDTO[];
 		listPerminatan: PerminatanTIItemDTO[];
 		listProfil: ProfilProdiItemDTO[];
 	} = $props();
-
-	// Tab aktif jika ingin menyaring per kategori (default 'all')
 </script>
 
 <div class="dashboard-component">
-	<!-- Tab Filter Navigasi Opsional -->
-	<div class="filter-tabs">
-		<button class:active={activeTab === 'all'} onclick={() => (activeTab = 'all')}
-			>Semua Data</button
-		>
-		<button class:active={activeTab === 'dosen'} onclick={() => (activeTab = 'dosen')}
-			>Dosen & Staff ({listDosen.length})</button
-		>
-		<button class:active={activeTab === 'perminatan'} onclick={() => (activeTab = 'perminatan')}
-			>Perminatan TI ({listPerminatan.length})</button
-		>
-		<button class:active={activeTab === 'profil'} onclick={() => (activeTab = 'profil')}
-			>Profil Prodi ({listProfil.length})</button
-		>
-	</div>
-
-	<!-- KATEGORI 1: DOSEN & STAFF -->
-	{#if (activeTab === 'all' || activeTab === 'dosen') && listDosen.length > 0}
+	<!-- kategori 1: dosen & staff -->
+	{#if listDosen.length > 0}
 		<div class="section-group">
 			<h2 class="group-title">
-				<span class="badge">Dosen</span> Daftar Dosen & Staff
+				<span class="badge">Dosen</span> Daftar Dosen & Staff ({listDosen.length})
 			</h2>
 			<div class="grid">
 				{#each listDosen as dosen (dosen.id)}
@@ -60,10 +38,10 @@
 	{/if}
 
 	<!-- KATEGORI 2: PERMINATAN TI -->
-	{#if (activeTab === 'all' || activeTab === 'perminatan') && listPerminatan.length > 0}
+	{#if listPerminatan.length > 0}
 		<div class="section-group">
 			<h2 class="group-title">
-				<span class="badge badge-purple">Perminatan</span> Bidang Keahlian TI
+				<span class="badge badge-purple">Perminatan</span> Bidang Keahlian TI ({listPerminatan.length})
 			</h2>
 			<div class="grid">
 				{#each listPerminatan as perminatan (perminatan.id)}
@@ -79,10 +57,10 @@
 	{/if}
 
 	<!-- KATEGORI 3: PROFIL PRODI -->
-	{#if (activeTab === 'all' || activeTab === 'profil') && listProfil.length > 0}
+	{#if listProfil.length > 0}
 		<div class="section-group">
 			<h2 class="group-title">
-				<span class="badge badge-green">Profil</span> Informasi & Pengaduan Prodi
+				<span class="badge badge-green">Profil</span> Informasi & Pengaduan Prodi ({listProfil.length})
 			</h2>
 			<div class="grid">
 				{#each listProfil as profil (profil.id)}
@@ -98,10 +76,10 @@
 		</div>
 	{/if}
 
-	<!-- JIKA TIDAK ADA DATA -->
+	<!-- Jika semua data kosong -->
 	{#if listDosen.length === 0 && listPerminatan.length === 0 && listProfil.length === 0}
 		<div class="empty-state">
-			<p>Tidak ada data yang tersedia dari ketiga tabel.</p>
+			<p>Tidak ada data yang tersedia</p>
 		</div>
 	{/if}
 </div>
@@ -113,35 +91,6 @@
 			system-ui,
 			-apple-system,
 			sans-serif;
-	}
-
-	.filter-tabs {
-		display: flex;
-		gap: 0.5rem;
-		margin-bottom: 2rem;
-		flex-wrap: wrap;
-	}
-
-	.filter-tabs button {
-		padding: 0.5rem 1rem;
-		border: 1px solid #cbd5e1;
-		background-color: #ffffff;
-		border-radius: 9999px;
-		font-size: 0.875rem;
-		font-weight: 600;
-		color: #475569;
-		cursor: pointer;
-		transition: all 0.2s ease;
-	}
-
-	.filter-tabs button:hover {
-		background-color: #f1f5f9;
-	}
-
-	.filter-tabs button.active {
-		background-color: #0284c7;
-		color: #ffffff;
-		border-color: #0284c7;
 	}
 
 	.section-group {

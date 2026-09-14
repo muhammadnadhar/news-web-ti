@@ -1,7 +1,8 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import { User, Calendar, ArrowRight } from 'lucide-svelte';
-import SidebarWidgetPriview from '$lib/components/admin/sidebarWidgetPriview.svelte';
+	import { User, Calendar, ArrowRight, ImagesIcon } from 'lucide-svelte';
+	import SidebarWidgetPriview from '$lib/components/admin/sidebarWidgetPriview.svelte';
+	import { CldImage } from 'svelte-cloudinary';
 	let data: PageData = $props();
 
 	// Tracker status loading gambar untuk skeleton effect
@@ -18,7 +19,7 @@ import SidebarWidgetPriview from '$lib/components/admin/sidebarWidgetPriview.sve
 			<main class="space-y-8 lg:col-span-8">
 				{#each data.newsList as news (news.id)}
 					<article
-						class="overflow-hidden rounded-xl border border-color-border-light bg-color-bg-secondary shadow-sm transition-shadow hover:shadow-md"
+						class="border-color-border-light bg-color-bg-secondary overflow-hidden rounded-xl border shadow-sm transition-shadow hover:shadow-md"
 					>
 						<!-- Wrapper Image dengan Skeleton Loading -->
 						<div
@@ -30,16 +31,37 @@ import SidebarWidgetPriview from '$lib/components/admin/sidebarWidgetPriview.sve
 								></div>
 							{/if}
 
-							<img
-								src={news.image_url || '/placeholder-news.jpg'}
-								alt={news.title}
-								on:load={() => handleImageLoad(news.id)}
-								class="h-full w-full object-cover transition-opacity duration-300 {loadedImages[
-									news.id
-								]
-									? 'opacity-100'
-									: 'opacity-0'}"
-							/>
+							<!-- <img -->
+							<!-- 	src={news.image_url || '/placeholder-news.jpg'} -->
+							<!-- 	alt={news.title} -->
+							<!-- 	on:load={() => handleImageLoad(news.id)} -->
+							<!-- 	class="h-full w-full object-cover transition-opacity duration-300 {loadedImages[ -->
+							<!-- 		news.id -->
+							<!-- 	] -->
+							<!-- 		? 'opacity-100' -->
+							<!-- 		: 'opacity-0'}" -->
+							<!-- /> -->
+							{#if news.image_url}
+								<CldImage
+									src={news.image_url}
+									alt={news.title}
+									width="600"
+									height="400"
+									crop="fill"
+									onload={() => handleImageLoad(news.id)}
+									class="h-full w-full object-cover transition-opacity duration-300 {loadedImages[
+										news.id
+									]
+										? 'opacity-100'
+										: 'opacity-0'}"
+								/>
+							{:else}
+								<div
+									class="flex h-full w-full items-center justify-center bg-slate-800 text-slate-500"
+								>
+									<ImagesIcon class="h-10 w-10 opacity-60" />
+								</div>
+							{/if}
 						</div>
 
 						<!-- Content Card Berita -->
@@ -97,10 +119,7 @@ import SidebarWidgetPriview from '$lib/components/admin/sidebarWidgetPriview.sve
 			</main>
 
 			<!-- Sidebar Component -->
-			<SidebarWidgetPriview
-				recentPosts={data.recentNews}
-				categories={data.categories}
-			/>
+			<SidebarWidgetPriview recentPosts={data.recentNews} categories={data.categories} />
 		</div>
 	</div>
 </div>

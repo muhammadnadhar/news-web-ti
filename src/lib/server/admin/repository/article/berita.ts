@@ -13,7 +13,14 @@ export async function createNews(id: string, data: CreateNewsData): Promise<bool
         INSERT INTO ${tableNews} (id, title, category, published_at)
         VALUES (?, ?, ?, ?)
     `;
-	const params = [id, data.title, data.category, data.published_at || new Date()];
+	const params = [
+		id,
+		data.title,
+		data.category,
+		data.content,
+		data.image_url || null,
+		data.published_at || new Date()
+	];
 
 	const result = (await query(sql, params)) as any;
 	return result.affectedRows > 0;
@@ -39,7 +46,7 @@ export async function getNewsById(id: string): Promise<NewsItemDTO | null> {
 }
 
 /**
- * 4. MENDAPATKAN BERITA BERDASARKAN KATEGORI
+ *  mendapatkan berita berdasarkan kategori
  */
 export async function getNewsByCategory(category: string): Promise<NewsItemDTO[]> {
 	const sql = `SELECT * FROM ${tableNews} WHERE category = ? ORDER BY published_at DESC`;

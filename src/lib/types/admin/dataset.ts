@@ -6,3 +6,26 @@ export interface AngkatanDTO {
 	created_at?: Date;
 	updated_at?: Date;
 }
+
+// Interface sesuai struktur kolom database
+export interface SemesterDTO {
+	id: string;
+	name: string;
+	academic_year: string;
+	is_active: boolean;
+	created_at: Date;
+	updated_at: Date;
+}
+
+export type CreateSemesterInputDTO = {
+	id: string;
+	name: string;
+	academic_year: string;
+	is_active?: boolean;
+};
+
+export type UpdateSemesterInputDTO = {
+	name: string;
+	academic_year: string;
+	is_active?: boolean;
+};

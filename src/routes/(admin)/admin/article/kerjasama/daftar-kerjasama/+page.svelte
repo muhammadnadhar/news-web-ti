@@ -60,9 +60,7 @@
 		>
 			<Sparkles class="text-scitech-mint h-4 w-4" /> Kerjasama
 		</span>
-		<h1 class="text-2xl font-extrabold tracking-tight text-white sm:text-3xl">
-			Daftar Kerjasama
-		</h1>
+		<h1 class="text-2xl font-extrabold tracking-tight text-white sm:text-3xl">Daftar Kerjasama</h1>
 	</div>
 
 	<!-- Component TableContent -->
@@ -106,7 +104,7 @@
 				<input type="hidden" name="is_edit" value={isEditMode ? 'true' : 'false'} />
 
 				<div>
-					<label for="institution_name" class="text-text-muted mb-1 block text-xs font-medium">
+					<label for="institution_name" class="mb-1 block text-xs font-medium text-text-muted">
 						Nama Instansi / Mitra<span class="text-rose-400">*</span>
 					</label>
 					<input
@@ -121,7 +119,7 @@
 				</div>
 
 				<div>
-					<label for="logo_url" class="text-text-muted mb-1 block text-xs font-medium">
+					<label for="logo_url" class="mb-1 block text-xs font-medium text-text-muted">
 						URL / Path Logo Instansi
 					</label>
 					<input
@@ -134,10 +132,9 @@
 					/>
 				</div>
 
-				<!-- Preview Logo jika URL ada -->
 				{#if logoUrlInput}
 					<div class="space-y-1">
-						<span class="text-text-muted block text-xs font-medium">Preview Logo:</span>
+						<span class="block text-xs font-medium text-text-muted">Preview Logo:</span>
 						<div class="flex h-20 w-20 items-center justify-center rounded-xl bg-white p-2">
 							<img
 								src={logoUrlInput}
@@ -148,11 +145,11 @@
 					</div>
 				{/if}
 
-				<div class="flex justify-end gap-3 pt-4 border-t border-white/10">
+				<div class="flex justify-end gap-3 border-t border-white/10 pt-4">
 					<button
 						type="button"
 						onclick={closeModal}
-						class="text-text-muted rounded-xl bg-white/5 px-4 py-2 text-xs font-semibold hover:bg-white/10"
+						class="rounded-xl bg-white/5 px-4 py-2 text-xs font-semibold text-text-muted hover:bg-white/10"
 					>
 						Batal
 					</button>

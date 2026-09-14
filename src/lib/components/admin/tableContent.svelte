@@ -117,7 +117,7 @@
 			<span>Show</span>
 			<select
 				bind:value={entriesPerPage}
-				class="rounded-lg border border-white/10 bg-scitech-navy px-2.5 py-1.5 text-white focus:border-scitech-mint focus:outline-none"
+				class="rounded-lg border border-white/10 bg-scitech-navy px-2.5 py-1.5 text-text-main focus:border-scitech-mint focus:outline-none"
 			>
 				<option value={5}>5</option>
 				<option value={10}>10</option>
@@ -133,12 +133,11 @@
 				type="text"
 				bind:value={searchQuery}
 				placeholder="Search..."
-				class="w-full rounded-lg border border-white/10 bg-scitech-navy pl-9 pr-3 py-1.5 text-xs text-white placeholder-text-muted transition-all focus:border-scitech-mint focus:outline-none"
+				class="w-full rounded-lg border border-white/10 bg-scitech-navy pl-9 pr-3 py-1.5 text-xs text-text-main placeholder-text-muted transition-all focus:border-scitech-mint focus:outline-none"
 			/>
 		</div>
 	</div>
 
-	<!-- TABEL UTAMA -->
 	<div class="overflow-x-auto rounded-xl border border-white/10 bg-scitech-navy/60">
 		<table class="w-full border-collapse text-left text-xs">
 			<!-- Table Header -->
@@ -177,7 +176,16 @@
 												alt={item.colomn}
 												class="h-full w-full object-cover transition-transform group-hover:scale-105"
 											/>
-										</div>
+ <!-- <CldImage -->
+ <!--    src="cld-sample-5" -->
+ <!--    width="300" -->
+ <!--    height="300" -->
+ <!--    crop="fill" -->
+ <!--    gravity="faces" -->
+ <!--    tint="equalize:80:blue" -->
+ <!--    alt="Gambar dengan efek potong wajah dan warna biru" -->
+ <!--  /> -->
+ 					</div> -->
 									{:else if checkIsLink(item)}
 										<!-- Tampilan Tautan/Link -->
 										<a
@@ -190,7 +198,7 @@
 										</a>
 									{:else}
 										<!-- Tampilan Teks Biasa -->
-										<span class="text-white group-hover:text-scitech-mint transition-colors">
+										<span class="text-text-main group-hover:text-scitech-mint transition-colors">
 											{item.row}
 										</span>
 									{/if}
@@ -227,7 +235,6 @@
 				{/if}
 			</tbody>
 
-			<!-- Table Footer Header (Meniru gaya gambar) -->
 			<tfoot>
 				<tr class="border-t border-white/10 bg-white/5 font-mono text-[11px] text-text-muted">
 					{#each columns as col}
@@ -239,7 +246,6 @@
 		</table>
 	</div>
 
-	<!-- footer datatable: showing info & pagination -->
 	<div class="flex flex-col gap-3 text-xs sm:flex-row sm:items-center sm:justify-between text-text-muted">
 		<div>
 			Showing {totalEntries === 0 ? 0 : startIndex + 1} to {endIndex} of {totalEntries} entries
@@ -262,7 +268,7 @@
 					onclick={() => (currentPage = i + 1)}
 					class="rounded-lg px-3 py-1.5 font-bold transition-all {currentPage === i + 1
 						? 'bg-scitech-mint text-scitech-navy'
-						: 'border border-white/10 text-white hover:bg-white/5'}"
+						: 'border border-white/10 text-text-main hover:bg-white/5'}"
 				>
 					{i + 1}
 				</button>
@@ -291,7 +297,7 @@
 					<AlertTriangle class="h-4 w-4" />
 					<span>Konfirmasi Hapus Data</span>
 				</div>
-				<button type="button" onclick={() => (itemToDelete = null)} class="text-text-muted hover:text-white">
+				<button type="button" onclick={() => (itemToDelete = null)} class="text-text-muted hover:text-text-main">
 					<X class="h-4 w-4" />
 				</button>
 			</div>
@@ -304,7 +310,7 @@
 				<button
 					type="button"
 					onclick={() => (itemToDelete = null)}
-					class="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-white transition-all hover:bg-white/10"
+					class="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-text-main transition-all hover:bg-white/10"
 				>
 					Batal
 				</button>

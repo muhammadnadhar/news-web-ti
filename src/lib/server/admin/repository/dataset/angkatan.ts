@@ -14,12 +14,24 @@ export async function createAngkatan(id: string, year: number): Promise<boolean>
 }
 
 /**
- * MENDAPATKAN SEMUA ANGKATAN (Read All)
+ * mendapatkan semua angkatan (read all)
  */
 export async function getAllAngkatan(): Promise<AngkatanDTO[]> {
 	const sql = `SELECT * FROM ${tableAngkatan} ORDER BY year DESC`;
 	const rows = (await query(sql)) as AngkatanDTO[];
 	return rows;
+}
+
+export async function getAngkatanById(id: string): Promise<AngkatanDTO | null> {
+	const sql = `SELECT id, year, created_at, updated_at FROM ${tableAngkatan} WHERE id = ? LIMIT 1`;
+	const rows = (await query(sql, [id])) as AngkatanDTO[];
+	return rows[0] || null;
+}
+
+export async function getAngkatanByYear(year: number): Promise<AngkatanDTO | null> {
+	const sql = `SELECT id, year, created_at, updated_at FROM ${tableAngkatan} WHERE year = ? LIMIT 1`;
+	const rows = (await query(sql, [year])) as AngkatanDTO[];
+	return rows[0] || null;
 }
 
 /**

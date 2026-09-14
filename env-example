@@ -4,7 +4,7 @@ DB_USER=
 DB_PASSWORD=
 DB_DATABASE=newsTI
 
-# goolgle drive config 
-GOOGLE_CLIENT_EMAIL=
-GOOGLE_PRIVATE_KEY=
-GOOGLE_DRIVE_FOLDER_ID=
+# cloudinary untuk penyimpana image 
+PUBLIC_CLOUDINARY_CLOUD_NAME="isi_cloud_name"
+CLOUDINARY_API_KEY="isi_api_key"
+CLOUDINARY_API_SECRET="isi_api_secret"

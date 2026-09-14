@@ -34,9 +34,9 @@
 	let activeIndex = $state(0);
 
 	// State untuk kontrol Drag Mouse
-	let isDown = false;
-	let startX = 0;
-	let scrollLeftPos = 0;
+	let isDown = $state(false);
+	let startX = $state(0);
+	let scrollLeftPos = $state(0);
 
 	function handleScroll() {
 		if (!scrollContainer) return;

@@ -90,7 +90,7 @@
 	/>
 </div>
 
-<!-- Modal Form CRUD Mahasiswa IPK Tertinggi -->
+<!-- modal form crud mahasiswa ipk tertinggi -->
 {#if isModalOpen}
 	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
 		<div

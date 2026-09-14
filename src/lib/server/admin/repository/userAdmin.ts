@@ -1,30 +1,118 @@
 import { tableAdminUser } from '$lib/seeder/admin/userAdmin';
 import { query } from '$lib/server/database/svelteDb';
-
-export interface UserAdminItem {
-	id: string;
-	name: string;
-	username: string;
-	role: 'Administrator' | 'Dosen' | 'Operator' | 'Mahasiswa';
-	status: 'Active' | 'Inactive';
-	createdAt: string;
-}
+import type { UserAdminItem } from '$lib/types/admin/user';
 
 // Tipe data parsial untuk operasi update (agar kolom yang diupdate bersifat opsional)
 export type UpdateUserData = Partial<Omit<UserAdminItem, 'id' | 'createdAt'>>;
 
-/**
- * TAMBAH USER (Create)
- * Menambahkan satu user baru ke database
+/*
+ * Tambah User Admin Baru
  */
-export async function createUser(user: UserAdminItem): Promise<any> {
+export async function createUserAdmin(
+	userData: Omit<UserAdminItem, 'createdAt'>
+): Promise<boolean> {
 	const sql = `
-		INSERT INTO ${tableAdminUser} (id, name, username, role, status, created_at)
-		VALUES (?, ?, ?, ?, ?, ?)
+		INSERT INTO ${tableAdminUser} (id, name, username, email, password, role, status)
+		VALUES (?, ?, ?, ?, ?, ?, ?)
 	`;
 
-	const params = [user.id, user.name, user.username, user.role, user.status, user.createdAt];
-	return await query(sql, params);
+	const params = [
+		userData.id,
+		userData.name,
+		userData.username,
+		userData.email,
+		userData.password,
+		userData.role,
+		userData.status
+	];
+
+	await query(sql, params);
+	return true;
+}
+
+// Cek ketersediaan username atau email
+export async function checkUserExists(username: string, email: string) {
+	const sql = `SELECT username, email FROM ${tableAdminUser} WHERE username = ? OR email = ?`;
+	const rows = (await query(sql, [username, email])) as any[];
+
+	return {
+		usernameExists: rows.some((r) => r.username.toLowerCase() === username.toLowerCase()),
+		emailExists: rows.some((r) => r.email.toLowerCase() === email.toLowerCase())
+	};
+}
+
+/**
+ * Mencari data user admin berdasarkan username ATAU email.
+ * @param identifier - String berisi username atau email pengguna
+ * @returns Object UserAdminItem jika ditemukan, atau null jika tidak ada
+ */
+export async function findUserByUsernameOrEmail(identifier: string): Promise<UserAdminItem | null> {
+	const sql = `
+		SELECT 
+			id,
+			name,
+			username,
+			email,
+			password,
+			role,
+			status,
+			created_at AS createdAt
+		FROM ${tableAdminUser}
+		WHERE username = ? OR email = ?
+		LIMIT 1
+	`;
+
+	try {
+		// Menjalankan query dengan parameter binding
+		// Catatan: Jika Anda menggunakan PostgreSQL, ganti '?' dengan '$1' dan '$2'
+		const rows = (await query(sql, [identifier, identifier])) as any[];
+
+		// Jika data tidak ditemukan
+		if (!rows || rows.length === 0) {
+			return null;
+		}
+
+		const row = rows[0];
+
+		return {
+			id: row.id,
+			name: row.name,
+			username: row.username,
+			email: row.email,
+			password: row.password,
+			role: row.role,
+			status: row.status,
+			createdAt: row.createdAt ? new Date(row.createdAt).toISOString() : String(row.created_at)
+		};
+	} catch (error) {
+		console.error('Error pada repository findUserByUsernameOrEmail:', error);
+		throw error;
+	}
+}
+
+// Ambil data profil user berdasarkan ID
+export async function getUserById(id: string): Promise<UserAdminItem | null> {
+	const sql = `
+		SELECT 
+			id, 
+			name, 
+			username, 
+			email, 
+      avatar,
+			role, 
+			status, 
+			created_at AS createdAt 
+		FROM ${tableAdminUser} 
+		WHERE id = ? 
+		LIMIT 1
+	`;
+	const rows = (await query(sql, [id])) as any[];
+
+	if (!rows || rows.length === 0) {
+		return null;
+	}
+
+	return rows[0] as UserAdminItem;
 }
 
 /**

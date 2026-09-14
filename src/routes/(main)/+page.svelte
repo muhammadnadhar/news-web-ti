@@ -10,8 +10,11 @@
 
 	let { data } = $props();
 
-	// (Menggunakan $derived agar data tetap reaktif jika terjadi pembaruan)
+	// Menggunakan $derived agar data tetap reaktif jika terjadi pembaruan
 	let recentNews = $derived(data.recentNews);
+	let recentListDosen = $derived(data.listPrimaryDosen);
+	let recentListPermintaan = $derived(data.listPerminatan);
+	let recentListProfile = $derived(data.listProfil);
 
 	const images = [fstImg, uinFrontImg];
 	let captions = $state([
@@ -165,6 +168,12 @@
 
 <main id="main" class="mx-auto max-w-7xl space-y-16 px-6 py-12 lg:px-12">
 	<NewsSection {recentNews} />
+
+	<HomeSection
+		listDosen={recentListDosen}
+		listPerminatan={recentListPermintaan}
+		listProfil={recentListProfile}
+	/>
 
 	<!---->
 	<!-- <section class="bg-scitech-navy-glare border-scitech-slate rounded-3xl border p-8"> -->

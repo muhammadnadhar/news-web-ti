@@ -1,10 +1,6 @@
-import { tableDosen, tablePerminatanTI, tableProfilProdi } from '$lib/seeder/admin/home';
+import { tableProfilProdi } from '$lib/seeder/admin/home';
 import { query } from '$lib/server/database/svelteDb';
 import type { ProfilProdiItemDTO } from '$lib/types/admin/home';
-
-/* ============================================================================
- * METHOD TABLE PROFIL PRODI
- * ============================================================================ */
 
 /** READ ALL PROFIL PRODI */
 export async function getAllProfilProdi(): Promise<ProfilProdiItemDTO[]> {
@@ -12,15 +8,17 @@ export async function getAllProfilProdi(): Promise<ProfilProdiItemDTO[]> {
 	return (await query(sql)) as ProfilProdiItemDTO[];
 }
 
-/** READ PROFIL PRODI BY ID */
+/** read profil prodi by id */
 export async function getProfilProdiById(id: string): Promise<ProfilProdiItemDTO | null> {
 	const sql = `SELECT * FROM ${tableProfilProdi} WHERE id = ? LIMIT 1`;
 	const rows = (await query(sql, [id])) as ProfilProdiItemDTO[];
 	return rows.length > 0 ? rows[0] : null;
 }
 
-/** CREATE / ADD PROFIL PRODI */
-export async function addProfilProdi(data: Omit<ProfilProdiItemDTO, 'id' | 'created_at' | 'updated_at'>): Promise<string> {
+/** create / add profil prodi */
+export async function addProfilProdi(
+	data: Omit<ProfilProdiItemDTO, 'id' | 'created_at' | 'updated_at'>
+): Promise<string> {
 	const id = crypto.randomUUID();
 	const sql = `
 		INSERT INTO ${tableProfilProdi} (id, title, description, image_url)
@@ -31,7 +29,10 @@ export async function addProfilProdi(data: Omit<ProfilProdiItemDTO, 'id' | 'crea
 }
 
 /** UPDATE PROFIL PRODI */
-export async function updateProfilProdi(id: string, data: Partial<Omit<ProfilProdiItemDTO, 'id' | 'created_at' | 'updated_at'>>): Promise<boolean> {
+export async function updateProfilProdi(
+	id: string,
+	data: Partial<Omit<ProfilProdiItemDTO, 'id' | 'created_at' | 'updated_at'>>
+): Promise<boolean> {
 	const fields: string[] = [];
 	const values: any[] = [];
 
@@ -62,7 +63,12 @@ export async function replaceProfilProdi(data: ProfilProdiItemDTO): Promise<bool
 		REPLACE INTO ${tableProfilProdi} (id, title, description, image_url)
 		VALUES (?, ?, ?, ?)
 	`;
-	const result = (await query(sql, [data.id, data.title, data.description, data.image_url ?? null])) as any;
+	const result = (await query(sql, [
+		data.id,
+		data.title,
+		data.description,
+		data.image_url ?? null
+	])) as any;
 	return result.affectedRows > 0;
 }
 

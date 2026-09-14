@@ -37,12 +37,22 @@ export const sidebarMenu: MenuCategory[] = [
 		]
 	},
 	{
-		category: 'article',
+		category: 'HOME',
 		items: [
 			{
 				title: 'Home',
 				iconName: 'Home',
-				href: AdminUrl + '/article/home'
+				href: AdminUrl + '/home'
+			}
+		]
+	},
+	{
+		category: 'article',
+		items: [
+			{
+				title: 'Home article ',
+				iconName: 'Home',
+				href: AdminUrl + '/article'
 			},
 			{
 				title: 'Profil',
@@ -92,8 +102,11 @@ export const sidebarMenu: MenuCategory[] = [
 				iconName: 'Microscope',
 				children: [
 					{ title: 'Penelitian Dosen', href: AdminUrl + '/article/penelitian/penelitian-dosen' },
-						{ title: 'Publikasi Mahasiswa', href: AdminUrl + '/article/penelitian/publikasi-mahasiswa' },
-          { title: 'Publikasi Dosen', href: AdminUrl + '/article/penelitian/publikasi-dosen' }
+					{
+						title: 'Publikasi Mahasiswa',
+						href: AdminUrl + '/article/penelitian/publikasi-mahasiswa'
+					},
+					{ title: 'Publikasi Dosen', href: AdminUrl + '/article/penelitian/publikasi-dosen' }
 				]
 			},
 			{
@@ -108,8 +121,8 @@ export const sidebarMenu: MenuCategory[] = [
 				title: 'Berita',
 				iconName: 'Newspaper',
 				children: [
-					{ title: 'berita', href: AdminUrl + '/article/berita' },
-				// 	{ title: 'Agenda Kegiatan', href: AdminUrl + '/article/berita/agenda' }
+					{ title: 'berita', href: AdminUrl + '/article/berita' }
+					// 	{ title: 'Agenda Kegiatan', href: AdminUrl + '/article/berita/agenda' }
 				]
 			}
 		]

@@ -15,6 +15,8 @@
 
 	import TableContent from '$lib/components/admin/tableContent.svelte';
 	import type { TableContentType } from '$lib/types/tableContent';
+	import { goto } from '$app/navigation';
+	import { mergeNewPath } from '$lib/utils';
 
 	//	interface SemesterItem {
 	//	id: string;
@@ -165,61 +167,60 @@
 		class="bg-scitech-slate/60 space-y-6 rounded-3xl border border-white/10 p-6 shadow-2xl backdrop-blur-xl sm:p-8"
 	>
 		<!-- Top Action Bar -->
-		<div class="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-			<div class="flex items-center gap-3">
-				<div
-					class="bg-scitech-mint/10 text-scitech-mint border-scitech-mint/20 rounded-2xl border p-2.5"
-				>
-					<Calendar class="h-5 w-5" />
-				</div>
-				<div>
-					<h2 class="text-base font-bold text-white sm:text-lg">Data Semester Tahun Akademik</h2>
-					<p class="text-xs text-text-muted">Kelola periode semester dan tautan sistemik</p>
-				</div>
-			</div>
+		<!-- <div class="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center"> -->
+		<!-- 	<div class="flex items-center gap-3"> -->
+		<!-- 		<div -->
+		<!-- 			class="bg-scitech-mint/10 text-scitech-mint border-scitech-mint/20 rounded-2xl border p-2.5" -->
+		<!-- 		> -->
+		<!-- 			<Calendar class="h-5 w-5" /> -->
+		<!-- 		</div> -->
+		<!-- 		<div> -->
+		<!-- 			<h2 class="text-base font-bold text-white sm:text-lg">Data Semester Tahun Akademik</h2> -->
+		<!-- 			<p class="text-xs text-text-muted">Kelola periode semester dan tautan sistemik</p> -->
+		<!-- 		</div> -->
+		<!-- 	</div> -->
+		<!---->
+		<!-- 	<button -->
+		<!-- 		onclick={() => (isAddModalOpen = true)} -->
+		<!-- 		class="bg-scitech-mint text-scitech-navy hover:bg-scitech-mint-hover shadow-scitech-mint/20 inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-bold shadow-lg transition-all duration-200 active:scale-95 sm:text-sm" -->
+		<!-- 	> -->
+		<!-- 		<Plus class="h-4 w-4" /> -->
+		<!-- 		<span>+ Semester</span> -->
+		<!-- 	</button> -->
+		<!-- </div> -->
 
-			<button
-				onclick={() => (isAddModalOpen = true)}
-				class="bg-scitech-mint text-scitech-navy hover:bg-scitech-mint-hover shadow-scitech-mint/20 inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-bold shadow-lg transition-all duration-200 active:scale-95 sm:text-sm"
-			>
-				<Plus class="h-4 w-4" />
-				<span>+ Semester</span>
-			</button>
-		</div>
-
-		<!-- Controls Bar -->
-		<div class="flex flex-col justify-between gap-4 pt-2 md:flex-row md:items-center">
-			<div class="flex items-center gap-2 text-xs font-medium text-text-muted">
-				<span>Show</span>
-				<select
-					bind:value={entriesPerPage}
-					class="bg-scitech-navy focus:border-scitech-mint cursor-pointer rounded-xl border border-white/15 px-3 py-1.5 text-white transition-colors focus:outline-none"
-				>
-					<option value={10}>10</option>
-					<option value={25}>25</option>
-					<option value={50}>50</option>
-				</select>
-				<span>entries</span>
-			</div>
-
-			<div class="relative w-full md:w-72">
-				<Search class="absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-text-muted" />
-				<input
-					type="text"
-					placeholder="Search..."
-					bind:value={searchQuery}
-					class="bg-scitech-navy/80 focus:border-scitech-mint/80 w-full rounded-xl border border-white/15 py-2.5 pr-4 pl-10 text-xs text-white transition-all placeholder:text-text-muted focus:outline-none"
-				/>
-			</div>
-		</div>
+		<!-- <div class="flex flex-col justify-between gap-4 pt-2 md:flex-row md:items-center"> -->
+		<!-- 	<div class="flex items-center gap-2 text-xs font-medium text-text-muted"> -->
+		<!-- 		<span>Show</span> -->
+		<!-- 		<select -->
+		<!-- 			bind:value={entriesPerPage} -->
+		<!-- 			class="bg-scitech-navy focus:border-scitech-mint cursor-pointer rounded-xl border border-white/15 px-3 py-1.5 text-white transition-colors focus:outline-none" -->
+		<!-- 		> -->
+		<!-- 			<option value={10}>10</option> -->
+		<!-- 			<option value={25}>25</option> -->
+		<!-- 			<option value={50}>50</option> -->
+		<!-- 		</select> -->
+		<!-- 		<span>entries</span> -->
+		<!-- 	</div> -->
+		<!---->
+		<!-- 	<div class="relative w-full md:w-72"> -->
+		<!-- 		<Search class="absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-text-muted" /> -->
+		<!-- 		<input -->
+		<!-- 			type="text" -->
+		<!-- 			placeholder="Search..." -->
+		<!-- 			bind:value={searchQuery} -->
+		<!-- 			class="bg-scitech-navy/80 focus:border-scitech-mint/80 w-full rounded-xl border border-white/15 py-2.5 pr-4 pl-10 text-xs text-white transition-all placeholder:text-text-muted focus:outline-none" -->
+		<!-- 		/> -->
+		<!-- 	</div> -->
+		<!-- </div> -->
 
 		<!-- Data Table -->
 		<div class="bg-scitech-navy/40 overflow-x-auto rounded-2xl border border-white/10">
 			<TableContent
 				title="Data Angkatan"
-				addButtonLabel="+ Angkatan"
+				addButtonLabel="Semester"
 				data={filteredList}
-				onAdd={() => (isAddModalOpen = true)}
+				onAdd={() => goto(mergeNewPath("add"))}
 				onEdit={(item) => console.log('Edit:', item)}
 				onDelete={() => console.info('delete')}
 			/>
@@ -310,56 +311,56 @@
 </div>
 
 <!-- Modal Tambah Semester -->
-{#if isAddModalOpen}
-	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
-		<div
-			class="bg-scitech-navy w-full max-w-md space-y-6 rounded-3xl border border-white/15 p-6 shadow-2xl sm:p-8"
-		>
-			<div class="flex items-center justify-between border-b border-white/10 pb-4">
-				<h3 class="text-base font-bold text-white">Tambah Semester Baru</h3>
-				<button onclick={() => (isAddModalOpen = false)} class="text-text-muted hover:text-white"
-					><X class="h-5 w-5" /></button
-				>
-			</div>
-
-			<form onsubmit={handleAddSemester} class="space-y-4">
-				<div>
-					<label class="mb-1 block text-xs text-text-muted" for="nama">Nama Semester</label>
-					<input
-						id="nama"
-						type="text"
-						required
-						bind:value={newNama}
-						placeholder="Contoh: Semester Ganjil 2024/2025"
-						class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-white/15 px-4 py-2.5 text-xs text-white focus:outline-none"
-					/>
-				</div>
-				<div>
-					<label class="mb-1 block text-xs text-text-muted" for="link">Link Slug</label>
-					<input
-						id="link"
-						type="text"
-						required
-						bind:value={newLink}
-						placeholder="Contoh: ganjil24-25"
-						class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-white/15 px-4 py-2.5 text-xs text-white focus:outline-none"
-					/>
-				</div>
-
-				<div class="flex justify-end gap-3 pt-4">
-					<button
-						type="button"
-						onclick={() => (isAddModalOpen = false)}
-						class="rounded-xl bg-white/5 px-4 py-2 text-xs font-semibold text-text-muted"
-						>Batal</button
-					>
-					<button
-						type="submit"
-						class="text-scitech-navy bg-scitech-mint rounded-xl px-5 py-2 text-xs font-bold"
-						>Simpan</button
-					>
-				</div>
-			</form>
-		</div>
-	</div>
-{/if}
+<!-- {#if isAddModalOpen} -->
+<!-- 	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"> -->
+<!-- 		<div -->
+<!-- 			class="bg-scitech-navy w-full max-w-md space-y-6 rounded-3xl border border-white/15 p-6 shadow-2xl sm:p-8" -->
+<!-- 		> -->
+<!-- 			<div class="flex items-center justify-between border-b border-white/10 pb-4"> -->
+<!-- 				<h3 class="text-base font-bold text-white">Tambah Semester Baru</h3> -->
+<!-- 				<button onclick={() => (isAddModalOpen = false)} class="text-text-muted hover:text-white" -->
+<!-- 					><X class="h-5 w-5" /></button -->
+<!-- 				> -->
+<!-- 			</div> -->
+<!---->
+<!-- 			<form onsubmit={handleAddSemester} class="space-y-4"> -->
+<!-- 				<div> -->
+<!-- 					<label class="mb-1 block text-xs text-text-muted" for="nama">Nama Semester</label> -->
+<!-- 					<input -->
+<!-- 						id="nama" -->
+<!-- 						type="text" -->
+<!-- 						required -->
+<!-- 						bind:value={newNama} -->
+<!-- 						placeholder="Contoh: Semester Ganjil 2024/2025" -->
+<!-- 						class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-white/15 px-4 py-2.5 text-xs text-white focus:outline-none" -->
+<!-- 					/> -->
+<!-- 				</div> -->
+<!-- 				<div> -->
+<!-- 					<label class="mb-1 block text-xs text-text-muted" for="link">Link Slug</label> -->
+<!-- 					<input -->
+<!-- 						id="link" -->
+<!-- 						type="text" -->
+<!-- 						required -->
+<!-- 						bind:value={newLink} -->
+<!-- 						placeholder="Contoh: ganjil24-25" -->
+<!-- 						class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-white/15 px-4 py-2.5 text-xs text-white focus:outline-none" -->
+<!-- 					/> -->
+<!-- 				</div> -->
+<!---->
+<!-- 				<div class="flex justify-end gap-3 pt-4"> -->
+<!-- 					<button -->
+<!-- 						type="button" -->
+<!-- 						onclick={() => (isAddModalOpen = false)} -->
+<!-- 						class="rounded-xl bg-white/5 px-4 py-2 text-xs font-semibold text-text-muted" -->
+<!-- 						>Batal</button -->
+<!-- 					> -->
+<!-- 					<button -->
+<!-- 						type="submit" -->
+<!-- 						class="text-scitech-navy bg-scitech-mint rounded-xl px-5 py-2 text-xs font-bold" -->
+<!-- 						>Simpan</button -->
+<!-- 					> -->
+<!-- 				</div> -->
+<!-- 			</form> -->
+<!-- 		</div> -->
+<!-- 	</div> -->
+<!-- {/if} -->

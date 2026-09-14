@@ -1,13 +1,31 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { CldUploadWidget } from 'svelte-cloudinary';
 	import type { ActionData } from './$types';
 
-	let form: ActionData = $props();
+	interface Props {
+		form?: ActionData;
+	}
 
-	let title = form?.values?.title ?? '';
-	let category = form?.values?.category ?? '';
-	let content = form?.values?.content ?? '';
+	let { form }: Props = $props();
+
+	let title = $state(form?.values?.title ?? '');
+	let category = $state(form?.values?.category ?? '');
+	let content = $state(form?.values?.content ?? '');
+	let imageUrl = $state(form?.values?.imageUrl ?? '');
 	let isSubmitting = $state(false);
+
+	// Handler saat unggah ke Cloudinary berhasil
+	function handleUpload(result: any) {
+		if (result?.event === 'success') {
+			imageUrl = result.info.secure_url; // Mengambil URL Cloudinary
+		}
+	}
+
+	// Fungsi untuk mengosongkan gambar jika ingin mengganti
+	function removeImage() {
+		imageUrl = '';
+	}
 
 	// Daftar Kategori sesuai kebutuhan
 	const categories = [
@@ -26,7 +44,7 @@
 
 	<!-- Card Form -->
 	<div
-		class="border-color-border-light overflow-hidden rounded-lg border bg-bg-secondary shadow-sm"
+		class="overflow-hidden rounded-lg border border-[var(--color-border-light)] bg-[var(--color-bg-secondary)] shadow-sm"
 	>
 		<!-- Header Card -->
 		<div
@@ -39,7 +57,6 @@
 
 		<form
 			method="POST"
-			enctype="multipart/form-data"
 			use:enhance={() => {
 				isSubmitting = true;
 				return async ({ update }) => {
@@ -71,20 +88,58 @@
 				/>
 			</div>
 
-			<!-- Grid Foto & Kategori Berita -->
+			<!-- Grid Foto Cloudinary & Kategori Berita -->
 			<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-				<!-- Upload Foto -->
+				
+				<!-- Upload Foto Cloudinary -->
 				<div class="space-y-2">
-					<label for="photo" class="block text-sm font-medium text-[var(--color-text-muted)]">
-						Foto
+					<label class="block text-sm font-medium text-[var(--color-text-muted)]">
+						Foto Berita
 					</label>
-					<input
-						type="file"
-						id="photo"
-						name="photo"
-						accept="image/*"
-						class="w-full cursor-pointer rounded-md border border-[var(--color-border-light)] bg-[var(--color-bg-primary)] text-sm text-[var(--color-text-muted)] file:mr-4 file:rounded-md file:border-0 file:bg-[var(--color-bg-secondary-hover)] file:px-4 file:py-2 file:text-sm file:font-semibold file:text-[var(--color-text-main)] hover:file:bg-[var(--color-border-light)]"
-					/>
+
+					<!-- Hidden input untuk mengirimkan path/URL Cloudinary ke backend server -->
+					<input type="hidden" name="imageUrl" value={imageUrl} />
+
+					{#if imageUrl}
+						<!-- Tampilan Pratinjau Jika Gambar Sudah Diunggah -->
+						<div class="relative overflow-hidden rounded-md border border-[var(--color-border-light)] bg-[var(--color-bg-primary)] p-2">
+							<img
+								src={imageUrl}
+								alt="Pratinjau Foto"
+								class="h-36 w-full rounded object-cover"
+							/>
+							<div class="mt-2 flex items-center justify-between">
+								<span class="max-w-[200px] truncate text-xs text-[var(--color-text-muted)]">
+									{imageUrl}
+								</span>
+								<button
+									type="button"
+									onclick={removeImage}
+									class="rounded bg-[var(--color-status-error)]/20 px-2 py-1 text-xs text-[var(--color-status-error)] hover:bg-[var(--color-status-error)]/30"
+								>
+									Hapus / Ganti
+								</button>
+							</div>
+						</div>
+					{:else}
+						<!-- Widget Tombol Upload Cloudinary -->
+						<CldUploadWidget
+							uploadPreset="nama_preset_unsigned_anda"
+							onUpload={handleUpload}
+							let:open
+						>
+							<button
+								type="button"
+								onclick={() => open()}
+								class="flex w-full items-center justify-center gap-2 rounded-md border border-dashed border-[var(--color-border-light)] bg-[var(--color-bg-primary)] px-4 py-8 text-sm text-[var(--color-text-muted)] transition-colors hover:border-[var(--color-accent-primary)] hover:text-[var(--color-accent-primary)]"
+							>
+								<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+								</svg>
+								<span>Pilih dan Unggah Gambar</span>
+							</button>
+						</CldUploadWidget>
+					{/if}
 				</div>
 
 				<!-- Select Kategori -->
@@ -107,7 +162,7 @@
 				</div>
 			</div>
 
-			<!-- Isi Berita (Rich Text / WYSIWYG Container) -->
+			<!-- Isi Berita -->
 			<div class="space-y-2">
 				<label for="content" class="block text-sm font-medium text-[var(--color-text-muted)]">
 					Isi Berita <span class="text-[var(--color-status-error)]">*</span>
@@ -116,7 +171,6 @@
 				<div
 					class="overflow-hidden rounded-md border border-[var(--color-border-light)] bg-[var(--color-bg-primary)]"
 				>
-					<!-- Toolbar Editor Dummy (Menyerupai Tampilan UI Gambar) -->
 					<div
 						class="flex flex-wrap gap-2 border-b border-[var(--color-border-light)] bg-[var(--color-bg-primary-glare)] p-2 text-sm text-[var(--color-text-muted)]"
 					>
@@ -134,11 +188,9 @@
 						<button type="button" class="px-2 py-1 hover:text-[var(--color-text-main)]">≡</button>
 						<button type="button" class="px-2 py-1 hover:text-[var(--color-text-main)]">🖼</button>
 						<button type="button" class="px-2 py-1 hover:text-[var(--color-text-main)]">“ ”</button>
-						<button type="button" class="px-2 py-1 hover:text-[var(--color-text-main)]">📊 ▾</button
-						>
+						<button type="button" class="px-2 py-1 hover:text-[var(--color-text-main)]">📊 ▾</button>
 					</div>
 
-					<!-- Area Text (Dapat Diganti dengan Package Rich Text Editor Pilihan Anda) -->
 					<textarea
 						id="content"
 						name="content"
@@ -161,7 +213,6 @@
 					{#if isSubmitting}
 						<span class="text-sm font-medium">Memproses...</span>
 					{:else}
-						<!-- Icon Kirim/Telegram (sesuai gambar) -->
 						<svg
 							class="-mt-1 h-5 w-5 rotate-45 transform"
 							fill="none"

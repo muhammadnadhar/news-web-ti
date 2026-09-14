@@ -1,13 +1,13 @@
-
-
 // Interface Data Dosen
-export interface DosenItemDTO {
-	id: string;
-	name: string;
+export interface PrimaryDosenDTO {
+	primary_id: string;
+	lecturer_staff_id: string;
 	position: string;
-	image_url: string;
-	created_at?: Date | string;
-	updated_at?: Date | string;
+	name: string;
+	nidn: string | null;
+	expertise: string;
+	photo_url: string | null;
+	pddikti_url: string | null;
 }
 
 // Interface Data Perminatan TI

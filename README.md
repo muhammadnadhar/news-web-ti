@@ -1,5 +1,5 @@
-<h1>
-News TI
+<h1 align="center">
+News TI ( UIN Ar-Raniry )
 </h1>
 
 <br>
@@ -11,13 +11,13 @@ News TI
 ### Stack
 
 <p align="center">
-  <img src="https://skillicons.dev" width="50" alt="Svelte / SvelteKit" />
-  <img src="https://skillicons.dev" width="50" alt="Tailwind CSS" />
-  <img src="https://skillicons.dev" width="50" alt="MySQL" />
-  <img src="https://skillicons.dev" width="50" alt="TypeScript (tsx)" />
-  <img src="https://skillicons.dev" width="50" alt="Bun" />
-
-  <img src="https://shields.io" height="40" alt="Lucide Svelte" />
+  <img src="https://img.shields.io/badge/Framework-SvelteKit-FF3E00?logo=svelte&logoColor=white" />
+  <img src="https://img.shields.io/badge/Styling-Tailwind_CSS-06B6D4?logo=tailwindcss&logoColor=white" />
+  <img src="https://img.shields.io/badge/Database-MySQL-4479A1?logo=mysql&logoColor=white" />
+  <img src="https://img.shields.io/badge/Language-TypeScript-3178C6?logo=typescript&logoColor=white" />
+  <img src="https://img.shields.io/badge/Runtime-Bun-000000?logo=bun&logoColor=white" />
+  <img src="https://img.shields.io/badge/Media-Cloudinary-3448C5?logo=cloudinary&logoColor=white" />
+  <img src="https://img.shields.io/badge/Icons-Lucide_Svelte-FF3E00?logo=svelte&logoColor=white" />
 </p>
 
 <br>
@@ -28,8 +28,7 @@ News TI
 - `MySql` : database yang di gunakan di projek ini
 - `tsx` : typescrip yang akan di gunakan di
 - `bun` : runtime yang di gunakan di projek ini
-- `googleapis` : di butuhkan untuk
-  1. menyimpan file _**img**_ ke google drive
+- `svelte-cloudinary` : koneksi ke cloudinary untuk menyimpan file gambar
 
 <br>
 
@@ -70,6 +69,7 @@ npm run dev -- --open
 
 ##### seeder
 
+
 > jalakan untuk memasukan data dummy
 
 <br>
@@ -78,9 +78,12 @@ npm run dev -- --open
 
 ```bash
 # jalakan data dummy ( bisa dengan bun / npm /pnpm)
-bun run db:seed:bun
+bun run db:seed:bun:table
+bun run db:seed:bun:data
+
 # pastikan install tsx , karena mengguakna tsx
-npm run db:seed:npm
+npm run db:seed:npm:table
+bun run db:seed:bun:data
 
 ```
 

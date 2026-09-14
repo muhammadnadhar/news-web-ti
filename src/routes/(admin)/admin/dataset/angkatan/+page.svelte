@@ -4,6 +4,8 @@
 	import TableContent from '$lib/components/admin/tableContent.svelte';
 	import type { TableContentType } from '$lib/types/tableContent';
 	import { enhance } from '$app/forms';
+	import { mergeNewPath } from '$lib/utils.js';
+	import { goto } from '$app/navigation';
 
 	// Data Angkatan sesuai Gambar 2
 	let { data } = $props();
@@ -88,7 +90,7 @@
 	<!-- 		</button> -->
 	<!-- 	</div> -->
 	<!---->
-	<!-- 	<!-- Controls Bar --> -->
+	<!-- 	<!-- Controls Bar --> 
 	<!-- 	<div class="flex flex-col justify-between gap-4 pt-2 md:flex-row md:items-center"> -->
 	<!-- 		<div class="text-text-muted flex items-center gap-2 text-xs font-medium"> -->
 	<!-- 			<span>Show</span> -->
@@ -165,8 +167,8 @@
 	title="Data Angkatan Teknologi Informasi"
 	addButtonLabel="+ Angkatan"
 	data={filteredList}
-	onAdd={openAddModal}
-	onEdit={openEditModal}
+	onAdd={() =>goto( mergeNewPath("add"))}
+	onEdit={()=> console.info("edit")}
 />
 
 <!-- Pagination Footer -->
@@ -196,65 +198,65 @@
 <!-- </div> -->
 
 <!-- Modal Tambah Angkatan -->
-<!-- Modal Form Tambah / Edit Angkatan -->
-{#if isModalOpen}
-	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
-		<div
-			class="bg-scitech-navy w-full max-w-md space-y-6 rounded-3xl border border-white/15 p-6 shadow-2xl sm:p-8"
-		>
-			<div class="flex items-center justify-between border-b border-white/10 pb-4">
-				<h3 class="text-base font-bold text-white">
-					{isEditMode ? 'Edit Data Angkatan' : 'Tambah Angkatan Baru'}
-				</h3>
-				<button type="button" onclick={closeModal} class="text-text-muted hover:text-white">
-					<X class="h-5 w-5" />
-				</button>
-			</div>
-
-			<form
-				method="POST"
-				action="?/save"
-				use:enhance={() => {
-					return async ({ result }) => {
-						if (result.type === 'success') {
-							closeModal();
-						}
-					};
-				}}
-				class="space-y-4"
-			>
-				<input type="hidden" name="id" value={selectedId} />
-				<input type="hidden" name="is_edit" value={isEditMode ? 'true' : 'false'} />
-
-				<div>
-					<label class="mb-1 block text-xs text-text-muted" for="year">Tahun Angkatan</label>
-					<input
-						id="year"
-						name="year"
-						type="number"
-						required
-						bind:value={yearInput}
-						placeholder="Contoh: 2024"
-						class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-white/15 px-4 py-2.5 text-xs text-white focus:outline-none"
-					/>
-				</div>
-
-				<div class="flex justify-end gap-3 pt-4">
-					<button
-						type="button"
-						onclick={closeModal}
-						class="rounded-xl bg-white/5 px-4 py-2 text-xs font-semibold text-text-muted hover:bg-white/10"
-					>
-						Batal
-					</button>
-					<button
-						type="submit"
-						class="text-scitech-navy bg-scitech-mint hover:bg-scitech-mint-hover rounded-xl px-5 py-2 text-xs font-bold"
-					>
-						Simpan
-					</button>
-				</div>
-			</form>
-		</div>
-	</div>
-{/if}
+<!--Gak pakek Model lagi ya wkwkw -->
+<!-- {#if isModalOpen} -->
+<!-- 	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"> -->
+<!-- 		<div -->
+<!-- 			class="bg-scitech-navy w-full max-w-md space-y-6 rounded-3xl border border-white/15 p-6 shadow-2xl sm:p-8" -->
+<!-- 		> -->
+<!-- 			<div class="flex items-center justify-between border-b border-white/10 pb-4"> -->
+<!-- 				<h3 class="text-base font-bold text-white"> -->
+<!-- 					{isEditMode ? 'Edit Data Angkatan' : 'Tambah Angkatan Baru'} -->
+<!-- 				</h3> -->
+<!-- 				<button type="button" onclick={closeModal} class="text-text-muted hover:text-white"> -->
+<!-- 					<X class="h-5 w-5" /> -->
+<!-- 				</button> -->
+<!-- 			</div> -->
+<!---->
+<!-- 			<form -->
+<!-- 				method="POST" -->
+<!-- 				action="?/save" -->
+<!-- 				use:enhance={() => { -->
+<!-- 					return async ({ result }) => { -->
+<!-- 						if (result.type === 'success') { -->
+<!-- 							closeModal(); -->
+<!-- 						} -->
+<!-- 					}; -->
+<!-- 				}} -->
+<!-- 				class="space-y-4" -->
+<!-- 			> -->
+<!-- 				<input type="hidden" name="id" value={selectedId} /> -->
+<!-- 				<input type="hidden" name="is_edit" value={isEditMode ? 'true' : 'false'} /> -->
+<!---->
+<!-- 				<div> -->
+<!-- 					<label class="mb-1 block text-xs text-text-muted" for="year">Tahun Angkatan</label> -->
+<!-- 					<input -->
+<!-- 						id="year" -->
+<!-- 						name="year" -->
+<!-- 						type="number" -->
+<!-- 						required -->
+<!-- 						bind:value={yearInput} -->
+<!-- 						placeholder="Contoh: 2024" -->
+<!-- 						class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-white/15 px-4 py-2.5 text-xs text-white focus:outline-none" -->
+<!-- 					/> -->
+<!-- 				</div> -->
+<!---->
+<!-- 				<div class="flex justify-end gap-3 pt-4"> -->
+<!-- 					<button -->
+<!-- 						type="button" -->
+<!-- 						onclick={closeModal} -->
+<!-- 						class="rounded-xl bg-white/5 px-4 py-2 text-xs font-semibold text-text-muted hover:bg-white/10" -->
+<!-- 					> -->
+<!-- 						Batal -->
+<!-- 					</button> -->
+<!-- 					<button -->
+<!-- 						type="submit" -->
+<!-- 						class="text-scitech-navy bg-scitech-mint hover:bg-scitech-mint-hover rounded-xl px-5 py-2 text-xs font-bold" -->
+<!-- 					> -->
+<!-- 						Simpan -->
+<!-- 					</button> -->
+<!-- 				</div> -->
+<!-- 			</form> -->
+<!-- 		</div> -->
+<!-- 	</div> -->
+<!-- {/if} -->

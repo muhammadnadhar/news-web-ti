@@ -79,7 +79,7 @@
 		>
 			<Sparkles class="text-scitech-mint h-4 w-4" /> Kemahasiswaan
 		</span>
-		<h1 class="text-2xl font-extrabold tracking-tight text-white sm:text-3xl">Mahasiswa Prestasi</h1>
+		<h1 class="text-2xl font-extrabold tracking-tight text-text-main sm:text-3xl">Mahasiswa Prestasi</h1>
 	</div>
 
 	<!-- Component TableContent -->
@@ -99,10 +99,10 @@
 			class="bg-scitech-navy max-h-[90vh] w-full max-w-xl space-y-6 overflow-y-auto rounded-3xl border border-white/15 p-6 shadow-2xl sm:p-8"
 		>
 			<div class="flex items-center justify-between border-b border-white/10 pb-4">
-				<h3 class="text-base font-bold text-white">
+				<h3 class="text-base font-bold text-text-main">
 					{isEditMode ? 'Edit Data Mahasiswa Prestasi' : 'Tambah Data Mahasiswa Prestasi'}
 				</h3>
-				<button type="button" onclick={closeModal} class="text-text-muted hover:text-white">
+				<button type="button" onclick={closeModal} class="text-text-muted hover:text-text-main">
 					<X class="h-5 w-5" />
 				</button>
 			</div>
@@ -134,7 +134,7 @@
 						required
 						bind:value={studentNameInput}
 						placeholder="Contoh: Azri Ahmad Fahrozi"
-						class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-white/15 px-4 py-2.5 text-xs text-white focus:outline-none"
+						class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-white/15 px-4 py-2.5 text-xs text-text-main focus:outline-none"
 					/>
 				</div>
 
@@ -147,7 +147,7 @@
 						id="is_academic"
 						name="is_academic"
 						bind:value={isAcademicInput}
-						class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-white/15 px-4 py-2.5 text-xs text-white focus:outline-none"
+						class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-white/15 px-4 py-2.5 text-xs text-text-main focus:outline-none"
 					>
 						<option value="y">Akademik</option>
 						<option value="n">Non-Akademik</option>
@@ -167,7 +167,7 @@
 							required
 							bind:value={batchYearInput}
 							placeholder="Contoh: 2020"
-							class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-white/15 px-4 py-2.5 text-xs text-white focus:outline-none"
+							class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-white/15 px-4 py-2.5 text-xs text-text-main focus:outline-none"
 						/>
 					</div>
 
@@ -182,7 +182,7 @@
 							required
 							bind:value={semesterInput}
 							placeholder="Contoh: Semester Genap 2022/2023"
-							class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-white/15 px-4 py-2.5 text-xs text-white focus:outline-none"
+							class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-white/15 px-4 py-2.5 text-xs text-text-main focus:outline-none"
 						/>
 					</div>
 				</div>
@@ -199,7 +199,7 @@
 						required
 						bind:value={achievementNameInput}
 						placeholder="Contoh: Juara 1 Lomba Software Development National Level 2023"
-						class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-white/15 p-3 text-xs text-white focus:outline-none resize-none"
+						class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-white/15 p-3 text-xs text-text-main focus:outline-none resize-none"
 					></textarea>
 				</div>
 

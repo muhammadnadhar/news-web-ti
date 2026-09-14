@@ -23,7 +23,7 @@ export const load: PageServerLoad = async () => {
 		}));
 
 		return {
-			angkatanList
+			angkatanList,
 		};
 	} catch (err) {
 		console.error('Error loading angkatan data:', err);

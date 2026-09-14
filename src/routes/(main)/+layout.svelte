@@ -4,13 +4,15 @@
 	import Navbar from '$lib/components/navbar.svelte';
 	import MainFooter from './_components/mainFooter.svelte';
 	import { X } from 'lucide-svelte';
-	import uinIcon from '$lib/assets/uin-icon.svg'; // Sesuaikan path
 	import type { Snippet } from 'svelte';
 	import { Apptheme } from '$lib/global/theme';
 	import type { LayoutData } from '../$types';
 	import type { SubMenuItem } from '$lib/types/navbar';
 	import { navMenuItems } from '$lib/data/navbar';
 
+	import uinIcon from '$lib/assets/uin-icon.svg'; // Sesuaikan path
+	import GlobalSkeletonUser from '$lib/components/globalSkeletonUser.svelte';
+	import { navigating } from '$app/state';
 	interface Props {
 		data: LayoutData;
 		children: Snippet;
@@ -101,16 +103,19 @@
 		<Navbar navMenuItems={dynamicNavMenu} />
 	</header>
 
-	<!-- CONTENT RENDER (SvelteKit Slot) -->
+	{#if navigating.to}
+		<GlobalSkeletonUser />
+	{/if}
+
+	<!-- content render (sveltekit slot) -->
 	<div class="grow">
 		<!-- <slot /> -->
 		{@render children()}
 	</div>
 
-	<!-- FOOTER GLOBAL -->
+	<!-- footer GLOBAL -->
 	<MainFooter />
-
-	<!-- DRAWER NAVIGATION GLOBAL -->
+	<!-- drawer navigation global -->
 	{#if isDrawerOpen}
 		<div
 			class="bg-scitech-navy/95 fixed inset-0 z-50 flex flex-col justify-between p-8 backdrop-blur-2xl lg:p-16"

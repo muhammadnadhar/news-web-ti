@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
 	import TableContent from '$lib/components/admin/tableContent.svelte';
 	import { Plus, Edit, Trash2 } from 'lucide-svelte';
 
@@ -22,6 +24,12 @@
 		})
 	);
 
+	const addUrl = $derived.by(() => {
+		const currentPath = page.url.pathname;
+		// Jika sudah di halaman /add, tetap di halaman itu. Jika belum, tambahkan /add
+		return currentPath.endsWith('/add') ? currentPath : `${currentPath}/add`;
+	});
+
 	// Pagination Math
 	let totalEntries = $derived(filteredData.length);
 	let totalPages = $derived(Math.ceil(totalEntries / entriesPerPage) || 1);
@@ -32,19 +40,18 @@
 <div class="space-y-6 p-6 lg:p-10">
 	<!-- HEADER BAR -->
 	<div class="border-scitech-slate/20 border-b pb-4">
-		<h1 class="text-2xl font-bold tracking-tight text-white">Dosen & Staff</h1>
+		<h1 class="text-2xl font-bold tracking-tight text-text-main">Dosen & Staff</h1>
 	</div>
 
-	<!-- DATATABLE CONTAINER -->
 	<div
 		class="border-scitech-slate/20 bg-scitech-navy-glare space-y-4 rounded-2xl border p-6 shadow-xl"
 	>
-		<!-- CONTAINER HEADER: TITLE & BUTTON ADD -->
 		<div class="border-scitech-slate/10 flex items-center justify-between border-b pb-4">
 			<h2 class="text-scitech-cyan text-sm font-semibold">Data Dosen & Staff</h2>
 			<button
 				type="button"
-				class="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-2 text-xs font-medium text-white shadow-md transition-all hover:bg-indigo-700 active:scale-95"
+				class="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-2 text-xs font-medium text-text-main shadow-md transition-all hover:bg-indigo-700 active:scale-95"
+				onclick={() => goto(addUrl)}
 			>
 				<Plus class="h-4 w-4" />
 				<span>+ Dosen & Staff</span>
@@ -107,7 +114,7 @@
 									<!-- BUTTON EDIT -->
 									<button
 										type="button"
-										class="rounded bg-cyan-500 p-1.5 text-white transition-all hover:bg-cyan-600"
+										class="rounded bg-cyan-500 p-1.5 text-text-main transition-all hover:bg-cyan-600"
 										title="Edit Data"
 									>
 										<Edit class="h-3.5 w-3.5" />
@@ -118,7 +125,7 @@
 										<input type="hidden" name="id" value={item.id} />
 										<button
 											type="submit"
-											class="rounded bg-rose-500 p-1.5 text-white transition-all hover:bg-rose-600"
+											class="rounded bg-rose-500 p-1.5 text-text-main transition-all hover:bg-rose-600"
 											title="Hapus Data"
 										>
 											<Trash2 class="h-3.5 w-3.5" />
@@ -142,47 +149,47 @@
 		</TableContent>
 
 		<!-- PAGINATION FOOTER -->
-		<div
-			class="flex flex-col gap-4 pt-2 text-xs text-text-muted sm:flex-row sm:items-center sm:justify-between"
-		>
-			<div>
-				Showing {totalEntries === 0 ? 0 : startIndex + 1} to {Math.min(
-					startIndex + entriesPerPage,
-					totalEntries
-				)} of {totalEntries} entries
-			</div>
-
-			<div class="flex items-center gap-1">
-				<button
-					type="button"
-					disabled={currentPage === 1}
-					onclick={() => currentPage--}
-					class="border-scitech-slate/30 rounded border px-3 py-1.5 hover:bg-white/5 disabled:opacity-40"
-				>
-					Previous
-				</button>
-
-				{#each Array(totalPages) as _, i}
-					<button
-						type="button"
-						onclick={() => (currentPage = i + 1)}
-						class="border-scitech-slate/30 rounded border px-3 py-1.5 {currentPage === i + 1
-							? 'border-indigo-600 bg-indigo-600 text-white'
-							: 'hover:bg-white/5'}"
-					>
-						{i + 1}
-					</button>
-				{/each}
-
-				<button
-					type="button"
-					disabled={currentPage === totalPages}
-					onclick={() => currentPage++}
-					class="border-scitech-slate/30 rounded border px-3 py-1.5 hover:bg-white/5 disabled:opacity-40"
-				>
-					Next
-				</button>
-			</div>
-		</div>
+		<!-- <div -->
+		<!-- 	class="flex flex-col gap-4 pt-2 text-xs text-text-muted sm:flex-row sm:items-center sm:justify-between" -->
+		<!-- > -->
+		<!-- 	<div> -->
+		<!-- 		Showing {totalEntries === 0 ? 0 : startIndex + 1} to {Math.min( -->
+		<!-- 			startIndex + entriesPerPage, -->
+		<!-- 			totalEntries -->
+		<!-- 		)} of {totalEntries} entries -->
+		<!-- 	</div> -->
+		<!---->
+		<!-- 	<div class="flex items-center gap-1"> -->
+		<!-- 		<button -->
+		<!-- 			type="button" -->
+		<!-- 			disabled={currentPage === 1} -->
+		<!-- 			onclick={() => currentPage--} -->
+		<!-- 			class="border-scitech-slate/30 rounded border px-3 py-1.5 hover:bg-white/5 disabled:opacity-40" -->
+		<!-- 		> -->
+		<!-- 			Previous -->
+		<!-- 		</button> -->
+		<!---->
+		<!-- 		{#each Array(totalPages) as _, i} -->
+		<!-- 			<button -->
+		<!-- 				type="button" -->
+		<!-- 				onclick={() => (currentPage = i + 1)} -->
+		<!-- 				class="border-scitech-slate/30 rounded border px-3 py-1.5 {currentPage === i + 1 -->
+		<!-- 					? 'border-indigo-600 bg-indigo-600 text-text-main' -->
+		<!-- 					: 'hover:bg-white/5'}" -->
+		<!-- 			> -->
+		<!-- 				{i + 1} -->
+		<!-- 			</button> -->
+		<!-- 		{/each} -->
+		<!---->
+		<!-- 		<button -->
+		<!-- 			type="button" -->
+		<!-- 			disabled={currentPage === totalPages} -->
+		<!-- 			onclick={() => currentPage++} -->
+		<!-- 			class="border-scitech-slate/30 rounded border px-3 py-1.5 hover:bg-white/5 disabled:opacity-40" -->
+		<!-- 		> -->
+		<!-- 			Next -->
+		<!-- 		</button> -->
+		<!-- 	</div> -->
+		<!-- </div> -->
 	</div>
 </div>

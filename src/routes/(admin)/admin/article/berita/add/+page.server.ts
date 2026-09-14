@@ -1,6 +1,7 @@
+// src/routes/admin/berita/tambah/+page.server.ts
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
-import { randomUUID } from '$lib/server/crypto'; // Atau modul UUID generator Anda
+import { randomUUID } from '$lib/server/crypto';
 import { createNews } from '$lib/server/admin/repository/article/berita';
 
 export const actions: Actions = {
@@ -10,21 +11,14 @@ export const actions: Actions = {
 		const title = formData.get('title')?.toString().trim();
 		const category = formData.get('category')?.toString().trim();
 		const content = formData.get('content')?.toString().trim();
-		const photo = formData.get('photo') as File | null;
+		// Mengambil URL Cloudinary dari hidden input name="imageUrl"
+		const imageUrl = formData.get('imageUrl')?.toString().trim() || null;
 
-		// Validasi input
 		if (!title || !category || !content) {
 			return fail(400, {
 				error: 'Harap isi semua kolom yang wajib (*).',
-				values: { title, category, content }
+				values: { title, category, content, imageUrl }
 			});
-		}
-
-		// Contoh penanganan Upload Foto jika ada file
-		let photoUrl = $state<string>('');
-		if (photo && photo.size > 0) {
-			// Logika simpan file (misal: simpan ke static/uploads)
-			// photoUrl = await saveFile(photo);
 		}
 
 		const newsId = randomUUID();
@@ -33,14 +27,15 @@ export const actions: Actions = {
 			await createNews(newsId, {
 				title,
 				category,
+				content,
+				image_url: imageUrl,
 				published_at: new Date()
-				// Tambahkan field photoUrl/content jika schema repository Anda disesuaikan
 			});
 		} catch (err) {
 			console.error('Error creating news:', err);
 			return fail(500, {
 				error: 'Gagal menyimpan data berita ke database.',
-				values: { title, category, content }
+				values: { title, category, content, imageUrl }
 			});
 		}
 

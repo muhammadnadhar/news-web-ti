@@ -1,5 +1,7 @@
+import { toMySQLDateTime } from '$lib/server/database/core';
 import { query } from '$lib/server/database/runtimeDb'; // di gunakan oleh runntime bawaah
 import type { UserAdminItem } from '$lib/types/admin/user';
+import { createAttachmentKey } from 'svelte/attachments';
 
 export const tableAdminUser = 'usersAdmin';
 
@@ -10,7 +12,10 @@ CREATE TABLE IF NOT EXISTS ${tableAdminUser}(
     id VARCHAR(36) PRIMARY KEY, -- Menggunakan VARCHAR(36) jika ID berupa UUID string
     name VARCHAR(100) NOT NULL,
     username VARCHAR(50) NOT NULL UNIQUE,
-    role VARCHAR(20) NOT NULL CHECK (role IN ('Administrator', 'Dosen', 'Operator', 'Mahasiswa')),
+email VARCHAR(100) NOT NULL UNIQUE,
+avatar VARCHAR(100),
+    password VARCHAR(255) NOT NULL,
+role VARCHAR(20) NOT NULL CHECK (role IN ('Administrator', 'Supervisor', 'Author')),
     status VARCHAR(15) NOT NULL CHECK (status IN ('Active', 'Inactive')),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- Diubah ke snake_case agar sesuai best practice database
 );
@@ -52,6 +57,47 @@ export async function defaultUsersDatas(data: UserAdminItem[]) {
 		return result;
 	} catch (error) {
 		console.error('Gagal memasukkan data default user:', error);
+		throw error;
+	}
+}
+
+/**
+ * Memasukkan atau memperbarui satu data user default/seed ke dalam database
+ * @param {UserAdminItem} user - Single object data user
+ */
+export async function defaultUserData(user: UserAdminItem) {
+	if (!user) return;
+	const createdAtFormatted = toMySQLDateTime(user.createdAt);
+
+	const sql = `
+		INSERT INTO ${tableAdminUser} (id, name, username, email, password, role, status, created_at) 
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+		ON DUPLICATE KEY UPDATE 
+			name = VALUES(name),
+			username = VALUES(username),
+			email = VALUES(email),
+			password = VALUES(password),
+			role = VALUES(role),
+			status = VALUES(status)
+	`;
+
+	const params = [
+		user.id,
+		user.name,
+		user.username,
+		user.email,
+		user.password,
+		user.role,
+		user.status,
+		createdAtFormatted
+	];
+
+	try {
+		const result = await query(sql, params);
+		console.log(`Berhasil memproses insert/update user: ${user.username}`);
+		return result;
+	} catch (error) {
+		console.error(`Gagal memasukkan data user (${user.username}):`, error);
 		throw error;
 	}
 }

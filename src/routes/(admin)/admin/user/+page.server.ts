@@ -2,7 +2,7 @@ import { fail, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { type UserItem } from './proxy+page.server';
 import {
-	createUser,
+	createUserAdmin,
 	deleteUser,
 	getUsersAdmin,
 	isUsernameTaken
@@ -68,7 +68,7 @@ export const actions: Actions = {
 		// return { success: true, action: 'create' };
 		try {
 			// Simpan ke database MySQL
-			await createUser(newUser);
+			await createUserAdmin(newUser);
 			return { success: true, action: 'create' };
 		} catch (error) {
 			return fail(500, { message: 'Gagal menyimpan user ke database.' });

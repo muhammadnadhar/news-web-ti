@@ -1,5 +1,5 @@
 // semua seeder akan di jalkan di foler ini yang menjadi entry point data utama
-import { createUser } from '$lib/server/admin/repository/userAdmin';
+import { createUserAdmin } from '$lib/server/admin/repository/userAdmin';
 import { dbName, initializeDatabase, pool } from '$lib/server/database/runtimeDb';
 import {
 	AcademicCalendarTableSeed,
@@ -30,8 +30,8 @@ import {
 	VisiMisiTableSeed
 } from './admin/article/profile';
 import { AngkatanTableSeed, SemesterTableSeed } from './admin/dataset';
-import { DosenTableSeed, PerminatanTITableSeed, ProfilProdiTableSeed } from './admin/home';
-import { defaultUsersData, UserTableSeed } from './admin/userAdmin';
+import { DosenPrimaryTableSeed, PerminatanTITableSeed, ProfilProdiTableSeed } from './admin/home';
+import { UserTableSeed } from './admin/userAdmin';
 
 try {
 	//
@@ -41,14 +41,8 @@ try {
 	//
 	// TABLE >>>>>>>>>>>
 	//
-	// --------------- Section Admin --------------
 	// --------------- Section Admin (Dijalankan Berurutan) --------------
 	await UserTableSeed();
-
-	// HOME
-	await DosenTableSeed();
-	await PerminatanTITableSeed();
-	await ProfilProdiTableSeed();
 
 	// ARTICLE - akademik
 	await PedomanTaTableSeed();
@@ -90,23 +84,15 @@ try {
 	await AngkatanTableSeed();
 	await SemesterTableSeed();
 
-	// TABLE >>>>>>>>>>>	//
+	// HOME
+	await DosenPrimaryTableSeed(); // ini punya forengkey ke LecturerStaffTableSeed
+	await PerminatanTITableSeed();
+	await ProfilProdiTableSeed();
 	//
 
 	//
 	// Default Data in database
 	//
-
-	// Users
-	// user default loh yah
-	await createUser({
-		id: 'only-one',
-		name: 'dar',
-		username: 'muhammad nadhar',
-		role: 'Administrator',
-		status: 'Active',
-		createdAt: Date.now().toString()
-	});
 } catch (error) {
 	console.error(' Seeding gagal karena terjadi error:', error);
 } finally {
