@@ -2,6 +2,9 @@ import { tableStudentAchievement } from '$lib/seeder/admin/article/kemahasiswaan
 import { query } from '$lib/server/database/svelteDb';
 import type { StudentAchievementDTO } from '$lib/types/admin/article/kemahasiswaan';
 
+//
+// Mapress  : Mahasiswa Prestasi
+//
 
 /**
  * Mengambil seluruh data Mahasiswa Prestasi

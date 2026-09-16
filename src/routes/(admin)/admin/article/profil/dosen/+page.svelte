@@ -3,9 +3,53 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import TableContent from '$lib/components/admin/tableContent.svelte';
+	import TableSkeleton from '$lib/components/tableSkeleton.svelte';
+	import type { LecturerStaffItemDTO } from '$lib/types/admin/article/profile.js';
+	import type { TableContentType } from '$lib/types/tableContent.js';
+	import { gotoEdit, mergeNewPath } from '$lib/utils.js';
 	import { Plus, Edit, Trash2 } from 'lucide-svelte';
 
 	let { data } = $props();
+
+	/**
+	 * Mapper untuk mengonversi data LecturerStaffItemDTO dari database
+	 * ke format TableContentType yang dibutuhkan oleh komponen TableContent.
+	 */
+	export function mapLecturerStaffToTableContent(
+		items: LecturerStaffItemDTO[]
+	): TableContentType[] {
+		return items.map((item) => ({
+			id: item.id,
+			items: [
+				{
+					colomn: 'Foto',
+					row: item.photo_url || '-',
+					isImage: true
+				},
+				{
+					colomn: 'Nama Lengkap',
+					row: item.name
+				},
+				{
+					colomn: 'NIDN',
+					row: item.nidn || '-'
+				},
+				{
+					colomn: 'Peran',
+					row: item.is_primary ? `${item.role} Utama` : item.role
+				},
+				{
+					colomn: 'Keahlian / Tugas',
+					row: item.expertise
+				},
+				{
+					colomn: 'PDDikti',
+					row: item.pddikti_url || '-',
+					isLink: Boolean(item.pddikti_url)
+				}
+			]
+		}));
+	}
 
 	// State untuk Search dan Pagination
 	let searchQuery = $state('');
@@ -85,68 +129,85 @@
 			</div>
 		</div>
 
-		<!-- TABLE CONTENT -->
-		<TableContent>
-			{#snippet header()}
-				<tr>
-					<th class="p-3 text-left font-semibold">Nama</th>
-					<th class="p-3 text-left font-semibold">NIDN</th>
-					<th class="p-3 text-left font-semibold">Bidang</th>
-					<th class="w-24 p-3 text-center font-semibold">Menu</th>
-				</tr>
-			{/snippet}
+		{#await data.lecturerStaffList}
+			<TableSkeleton showTitle={true} title="Memuat Data Kerjasama..." columnsCount={6} />
+		{:then rawList}
+			<TableContent
+				title="Daftar Kerjasama"
+				addButtonLabel="Kerjasama"
+				data={mapLecturerStaffToTableContent(rawList)}
+				onAdd={() => goto(mergeNewPath('add'))}
+				onEdit={(data) => gotoEdit(data.id, page.url.pathname)}
+				onDelete={(data) => console.info('dlete dengan modal')}
+			/>
+		{:catch error}
+			<div class="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-400">
+				Gagal memuat data kerjasama: {error.message}
+			</div>
+		{/await}
 
-			{#snippet body()}
-				{#if paginatedData.length === 0}
-					<tr>
-						<td colspan="4" class="p-6 text-center text-text-muted">
-							Tidak ada data dosen atau staff ditemukan.
-						</td>
-					</tr>
-				{:else}
-					{#each paginatedData as item}
-						<tr class="border-scitech-slate/10 border-b transition-colors hover:bg-white/5">
-							<td class="p-3 font-medium text-text-main">{item.name}</td>
-							<td class="p-3 text-text-muted">{item.nidn || '-'}</td>
-							<td class="p-3 text-text-muted">{item.expertise}</td>
-							<td class="p-3 text-center">
-								<div class="flex items-center justify-center gap-1">
-									<!-- BUTTON EDIT -->
-									<button
-										type="button"
-										class="rounded bg-cyan-500 p-1.5 text-text-main transition-all hover:bg-cyan-600"
-										title="Edit Data"
-									>
-										<Edit class="h-3.5 w-3.5" />
-									</button>
-
-									<!-- BUTTON DELETE -->
-									<form method="POST" action="?/delete" use:enhance class="inline">
-										<input type="hidden" name="id" value={item.id} />
-										<button
-											type="submit"
-											class="rounded bg-rose-500 p-1.5 text-text-main transition-all hover:bg-rose-600"
-											title="Hapus Data"
-										>
-											<Trash2 class="h-3.5 w-3.5" />
-										</button>
-									</form>
-								</div>
-							</td>
-						</tr>
-					{/each}
-				{/if}
-			{/snippet}
-
-			{#snippet footer()}
-				<tr>
-					<th class="p-3 text-left font-semibold">Nama</th>
-					<th class="p-3 text-left font-semibold">NIDN</th>
-					<th class="p-3 text-left font-semibold">Bidang</th>
-					<th class="p-3 text-center font-semibold">Menu</th>
-				</tr>
-			{/snippet}
-		</TableContent>
+		<!-- table content -->
+		<!-- <TableContent> -->
+		<!-- 	{#snippet header()} -->
+		<!-- 		<tr> -->
+		<!-- 			<th class="p-3 text-left font-semibold">Nama</th> -->
+		<!-- 			<th class="p-3 text-left font-semibold">NIDN</th> -->
+		<!-- 			<th class="p-3 text-left font-semibold">Bidang</th> -->
+		<!-- 			<th class="w-24 p-3 text-center font-semibold">Menu</th> -->
+		<!-- 		</tr> -->
+		<!-- 	{/snippet} -->
+		<!---->
+		<!-- 	{#snippet body()} -->
+		<!-- 		{#if paginatedData.length === 0} -->
+		<!-- 			<tr> -->
+		<!-- 				<td colspan="4" class="p-6 text-center text-text-muted"> -->
+		<!-- 					Tidak ada data dosen atau staff ditemukan. -->
+		<!-- 				</td> -->
+		<!-- 			</tr> -->
+		<!-- 		{:else} -->
+		<!-- 			{#each paginatedData as item} -->
+		<!-- 				<tr class="border-scitech-slate/10 border-b transition-colors hover:bg-white/5"> -->
+		<!-- 					<td class="p-3 font-medium text-text-main">{item.name}</td> -->
+		<!-- 					<td class="p-3 text-text-muted">{item.nidn || '-'}</td> -->
+		<!-- 					<td class="p-3 text-text-muted">{item.expertise}</td> -->
+		<!-- 					<td class="p-3 text-center"> -->
+		<!-- 						<div class="flex items-center justify-center gap-1"> -->
+		<!-- 							<!-- BUTTON EDIT --> -->
+		<!-- 							<button -->
+		<!-- 								type="button" -->
+		<!-- 								class="rounded bg-cyan-500 p-1.5 text-text-main transition-all hover:bg-cyan-600" -->
+		<!-- 								title="Edit Data" -->
+		<!-- 							> -->
+		<!-- 								<Edit class="h-3.5 w-3.5" /> -->
+		<!-- 							</button> -->
+		<!---->
+		<!-- 							<!-- BUTTON DELETE --> -->
+		<!-- 							<form method="POST" action="?/delete" use:enhance class="inline"> -->
+		<!-- 								<input type="hidden" name="id" value={item.id} /> -->
+		<!-- 								<button -->
+		<!-- 									type="submit" -->
+		<!-- 									class="rounded bg-rose-500 p-1.5 text-text-main transition-all hover:bg-rose-600" -->
+		<!-- 									title="Hapus Data" -->
+		<!-- 								> -->
+		<!-- 									<Trash2 class="h-3.5 w-3.5" /> -->
+		<!-- 								</button> -->
+		<!-- 							</form> -->
+		<!-- 						</div> -->
+		<!-- 					</td> -->
+		<!-- 				</tr> -->
+		<!-- 			{/each} -->
+		<!-- 		{/if} -->
+		<!-- 	{/snippet} -->
+		<!---->
+		<!-- 	{#snippet footer()} -->
+		<!-- 		<tr> -->
+		<!-- 			<th class="p-3 text-left font-semibold">Nama</th> -->
+		<!-- 			<th class="p-3 text-left font-semibold">NIDN</th> -->
+		<!-- 			<th class="p-3 text-left font-semibold">Bidang</th> -->
+		<!-- 			<th class="p-3 text-center font-semibold">Menu</th> -->
+		<!-- 		</tr> -->
+		<!-- 	{/snippet} -->
+		<!-- </TableContent> -->
 
 		<!-- PAGINATION FOOTER -->
 		<!-- <div -->

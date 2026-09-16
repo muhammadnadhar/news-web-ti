@@ -2,6 +2,8 @@
 	import { goto } from '$app/navigation';
 	import { enhance } from '$app/forms';
 	import { ArrowLeft, Save, BookOpen, AlertCircle } from 'lucide-svelte';
+	import type { MessageStatus } from '$lib/components/admin/message.svelte';
+	import Message from '$lib/components/admin/message.svelte';
 
 	let { form } = $props();
 
@@ -9,7 +11,37 @@
 	let loading = $state(false);
 	let title = $state('');
 	let description = $state('');
+
+	let isSubmitting = $state(false);
+	let showMessage = $state(false);
+
+	let messageConfig = $state<{
+		status: MessageStatus;
+		title: string;
+		message: string;
+	}>({
+		status: 'info',
+		title: '',
+		message: ''
+	});
+	function triggerMessage(status: MessageStatus, title: string, message: string) {
+		messageConfig = { status, title, message };
+		showMessage = true;
+	}
 </script>
+
+{#if showMessage}
+	<div class="mb-6">
+		<Message
+			status={messageConfig.status}
+			title={messageConfig.title}
+			message={messageConfig.message}
+			dismissible={true}
+			timeout={5000}
+			onclose={() => (showMessage = false)}
+		/>
+	</div>
+{/if}
 
 <div class="mx-auto max-w-3xl space-y-6">
 	<!-- Back Button & Header -->
@@ -17,7 +49,7 @@
 		<button
 			type="button"
 			onclick={() => history.back()}
-			class="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-bg-secondary/60 text-white transition-all hover:bg-white/10"
+			class="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-bg-secondary/60 text-text-main transition-all hover:bg-white/10"
 		>
 			<ArrowLeft class="h-5 w-5" />
 		</button>
@@ -44,10 +76,35 @@
 		method="POST"
 		action="?/create"
 		use:enhance={() => {
-			loading = true;
-			return async ({ update }) => {
-				loading = false;
-				await update();
+			isSubmitting = true;
+			showMessage = false; // Sembunyikan pesan lama saat submitting
+
+			return async ({ result, update }) => {
+				isSubmitting = false;
+
+				if (result.type === 'success' && result.data?.success) {
+					triggerMessage(
+						'success',
+						(result.data.title as string) || 'Berhasil',
+						result.data.message as string
+					);
+
+					// Reset state checkbox dan isi input form
+					await update({ reset: true });
+				} else if (result.type === 'failure' && result.data) {
+					triggerMessage(
+						'error',
+						(result.data.title as string) || 'Gagal Menyimpan',
+						result.data.message as string
+					);
+
+					// Pertahankan isi input yang dimasukkan user sebelumnya
+					await update();
+				} else {
+					// Handling Error Tak Terduga
+					triggerMessage('error', 'Error', 'Terjadi kesalahan sistem saat memproses data.');
+					await update();
+				}
 			};
 		}}
 		class="space-y-6 rounded-2xl border border-white/10 bg-bg-secondary/40 p-6 backdrop-blur-md md:p-8"
@@ -64,7 +121,7 @@
 				maxlength="150"
 				required
 				placeholder="Contoh: Kecerdasan Buatan (AI) & Data Science"
-				class="w-full rounded-xl border border-white/10 bg-bg-primary/60 px-4 py-3 text-sm text-white placeholder-text-muted/50 transition-all outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20"
+				class="w-full rounded-xl border border-white/10 bg-bg-primary/60 px-4 py-3 text-sm text-text-main placeholder-text-muted/50 transition-all outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20"
 			/>
 			<div class="flex justify-between text-xs text-text-muted">
 				<span>Maksimal 150 karakter</span>
@@ -84,7 +141,7 @@
 				rows="5"
 				required
 				placeholder="Jelaskan cakupan topik, mata kuliah fokus, atau prospek karir dari peminatan ini..."
-				class="w-full rounded-xl border border-white/10 bg-bg-primary/60 px-4 py-3 text-sm text-white placeholder-text-muted/50 transition-all outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20"
+				class="w-full rounded-xl border border-white/10 bg-bg-primary/60 px-4 py-3 text-sm text-text-main placeholder-text-muted/50 transition-all outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20"
 			></textarea>
 		</div>
 
@@ -93,7 +150,7 @@
 			<button
 				type="button"
 				onclick={() => history.back()}
-				class="rounded-xl border border-white/10 px-5 py-2.5 text-sm font-semibold text-text-muted transition-all hover:bg-white/5 hover:text-white"
+				class="rounded-xl border border-white/10 px-5 py-2.5 text-sm font-semibold text-text-muted transition-all hover:bg-white/5 hover:text-text-main"
 			>
 				Batal
 			</button>

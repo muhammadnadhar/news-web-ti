@@ -24,7 +24,7 @@
 		{#key currentText}
 			<div class="animate-text-flip flex transform-gpu flex-col items-start">
 				<h2
-					class="text-3xl leading-tight font-black tracking-tight text-white sm:text-5xl md:text-6xl"
+					class="text-3xl leading-tight font-black tracking-tight text-text-main sm:text-5xl md:text-6xl"
 				>
 					<span
 						class="to-scitech-mint/80 bg-gradient-to-r from-white via-slate-100 bg-clip-text text-transparent"
@@ -60,7 +60,7 @@
 				href="https://uinarraniry.siakadcloud.com/"
 				target="_blank"
 				rel="noopener noreferrer"
-				class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-medium text-white transition-all hover:bg-white/10 active:scale-95 sm:w-auto sm:px-3.5"
+				class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-medium text-text-main transition-all hover:bg-white/10 active:scale-95 sm:w-auto sm:px-3.5"
 			>
 				<BookOpen class="text-scitech-cyan h-3.5 w-3.5 shrink-0" />
 				<span class="truncate">Portal SIAKAD</span>
@@ -68,7 +68,7 @@
 
 			<a
 				href="/pmb"
-				class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-medium text-white transition-all hover:bg-white/10 active:scale-95 sm:w-auto sm:px-3.5"
+				class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-medium text-text-main transition-all hover:bg-white/10 active:scale-95 sm:w-auto sm:px-3.5"
 			>
 				<GraduationCap class="text-scitech-purple h-3.5 w-3.5 shrink-0" />
 				<span class="truncate">Daftar PMB</span>
@@ -80,7 +80,7 @@
 				onclick={onToggleAnimation}
 				title={isPlaying ? 'Hentikan Animasi' : 'Jalankan Animasi'}
 				aria-label={isPlaying ? 'Hentikan Animasi' : 'Jalankan Animasi'}
-				class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-medium text-white transition-all hover:bg-white/10 active:scale-95 sm:w-auto sm:px-3.5"
+				class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-medium text-text-main transition-all hover:bg-white/10 active:scale-95 sm:w-auto sm:px-3.5"
 			>
 				{#if isPlaying}
 					<PauseIcon class="text-scitech-mint h-3.5 w-3.5 shrink-0" />

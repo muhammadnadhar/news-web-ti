@@ -81,8 +81,8 @@
 
 <!-- sidebar utama (sticky & responsive drawer) -->
 <aside
-	class="bg-scitech-navy/95 fixed top-0 left-0 z-40 flex h-screen scrollbar-none flex-col justify-between
-         overflow-y-auto border-r border-white/10 backdrop-blur-xl transition-all duration-300 ease-in-out lg:sticky
+	class="fixed top-0 left-0 z-40 flex h-screen scrollbar-none flex-col justify-between overflow-y-auto
+         border-r border-border-color/10 bg-bg-secondary/95 backdrop-blur-xl transition-all duration-300 ease-in-out lg:sticky
          {isMobileOpen ? 'w-72 translate-x-0' : '-translate-x-full lg:translate-x-0'} 
          {isCollapsed ? 'lg:w-20' : 'lg:w-72'}"
 >

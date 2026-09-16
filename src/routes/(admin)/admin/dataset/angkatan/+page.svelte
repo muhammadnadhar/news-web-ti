@@ -4,8 +4,11 @@
 	import TableContent from '$lib/components/admin/tableContent.svelte';
 	import type { TableContentType } from '$lib/types/tableContent';
 	import { enhance } from '$app/forms';
-	import { mergeNewPath } from '$lib/utils.js';
+	import { gotoEdit, mergeNewPath } from '$lib/utils.js';
 	import { goto } from '$app/navigation';
+	import type { AngkatanDTO } from '$lib/types/admin/dataset.js';
+	import TableSkeleton from '$lib/components/tableSkeleton.svelte';
+	import { page } from '$app/state';
 
 	// Data Angkatan sesuai Gambar 2
 	let { data } = $props();
@@ -16,6 +19,33 @@
 	let isEditMode = $state(false);
 	let selectedId = $state('');
 	let yearInput = $state('');
+
+	/**
+	 * Mengubah list AngkatanDTO menjadi format TableContentType
+	 */
+	export function mapAngkatanToTableContent(dataList: AngkatanDTO[]): TableContentType[] {
+		if (!Array.isArray(dataList)) return [];
+
+		return dataList.map((item) => ({
+			id: item.id,
+			items: [
+				{
+					colomn: 'Tahun Angkatan',
+					row: item.year ?? '-'
+				},
+				{
+					colomn: 'Tanggal Dibuat',
+					row: item.created_at
+						? new Date(item.created_at).toLocaleDateString('id-ID', {
+								day: 'numeric',
+								month: 'short',
+								year: 'numeric'
+							})
+						: '-'
+				}
+			]
+		}));
+	}
 
 	// Sync local state dengan data server
 	let angkatanList = $derived<TableContentType[]>(data.angkatanList || []);
@@ -58,7 +88,7 @@
 		>
 			<Sparkles class="text-scitech-mint h-4 w-4" /> Dataset Akademik
 		</span>
-		<h1 class="text-2xl font-extrabold tracking-tight text-white sm:text-3xl">Angkatan</h1>
+		<h1 class="text-2xl font-extrabold tracking-tight text-text-main sm:text-3xl">Angkatan</h1>
 	</div>
 
 	<!-- Main Table Container Card -->
@@ -74,7 +104,7 @@
 	<!-- 				<Users class="h-5 w-5" /> -->
 	<!-- 			</div> -->
 	<!-- 			<div> -->
-	<!-- 				<h2 class="text-base font-bold text-white sm:text-lg"> -->
+	<!-- 				<h2 class="text-base font-bold text-text-main sm:text-lg"> -->
 	<!-- 					Data Angkatan Teknologi Informasi -->
 	<!-- 				</h2> -->
 	<!-- 				<p class="text-text-muted text-xs">Master data tahun kohort mahasiswa</p> -->
@@ -90,13 +120,13 @@
 	<!-- 		</button> -->
 	<!-- 	</div> -->
 	<!---->
-	<!-- 	<!-- Controls Bar --> 
+	<!-- 	<!-- Controls Bar -->
 	<!-- 	<div class="flex flex-col justify-between gap-4 pt-2 md:flex-row md:items-center"> -->
 	<!-- 		<div class="text-text-muted flex items-center gap-2 text-xs font-medium"> -->
 	<!-- 			<span>Show</span> -->
 	<!-- 			<select -->
 	<!-- 				bind:value={entriesPerPage} -->
-	<!-- 				class="bg-scitech-navy focus:border-scitech-mint cursor-pointer rounded-xl border border-white/15 px-3 py-1.5 text-white transition-colors focus:outline-none" -->
+	<!-- 				class="bg-scitech-navy focus:border-scitech-mint cursor-pointer rounded-xl border border-white/15 px-3 py-1.5 text-text-main transition-colors focus:outline-none" -->
 	<!-- 			> -->
 	<!-- 				<option value={10}>10</option> -->
 	<!-- 				<option value={25}>25</option> -->
@@ -111,7 +141,7 @@
 	<!-- 				type="text" -->
 	<!-- 				placeholder="Search..." -->
 	<!-- 				bind:value={searchQuery} -->
-	<!-- 				class="bg-scitech-navy/80 placeholder:text-text-muted focus:border-scitech-mint/80 w-full rounded-xl border border-white/15 py-2.5 pr-4 pl-10 text-xs text-white transition-all focus:outline-none" -->
+	<!-- 				class="bg-scitech-navy/80 placeholder:text-text-muted focus:border-scitech-mint/80 w-full rounded-xl border border-white/15 py-2.5 pr-4 pl-10 text-xs text-text-main transition-all focus:outline-none" -->
 	<!-- 			/> -->
 	<!-- 		</div> -->
 	<!-- 	</div> -->
@@ -136,7 +166,7 @@
 	<!-- 		{#each filteredList as item (item.id)} -->
 	<!-- 			<tr class="group transition-colors hover:bg-white/[0.03]"> -->
 	<!-- 				<td -->
-	<!-- 					class="group-hover:text-scitech-mint p-4 font-mono text-sm font-bold text-white transition-colors" -->
+	<!-- 					class="group-hover:text-scitech-mint p-4 font-mono text-sm font-bold text-text-main transition-colors" -->
 	<!-- 				> -->
 	<!-- 					Angkatan {item.nama} -->
 	<!-- 				</td> -->
@@ -163,13 +193,35 @@
 	<!-- </table> -->
 </div>
 <!-- pindahkan ke table sekarang -->
-<TableContent
-	title="Data Angkatan Teknologi Informasi"
-	addButtonLabel="+ Angkatan"
-	data={filteredList}
-	onAdd={() =>goto( mergeNewPath("add"))}
-	onEdit={()=> console.info("edit")}
-/>
+
+{#await data.angkatanList}
+	<TableSkeleton showTitle={true} title="Memuat Data Kerjasama..." columnsCount={4} />
+{:then rawList}
+	<TableContent
+		title="Data Angkatan Teknologi Informasi"
+		addButtonLabel="+ Angkatan"
+		data={mapAngkatanToTableContent(rawList)}
+		onAdd={() => goto(mergeNewPath('add'))}
+		onEdit={(data) => gotoEdit(data.id, page.url.pathname)}
+		deleteAction="?/delete"
+		onDeleteSuccess={(res) =>
+			triggerMessage(
+				res?.status ?? 'success',
+				res?.title ?? 'Berhasil',
+				res?.message ?? 'Data angkatan berhasil dihapus.'
+			)}
+		onDeleteError={(res) =>
+			triggerMessage(
+				res?.status ?? 'error',
+				res?.title ?? 'Gagal',
+				res?.message ?? 'Gagal menghapus data angkatan.'
+			)}
+	/>
+{:catch error}
+	<div class="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-400">
+		Gagal memuat data kerjasama: {error.message}
+	</div>
+{/await}
 
 <!-- Pagination Footer -->
 <!-- 		<div class="flex flex-col items-center justify-between gap-4 pt-2 sm:flex-row"> -->
@@ -205,10 +257,10 @@
 <!-- 			class="bg-scitech-navy w-full max-w-md space-y-6 rounded-3xl border border-white/15 p-6 shadow-2xl sm:p-8" -->
 <!-- 		> -->
 <!-- 			<div class="flex items-center justify-between border-b border-white/10 pb-4"> -->
-<!-- 				<h3 class="text-base font-bold text-white"> -->
+<!-- 				<h3 class="text-base font-bold text-text-main"> -->
 <!-- 					{isEditMode ? 'Edit Data Angkatan' : 'Tambah Angkatan Baru'} -->
 <!-- 				</h3> -->
-<!-- 				<button type="button" onclick={closeModal} class="text-text-muted hover:text-white"> -->
+<!-- 				<button type="button" onclick={closeModal} class="text-text-muted hover:text-text-main"> -->
 <!-- 					<X class="h-5 w-5" /> -->
 <!-- 				</button> -->
 <!-- 			</div> -->
@@ -237,7 +289,7 @@
 <!-- 						required -->
 <!-- 						bind:value={yearInput} -->
 <!-- 						placeholder="Contoh: 2024" -->
-<!-- 						class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-white/15 px-4 py-2.5 text-xs text-white focus:outline-none" -->
+<!-- 						class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-white/15 px-4 py-2.5 text-xs text-text-main focus:outline-none" -->
 <!-- 					/> -->
 <!-- 				</div> -->
 <!---->

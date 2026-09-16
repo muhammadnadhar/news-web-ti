@@ -4,6 +4,10 @@
 	import TableContent from '$lib/components/admin/tableContent.svelte';
 	import type { TableContentType } from '$lib/types/tableContent';
   import type { StudentAchievementDTO } from '$lib/types/admin/article/kemahasiswaan';
+	import TableSkeleton from '$lib/components/tableSkeleton.svelte';
+	import { gotoEdit, mergeNewPath } from '$lib/utils.js';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
 
 	let { data } = $props();
 
@@ -18,8 +22,42 @@
 	let achievementNameInput = $state('');
 
 	// Sync local state dengan data server
-	let achievementList = $derived<TableContentType[]>(data.achievementList || []);
-	let rawAchievementList = $derived<StudentAchievementDTO[]>(data.rawAchievementList || []);
+/**
+ * Mapper untuk mengonversi data StudentAchievementDTO dari database
+ * ke format TableContentType yang dibutuhkan oleh komponen TableContent
+ */
+export function mapStudentAchievementToTableContent(
+	items: StudentAchievementDTO[]
+): TableContentType[] {
+	if (!Array.isArray(items)) return [];
+
+	return items.map((item) => ({
+		id: item.id,
+		items: [
+			{
+				colomn: 'Nama Mahasiswa',
+				row: item.student_name
+			},
+			{
+				colomn: 'Nama Prestasi',
+				row: item.achievement_name
+			},
+			{
+				colomn: 'Kategori',
+				row: item.is_academic === 'y' ? 'Akademik' : 'Non-Akademik'
+			},
+			{
+				colomn: 'Angkatan',
+				row: item.batch_year
+			},
+			{
+				colomn: 'Semester',
+				row: item.semester
+			}
+		]
+	}));
+}
+
 
 	// Modal Handlers
 	function openAddModal() {
@@ -62,7 +100,7 @@
 
 	function closeModal() {
 		isModalOpen = false;
-		selectedId = '';
+	selectedId = '';
 		studentNameInput = '';
 		isAcademicInput = 'y';
 		batchYearInput = '';
@@ -83,13 +121,25 @@
 	</div>
 
 	<!-- Component TableContent -->
-	<TableContent
-		title="Data Mahasiswa Prestasi"
-		addButtonLabel="+ Mahasiswa Prestasi"
-		data={achievementList}
-		onAdd={openAddModal}
-		onEdit={openEditModal}
-	/>
+
+	{#await data.rawAchievementList}
+			<TableSkeleton showTitle={true} title="Memuat Data Mahasiswa Prestasi..." columnsCount={4} />
+		{:then rawList}
+			<TableContent
+					title="Data Mahasiswa Prestasi"
+		addButtonLabel=" Mahasiswa Prestasi"
+				data={mapStudentAchievementToTableContent(rawList)}
+				onAdd={() => goto(mergeNewPath('add'))}
+				onEdit={(data) => gotoEdit(data.id, page.url.pathname)}
+				onDelete={(data) => console.info('dlete dengan modal')}
+			/>
+		{:catch error}
+			<div class="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-400">
+				Gagal memuat data kerjasama: {error.message}
+			</div>
+		{/await}
+
+
 </div>
 
 <!-- Modal Form CRUD Mahasiswa Prestasi -->
@@ -122,7 +172,6 @@
 				<input type="hidden" name="id" value={selectedId} />
 				<input type="hidden" name="is_edit" value={isEditMode ? 'true' : 'false'} />
 
-				<!-- Nama Mahasiswa -->
 				<div>
 					<label for="student_name" class="text-text-muted mb-1 block text-xs font-medium">
 						Nama Mahasiswa<span class="text-rose-400">*</span>

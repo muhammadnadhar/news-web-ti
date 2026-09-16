@@ -1,5 +1,6 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
+import { createSemester } from '$lib/server/admin/repository/dataset/semester';
 
 export const actions: Actions = {
 	default: async ({ request }) => {
@@ -14,6 +15,8 @@ export const actions: Actions = {
 		if (!name || name.trim() === '') {
 			return fail(400, {
 				success: false,
+				title: 'Gagal',
+				status: 'warning' as const,
 				message: 'Nama Semester wajib diisi.',
 				values: { name, academicYear, isActive }
 			});
@@ -23,6 +26,10 @@ export const actions: Actions = {
 		if (!academicYear || academicYear.trim() === '') {
 			return fail(400, {
 				success: false,
+
+				title: 'Gagal',
+
+				status: 'warning' as const,
 				message: 'Tahun Ajaran wajib diisi.',
 				values: { name, academicYear, isActive }
 			});
@@ -36,13 +43,16 @@ export const actions: Actions = {
 
 			if (!success) {
 				return fail(500, {
+					title: 'Gagal',
 					success: false,
+					status: 'error' as const,
 					message: 'Gagal menyimpan data Semester ke database.',
 					values: { name, academicYear, isActive }
 				});
 			}
 		} catch (error: any) {
 			return fail(500, {
+				title: 'Gagal',
 				success: false,
 				message: 'Terjadi kesalahan sistem: ' + error.message,
 				values: { name, academicYear, isActive }
@@ -50,6 +60,12 @@ export const actions: Actions = {
 		}
 
 		// Redirect ke halaman daftar Semester
-		throw redirect(303, '/admin/akademik/semester');
+		// throw redirect(303, '/admin/akademik/semester');
+		return {
+			success: true,
+			status: 'success' as const,
+			title: 'Berhasil',
+			message: 'Data  semester berhasil diperbarui!'
+		};
 	}
 };

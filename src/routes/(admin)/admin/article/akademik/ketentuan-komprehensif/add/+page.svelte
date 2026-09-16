@@ -3,6 +3,14 @@
 	import { CldUploadWidget } from 'svelte-cloudinary';
 	import FormEditor from '$lib/components/admin/formEditor.svelte';
 	import type { ActionData } from './$types';
+	import {
+		folder_cloudinary_admin_article_akademik,
+		getUploadConfig,
+		getUploadOptions,
+		upload_cloudinary_preset
+	} from '$lib/cloudinary/client';
+	import { UploadCloud } from 'lucide-svelte';
+	import Message from '$lib/components/admin/message.svelte';
 
 	let { form }: { form: ActionData } = $props();
 
@@ -21,6 +29,22 @@
 	function removeImage() {
 		imageUrl = '';
 	}
+	let isSubmitting = $state(false);
+	let messageState = $state<{
+		show: boolean;
+		type: 'success' | 'error';
+		title: string;
+		message: string;
+	}>({
+		show: false,
+		type: 'success',
+		title: '',
+		message: ''
+	});
+
+	function closeMessage() {
+		messageState.show = false;
+	}
 </script>
 
 <div class="container">
@@ -29,15 +53,14 @@
 	<!-- 	<h1>Tambah Rekrutmen Asisten Baru</h1> -->
 	<!-- </header> -->
 
-	{#if form?.message}
-		<div class="alert error">
-			{form.message}
-		</div>
-	{/if}
+	<!-- {#if form?.message} -->
+	<!-- 	<div class="alert error"> -->
+	<!-- 		{form.message} -->
+	<!-- 	</div> -->
+	<!-- {/if} -->
 
 	<div class="card">
 		<form method="POST" use:enhance class="form">
-			<!-- Field: Judul Rekrutmen -->
 			<div class="form-group">
 				<label for="title">Judul / Ketentuan Rekrutmen <span class="required">*</span></label>
 				<input
@@ -50,7 +73,6 @@
 				/>
 			</div>
 
-			<!-- Field: Upload Foto Sampul/Poster dengan Cloudinary -->
 			<div class="form-group">
 				<label for="image_upload">Poster / Foto Pendukung</label>
 				<input type="hidden" name="image_url" value={imageUrl} />
@@ -63,9 +85,20 @@
 						</button>
 					</div>
 				{:else}
-					<CldUploadWidget uploadPreset="ml_default" onSuccess={handleUploadSuccess} let:open>
-						<button type="button" class="btn-upload" onclick={() => open()}>
-							📷 Unggah Poster / Gambar (Cloudinary)
+					<CldUploadWidget
+						config={getUploadConfig()}
+						options={getUploadOptions(folder_cloudinary_admin_article_akademik)}
+						uploadPreset={upload_cloudinary_preset}
+						onSuccess={handleUploadSuccess}
+						let:open
+					>
+						<button
+							type="button"
+							onclick={() => open()}
+							class="bg-color-bg-secondary text-text-accent-primary hover:bg-color-border-light inline-flex items-center gap-2 rounded-xl border border-border-light px-4 py-2.5 text-xs font-semibold shadow-sm transition-all"
+						>
+							<UploadCloud class="h-4 w-4" />
+							Unggah Poster / Gambar (Cloudinary)
 						</button>
 					</CldUploadWidget>
 				{/if}
@@ -82,14 +115,23 @@
 				/>
 			</div>
 
-			<!-- Actions -->
 			<div class="form-actions">
-				<a href="/admin/akademik/rekrutmen-asisten" class="btn-cancel">Batal</a>
+				<button onclick={() => history.back()} class="btn-cancel">Batal</button>
 				<button type="submit" class="btn-save">Simpan Rekrutmen</button>
 			</div>
 		</form>
 	</div>
 </div>
+
+{#if messageState.show}
+	<Message
+		type={messageState.type}
+		title={messageState.title}
+		message={messageState.message}
+		isOpen={messageState.show}
+		onClose={closeMessage}
+	/>
+{/if}
 
 <style>
 	.container {

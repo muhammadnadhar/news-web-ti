@@ -1,3 +1,12 @@
+// Interface DTO disesuaikan dengan skema tabel
+export interface ProfileDashboardDTO {
+	id: string;
+	title: string;
+	image_path: string;
+	created_at?: Date | string;
+	updated_at?: Date | string;
+}
+
 // Interface Data Dosen
 export interface PrimaryDosenDTO {
 	primary_id: string;

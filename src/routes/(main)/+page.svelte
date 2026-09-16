@@ -1,5 +1,4 @@
 <script lang="ts">
-	import GetStartedCard from '$lib/components/get.started.svelte';
 
 	import NewsSection from './_components/newsSection.svelte';
 	import HomeSection from './_components/homeSection.svelte';
@@ -7,6 +6,8 @@
 	import uinFrontImg from '$lib/assets/uin-front.jpg';
 	import { fade } from 'svelte/transition';
 	import { onMount } from 'svelte';
+
+import GetStartedCard from "./_components/get.started.svelte";
 
 	let { data } = $props();
 

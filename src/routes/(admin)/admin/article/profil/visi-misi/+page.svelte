@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-  import FormEditor from "$lib/components/admin/formEditor.svelte"
+	import FormEditor from '$lib/components/admin/formEditor.svelte';
 	import { Send } from 'lucide-svelte';
 
 	// Props dari SvelteKit PageData
@@ -13,12 +13,10 @@
 </script>
 
 <div class="space-y-6 p-6 lg:p-10">
-	<!-- TITLE BAR -->
 	<div class="border-scitech-slate/20 border-b pb-4">
-		<h1 class="text-2xl font-bold tracking-tight text-white">Visi Misi</h1>
+		<h1 class="text-2xl font-bold tracking-tight text-text-main">Visi Misi</h1>
 	</div>
 
-	<!-- FORM CONTAINER -->
 	<div class="border-scitech-slate/20 bg-scitech-navy-glare rounded-2xl border p-6 shadow-xl">
 		<h2 class="text-scitech-mint mb-6 text-sm font-semibold">Form Ubah Data Visi Misi</h2>
 
@@ -38,7 +36,7 @@
 
 			<!-- Input Editor Container -->
 			<div class="space-y-2">
-				<label for="content" class="text-text-main text-xs font-medium">
+				<label for="content" class="text-xs font-medium text-text-main">
 					Isi Visi Misi<span class="text-scitech-error">*</span>
 				</label>
 

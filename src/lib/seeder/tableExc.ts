@@ -30,7 +30,12 @@ import {
 	VisiMisiTableSeed
 } from './admin/article/profile';
 import { AngkatanTableSeed, SemesterTableSeed } from './admin/dataset';
-import { DosenPrimaryTableSeed, PerminatanTITableSeed, ProfilProdiTableSeed } from './admin/home';
+import {
+	DosenPrimaryTableSeed,
+	PerminatanTITableSeed,
+	ProfileDashboardTableSeed,
+	ProfilProdiTableSeed
+} from './admin/home';
 import { UserTableSeed } from './admin/userAdmin';
 
 try {
@@ -88,7 +93,7 @@ try {
 	await DosenPrimaryTableSeed(); // ini punya forengkey ke LecturerStaffTableSeed
 	await PerminatanTITableSeed();
 	await ProfilProdiTableSeed();
-	//
+	await ProfileDashboardTableSeed();
 
 	//
 	// Default Data in database

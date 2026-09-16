@@ -2,11 +2,33 @@
 	import { enhance } from '$app/forms';
 	import { CldUploadWidget } from 'svelte-cloudinary';
 	import type { ActionData } from './$types';
+	import { goto } from '$app/navigation';
+	import { ImageIcon } from 'lucide-svelte';
+	import type { MessageStatus } from '$lib/components/admin/message.svelte';
+	import Message from '$lib/components/admin/message.svelte';
 
 	let { form }: { form: ActionData } = $props();
 
 	// State lokal untuk gambar penerima beasiswa
 	let imageUrl = $state(form?.values?.imageUrl || '');
+
+	let isSubmitting = $state(false);
+	let showMessage = $state(false);
+
+	let messageConfig = $state<{
+		status: MessageStatus;
+		title: string;
+		message: string;
+	}>({
+		status: 'info',
+		title: '',
+		message: ''
+	});
+
+	function triggerMessage(status: MessageStatus, title: string, message: string) {
+		messageConfig = { status, title, message };
+		showMessage = true;
+	}
 
 	// Handler saat gambar berhasil diunggah ke Cloudinary
 	function handleUploadSuccess(result: any) {
@@ -27,14 +49,55 @@
 	<!-- 	<h1>Tambah Penerima Beasiswa</h1> -->
 	<!-- </header> -->
 
-	{#if form?.message}
-		<div class="alert error">
-			{form.message}
+	{#if showMessage}
+		<div class="mb-6">
+			<Message
+				status={messageConfig.status}
+				title={messageConfig.title}
+				message={messageConfig.message}
+				dismissible={true}
+				timeout={5000}
+				onclose={() => (showMessage = false)}
+			/>
 		</div>
 	{/if}
-
 	<div class="card">
-		<form method="POST" use:enhance class="form">
+		<form
+			method="POST"
+			use:enhance={() => {
+				isSubmitting = true;
+				showMessage = false; // Sembunyikan pesan lama saat submitting
+
+				return async ({ result, update }) => {
+					isSubmitting = false;
+
+					if (result.type === 'success' && result.data?.success) {
+						triggerMessage(
+							'success',
+							(result.data.title as string) || 'Berhasil',
+							result.data.message as string
+						);
+
+						// Reset state checkbox dan isi input form
+						await update({ reset: true });
+					} else if (result.type === 'failure' && result.data) {
+						triggerMessage(
+							'error',
+							(result.data.title as string) || 'Gagal Menyimpan',
+							result.data.message as string
+						);
+
+						// Pertahankan isi input yang dimasukkan user sebelumnya
+						await update();
+					} else {
+						// 3. Handling Error Tak Terduga
+						triggerMessage('error', 'Error', 'Terjadi kesalahan sistem saat memproses data.');
+						await update();
+					}
+				};
+			}}
+			class="form"
+		>
 			<!-- Field: Nama Mahasiswa -->
 			<div class="form-group">
 				<label for="student_name">Nama Mahasiswa <span class="required">*</span></label>
@@ -76,9 +139,14 @@
 						</button>
 					</div>
 				{:else}
-					<CldUploadWidget uploadPreset="ml_default" onSuccess={handleUploadSuccess} let:open>
+					<CldUploadWidget
+						uploadPreset="ml_default"
+						options={getUploadOptions()}
+						onSuccess={handleUploadSuccess}
+						let:open
+					>
 						<button type="button" class="btn-upload" onclick={() => open()}>
-							📷 Unggah Foto Mahasiswa (Cloudinary)
+							<ImageIcon />Unggah Foto Mahasiswa (Cloudinary)
 						</button>
 					</CldUploadWidget>
 				{/if}
@@ -86,7 +154,7 @@
 
 			<!-- Actions -->
 			<div class="form-actions">
-				<a href="/admin/kemahasiswaan/beasiswa" class="btn-cancel">Batal</a>
+				<button onclick={() => history.back()} class="btn-cancel">Batal</button>
 				<button type="submit" class="btn-save">Simpan Data Beasiswa</button>
 			</div>
 		</form>

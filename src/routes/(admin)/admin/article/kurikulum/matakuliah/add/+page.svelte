@@ -2,6 +2,14 @@
 	import { enhance } from '$app/forms';
 	import { CldUploadWidget } from 'svelte-cloudinary';
 	import type { ActionData } from './$types';
+	import { page } from '$app/state';
+	import {
+		folder_cloudinary_admin_article_kurikulum,
+		getUploadConfig,
+		getUploadOptions,
+		upload_cloudinary_preset
+	} from '$lib/cloudinary/client';
+	import { UploadCloudIcon } from 'lucide-svelte';
 
 	let { form }: { form: ActionData } = $props();
 
@@ -11,6 +19,12 @@
 	// Handler saat gambar berhasil diunggah ke Cloudinary
 	function handleUploadSuccess(result: any) {
 		if (result?.info?.secure_url) {
+			imageUrl = result.info.secure_url;
+		}
+	}
+
+	function handleUpload(result: any) {
+		if (result?.event === 'success') {
 			imageUrl = result.info.secure_url;
 		}
 	}
@@ -37,7 +51,7 @@
 		<form method="POST" use:enhance class="form">
 			<!-- Field: Judul Peta Mata Kuliah -->
 			<div class="form-group">
-				<label for="title">Judul Peta Mata Kuliah <span class="required">*</span></label>
+				<label for="title">Judul Peta Mata Kuliah </label>
 				<input
 					type="text"
 					id="title"
@@ -61,9 +75,21 @@
 						</button>
 					</div>
 				{:else}
-					<CldUploadWidget uploadPreset="ml_default" onSuccess={handleUploadSuccess} let:open>
-						<button type="button" class="btn-upload" onclick={() => open()}>
-							📷 Unggah Gambar Peta MK (Cloudinary)
+					<CldUploadWidget
+						config={getUploadConfig()}
+						uploadPreset={upload_cloudinary_preset}
+						options={getUploadOptions(folder_cloudinary_admin_article_kurikulum)}
+						onUpload={handleUpload}
+						let:open
+						let:isLoading
+					>
+						<button
+							type="button"
+							onclick={() => open()}
+							class="text-text-accent-primary inline-flex items-center gap-2 rounded-xl border border-[var(--color-border-light)] bg-[var(--color-bg-secondary)] px-3 py-2 text-xs font-semibold shadow-sm transition-all hover:bg-[var(--color-border-light)]"
+						>
+							<UploadCloudIcon class="h-4 w-4" />
+							<span>Unggah Foto</span>
 						</button>
 					</CldUploadWidget>
 				{/if}
@@ -71,7 +97,7 @@
 
 			<!-- Actions -->
 			<div class="form-actions">
-				<a href="/admin/akademik/peta-matakuliah" class="btn-cancel">Batal</a>
+				<button onclick={() => history.back()} class="btn-cancel">Batal</button>
 				<button type="submit" class="btn-save">Simpan Peta MK</button>
 			</div>
 		</form>

@@ -1,11 +1,27 @@
 import { query } from '$lib/server/database/runtimeDb';
 import { tableLecturerStaff } from './article/profile';
 
+export const tableProfileDashboard = 'home_profileDashboard';
 export const tableDosenPrimary = 'home_dosenPrimary';
 export const tablePerminatanTI = 'home_perminatan';
 export const tableProfilProdi = 'home_profilProdi';
+
+/** seeder / create table profile dashboard */
+export async function ProfileDashboardTableSeed() {
+	const sql = `
+        CREATE TABLE IF NOT EXISTS ${tableProfileDashboard} (
+            id VARCHAR(36) PRIMARY KEY, -- Primary Key UUID String
+            title VARCHAR(150) NOT NULL, -- Judul text yang muncul setiap gambar
+            image_path VARCHAR(255) NOT NULL, -- Path URL ke file img yg di simpan
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        );
+    `;
+	await query(sql);
+}
+
 /*
- * 3 dosen utama yang akan di tampilkan di sini
+ * dosen utama yang akan di tampilkan di sini
  * ini ambil dari daftar table dosen dan staff yg nantinya ada penandanya cek di profile
  */
 export async function DosenPrimaryTableSeed() {

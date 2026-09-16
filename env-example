@@ -6,5 +6,6 @@ DB_DATABASE=newsTI
 
 # cloudinary untuk penyimpana image 
 PUBLIC_CLOUDINARY_CLOUD_NAME="isi_cloud_name"
-CLOUDINARY_API_KEY="isi_api_key"
+PUBLIC_CLOUDINARY_API_KEY="isi_api_key"
 CLOUDINARY_API_SECRET="isi_api_secret"
+PUBLIC_CLOUDINARY_UPLOAD_PRESET="settings_upload"

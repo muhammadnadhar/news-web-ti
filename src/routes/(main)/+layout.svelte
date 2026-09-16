@@ -10,6 +10,7 @@
 	import type { SubMenuItem } from '$lib/types/navbar';
 	import { navMenuItems } from '$lib/data/navbar';
 
+
 	import uinIcon from '$lib/assets/uin-icon.svg'; // Sesuaikan path
 	import GlobalSkeletonUser from '$lib/components/globalSkeletonUser.svelte';
 	import { navigating } from '$app/state';
@@ -26,9 +27,40 @@
 
 	let isDrawerOpen = $state(false);
 
+ let showLoading = $state(false);
+  let    timer: ReturnType<typeof setTimeout> | null = null;;
+  const DELAY_MS = 300;
+
 	function toggleDrawer() {
 		isDrawerOpen = !isDrawerOpen;
 	}
+
+// $effect akan otomatis berjalan setiap kali nilai $navigating berubah
+  $effect(() => {
+    // Membaca store $navigating (tetap reaktif di dalam $effect)
+    const currentNavigating = navigating.to;
+
+    if (currentNavigating) {
+      if (!timer) {
+        timer = setTimeout(() => {
+          showLoading = true;
+        }, DELAY_MS);
+      }
+    } else {
+      if (timer) {
+        clearTimeout(timer);
+        timer = null;
+      }
+      showLoading = false;
+    }
+
+    // Fungsi cleanup otomatis jika komponen hancur
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
+  });
 
 	// Helper function untuk memformat menu
 	const formatSubMenu = (semesters: { semester: string }[], basePath: string): SubMenuItem[] => {
@@ -103,9 +135,9 @@
 		<Navbar navMenuItems={dynamicNavMenu} />
 	</header>
 
-	{#if navigating.to}
+	{#if showLoading}
 		<GlobalSkeletonUser />
-	{/if}
+  {/if}
 
 	<!-- content render (sveltekit slot) -->
 	<div class="grow">

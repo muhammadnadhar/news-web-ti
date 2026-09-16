@@ -60,7 +60,6 @@
 		<!-- Render Komponen TableContent -->
 		<div class="p-4">
 			<TableContent {columns} data={data.news}>
-				<!-- Custom Row Rendering via Slot (opsional, disesuaikan dengan slot TableContent Anda) -->
 				<svelte:fragment slot="cell" let:row let:column>
 					{#if column.key === 'category'}
 						<!-- Badge Styling Kategori -->

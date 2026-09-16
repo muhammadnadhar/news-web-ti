@@ -6,38 +6,36 @@ import {
 	updateRecruitment,
 	deleteRecruitment
 } from '$lib/server/admin/repository/article/akedemik/ketentuan-komprehensif';
-;
-
 import type { TableContentType } from '$lib/types/tableContent';
 import { writeFileSync, mkdirSync, existsSync } from 'fs';
 import { join } from 'path';
 
 export const load: PageServerLoad = async () => {
 	try {
-		const rawList = await getAllRecruitment();
+		// const rawList = await getAllRecruitment();
 
 		// Transformasi data DB ke format TableContentType untuk komponen TableContent
-		const recruitmentList: TableContentType[] = rawList.map((item) => ({
-			id: item.id,
-			items: [
-				{
-					colomn: 'Judul',
-					row: item.title
-				},
-				{
-					colomn: 'Foto',
-					row: item.image_url || '-'
-				},
-				{
-					colomn: 'Description',
-					row: item.description || '-'
-				}
-			]
-		}));
+		// const recruitmentList: TableContentType[] = rawList.map((item) => ({
+		// 	id: item.id,
+		// 	items: [
+		// 		{
+		// 			colomn: 'Judul',
+		// 			row: item.title
+		// 		},
+		// 		{
+		// 			colomn: 'Foto',
+		// 			row: item.image_url || '-'
+		// 		},
+		// 		{
+		// 			colomn: 'Description',
+		// 			row: item.description || '-'
+		// 		}
+		// 	]
+		// }));
 
 		return {
-			recruitmentList,
-			rawRecruitmentList: rawList
+			// recruitmentList,
+			rawRecruitmentList: getAllRecruitment()
 		};
 	} catch (err) {
 		console.error('Error loading recruitment:', err);

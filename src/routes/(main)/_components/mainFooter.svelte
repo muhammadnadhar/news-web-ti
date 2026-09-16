@@ -1,13 +1,16 @@
 <script lang="ts">
-	import { ChevronRight, MapPin, Phone, Mail, ArrowUp } from 'lucide-svelte';
+	import { ChevronRight, MapPin, Phone, Mail, ArrowUp, GitBranchPlusIcon } from 'lucide-svelte';
 
 	// Props Svelte 5 (sesuaikan jika memakai Svelte 4)
 	let { layananOnline = [], scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' }) } =
 		$props();
+
+
+const currentYear = new Date().getFullYear();
 </script>
 
 <footer class="relative mt-28 border-t border-border-color text-text-muted transition-colors">
-	<!-- SVG Curve Wave Vector (Warna menyatu presisi dengan bg-[#070c18]) -->
+	<!-- svg curve wave vector (warna menyatu presisi dengan bg-[#070c18]) -->
 	<div
 		class="pointer-events-none absolute top-0 left-0 w-full -translate-y-[98%] overflow-hidden leading-none"
 	>
@@ -133,31 +136,24 @@
 		</div>
 	</div>
 
-	<div class="border-t border-white/5 bg-bg-primary-glare">
-		<div
-			class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 py-6 text-center text-xs text-text-muted sm:flex-row sm:text-left"
+<div class="space-y-1">
+	<p>
+		© Copyright <span class="font-semibold text-scitech-mint">Prodi Teknologi Informasi</span> 2023-{currentYear}.
+	</p>
+	<p>
+		© Powered by <span class="font-semibold text-text-main">HIMA-TI</span>. All Rights Reserved.
+	</p>
+	<p class="flex flex-wrap items-center justify-center gap-1.5 pt-1">
+		<span>prodi-ti-website</span>
+		<a
+			href="https://github.com/muhammadnadhar/news-web-ti"
+			target="_blank"
+			rel="noopener noreferrer"
+			class="inline-flex items-center gap-1 text-scitech-cyan transition-colors hover:text-text-main hover:underline"
 		>
-			<div class="space-y-1">
-				<p>
-					© Copyright <span class="text-scitech-mint font-semibold">Prodi Teknologi Informasi</span> 2023-2026.
-				</p>
-				<p>
-					© Powered by <span class="font-semibold text-white">HIMA-TI</span>. All Rights Reserved.
-				</p>
-				<p class="pt-1">
-					Designed by
-					<a href="#" class="text-scitech-cyan hover:underline">Aesha Durratul Nasihah</a> &
-					<a href="#" class="text-scitech-cyan hover:underline">M.Fadhlan</a>
-				</p>
-			</div>
-
-			<button
-				onclick={scrollToTop}
-				aria-label="Back to top"
-				class="hover:bg-scitech-mint text-scitech-mint hover:text-scitech-navy shrink-0 rounded-xl border border-white/10 bg-white/5 p-3 shadow-lg transition-all duration-300 active:scale-95"
-			>
-				<ArrowUp class="h-4 w-4" />
-			</button>
-		</div>
-	</div>
+			<GitBranchPlusIcon class="h-3.5 w-3.5" />
+			<!-- <span></span> -->
+		</a>
+	</p>
+</div>
 </footer>

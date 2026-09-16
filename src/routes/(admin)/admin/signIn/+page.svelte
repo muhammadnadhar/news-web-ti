@@ -13,9 +13,7 @@
 	<title>Sign In | Admin Portal</title>
 </svelte:head>
 
-<!-- Layout Utama: Full Screen & Background Gelap -->
 <div class="bg-scitech-navy flex min-h-screen items-center justify-center p-4">
-	<!-- Container Card -->
 	<div
 		class="bg-scitech-slate flex w-full max-w-5xl flex-col overflow-hidden rounded-3xl border border-white/10 shadow-2xl md:flex-row"
 	>
@@ -38,7 +36,6 @@
 			</div>
 		</div>
 
-		<!-- BAGIAN KANAN: Form Login -->
 		<div class="w-full p-8 md:w-1/2 md:p-12 lg:p-16">
 			<div class="mx-auto max-w-md">
 				<div class="mb-10">
@@ -56,7 +53,6 @@
 					</div>
 				{/if}
 
-				<!-- Form Login dengan Use Enhance Svelte 5 -->
 				<form
 					method="POST"
 					use:enhance={() => {
@@ -68,7 +64,6 @@
 					}}
 					class="space-y-6"
 				>
-					<!-- Field Username / Email -->
 					<div class="space-y-2">
 						<label for="identifier" class="text-sm font-medium text-slate-300">
 							Username atau Email
@@ -117,9 +112,9 @@
 								class="border-scitech-navy h-5 w-5 animate-spin rounded-full border-2 border-t-transparent"
 							></div>
 							<span>Memproses...</span>
-						<!-- {:else} -->
-						<!-- 	<LogIn class="h-5 w-5" /> -->
-						<!-- 	<span>Masuk Sekarang</span> -->
+						{:else}
+							<LogIn class="h-5 w-5" />
+							<span>Login</span>
 						{/if}
 					</button>
 				</form>

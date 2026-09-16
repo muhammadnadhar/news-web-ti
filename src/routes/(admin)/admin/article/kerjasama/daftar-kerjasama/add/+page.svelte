@@ -3,6 +3,12 @@
 	import { CldUploadWidget } from 'svelte-cloudinary';
 	import { Building2, UploadCloud, X, Handshake, ArrowLeft, Send } from 'lucide-svelte';
 	import type { ActionData } from './$types';
+	import {
+		folder_cloudinary_admin_article_kerjasama,
+		getUploadConfig,
+		getUploadOptions,
+		upload_cloudinary_preset
+	} from '$lib/cloudinary/client';
 
 	interface Props {
 		form?: ActionData;
@@ -82,10 +88,7 @@
 
 				<!-- Nama Instansi / Mitra -->
 				<div class="space-y-1.5">
-					<label
-						for="institution_name"
-						class="block text-xs font-medium text-[var(--color-text-muted)]"
-					>
+					<label for="institution_name" class="block text-xs font-medium text-text-muted">
 						Nama Instansi / Mitra Kerjasama <span class="text-[var(--color-status-error)]">*</span>
 					</label>
 					<div class="relative">
@@ -141,7 +144,9 @@
 							</div>
 
 							<CldUploadWidget
-								uploadPreset="nama_preset_unsigned_anda"
+								config={getUploadConfig()}
+								options={getUploadOptions(folder_cloudinary_admin_article_kerjasama)}
+								uploadPreset={upload_cloudinary_preset}
 								onUpload={handleUpload}
 								let:open
 							>

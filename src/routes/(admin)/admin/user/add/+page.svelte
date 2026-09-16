@@ -60,26 +60,25 @@
 	<title>Tambah User Baru - Admin Portal</title>
 </svelte:head>
 
-<div class="bg-scitech-navy min-h-screen p-4 text-white md:p-8">
+<div class="bg-scitech-navy min-h-screen p-4 text-text-main md:p-8">
 	<div class="mx-auto max-w-4xl space-y-6">
 		<!-- Header Page -->
 		<div class="flex items-center justify-between">
 			<div class="flex items-center gap-3">
-				<a
-					href="/admin/users"
-					class="bg-scitech-slate hover:border-scitech-mint/40 flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 transition-colors"
-					title="Kembali"
-				>
-					<ArrowLeft class="h-5 w-5 text-slate-300" />
-				</a>
+				<!-- <button -->
+				<!-- 	href="/admin/users" -->
+				<!-- 	class="bg-scitech-slate hover:border-scitech-mint/40 flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 transition-colors" -->
+				<!-- 	title="Kembali" -->
+				<!-- > -->
+				<!-- 	<ArrowLeft class="h-5 w-5 text-slate-300" /> -->
+				<!-- </button> -->
 				<div>
-					<h1 class="text-2xl font-bold tracking-tight text-white">Tambah Pengguna Baru</h1>
+					<h1 class="text-2xl font-bold tracking-tight text-text-main">Tambah Pengguna Baru</h1>
 					<p class="text-xs text-slate-400">Buat akun pengelola portal berita dan sistem</p>
 				</div>
 			</div>
 		</div>
 
-		<!-- Alert Error jika ada kegagalan dari server -->
 		{#if form?.error}
 			<div
 				class="border-scitech-error/50 bg-scitech-error/10 flex items-center gap-3 rounded-2xl border p-4 text-red-400"
@@ -102,7 +101,6 @@
 				}}
 				class="space-y-8"
 			>
-				<!-- Informasi Dasar -->
 				<div class="space-y-4">
 					<h3
 						class="border-b border-white/10 pb-2 text-sm font-semibold tracking-wider text-slate-400 uppercase"
@@ -111,7 +109,6 @@
 					</h3>
 
 					<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-						<!-- Nama Lengkap -->
 						<div class="space-y-1.5">
 							<label for="name" class="text-xs font-medium text-slate-300">Nama Lengkap</label>
 							<div class="relative">
@@ -123,7 +120,7 @@
 									required
 									placeholder="Contoh: Ahmad Subagja"
 									value={form?.values?.name ?? ''}
-									class="bg-scitech-navy focus:border-scitech-mint focus:ring-scitech-mint w-full rounded-xl border border-white/10 py-3 pr-4 pl-10 text-xs text-white placeholder-slate-500 transition-all focus:ring-1 focus:outline-none"
+									class="bg-scitech-navy focus:border-scitech-mint focus:ring-scitech-mint w-full rounded-xl border border-white/10 py-3 pr-4 pl-10 text-xs text-text-main placeholder-slate-500 transition-all focus:ring-1 focus:outline-none"
 								/>
 							</div>
 						</div>
@@ -140,12 +137,11 @@
 									required
 									placeholder="ahmad_subagja"
 									value={form?.values?.username ?? ''}
-									class="bg-scitech-navy focus:border-scitech-mint focus:ring-scitech-mint w-full rounded-xl border border-white/10 py-3 pr-4 pl-10 text-xs text-white placeholder-slate-500 transition-all focus:ring-1 focus:outline-none"
+									class="bg-scitech-navy focus:border-scitech-mint focus:ring-scitech-mint w-full rounded-xl border border-white/10 py-3 pr-4 pl-10 text-xs text-text-main placeholder-slate-500 transition-all focus:ring-1 focus:outline-none"
 								/>
 							</div>
 						</div>
 
-						<!-- Email -->
 						<div class="space-y-1.5">
 							<label for="email" class="text-xs font-medium text-slate-300">Email Utama</label>
 							<div class="relative">
@@ -157,7 +153,7 @@
 									required
 									placeholder="ahmad@uin.ac.id"
 									value={form?.values?.email ?? ''}
-									class="bg-scitech-navy focus:border-scitech-mint focus:ring-scitech-mint w-full rounded-xl border border-white/10 py-3 pr-4 pl-10 text-xs text-white placeholder-slate-500 transition-all focus:ring-1 focus:outline-none"
+									class="bg-scitech-navy focus:border-scitech-mint focus:ring-scitech-mint w-full rounded-xl border border-white/10 py-3 pr-4 pl-10 text-xs text-text-main placeholder-slate-500 transition-all focus:ring-1 focus:outline-none"
 								/>
 							</div>
 						</div>
@@ -173,7 +169,7 @@
 									name="password"
 									required
 									placeholder="••••••••"
-									class="bg-scitech-navy focus:border-scitech-mint focus:ring-scitech-mint w-full rounded-xl border border-white/10 py-3 pr-4 pl-10 text-xs text-white placeholder-slate-500 transition-all focus:ring-1 focus:outline-none"
+									class="bg-scitech-navy focus:border-scitech-mint focus:ring-scitech-mint w-full rounded-xl border border-white/10 py-3 pr-4 pl-10 text-xs text-text-main placeholder-slate-500 transition-all focus:ring-1 focus:outline-none"
 								/>
 							</div>
 						</div>
@@ -216,7 +212,7 @@
 											</div>
 										{/if}
 									</div>
-									<h4 class="text-xs font-bold text-white">{opt.label}</h4>
+									<h4 class="text-xs font-bold text-text-main">{opt.label}</h4>
 									<p class="mt-1 text-[11px] leading-relaxed text-slate-400">{opt.desc}</p>
 								</div>
 							</button>
@@ -238,7 +234,7 @@
 						<label
 							class="flex cursor-pointer items-center gap-3 rounded-xl border p-3 transition-all {selectedStatus ===
 							'Active'
-								? 'border-scitech-mint bg-scitech-navy/80 text-white'
+								? 'border-scitech-mint bg-scitech-navy/80 text-text-main'
 								: 'bg-scitech-navy/30 border-white/5 text-slate-400'}"
 						>
 							<input
@@ -256,7 +252,7 @@
 						<label
 							class="flex cursor-pointer items-center gap-3 rounded-xl border p-3 transition-all {selectedStatus ===
 							'Inactive'
-								? 'border-scitech-mint bg-scitech-navy/80 text-white'
+								? 'border-scitech-mint bg-scitech-navy/80 text-text-main'
 								: 'bg-scitech-navy/30 border-white/5 text-slate-400'}"
 						>
 							<input
@@ -275,12 +271,12 @@
 
 				<!-- Action Submit -->
 				<div class="flex items-center justify-end gap-3 border-t border-white/10 pt-6">
-					<a
-						href="/admin/users"
+					<button
+						onclick={() => history.back()}
 						class="rounded-xl border border-white/10 px-5 py-2.5 text-xs font-semibold text-slate-300 transition-colors hover:bg-white/5"
 					>
 						Batal
-					</a>
+					</button>
 					<button
 						type="submit"
 						disabled={isSubmitting}

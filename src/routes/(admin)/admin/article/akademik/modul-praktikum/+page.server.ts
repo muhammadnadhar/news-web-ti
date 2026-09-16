@@ -12,30 +12,29 @@ import { join } from 'path';
 
 export const load: PageServerLoad = async () => {
 	try {
-		const rawList = await getAllPracticumModule();
+		// const rawList = await getAllPracticumModule();
 
 		// Transformasi data DB ke format TableContentType untuk komponen TableContent
-		const moduleList: TableContentType[] = rawList.map((item) => ({
-			id: item.id,
-			items: [
-				{
-					colomn: 'Judul',
-					row: item.title
-				},
-				{
-					colomn: 'Foto',
-					row: item.image_url || '-'
-				},
-				{
-					colomn: 'Description',
-					row: item.description || '-'
-				}
-			]
-		}));
+		// const moduleList: TableContentType[] = rawList.map((item) => ({
+		// 	id: item.id,
+		// 	items: [
+		// 		{
+		// 			colomn: 'Judul',
+		// 			row: item.title
+		// 		},
+		// 		{
+		// 			colomn: 'Foto',
+		// 			row: item.image_url || '-'
+		// 		},
+		// 		{
+		// 			colomn: 'Description',
+		// 			row: item.description || '-'
+		// 		}
+		// 	]
+		// }));
 
 		return {
-			moduleList,
-			rawModuleList: rawList
+			rawModuleList: getAllPracticumModule()
 		};
 	} catch (err) {
 		console.error('Error loading practicum module:', err);

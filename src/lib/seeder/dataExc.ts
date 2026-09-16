@@ -20,6 +20,9 @@ try {
 		password: 'dar07',
 		createdAt: Date.now().toString()
 	});
+
+	// Home
+	// data dosen TI desauft card kosong 2
 } catch (err) {
 	console.error(' Seeding gagal karena terjadi error:', err);
 } finally {

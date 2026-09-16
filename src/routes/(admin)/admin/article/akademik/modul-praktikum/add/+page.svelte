@@ -3,6 +3,14 @@
 	import { CldUploadWidget } from 'svelte-cloudinary';
 	import FormEditor from '$lib/components/admin/formEditor.svelte';
 	import type { ActionData } from './$types';
+	import Message, { type MessageStatus } from '$lib/components/admin/message.svelte';
+	import {
+		folder_cloudinary_admin_article_akademik,
+		getUploadConfig,
+		getUploadOptions,
+		upload_cloudinary_preset
+	} from '$lib/cloudinary/client';
+	import { UploadCloud } from 'lucide-svelte';
 
 	let { form }: { form: ActionData } = $props();
 
@@ -21,6 +29,23 @@
 	function removeImage() {
 		imageUrl = '';
 	}
+	let isSubmitting = $state(false);
+	let showMessage = $state(false);
+
+	let messageConfig = $state<{
+		status: MessageStatus;
+		title: string;
+		message: string;
+	}>({
+		status: 'info',
+		title: '',
+		message: ''
+	});
+
+	function triggerMessage(status: MessageStatus, title: string, message: string) {
+		messageConfig = { status, title, message };
+		showMessage = true;
+	}
 </script>
 
 <div class="container">
@@ -29,15 +54,52 @@
 	<!-- 	<h1>Tambah Modul Praktikum Baru</h1> -->
 	<!-- </header> -->
 
-	{#if form?.message}
-		<div class="alert error">
-			{form.message}
+	{#if showMessage}
+		<div class="mb-6">
+			<Message
+				status={messageConfig.status}
+				title={messageConfig.title}
+				message={messageConfig.message}
+				dismissible={true}
+				timeout={5000}
+				onclose={() => (showMessage = false)}
+			/>
 		</div>
 	{/if}
 
 	<div class="card">
-		<form method="POST" use:enhance class="form">
-			<!-- Field: Judul Modul Praktikum -->
+		<form
+			method="POST"
+			use:enhance={() => {
+				isSubmitting = true;
+				showMessage = false; // Sembunyikan pesan lama saat submitting
+
+				return async ({ result, update }) => {
+					isSubmitting = false;
+
+					if (result.type === 'success' && result.data?.success) {
+						triggerMessage(
+							'success',
+							(result.data.title as string) || 'Berhasil',
+							result.data.message as string
+						);
+					} else if (result.type === 'failure' && result.data) {
+						triggerMessage(
+							'error',
+							(result.data.title as string) || 'Gagal Menyimpan',
+							result.data.message as string
+						);
+
+						// Pertahankan isi input yang dimasukkan user sebelumnya
+						await update();
+					} else {
+						triggerMessage('error', 'Error', 'Terjadi kesalahan sistem saat memproses data.');
+						await update();
+					}
+				};
+			}}
+			class="form"
+		>
 			<div class="form-group">
 				<label for="title">Judul Modul Praktikum <span class="required">*</span></label>
 				<input
@@ -63,9 +125,16 @@
 						</button>
 					</div>
 				{:else}
-					<CldUploadWidget uploadPreset="ml_default" onSuccess={handleUploadSuccess} let:open>
+					<CldUploadWidget
+						config={getUploadConfig()}
+						options={getUploadOptions(folder_cloudinary_admin_article_akademik)}
+						uploadPreset={upload_cloudinary_preset}
+						onSuccess={handleUploadSuccess}
+						let:open
+					>
 						<button type="button" class="btn-upload" onclick={() => open()}>
-							📷 Unggah Foto Sampul / Modul (Cloudinary)
+							<UploadCloud class="h-4 w-4" />
+							Unggah Foto Sampul / Modul (Cloudinary)
 						</button>
 					</CldUploadWidget>
 				{/if}
@@ -84,8 +153,17 @@
 
 			<!-- Actions -->
 			<div class="form-actions">
-				<a href="/admin/akademik/modul-praktikum" class="btn-cancel">Batal</a>
-				<button type="submit" class="btn-save">Simpan Modul</button>
+				<button
+					type="button"
+					onclick={() => history.back()}
+					class="btn-cancel"
+					disabled={isSubmitting}
+				>
+					Batal
+				</button>
+				<button type="submit" class="btn-save" disabled={isSubmitting}>
+					{isSubmitting ? 'Menyimpan...' : 'Simpan Data Semester'}
+				</button>
 			</div>
 		</form>
 	</div>

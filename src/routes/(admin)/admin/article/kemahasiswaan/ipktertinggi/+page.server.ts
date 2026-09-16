@@ -11,34 +11,34 @@ import type { TableContentType } from '$lib/types/tableContent';
 
 export const load: PageServerLoad = async () => {
 	try {
-		const rawList = await getAllHighGpaStudents();
+		// const rawList = await getAllHighGpaStudents();
 
 		// Transformasi data DB ke format TableContentType untuk komponen TableContent
-		const studentList: TableContentType[] = rawList.map((item) => ({
-			id: item.id,
-			items: [
-				{
-					colomn: 'Nama Mahasiswa',
-					row: item.student_name
-				},
-				{
-					colomn: 'IPK',
-					row: Number(item.gpa).toFixed(2)
-				},
-				{
-					colomn: 'Angkatan',
-					row: item.batch_year
-				},
-				{
-					colomn: 'Semester',
-					row: item.semester
-				}
-			]
-		}));
+		// const studentList: TableContentType[] = rawList.map((item) => ({
+		// 	id: item.id,
+		// 	items: [
+		// 		{
+		// 			colomn: 'Nama Mahasiswa',
+		// 			row: item.student_name
+		// 		},
+		// 		{
+		// 			colomn: 'IPK',
+		// 			row: Number(item.gpa).toFixed(2)
+		// 		},
+		// 		{
+		// 			colomn: 'Angkatan',
+		// 			row: item.batch_year
+		// 		},
+		// 		{
+		// 			colomn: 'Semester',
+		// 			row: item.semester
+		// 		}
+		// 	]
+		// }));
 
 		return {
-			studentList,
-			rawStudentList: rawList
+			// studentList,
+			rawStudentList: getAllHighGpaStudents()
 		};
 	} catch (err) {
 		console.error('Error loading high GPA students:', err);

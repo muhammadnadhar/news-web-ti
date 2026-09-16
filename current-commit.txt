@@ -1,11 +1,8 @@
-commit 5  finish desian  and add drive foto #1
-- add : user auth , profile page 
-- update : pemisahana ide untuk menyimpan foto di drive karena kurang aman dan kurang dalam kecepatan dna keandalan di projek besar jadi di ganti ke cloudinary
-- update : menambahkan authentikasi untk login admin
-- add : halaman home untuk article untuk di tampilkan di profile home 
-- update : menyesuikan data primary table untuk menggunakan forengkey agar data di primary di ambil dari tabel dosen staff
-- update : menambah halaman untuk menambah data di bagian akademik
-- add : menambah halaman add untuk setiap jenis sub route di dataset
-- update : memisahkan skeleton loading untuk global dan user biasa yang akses
-- update : mengubaha halaman profile user agar bisa menyesuikan dengan         <!-- Widget cloudinary --> dan structure profile
-- add : menambahkan Mesage Component untuk mengahandle Flush message
+commit 6  finish desian #2  and add drive with cloudinary foto #2
+- update : mengfinishkan penyimpanana image di cloudinary
+- update : update bentuk structure table di component routing kerjasama
+- update : setiap component table di asmin , akan memuat data dengan laoding dahulu , jiak data tersebut lama di muat nya  ( performance )
+- update : setiap halaman table menggunakn sreaming dengan loading skeleton data
+- finish : bagian DATASET sudah finish tahapan pertama #1 karena sudah bisa crud 
+- update : update FormEditor agar support pengetikan dan bisa menghandle setiap baris dnegan menganti tag @html
+- finish : tableComponent sudah bisa menerima data CRUD denag amaan dan bisa menyesuikan ukuran data yang si masukan

@@ -11,38 +11,36 @@ import type { TableContentType } from '$lib/types/tableContent';
 
 export const load: PageServerLoad = async () => {
 	try {
-		const rawList = await getAllStudentAchievements();
+		// const rawList = await getAllStudentAchievements();
 
-		// Transformasi data DB ke format TableContentType untuk komponen TableContent
-		const achievementList: TableContentType[] = rawList.map((item) => ({
-			id: item.id,
-			items: [
-				{
-					colomn: 'Nama',
-					row: item.student_name
-				},
-				{
-					colomn: 'Kategori',
-					row: item.is_academic === 'y' ? 'Akademik' : 'Non-Akademik'
-				},
-				{
-					colomn: 'Angkatan',
-					row: item.batch_year
-				},
-				{
-					colomn: 'Semester',
-					row: item.semester
-				},
-				{
-					colomn: 'Prestasi',
-					row: item.achievement_name
-				}
-			]
-		}));
+		// const achievementList: TableContentType[] = rawList.map((item) => ({
+		// 	id: item.id,
+		// 	items: [
+		// 		{
+		// 			colomn: 'Nama',
+		// 			row: item.student_name
+		// 		},
+		// 		{
+		// 			colomn: 'Kategori',
+		// 			row: item.is_academic === 'y' ? 'Akademik' : 'Non-Akademik'
+		// 		},
+		// 		{
+		// 			colomn: 'Angkatan',
+		// 			row: item.batch_year
+		// 		},
+		// 		{
+		// 			colomn: 'Semester',
+		// 			row: item.semester
+		// 		},
+		// 		{
+		// 			colomn: 'Prestasi',
+		// 			row: item.achievement_name
+		// 		}
+		// 	]
+		// }));
 
 		return {
-			achievementList,
-			rawAchievementList: rawList
+			rawAchievementList: getAllStudentAchievements(),
 		};
 	} catch (err) {
 		console.error('Error loading student achievements:', err);

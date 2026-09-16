@@ -9,29 +9,29 @@ import {
 import type { TableContentType } from '$lib/types/tableContent';
 import { writeFileSync, mkdirSync, existsSync } from 'fs';
 import { join } from 'path';
+import { errorResponse } from '$lib/helper/message';
 
 export const load: PageServerLoad = async () => {
 	try {
-		const rawList = await getAllCourseMap();
-
+		// const rawList = await getAllCourseMap();
 		// Transformasi data DB ke format TableContentType untuk komponen TableContent
-		const courseMapList: TableContentType[] = rawList.map((item) => ({
-			id: item.id,
-			items: [
-				{
-					colomn: 'Judul Peta Mata Kuliah',
-					row: item.title
-				},
-				{
-					colomn: 'Foto',
-					row: item.image_url || '-'
-				}
-			]
-		}));
+		// const courseMapList: TableContentType[] = rawList.map((item) => ({
+		// 	id: item.id,
+		// 	items: [
+		// 		{
+		// 			colomn: 'Judul Peta Mata Kuliah',
+		// 			row: item.title
+		// 		},
+		// 		{
+		// 			colomn: 'Foto',
+		// 			row: item.image_url || '-'
+		// 		}
+		// 	]
+		// }));
 
 		return {
-			courseMapList,
-			rawCourseMapList: rawList
+			// courseMapList,
+			rawCourseMapList: getAllCourseMap() // lazy streaming sveltekit
 		};
 	} catch (err) {
 		console.error('Error loading course map:', err);
@@ -89,14 +89,29 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const id = formData.get('id') as string;
 
-		if (!id) return fail(400, { message: 'ID tidak valid.' });
+		if (!id) {
+			return fail(400, {
+				success: false,
+				status: 'error',
+				title: 'Gagal Menghapus',
+				message: 'ID data tidak ditemukan.'
+			});
+		}
 
 		try {
 			await deleteCourseMap(id);
-			return { success: true };
-		} catch (err) {
-			console.error('Error deleting course map:', err);
-			return fail(500, { message: 'Gagal menghapus data Peta Mata Kuliah.' });
+			return {
+				success: true,
+				status: 'success',
+				title: 'Berhasil',
+				message: 'Data peta mata kuliah berhasil dihapus.'
+			};
+		} catch (error) {
+			console.error('Error deleting course map:', error);
+			return fail(
+				500,
+				errorResponse(error.message || 'Terjadi kesalahan sistem', 'Gagal Hapus Data')
+			);
 		}
 	}
 };

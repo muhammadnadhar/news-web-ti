@@ -9,9 +9,9 @@ import {
 
 export const load: PageServerLoad = async () => {
 	try {
-		const lecturerStaffList = await getAllLecturerStaff();
+		// const lecturerStaffList = await getAllLecturerStaff();
 		return {
-			lecturerStaffList
+			lecturerStaffList: getAllLecturerStaff() // promise streaming
 		};
 	} catch (err) {
 		console.error('Error loading lecturer & staff list:', err);

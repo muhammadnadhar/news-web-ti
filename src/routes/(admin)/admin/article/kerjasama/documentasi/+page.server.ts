@@ -10,30 +10,30 @@ import type { TableContentType } from '$lib/types/tableContent';
 
 export const load: PageServerLoad = async () => {
 	try {
-		const rawList = await getAllActivityDocumentations();
+		// const rawList = await getAllActivityDocumentations();
 
 		// Transformasi data DB ke format TableContentType untuk komponen TableContent
-		const documentationList: TableContentType[] = rawList.map((item) => ({
-			id: item.id,
-			items: [
-				{
-					colomn: 'Nama',
-					row: item.title
-				},
-				{
-					colomn: 'Foto',
-					row: item.image_url ? `<img src="${item.image_url}" alt="${item.title}" class="h-14 w-20 object-cover rounded-lg border border-white/10" />` : '-'
-				},
-				{
-					colomn: 'Link GDrive / Deskripsi',
-					row: item.description ? `<a href="${item.description}" target="_blank" rel="noopener noreferrer" class="text-scitech-mint hover:underline break-all">${item.description}</a>` : '-'
-				}
-			]
-		}));
+		// const documentationList: TableContentType[] = rawList.map((item) => ({
+		// 	id: item.id,
+		// 	items: [
+		// 		{
+		// 			colomn: 'Nama',
+		// 			row: item.title
+		// 		},
+		// 		{
+		// 			colomn: 'Foto',
+		// 			row: item.image_url ? `<img src="${item.image_url}" alt="${item.title}" class="h-14 w-20 object-cover rounded-lg border border-white/10" />` : '-'
+		// 		},
+		// 		{
+		// 			colomn: 'Link GDrive / Deskripsi',
+		// 			row: item.description ? `<a href="${item.description}" target="_blank" rel="noopener noreferrer" class="text-scitech-mint hover:underline break-all">${item.description}</a>` : '-'
+		// 		}
+		// 	]
+		// }));
 
 		return {
-			documentationList,
-			rawDocumentationList: rawList
+			documentationList: getAllActivityDocumentations // biarkan di tangani oleh client
+			// rawDocumentationList:
 		};
 	} catch (err) {
 		console.error('Error loading activity documentations:', err);

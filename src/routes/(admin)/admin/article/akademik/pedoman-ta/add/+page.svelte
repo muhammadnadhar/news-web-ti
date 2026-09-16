@@ -86,7 +86,7 @@
 
 			<!-- Actions -->
 			<div class="form-actions">
-				<a href="/admin/akademik/pedoman-ta" class="btn-cancel">Batal</a>
+				<button onclick={() => history.back() } class="btn-cancel">Batal</button>
 				<button type="submit" class="btn-save">Simpan Pedoman</button>
 			</div>
 		</form>

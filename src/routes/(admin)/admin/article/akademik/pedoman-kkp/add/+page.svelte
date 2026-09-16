@@ -3,12 +3,39 @@
 	import { CldUploadWidget } from 'svelte-cloudinary';
 	import FormEditor from '$lib/components/admin/formEditor.svelte';
 	import type { ActionData } from './$types';
+	import type { MessageStatus } from '$lib/components/admin/message.svelte';
+	import Message from '$lib/components/admin/message.svelte';
+	import {
+		folder_cloudinary_admin_article_akademik,
+		getUploadConfig,
+		getUploadOptions,
+		upload_cloudinary_preset
+	} from '$lib/cloudinary/client';
+	import { UploadCloud } from 'lucide-svelte';
 
 	let { form }: { form: ActionData } = $props();
 
 	// State lokal untuk gambar dan deskripsi editor
 	let imageUrl = $state(form?.values?.imageUrl || '');
 	let description = $state(form?.values?.description || '');
+
+	let isSubmitting = $state(false);
+	let showMessage = $state(false);
+
+	let messageConfig = $state<{
+		status: MessageStatus;
+		title: string;
+		message: string;
+	}>({
+		status: 'info',
+		title: '',
+		message: ''
+	});
+
+	function triggerMessage(status: MessageStatus, title: string, message: string) {
+		messageConfig = { status, title, message };
+		showMessage = true;
+	}
 
 	// Handler saat gambar berhasil diunggah ke Cloudinary
 	function handleUploadSuccess(result: any) {
@@ -25,18 +52,60 @@
 
 <div class="container">
 	<header class="header">
-		<a href="/admin/akademik/pedoman-kkp" class="btn-back">← Kembali ke Daftar</a>
+		<button onclick={() => history.back()} class="btn-back">← Kembali ke Daftar</button>
 		<h1>Tambah Pedoman KKP Baru</h1>
 	</header>
 
-	{#if form?.message}
-		<div class="alert error">
-			{form.message}
+	{#if showMessage}
+		<div class="mb-6">
+			<Message
+				status={messageConfig.status}
+				title={messageConfig.title}
+				message={messageConfig.message}
+				dismissible={true}
+				timeout={5000}
+				onclose={() => (showMessage = false)}
+			/>
 		</div>
 	{/if}
 
 	<div class="card">
-		<form method="POST" use:enhance class="form">
+		<form
+			method="POST"
+			use:enhance={() => {
+				isSubmitting = true;
+				showMessage = false; // Sembunyikan pesan lama saat submitting
+
+				return async ({ result, update }) => {
+					isSubmitting = false;
+
+					if (result.type === 'success' && result.data?.success) {
+						triggerMessage(
+							'success',
+							(result.data.title as string) || 'Berhasil',
+							result.data.message as string
+						);
+
+						// Reset state checkbox dan isi input form
+						await update({ reset: true });
+					} else if (result.type === 'failure' && result.data) {
+						triggerMessage(
+							'error',
+							(result.data.title as string) || 'Gagal Menyimpan',
+							result.data.message as string
+						);
+
+						// Pertahankan isi input yang dimasukkan user sebelumnya
+						await update();
+					} else {
+						// Handling Error Tak Terduga
+						triggerMessage('error', 'Error', 'Terjadi kesalahan sistem saat memproses data.');
+						await update();
+					}
+				};
+			}}
+			class="form"
+		>
 			<!-- Field: Judul Pedoman KKP -->
 			<div class="form-group">
 				<label for="title">Judul Pedoman KKP <span class="required">*</span></label>
@@ -58,14 +127,19 @@
 				{#if imageUrl}
 					<div class="image-preview">
 						<img src={imageUrl} alt="Preview Sampul" />
-						<button type="button" class="btn-remove-img" onclick={removeImage}>
-							✕ Hapus Foto
-						</button>
+						<button type="button" class="btn-remove-img" onclick={removeImage}> Hapus Foto </button>
 					</div>
 				{:else}
-					<CldUploadWidget uploadPreset="ml_default" onSuccess={handleUploadSuccess} let:open>
+					<CldUploadWidget
+						config={getUploadConfig()}
+						options={getUploadOptions(folder_cloudinary_admin_article_akademik)}
+						uploadPreset={upload_cloudinary_preset}
+						onSuccess={handleUploadSuccess}
+						let:open
+					>
 						<button type="button" class="btn-upload" onclick={() => open()}>
-							📷 Unggah Foto Sampul (Cloudinary)
+							<UploadCloud class="h-4 w-4" />
+							Unggah Foto Sampul (Cloudinary)
 						</button>
 					</CldUploadWidget>
 				{/if}
@@ -82,10 +156,18 @@
 				/>
 			</div>
 
-			<!-- Actions -->
 			<div class="form-actions">
-				<a href="/admin/akademik/pedoman-kkp" class="btn-cancel">Batal</a>
-				<button type="submit" class="btn-save">Simpan Pedoman</button>
+				<button
+					type="button"
+					onclick={() => history.back()}
+					class="btn-cancel"
+					disabled={isSubmitting}
+				>
+					Batal
+				</button>
+				<button type="submit" class="btn-save" disabled={isSubmitting}>
+					{isSubmitting ? 'Menyimpan...' : 'Simpan Data Pedoman KKP'}
+				</button>
 			</div>
 		</form>
 	</div>

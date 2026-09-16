@@ -10,33 +10,33 @@ import {
 import type { TableContentType } from '$lib/types/tableContent';
 import { writeFileSync, mkdirSync, existsSync } from 'fs';
 import { join } from 'path';
+import { getAllPedomanTa } from '$lib/server/admin/repository/article/akedemik/pedomanTa';
 
 export const load: PageServerLoad = async () => {
 	try {
-		const rawList = await getAllPedomanKkp();
+		// const rawList = await getAllPedomanKkp();
 
 		// Transformasi data DB ke format TableContentType untuk komponen TableContent
-		const pedomanList: TableContentType[] = rawList.map((item) => ({
-			id: item.id,
-			items: [
-				{
-					colomn: 'Judul',
-					row: item.title
-				},
-				{
-					colomn: 'Foto',
-					row: item.image_url || '-'
-				},
-				{
-					colomn: 'Description',
-					row: item.description || '-'
-				}
-			]
-		}));
+		// const pedomanList: TableContentType[] = rawList.map((item) => ({
+		// 	id: item.id,
+		// 	items: [
+		// 		{
+		// 			colomn: 'Judul',
+		// 			row: item.title
+		// 		},
+		// 		{
+		// 			colomn: 'Foto',
+		// 			row: item.image_url || '-'
+		// 		},
+		// 		{
+		// 			colomn: 'Description',
+		// 			row: item.description || '-'
+		// 		}
+		// 	]
+		// }));
 
 		return {
-			pedomanList,
-			rawPedomanList: rawList
+			rawPedomanList: getAllPedomanTa()
 		};
 	} catch (err) {
 		console.error('Error loading pedoman KKP:', err);

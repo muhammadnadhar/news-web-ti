@@ -41,6 +41,7 @@
 		"vite": "^8.0.16"
 	},
 	"dependencies": {
+		"cloudinary": "^2.11.0",
 		"l": "^0.6.0",
 		"lucide-svelte": "^1.0.1",
 		"mysql2": "^3.24.3",

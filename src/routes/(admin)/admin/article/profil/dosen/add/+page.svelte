@@ -10,9 +10,19 @@
 		X,
 		UserCheck,
 		ArrowLeft,
-		Send
+		Send,
+		BriefcaseIcon,
+		ChevronDownCircle,
+		ChevronDownIcon
 	} from 'lucide-svelte';
 	import type { ActionData } from './$types';
+	import {
+		folder_cloudinary_admin_article_profil,
+		getUploadConfig,
+		getUploadOptions,
+		upload_cloudinary_preset
+	} from '$lib/cloudinary/client';
+	import Message from '$lib/components/admin/message.svelte';
 
 	interface Props {
 		form?: ActionData;
@@ -26,6 +36,7 @@
 	let pddiktiUrl = $state(form?.values?.pddiktiUrl ?? '');
 	let photoUrl = $state(form?.values?.photoUrl ?? '');
 	let isSubmitting = $state(false);
+	let category = $state('dosen');
 
 	function handleUpload(result: any) {
 		if (result?.event === 'success') {
@@ -50,7 +61,6 @@
 		<div
 			class="overflow-hidden rounded-2xl border border-[var(--color-border-light)] bg-[var(--color-bg-secondary)] shadow-xl"
 		>
-			<!-- Header Card -->
 			<div
 				class="border-b border-[var(--color-border-light)] bg-[var(--color-bg-primary-glare)] px-6 py-4"
 			>
@@ -73,12 +83,15 @@
 				}}
 				class="space-y-6 p-6"
 			>
-				{#if form?.error}
-					<div
-						class="rounded-lg border border-[var(--color-status-error)]/40 bg-[var(--color-status-error)]/20 p-3.5 text-xs font-medium text-[var(--color-status-error)]"
-					>
-						{form.error}
-					</div>
+				<!-- {#if form?.error} -->
+				<!-- 	<div -->
+				<!-- 		class="rounded-lg border border-[var(--color-status-error)]/40 bg-[var(--color-status-error)]/20 p-3.5 text-xs font-medium text-[var(--color-status-error)]" -->
+				<!-- 	> -->
+				<!-- 		{form.error} -->
+				<!-- 	</div> -->
+				<!-- {/if} -->
+				{#if form?.message}
+					<Message type={form.message.type} text={form.message.text} />
 				{/if}
 
 				<!-- Hidden input URL foto untuk backend -->
@@ -127,9 +140,12 @@
 								</div>
 
 								<CldUploadWidget
-									uploadPreset="nama_preset_unsigned_anda"
+									config={getUploadConfig()}
+									uploadPreset={upload_cloudinary_preset}
+									options={getUploadOptions(folder_cloudinary_admin_article_profil)}
 									onUpload={handleUpload}
 									let:open
+									let:isLoading
 								>
 									<button
 										type="button"
@@ -228,6 +244,32 @@
 								/>
 								<LinkIcon class="absolute top-3 left-3 h-4 w-4 text-[var(--color-text-muted)]" />
 							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Pilihan Kategori (Dosen / Staff) -->
+				<div class="space-y-1.5">
+					<label for="category" class="block text-xs font-medium text-[var(--color-text-muted)]">
+						Kategori Kepegawaian <span class="text-[var(--color-status-error)]">*</span>
+					</label>
+					<div class="relative">
+						<select
+							id="category"
+							name="category"
+							bind:value={category}
+							required
+							class="w-full appearance-none rounded-xl border border-[var(--color-border-light)] bg-[var(--color-bg-primary)] py-2.5 pr-10 pl-10 text-xs text-[var(--color-text-main)] transition-colors focus:border-[var(--color-accent-primary)] focus:outline-none"
+						>
+							<option value="dosen">Dosen</option>
+							<option value="staff">Staff Administrasi / Umum</option>
+						</select>
+						<BriefcaseIcon class="absolute top-3 left-3 h-4 w-4 text-[var(--color-text-muted)]" />
+						<!-- Custom Dropdown Arrow -->
+						<div
+							class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-[var(--color-text-muted)]"
+						>
+							<ChevronDownIcon class="h-4 w-4" />
 						</div>
 					</div>
 				</div>

@@ -34,11 +34,15 @@ export const actions: Actions = {
 		} catch (err) {
 			console.error('Error creating news:', err);
 			return fail(500, {
-				error: 'Gagal menyimpan data berita ke database.',
+				error: 'Gagal menyimpan data berita ke.',
 				values: { title, category, content, imageUrl }
 			});
 		}
 
-		throw redirect(303, '/admin/berita');
+		// throw redirect(303, '/admin/berita');
+		return {
+			error: 'Gagal m',
+			values: { title, category, content, imageUrl }
+		};
 	}
 };

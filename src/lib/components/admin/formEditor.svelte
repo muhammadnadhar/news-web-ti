@@ -17,11 +17,11 @@
 		CheckCircle2
 	} from 'lucide-svelte';
 
-	// Interface Props untuk reusability
 	interface Props {
 		title?: string;
 		label?: string;
 		value?: string;
+		showSaveButton?: boolean;
 		onSave?: (data: string) => void;
 	}
 
@@ -29,18 +29,31 @@
 		title = 'Form Editor Data',
 		label = 'Konten Editor',
 		value = $bindable(''),
+		showSaveButton = true,
 		onSave
 	}: Props = $props();
 
 	let editorRef = $state<HTMLDivElement | null>(null);
 	let isSaved = $state(false);
+	let isInternalUpdate = false;
 
-	// Menjalankan perintah Formatting pada Document Editor
+	// Sinkronisasi data dari luar (Parent) tanpa merusak posisi kursor saat mengetik
+	$effect(() => {
+		if (editorRef && !isInternalUpdate && value !== editorRef.innerHTML) {
+			editorRef.innerHTML = value || '';
+		}
+	});
+
+	function handleInput() {
+		if (!editorRef) return;
+		isInternalUpdate = true;
+		value = editorRef.innerHTML;
+		isInternalUpdate = false;
+	}
+
 	function format(command: string, val: string | undefined = undefined) {
 		document.execCommand(command, false, val);
-		if (editorRef) {
-			value = editorRef.innerHTML;
-		}
+		handleInput();
 	}
 
 	function handleHeadingChange(e: Event) {
@@ -60,15 +73,51 @@
 		if (url) format('insertImage', url);
 	}
 
-	function handleSubmit(e: SubmitEvent) {
-		e.preventDefault();
+	function handleAddTable() {
+		const rows = prompt('Masukkan jumlah baris:', '3');
+		const cols = prompt('Masukkan jumlah kolom:', '3');
+		if (!rows || !cols) return;
+
+		let tableHtml = '<table class="my-4 w-full border-collapse border border-bg-secondary-hover">';
+		for (let r = 0; r < parseInt(rows); r++) {
+			tableHtml += '<tr>';
+			for (let c = 0; c < parseInt(cols); c++) {
+				tableHtml += '<td class="border border-bg-secondary-hover p-2">Teks</td>';
+			}
+			tableHtml += '</tr>';
+		}
+		tableHtml += '</table><p><br></p>';
+		format('insertHTML', tableHtml);
+	}
+
+	function handleAddVideo() {
+		const url = prompt('Masukkan URL Embed Video (Contoh YouTube Embed URL):');
+		if (!url) return;
+
+		let embedUrl = url;
+		if (url.includes('watch?v=')) {
+			embedUrl = url.replace('watch?v=', 'embed/');
+		}
+
+		const videoHtml = `<div class="aspect-video my-4 w-full"><iframe src="${embedUrl}" class="h-full w-full rounded-lg" frameborder="0" allowfullscreen></iframe></div><p><br></p>`;
+		format('insertHTML', videoHtml);
+	}
+
+	// Fungsi Publik: Bisa dipanggil langsung oleh Parent via Bindable Ref
+	export function triggerSave(): string {
 		if (editorRef) {
 			value = editorRef.innerHTML;
-			if (onSave) onSave(value);
-
-			isSaved = true;
-			setTimeout(() => (isSaved = false), 3000);
 		}
+		if (onSave) onSave(value);
+
+		isSaved = true;
+		setTimeout(() => (isSaved = false), 3000);
+		return value;
+	}
+
+	function handleSubmit(e: SubmitEvent) {
+		e.preventDefault();
+		triggerSave();
 	}
 </script>
 
@@ -141,7 +190,7 @@
 						<LinkIcon class="h-4 w-4" />
 					</button>
 
-					<div class="mx-1 h-4 w-1 bg-bg-secondary-hover"></div>
+					<div class="mx-1 h-4 w-[1px] bg-bg-secondary-hover"></div>
 
 					<button
 						type="button"
@@ -199,7 +248,7 @@
 					</button>
 					<button
 						type="button"
-						onclick={() => alert('Fitur Tabel')}
+						onclick={handleAddTable}
 						class="rounded p-1.5 transition-colors hover:bg-bg-secondary hover:text-accent-primary"
 						title="Table"
 					>
@@ -207,7 +256,7 @@
 					</button>
 					<button
 						type="button"
-						onclick={() => alert('Fitur Video')}
+						onclick={handleAddVideo}
 						class="rounded p-1.5 transition-colors hover:bg-bg-secondary hover:text-accent-primary"
 						title="Video"
 					>
@@ -239,25 +288,54 @@
 					id="rich-editor"
 					bind:this={editorRef}
 					contenteditable="true"
-					oninput={() => {
-						if (editorRef) value = editorRef.innerHTML;
-					}}
+					oninput={handleInput}
 					class="prose max-h-[500px] min-h-[300px] max-w-none overflow-y-auto p-6 leading-relaxed text-text-main prose-invert focus:outline-none"
-				>
-					{@html value}
-				</div>
+				></div>
 			</div>
 		</div>
 
-		<!-- Submit Button -->
-		<div class="pt-2">
-			<button
-				type="submit"
-				class="flex items-center gap-2 rounded-lg bg-accent-primary px-5 py-2.5 text-sm font-semibold text-text-dark shadow-lg shadow-accent-primary/10 transition-all hover:bg-accent-primary-hover"
-			>
-				<Send class="h-4 w-4" />
-				<span>Simpan Data</span>
-			</button>
-		</div>
+		<!-- Submit Button (Kondisional) -->
+		{#if showSaveButton}
+			<div class="pt-2">
+				<button
+					type="submit"
+					class="flex items-center gap-2 rounded-lg bg-accent-primary px-5 py-2.5 text-sm font-semibold text-text-dark shadow-lg shadow-accent-primary/10 transition-all hover:bg-accent-primary-hover"
+				>
+					<Send class="h-4 w-4" />
+					<span>Simpan Data</span>
+				</button>
+			</div>
+		{/if}
 	</form>
 </div>
+
+<!-- penggunaan  -->
+<!---->
+<!-- <FormEditor  -->
+<!--     bind:value={content}  -->
+<!--     onSave={(data) => console.log('Data disimpan:', data)}  -->
+<!-- /> -->
+
+<!-- perente triger   -->
+<!-- <script lang="ts"> -->
+<!--     import FormEditor from '$lib/components/FormEditor.svelte'; -->
+<!---->
+<!--     let editorRef: any; -->
+<!--     let content = $state('<p>Konten Awal</p>'); -->
+<!---->
+<!--     function handleParentSubmit() { -->
+<!--         // Trigger fungsi simpan dari Parent -->
+<!--         const data = editorRef.triggerSave(); -->
+<!--         console.log('Data dikirim oleh Parent:', data); -->
+<!--     } -->
+<!-- </script> -->
+<!---->
+<!-- <FormEditor  -->
+<!--     bind:this={editorRef}  -->
+<!--     bind:value={content}  -->
+<!--     showSaveButton={false}  -->
+<!-- /> -->
+<!---->
+<!-- <button onclick={handleParentSubmit} class="mt-4 border p-2"> -->
+<!--     Submit dari Parent -->
+<!-- </button> -->

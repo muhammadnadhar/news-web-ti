@@ -41,6 +41,10 @@ export const actions: Actions = {
 		}
 
 		// Redirect ke halaman daftar Rekrutmen Asisten
-		throw redirect(303, '/admin/akademik/rekrutmen-asisten');
+		// throw redirect(303, '/admin/akademik/rekrutmen-asisten');
+		return {
+			success: true,
+			message: 'Data Rekrutmen Asisten berhasil ditambahkan!'
+		};
 	}
 };

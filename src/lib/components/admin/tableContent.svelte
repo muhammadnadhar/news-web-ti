@@ -1,11 +1,12 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
+	import { invalidateAll } from '$app/navigation';
+	import type { ResponseMessage } from '$lib/types/message';
+	//
+	// semua desian Halaman yang mengguakanTable akan memanggil Compoennt ini
+	//
 
-
-// 
-// semua desian Halaman yang mengguakanTable akan memanggil Compoennt ini 
-// 
-
-  import type { TableContentType , tableItem } from '$lib/types/tableContent';
+	import type { TableContentType, tableItem } from '$lib/types/tableContent';
 	import {
 		ArrowUpDown,
 		Edit3,
@@ -15,7 +16,8 @@
 		Search,
 		ChevronLeft,
 		ChevronRight,
-		Plus
+		Plus,
+		Loader2Icon
 	} from 'lucide-svelte';
 
 	let {
@@ -24,15 +26,20 @@
 		data = [],
 		onAdd,
 		onEdit,
-		onDelete
+
+		deleteAction = '?/delete',
+		onDeleteSuccess,
+		onDeleteError
 	}: {
 		title?: string;
 		addButtonLabel?: string;
 		data: TableContentType[];
 		// optional
-    onAdd?: () => void;
+		onAdd?: () => void;
 		onEdit?: (item: TableContentType) => void;
-		onDelete?: (item: TableContentType) => void;
+		deleteAction?: string; // Action URL, default: '?/delete'
+		onDeleteSuccess?: (data: ResponseMessage) => void;
+		onDeleteError?: (data: ResponseMessage) => void;
 	} = $props();
 
 	// State internal
@@ -40,6 +47,7 @@
 	let entriesPerPage = $state(10);
 	let currentPage = $state(1);
 	let itemToDelete = $state<TableContentType | null>(null);
+	let isSubmitting = $state(false);
 
 	// Ambil daftar kolom secara otomatis dari baris data pertama
 	let columns = $derived.by(() => {
@@ -66,6 +74,20 @@
 		return filteredData.slice(startIndex, startIndex + entriesPerPage);
 	});
 
+	function closeDeleteModal() {
+		itemToDelete = null;
+		isSubmitting = false;
+	}
+
+	// Otomatis mengekstrak nama/judul item dari array kolom untuk ditampilkan pada pesan konfirmasi
+	let itemTitle = $derived.by(() => {
+		if (!itemToDelete?.items) return '';
+		const nameCol = itemToDelete.items.find((col: any) =>
+			col.colomn.toLowerCase().includes('nama')
+		);
+		return nameCol ? nameCol.row : itemToDelete.items[0]?.row || '';
+	});
+
 	// Helper deteksi URL Gambar
 	function checkIsImage(item: tableItem): boolean {
 		if (item.isImage) return true;
@@ -83,27 +105,30 @@
 		return item.row.startsWith('http://') || item.row.startsWith('https://');
 	}
 
-	function handleConfirmDelete() {
-		if (itemToDelete && onDelete) {
-			onDelete(itemToDelete);
-		}
-		itemToDelete = null;
-	}
+	// Reset ke halaman pertama saat melakukan pencarian
+	$effect(() => {
+		searchQuery; // dependency
+		currentPage = 1;
+	});
 </script>
 
-<div class="space-y-4 rounded-2xl border border-white/10 bg-scitech-slate/50 p-5 shadow-2xl backdrop-blur-xl">
+<div
+	class="bg-scitech-slate/50 space-y-4 rounded-2xl border border-white/10 p-5 shadow-2xl backdrop-blur-xl"
+>
 	<!-- header action & title bar -->
 	{#if title || addButtonLabel}
-		<div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-white/10 pb-4">
+		<div
+			class="flex flex-col gap-3 border-b border-white/10 pb-4 sm:flex-row sm:items-center sm:justify-between"
+		>
 			{#if title}
-				<h2 class="text-sm font-bold text-scitech-mint tracking-wide">{title}</h2>
+				<h2 class="text-scitech-mint text-sm font-bold tracking-wide">{title}</h2>
 			{/if}
 
 			{#if addButtonLabel && onAdd}
 				<button
 					type="button"
 					onclick={onAdd}
-					class="inline-flex items-center justify-center gap-1.5 rounded-xl bg-scitech-mint px-4 py-2 text-xs font-bold text-scitech-navy shadow-md shadow-scitech-mint/10 transition-all hover:bg-scitech-mint-hover active:scale-95 sm:w-auto"
+					class="bg-scitech-mint text-scitech-navy shadow-scitech-mint/10 hover:bg-scitech-mint-hover inline-flex items-center justify-center gap-1.5 rounded-xl px-4 py-2 text-xs font-bold shadow-md transition-all active:scale-95 sm:w-auto"
 				>
 					<Plus class="h-4 w-4" />
 					<span>{addButtonLabel}</span>
@@ -112,12 +137,14 @@
 		</div>
 	{/if}
 
-	<div class="flex flex-col gap-3 text-xs sm:flex-row sm:items-center sm:justify-between text-text-muted">
+	<div
+		class="flex flex-col gap-3 text-xs text-text-muted sm:flex-row sm:items-center sm:justify-between"
+	>
 		<div class="flex items-center gap-2">
 			<span>Show</span>
 			<select
 				bind:value={entriesPerPage}
-				class="rounded-lg border border-white/10 bg-scitech-navy px-2.5 py-1.5 text-text-main focus:border-scitech-mint focus:outline-none"
+				class="bg-scitech-navy focus:border-scitech-mint rounded-lg border border-white/10 px-2.5 py-1.5 text-text-main focus:outline-none"
 			>
 				<option value={5}>5</option>
 				<option value={10}>10</option>
@@ -128,30 +155,32 @@
 		</div>
 
 		<div class="relative w-full sm:w-64">
-			<Search class="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-text-muted" />
+			<Search class="absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-text-muted" />
 			<input
 				type="text"
 				bind:value={searchQuery}
 				placeholder="Search..."
-				class="w-full rounded-lg border border-white/10 bg-scitech-navy pl-9 pr-3 py-1.5 text-xs text-text-main placeholder-text-muted transition-all focus:border-scitech-mint focus:outline-none"
+				class="bg-scitech-navy focus:border-scitech-mint w-full rounded-lg border border-white/10 py-1.5 pr-3 pl-9 text-xs text-text-main placeholder-text-muted transition-all focus:outline-none"
 			/>
 		</div>
 	</div>
 
-	<div class="overflow-x-auto rounded-xl border border-white/10 bg-scitech-navy/60">
+	<div class="bg-scitech-navy/60 overflow-x-auto rounded-xl border border-white/10">
 		<table class="w-full border-collapse text-left text-xs">
 			<!-- Table Header -->
 			<thead>
-				<tr class="border-b border-white/10 bg-white/5 font-mono text-[11px] text-text-muted tracking-wider uppercase">
+				<tr
+					class="border-b border-white/10 bg-white/5 font-mono text-[11px] tracking-wider text-text-muted uppercase"
+				>
 					{#each columns as col}
 						<th class="p-3.5">
 							<div class="flex items-center gap-1.5">
 								<span>{col}</span>
-								<ArrowUpDown class="h-3 w-3 text-scitech-cyan/70" />
+								<ArrowUpDown class="text-scitech-cyan/70 h-3 w-3" />
 							</div>
 						</th>
 					{/each}
-					<th class="p-3.5 text-center w-28">Menu</th>
+					<th class="w-28 p-3.5 text-center">Menu</th>
 				</tr>
 			</thead>
 
@@ -164,41 +193,43 @@
 						</td>
 					</tr>
 				{:else}
-					{#each paginatedData as rowData (rowData.id)}
+					{#each paginatedData as rowData, i (rowData.id ?? i)}
 						<tr class="group transition-colors hover:bg-white/[0.03]">
 							{#each rowData.items as item}
 								<td class="p-3.5 align-middle">
 									{#if checkIsImage(item)}
 										<!-- Tampilan Gambar/Foto -->
-										<div class="h-16 w-24 overflow-hidden rounded-lg border border-white/10 bg-black/40">
+										<div
+											class="h-16 w-24 overflow-hidden rounded-lg border border-white/10 bg-black/40"
+										>
 											<img
 												src={String(item.row)}
 												alt={item.colomn}
 												class="h-full w-full object-cover transition-transform group-hover:scale-105"
 											/>
- <!-- <CldImage -->
- <!--    src="cld-sample-5" -->
- <!--    width="300" -->
- <!--    height="300" -->
- <!--    crop="fill" -->
- <!--    gravity="faces" -->
- <!--    tint="equalize:80:blue" -->
- <!--    alt="Gambar dengan efek potong wajah dan warna biru" -->
- <!--  /> -->
- 					</div> -->
+											<!-- <CldImage -->
+											<!--    src="cld-sample-5" -->
+											<!--    width="300" -->
+											<!--    height="300" -->
+											<!--    crop="fill" -->
+											<!--    gravity="faces" -->
+											<!--    tint="equalize:80:blue" -->
+											<!--    alt="Gambar dengan efek potong wajah dan warna biru" -->
+											<!--  /> -->
+										</div>
 									{:else if checkIsLink(item)}
 										<!-- Tampilan Tautan/Link -->
 										<a
 											href={String(item.row)}
 											target="_blank"
 											rel="noopener noreferrer"
-											class="text-scitech-cyan hover:underline break-all"
+											class="text-scitech-cyan break-all hover:underline"
 										>
 											{item.row}
 										</a>
 									{:else}
 										<!-- Tampilan Teks Biasa -->
-										<span class="text-text-main group-hover:text-scitech-mint transition-colors">
+										<span class="group-hover:text-scitech-mint text-text-main transition-colors">
 											{item.row}
 										</span>
 									{/if}
@@ -213,12 +244,12 @@
 											type="button"
 											title="Edit"
 											onclick={() => onEdit(rowData)}
-											class="rounded-lg border border-scitech-cyan/30 bg-scitech-cyan/10 p-2 text-scitech-cyan transition-all hover:bg-scitech-cyan/20 active:scale-95"
+											class="border-scitech-cyan/30 bg-scitech-cyan/10 text-scitech-cyan hover:bg-scitech-cyan/20 rounded-lg border p-2 transition-all active:scale-95"
 										>
 											<Edit3 class="h-3.5 w-3.5" />
 										</button>
 									{/if}
-									{#if onDelete}
+									{#if deleteAction}
 										<button
 											type="button"
 											title="Hapus"
@@ -246,7 +277,9 @@
 		</table>
 	</div>
 
-	<div class="flex flex-col gap-3 text-xs sm:flex-row sm:items-center sm:justify-between text-text-muted">
+	<div
+		class="flex flex-col gap-3 text-xs text-text-muted sm:flex-row sm:items-center sm:justify-between"
+	>
 		<div>
 			Showing {totalEntries === 0 ? 0 : startIndex + 1} to {endIndex} of {totalEntries} entries
 		</div>
@@ -288,47 +321,115 @@
 
 <!-- --------------------------------MODAL----------------------  -->
 
-<!-- modal alert konfirmasi hapus -->
+<!-- Modal Alert Konfirmasi Hapus -->
 {#if itemToDelete}
-	<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-scitech-navy/80 backdrop-blur-md">
-		<div class="w-full max-w-md rounded-2xl border border-red-500/30 bg-scitech-slate p-6 shadow-2xl space-y-4">
-			<div class="flex items-center justify-between border-b border-white/10 pb-3">
-				<div class="flex items-center gap-2 text-red-400 font-mono text-xs font-bold uppercase tracking-wider">
-					<AlertTriangle class="h-4 w-4" />
-					<span>Konfirmasi Hapus Data</span>
+	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
+		<div
+			class="bg-scitech-navy w-full max-w-md space-y-6 rounded-3xl border border-white/15 p-6 shadow-2xl sm:p-8"
+		>
+			<!-- Header Modal -->
+			<div class="flex items-center justify-between border-b border-white/10 pb-4">
+				<div class="flex items-center gap-2 font-bold text-red-400">
+					<AlertTriangle class="h-5 w-5" />
+					<h3 class="text-sm">Konfirmasi Hapus Data</h3>
 				</div>
-				<button type="button" onclick={() => (itemToDelete = null)} class="text-text-muted hover:text-text-main">
-					<X class="h-4 w-4" />
+				<button
+					type="button"
+					onclick={closeDeleteModal}
+					disabled={isSubmitting}
+					class="text-text-muted transition-colors hover:text-text-muted disabled:opacity-50"
+				>
+					<X class="h-5 w-5" />
 				</button>
 			</div>
 
-			<p class="text-xs text-text-muted leading-relaxed">
-				Apakah Anda yakin ingin menghapus data entri ini? Tindakan ini tidak dapat dibatalkan.
-			</p>
+			<!-- Form Hapus Server Action -->
+			<form
+				method="POST"
+				action={deleteAction}
+				use:enhance={() => {
+					isSubmitting = true;
+					return async ({ result }) => {
+						isSubmitting = false;
 
-			<div class="flex items-center justify-end gap-3 pt-2">
-				<button
-					type="button"
-					onclick={() => (itemToDelete = null)}
-					class="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-text-main transition-all hover:bg-white/10"
-				>
-					Batal
-				</button>
-				<button
-					type="button"
-					onclick={handleConfirmDelete}
-					class="rounded-xl border border-red-500/40 bg-red-500/20 px-4 py-2 text-xs font-bold text-red-300 transition-all hover:bg-red-500/30 active:scale-95"
-				>
-					Hapus Data
-				</button>
-			</div>
+						if (result.type === 'success') {
+							closeDeleteModal();
+							await invalidateAll();
+							onDeleteSuccess?.(
+								(result.data as ResponseMessage) ?? {
+									status: 'success',
+									title: 'Berhasil',
+									message: 'Data berhasil dihapus.'
+								}
+							);
+						} else if (result.type === 'failure') {
+							closeDeleteModal();
+							onDeleteError?.(
+								(result.data as ResponseMessage) ?? {
+									status: 'error',
+									title: 'Gagal',
+									message: 'Gagal menghapus data.'
+								}
+							);
+						} else {
+							closeDeleteModal();
+							// PERBAIKAN: Kirim Objek ResponseMessage, bukan String!
+							onDeleteError?.({
+								status: 'error',
+								title: 'Kesalahan Sistem',
+								message: 'Terjadi kesalahan sistem saat menghapus data.'
+							});
+						}
+					};
+				}}
+				class="space-y-6"
+			>
+				<!-- Hidden Input ID -->
+				<input type="hidden" name="id" value={itemToDelete.id} />
+
+				<div class="space-y-2">
+					<p class="text-xs leading-relaxed text-text-muted">
+						Apakah Anda yakin ingin menghapus data
+						{#if itemTitle}
+							<span class="font-bold text-white">"{itemTitle}"</span>
+						{/if}?
+					</p>
+					<p class="text-[11px] text-red-400/80 italic">
+						*Tindakan ini tidak dapat dibatalkan dan data akan dihapus permanen dari sistem.
+					</p>
+				</div>
+
+				<!-- Form Action Buttons -->
+				<div class="flex justify-end gap-3 border-t border-white/10 pt-4">
+					<button
+						type="button"
+						onclick={closeDeleteModal}
+						disabled={isSubmitting}
+						class="rounded-xl bg-white/5 px-4 py-2 text-xs font-semibold text-text-muted transition-all hover:bg-white/10 disabled:opacity-50"
+					>
+						Batal
+					</button>
+
+					<button
+						type="submit"
+						disabled={isSubmitting}
+						class="inline-flex items-center gap-2 rounded-xl border border-red-500/40 bg-red-500/20 px-5 py-2 text-xs font-bold text-red-300 transition-all hover:bg-red-500/30 active:scale-95 disabled:opacity-50"
+					>
+						{#if isSubmitting}
+							<Loader2Icon class="h-4 w-4 animate-spin" />
+							<span>Menghapus...</span>
+						{:else}
+							<Trash2 class="h-4 w-4" />
+							<span>Hapus Data</span>
+						{/if}
+					</button>
+				</div>
+			</form>
 		</div>
 	</div>
 {/if}
 
-
-
-<!-- contoh penggunaan  -->
+<!-- contoh penggunaan  / ubah dahulu ke TbaleContentType-->
 <!---->
 <!-- <script lang="ts"> -->
 <!-- 	import DataTable from '$lib/components/DataTable.svelte'; -->
@@ -349,4 +450,3 @@
 <!-- 	onEdit={(item) => console.log('Edit', item)} -->
 <!-- 	onDelete={(item) => console.log('Delete', item)} -->
 <!-- /> -->
-

@@ -14,6 +14,8 @@
 	import type { PageData } from './$types';
 	import GlobalSkeletonUser from '$lib/components/globalSkeletonUser.svelte';
 	import { CldUploadWidget } from 'svelte-cloudinary';
+	import type { MessageStatus } from '$lib/components/admin/message.svelte';
+	import Message from '$lib/components/admin/message.svelte';
 	// Mendapatkan data dari +page.server.ts menggunakan Svelte 5 Rune
 	let { data }: { data: PageData } = $props();
 
@@ -24,6 +26,22 @@
 
 	let avatarForm: HTMLFormElement;
 	let uploadedAvatarUrl = $state<string>('');
+
+	let showMessage = $state(false);
+	let messageConfig = $state<{
+		status: MessageStatus;
+		title: string;
+		message: string;
+	}>({
+		status: 'info',
+		title: '',
+		message: ''
+	});
+
+	function triggerMessage(status: MessageStatus, title: string, message: string) {
+		messageConfig = { status, title, message };
+		showMessage = true;
+	}
 
 	// Sinkronkan state form lokal saat promise data user selesai dimuat
 	$effect(() => {
@@ -71,11 +89,21 @@
 			</div>
 		</div>
 
+		{#if showMessage}
+			<Message
+				status={messageConfig.status}
+				title={messageConfig.title}
+				message={messageConfig.message}
+				dismissible={true}
+				timeout={4000}
+				onclose={() => (showMessage = false)}
+			/>
+		{/if}
+
 		{#await data.user}
 			<GlobalSkeletonUser />
 		{:then user}
 			{#if user}
-				<!-- Main Content Layout Grid -->
 				<div class="grid grid-cols-1 items-start gap-8 lg:grid-cols-12">
 					<!-- Left Column: Informasi Profil Utama (7 Cols) -->
 					<div class="space-y-8 lg:col-span-7">
@@ -290,17 +318,18 @@
 			{/if}
 		{:catch error}
 			<!-- Tampilan penanganan error jika query gagal -->
-			<div
-				class="flex items-center gap-3 rounded-xl border border-red-500/20 bg-red-500/10 p-6 text-red-400"
-			>
-				<AlertCircle class="h-6 w-6 shrink-0" />
-				<div>
-					<h3 class="font-bold">Gagal memuat profil</h3>
-					<p class="text-sm text-red-300/80">
-						{error?.message || 'Terjadi kesalahan tidak terduga.'}
-					</p>
-				</div>
-			</div>
+			<!-- <div -->
+			<!-- 	class="flex items-center gap-3 rounded-xl border border-red-500/20 bg-red-500/10 p-6 text-red-400" -->
+			<!-- > -->
+			<!-- 	<AlertCircle class="h-6 w-6 shrink-0" /> -->
+			<!-- 	<div> -->
+			<!-- 		<h3 class="font-bold">Gagal memuat profil</h3> -->
+			<!-- 		<p class="text-sm text-red-300/80"> -->
+			<!-- 			{error?.message || 'Terjadi kesalahan tidak terduga.'} -->
+			<!-- 		</p> -->
+			<!-- 	</div> -->
+			<!-- </div> -->
+			{triggerMessage('error', 'error', error?.message || 'terjadi kesalahan yang tidak di duga')}
 		{/await}
 	</div>
 </div>

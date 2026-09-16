@@ -34,7 +34,9 @@
 		>
 			<Sparkles class="text-scitech-mint h-4 w-4" /> Artikel Akademik
 		</span>
-		<h1 class="text-2xl font-extrabold tracking-tight text-white sm:text-3xl">Kalender Akademik</h1>
+		<h1 class="text-2xl font-extrabold tracking-tight text-text-main sm:text-3xl">
+			Kalender Akademik
+		</h1>
 	</div>
 
 	<!-- Main Form Container -->
@@ -59,7 +61,7 @@
 					type="text"
 					required
 					bind:value={titleInput}
-					class="bg-scitech-navy/80 focus:border-scitech-mint w-full rounded-xl border border-white/15 px-4 py-2.5 text-xs text-white focus:outline-none"
+					class="bg-scitech-navy/80 focus:border-scitech-mint w-full rounded-xl border border-white/15 px-4 py-2.5 text-xs text-text-main focus:outline-none"
 				/>
 			</div>
 
@@ -92,7 +94,7 @@
 								<button
 									type="button"
 									onclick={() => removeExistingImage(idx)}
-									class="absolute top-3 right-3 rounded-lg bg-rose-500/80 p-1.5 text-white opacity-0 transition-opacity group-hover:opacity-100 hover:bg-rose-600"
+									class="absolute top-3 right-3 rounded-lg bg-rose-500/80 p-1.5 text-text-main opacity-0 transition-opacity group-hover:opacity-100 hover:bg-rose-600"
 									title="Hapus foto"
 								>
 									<Trash2 class="h-4 w-4" />
@@ -111,7 +113,7 @@
 				<div class="flex items-center gap-3">
 					<label
 						for="images"
-						class="bg-scitech-navy hover:bg-scitech-navy/80 inline-flex cursor-pointer items-center gap-2 rounded-xl border border-white/15 px-4 py-2 text-xs font-medium text-text-muted transition-all hover:text-white"
+						class="bg-scitech-navy hover:bg-scitech-navy/80 inline-flex cursor-pointer items-center gap-2 rounded-xl border border-white/15 px-4 py-2 text-xs font-medium text-text-muted transition-all hover:text-text-main"
 					>
 						<Upload class="h-4 w-4" />
 						<span>Browse...</span>
@@ -120,7 +122,6 @@
 				</div>
 			</div>
 
-			<!-- Submit Button -->
 			<div class="pt-4">
 				<button
 					type="submit"

@@ -10,26 +10,26 @@ import type { TableContentType } from '$lib/types/tableContent';
 
 export const load: PageServerLoad = async () => {
 	try {
-		const rawList = await getAllPartnerships();
+		// const rawList = await getAllPartnerships();
 
 		// Transformasi data DB ke format TableContentType untuk komponen TableContent
-		const partnershipList: TableContentType[] = rawList.map((item) => ({
-			id: item.id,
-			items: [
-				{
-					colomn: 'Nama',
-					row: item.institution_name
-				},
-				{
-					colomn: 'Foto',
-					row: item.logo_url ? `<img src="${item.logo_url}" alt="${item.institution_name}" class="h-12 w-12 object-contain rounded-lg bg-white p-1" />` : '-'
-				}
-			]
-		}));
+		// const partnershipList: TableContentType[] = rawList.map((item) => ({
+		// 	id: item.id,
+		// 	items: [
+		// 		{
+		// 			colomn: 'Nama',
+		// 			row: item.institution_name
+		// 		},
+		// 		{
+		// 			colomn: 'Foto',
+		// 			row: item.logo_url ? `<img src="${item.logo_url}" alt="${item.institution_name}" class="h-12 w-12 object-contain rounded-lg bg-white p-1" />` : '-'
+		// 		}
+		// 	]
+		// }));
 
 		return {
-			partnershipList,
-			rawPartnershipList: rawList
+			// partnershipList,
+			rawPartnershipList: getAllPartnerships()
 		};
 	} catch (err) {
 		console.error('Error loading partnerships:', err);

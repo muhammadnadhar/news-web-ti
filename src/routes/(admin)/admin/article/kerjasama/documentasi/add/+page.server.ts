@@ -15,6 +15,8 @@ export const actions: Actions = {
 		if (!title || title.trim() === '') {
 			return fail(400, {
 				success: false,
+
+				title: 'Gagal',
 				message: 'Judul Kegiatan / Nama Dokumentasi wajib diisi.',
 				values: { title, imageUrl, description, eventDate }
 			});
@@ -24,6 +26,8 @@ export const actions: Actions = {
 		if (!imageUrl || imageUrl.trim() === '') {
 			return fail(400, {
 				success: false,
+
+				title: 'Gagal',
 				message: 'Foto / Media Dokumentasi wajib diunggah.',
 				values: { title, imageUrl, description, eventDate }
 			});
@@ -42,6 +46,7 @@ export const actions: Actions = {
 
 			if (!success) {
 				return fail(500, {
+					title: 'Gagal',
 					success: false,
 					message: 'Gagal menyimpan data Dokumentasi Kegiatan ke database.',
 					values: { title, imageUrl, description, eventDate }
@@ -50,12 +55,20 @@ export const actions: Actions = {
 		} catch (error: any) {
 			return fail(500, {
 				success: false,
+
+				title: 'Gagal',
 				message: 'Terjadi kesalahan sistem: ' + error.message,
 				values: { title, imageUrl, description, eventDate }
 			});
 		}
 
 		// Redirect ke halaman daftar Dokumentasi Kegiatan
-		throw redirect(303, '/admin/kegiatan/dokumentasi');
+		// throw redirect(303, '/admin/kegiatan/dokumentasi');
+		return {
+			success: true,
+			title: 'Berhasil',
+			status: 'success' as const,
+			message: 'Data Mitra Documentasi berhasil disimpan!'
+		};
 	}
 };

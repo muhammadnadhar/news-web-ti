@@ -82,6 +82,7 @@ CREATE TABLE IF NOT EXISTS ${tableLecturerStaff} (
     pddikti_url VARCHAR(255) NULL, -- Link PDDikti / DDT
     expertise VARCHAR(150) NOT NULL, -- Bidang keahlian/tugas (contoh: 'Keamanan Siber', 'Staff Administrasi')
     role ENUM('Dosen', 'Staff') NOT NULL DEFAULT 'Dosen', -- Penanda jenis: 'Dosen' atau 'Staff'
+    is_primary BOOLEAN NOT NULL DEFAULT FALSE, -- Penanda data utama yang tampil di Home (true/false)
     photo_url VARCHAR(255) NULL, -- URL/Path foto profil (opsional)
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Waktu pembuatan data
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP -- Waktu update data

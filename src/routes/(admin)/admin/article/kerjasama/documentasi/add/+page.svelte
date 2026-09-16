@@ -3,10 +3,35 @@
 	import { CldUploadWidget } from 'svelte-cloudinary';
 	import type { ActionData } from './$types';
 	import { ImageIcon } from 'lucide-svelte';
+	import {
+		folder_cloudinary_admin_article_kerjasama,
+		getUploadConfig,
+		getUploadOptions,
+		upload_cloudinary_preset
+	} from '$lib/cloudinary/client';
+	import Message, { type MessageStatus } from '$lib/components/admin/message.svelte';
 	let { form }: { form: ActionData } = $props();
 
 	// State lokal untuk URL foto dokumentasi
 	let imageUrl = $state(form?.values?.imageUrl || '');
+
+	let isSubmitting = $state(false);
+	let showMessage = $state(false);
+
+	let messageConfig = $state<{
+		status: MessageStatus;
+		title: string;
+		message: string;
+	}>({
+		status: 'info',
+		title: '',
+		message: ''
+	});
+
+	function triggerMessage(status: MessageStatus, title: string, message: string) {
+		messageConfig = { status, title, message };
+		showMessage = true;
+	}
 
 	// Handler saat gambar berhasil diunggah ke Cloudinary
 	function handleUploadSuccess(result: any) {
@@ -26,15 +51,56 @@
 		<h1>Tambah Dokumentasi Kegiatan Baru</h1>
 	</header>
 
-	{#if form?.message}
-		<div class="alert error">
-			{form.message}
+	{#if showMessage}
+		<div class="mb-6">
+			<Message
+				status={messageConfig.status}
+				title={messageConfig.title}
+				message={messageConfig.message}
+				dismissible={true}
+				timeout={5000}
+				onclose={() => (showMessage = false)}
+			/>
 		</div>
 	{/if}
 
 	<div class="card">
-		<form method="POST" use:enhance class="form">
-			<!-- Field: Judul Kegiatan -->
+		<form
+			method="POST"
+			use:enhance={() => {
+				isSubmitting = true;
+				showMessage = false; // Sembunyikan pesan lama saat submitting
+
+				return async ({ result, update }) => {
+					isSubmitting = false;
+
+					if (result.type === 'success' && result.data?.success) {
+						triggerMessage(
+							'success',
+							(result.data.title as string) || 'Berhasil',
+							result.data.message as string
+						);
+
+						// Reset state checkbox dan isi input form
+						await update({ reset: true });
+					} else if (result.type === 'failure' && result.data) {
+						triggerMessage(
+							'error',
+							(result.data.title as string) || 'Gagal Menyimpan',
+							result.data.message as string
+						);
+
+						// Pertahankan isi input yang dimasukkan user sebelumnya
+						await update();
+					} else {
+						// 3. Handling Error Tak Terduga
+						triggerMessage('error', 'Error', 'Terjadi kesalahan sistem saat memproses data.');
+						await update();
+					}
+				};
+			}}
+			class="form"
+		>
 			<div class="form-group">
 				<label for="title">Judul Kegiatan / Nama Dokumentasi <span class="required">*</span></label>
 				<input
@@ -47,7 +113,6 @@
 				/>
 			</div>
 
-			<!-- Field: Tanggal Pelaksanaan (Opsional) -->
 			<div class="form-group">
 				<label for="event_date">Tanggal Pelaksanaan Kegiatan</label>
 				<input
@@ -71,7 +136,13 @@
 						</button>
 					</div>
 				{:else}
-					<CldUploadWidget uploadPreset="ml_default" onSuccess={handleUploadSuccess} let:open>
+					<CldUploadWidget
+						config={getUploadConfig()}
+						uploadPreset={upload_cloudinary_preset}
+						options={getUploadOptions(folder_cloudinary_admin_article_kerjasama)}
+						onSuccess={handleUploadSuccess}
+						let:open
+					>
 						<button type="button" class="btn-upload" onclick={() => open()}>
 							<ImageIcon /> Unggah Foto Dokumentasi
 						</button>
@@ -91,9 +162,8 @@
 				>
 			</div>
 
-			<!-- Actions -->
 			<div class="form-actions">
-				<a href="/admin/kegiatan/dokumentasi" class="btn-cancel">Batal</a>
+				<button onclick={() => history.back()} class="btn-cancel">Batal</button>
 				<button type="submit" class="btn-save">Simpan Dokumentasi</button>
 			</div>
 		</form>

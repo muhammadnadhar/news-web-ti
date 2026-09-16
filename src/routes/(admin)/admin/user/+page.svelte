@@ -80,13 +80,12 @@
 			case 'Operator':
 				return 'bg-amber-500/15 text-amber-400 border-amber-500/40';
 			default:
-				return 'bg-white/10 text-white/80 border-white/20';
+				return 'bg-white/10 text-text-main/80 border-white/20';
 		}
 	}
 </script>
 
 <div class="mx-auto max-w-7xl space-y-8 p-6 sm:p-10">
-	<!-- Header Section -->
 	<div
 		class="flex flex-col justify-between gap-4 border-b border-white/10 pb-6 sm:flex-row sm:items-center"
 	>
@@ -96,10 +95,9 @@
 			>
 				<Sparkles class="text-scitech-mint h-4 w-4" /> Manajemen Pengguna
 			</span>
-			<h1 class="text-2xl font-extrabold tracking-tight text-white sm:text-3xl">Semua User</h1>
+			<h1 class="text-2xl font-extrabold tracking-tight text-text-main sm:text-3xl">Semua User</h1>
 		</div>
 
-		<!-- Quick Stat Card -->
 		<div
 			class="bg-scitech-slate/80 flex items-center gap-3 rounded-2xl border border-white/10 px-4 py-2.5 backdrop-blur-md"
 		>
@@ -108,7 +106,7 @@
 			</div>
 			<div>
 				<span class="text-text-muted block text-xs">Total Pengguna</span>
-				<span class="font-mono text-base font-bold text-white">{data.totalCount} Terdaftar</span>
+				<span class="font-mono text-base font-bold text-text-main">{data.totalCount} Terdaftar</span>
 			</div>
 		</div>
 	</div>
@@ -117,11 +115,10 @@
 	<div
 		class="bg-scitech-slate/60 space-y-6 rounded-3xl border border-white/10 p-6 shadow-2xl backdrop-blur-xl sm:p-8"
 	>
-		<!-- Card Action Header -->
 		<div class="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
 			<div class="flex items-center gap-2">
 				<div class="bg-scitech-mint h-6 w-2 rounded-full"></div>
-				<h2 class="text-lg font-bold tracking-wide text-white">Data User System</h2>
+				<h2 class="text-lg font-bold tracking-wide text-text-main">Data User System</h2>
 			</div>
 
 			<button
@@ -140,7 +137,7 @@
 				<span>Tampilkan</span>
 				<select
 					bind:value={entriesPerPage}
-					class="bg-scitech-navy focus:border-scitech-mint cursor-pointer rounded-xl border border-white/15 px-3 py-1.5 text-white transition-colors focus:outline-none"
+					class="bg-scitech-navy focus:border-scitech-mint cursor-pointer rounded-xl border border-white/15 px-3 py-1.5 text-text-main transition-colors focus:outline-none"
 				>
 					<option value={5}>5</option>
 					<option value={10}>10</option>
@@ -157,7 +154,7 @@
 					type="text"
 					placeholder="Cari nama, username..."
 					bind:value={searchQuery}
-					class="bg-scitech-navy/80 placeholder:text-text-muted focus:border-scitech-mint/80 focus:ring-scitech-mint/80 w-full rounded-xl border border-white/15 py-2.5 pr-4 pl-10 text-xs text-white transition-all focus:ring-1 focus:outline-none"
+					class="bg-scitech-navy/80 placeholder:text-text-muted focus:border-scitech-mint/80 focus:ring-scitech-mint/80 w-full rounded-xl border border-white/15 py-2.5 pr-4 pl-10 text-xs text-text-main transition-all focus:ring-1 focus:outline-none"
 				/>
 			</div>
 		</div>
@@ -170,7 +167,7 @@
 						class="bg-scitech-navy/90 text-text-muted border-b border-white/10 font-mono text-[11px] tracking-wider uppercase"
 					>
 						<th
-							class="cursor-pointer p-4 transition-colors hover:text-white"
+							class="cursor-pointer p-4 transition-colors hover:text-text-main"
 							onclick={() => toggleSort('name')}
 						>
 							<div class="flex items-center gap-2">
@@ -179,7 +176,7 @@
 							</div>
 						</th>
 						<th
-							class="cursor-pointer p-4 transition-colors hover:text-white"
+							class="cursor-pointer p-4 transition-colors hover:text-text-main"
 							onclick={() => toggleSort('username')}
 						>
 							<div class="flex items-center gap-2">
@@ -188,7 +185,7 @@
 							</div>
 						</th>
 						<th
-							class="cursor-pointer p-4 transition-colors hover:text-white"
+							class="cursor-pointer p-4 transition-colors hover:text-text-main"
 							onclick={() => toggleSort('role')}
 						>
 							<div class="flex items-center gap-2">
@@ -211,7 +208,7 @@
 							<tr class="group transition-colors hover:bg-white/[0.03]">
 								<!-- Column Nama -->
 								<td
-									class="group-hover:text-scitech-mint p-4 font-semibold text-white transition-colors"
+									class="group-hover:text-scitech-mint p-4 font-semibold text-text-main transition-colors"
 								>
 									<div class="flex items-center gap-3">
 										<div
@@ -278,7 +275,7 @@
 				<button
 					onclick={() => (currentPage = Math.max(1, currentPage - 1))}
 					disabled={currentPage === 1}
-					class="bg-scitech-navy text-text-muted rounded-xl border border-white/10 p-2 transition-all hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
+					class="bg-scitech-navy text-text-muted rounded-xl border border-white/10 p-2 transition-all hover:text-text-main disabled:cursor-not-allowed disabled:opacity-30"
 				>
 					<ChevronLeft class="h-4 w-4" />
 				</button>
@@ -289,7 +286,7 @@
 						class="rounded-xl border px-3 py-1.5 font-mono text-xs font-bold transition-all {currentPage ===
 						i + 1
 							? 'bg-scitech-mint text-scitech-navy border-scitech-mint shadow-md'
-							: 'bg-scitech-navy text-text-muted border-white/10 hover:text-white'}"
+							: 'bg-scitech-navy text-text-muted border-white/10 hover:text-text-main'}"
 					>
 						{i + 1}
 					</button>
@@ -298,7 +295,7 @@
 				<button
 					onclick={() => (currentPage = Math.min(totalPages, currentPage + 1))}
 					disabled={currentPage === totalPages}
-					class="bg-scitech-navy text-text-muted rounded-xl border border-white/10 p-2 transition-all hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
+					class="bg-scitech-navy text-text-muted rounded-xl border border-white/10 p-2 transition-all hover:text-text-main disabled:cursor-not-allowed disabled:opacity-30"
 				>
 					<ChevronRight class="h-4 w-4" />
 				</button>
@@ -314,10 +311,10 @@
 			class="bg-scitech-navy relative w-full max-w-md space-y-6 rounded-3xl border border-white/15 p-6 shadow-2xl sm:p-8"
 		>
 			<div class="flex items-center justify-between border-b border-white/10 pb-4">
-				<h3 class="flex items-center gap-2 text-base font-bold text-white">
+				<h3 class="flex items-center gap-2 text-base font-bold text-text-main">
 					<UserPlus class="text-scitech-mint h-4 w-4" /> Tambah User Baru
 				</h3>
-				<button onclick={() => (isAddModalOpen = false)} class="text-text-muted hover:text-white">
+				<button onclick={() => (isAddModalOpen = false)} class="text-text-muted hover:text-text-main">
 					<X class="h-5 w-5" />
 				</button>
 			</div>
@@ -334,7 +331,7 @@
 						required
 						bind:value={newName}
 						placeholder="Masukkan nama lengkap..."
-						class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-white/15 px-4 py-2.5 text-xs text-white focus:outline-none"
+						class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-white/15 px-4 py-2.5 text-xs text-text-main focus:outline-none"
 					/>
 				</div>
 
@@ -349,7 +346,7 @@
 						required
 						bind:value={newUsername}
 						placeholder="Masukkan username unik..."
-						class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-white/15 px-4 py-2.5 text-xs text-white focus:outline-none"
+						class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-white/15 px-4 py-2.5 text-xs text-text-main focus:outline-none"
 					/>
 				</div>
 
@@ -361,7 +358,7 @@
 						id="role"
 						name="role"
 						bind:value={newRole}
-						class="bg-scitech-slate focus:border-scitech-mint w-full cursor-pointer rounded-xl border border-white/15 px-4 py-2.5 text-xs text-white focus:outline-none"
+						class="bg-scitech-slate focus:border-scitech-mint w-full cursor-pointer rounded-xl border border-white/15 px-4 py-2.5 text-xs text-text-main focus:outline-none"
 					>
 						<option value="Administrator">Administrator</option>
 						<option value="Dosen">Dosen</option>
@@ -374,7 +371,7 @@
 					<button
 						type="button"
 						onclick={() => (isAddModalOpen = false)}
-						class="text-text-muted rounded-xl bg-white/5 px-4 py-2 text-xs font-semibold transition-all hover:bg-white/10 hover:text-white"
+						class="text-text-muted rounded-xl bg-white/5 px-4 py-2 text-xs font-semibold transition-all hover:bg-white/10 hover:text-text-main"
 					>
 						Batal
 					</button>
@@ -403,7 +400,7 @@
 			</div>
 
 			<div>
-				<h3 class="text-sm font-bold text-white">Hapus Data User?</h3>
+				<h3 class="text-sm font-bold text-text-main">Hapus Data User?</h3>
 				<p class="text-text-muted mt-1 text-xs leading-relaxed">
 					Tindakan ini tidak dapat dibatalkan. User akan dihapus dari sistem secara permanen.
 				</p>
@@ -420,7 +417,7 @@
 				</button>
 				<button
 					type="submit"
-					class="rounded-xl bg-red-500 px-5 py-2 text-xs font-bold text-white transition-all hover:bg-red-600"
+					class="rounded-xl bg-red-500 px-5 py-2 text-xs font-bold text-text-main transition-all hover:bg-red-600"
 				>
 					Ya, Hapus
 				</button>

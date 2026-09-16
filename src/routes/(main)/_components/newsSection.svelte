@@ -164,9 +164,9 @@
 							</div>
 
 							<h3
-								class="mb-2 line-clamp-2 text-sm font-bold leading-snug text-white sm:text-base {isActive
-									? 'text-white'
-									: 'text-white/80'}"
+								class="mb-2 line-clamp-2 text-sm font-bold leading-snug text-text-main sm:text-base {isActive
+									? 'text-text-main'
+									: 'text-text-main/80'}"
 							>
 								{news.title}
 							</h3>
@@ -214,7 +214,7 @@
 			>
 				<NewspaperIcon class="h-7 w-7" />
 			</div>
-			<h3 class="mb-2 text-lg font-bold text-white">Belum Ada Berita Terbaru</h3>
+			<h3 class="mb-2 text-lg font-bold text-text-main">Belum Ada Berita Terbaru</h3>
 			<p class="text-text-muted text-xs leading-relaxed">
 				Saat ini belum terdapat berita atau pengumuman yang dipublikasikan. Silakan periksa kembali
 				secara berkala.

@@ -11,10 +11,10 @@ import { join } from 'path';
 
 export const load: PageServerLoad = async () => {
 	try {
-		const rawList = await getAllPedomanTa();
+		// const rawList = await getAllPedomanTa();
 
 		return {
-			pedomanList: rawList
+			pedomanList: getAllPedomanTa()
 		};
 	} catch (err) {
 		console.error('Error loading pedoman TA:', err);

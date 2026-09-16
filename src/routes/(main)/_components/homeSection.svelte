@@ -1,6 +1,6 @@
 <script lang="ts">
 	import UserCard from '$lib/components/admin/userCard.svelte';
-	import type { DosenItemDTO } from '$lib/types/admin/home';
+	import type { PrimaryDosenDTO } from '$lib/types/admin/home';
 	import type { PerminatanTIItemDTO } from '$lib/types/admin/home';
 	import type { ProfilProdiItemDTO } from '$lib/types/admin/home';
 
@@ -10,7 +10,7 @@
 		listPerminatan = [],
 		listProfil = []
 	}: {
-		listDosen: DosenItemDTO[];
+		listDosen: PrimaryDosenDTO[];
 		listPerminatan: PerminatanTIItemDTO[];
 		listProfil: ProfilProdiItemDTO[];
 	} = $props();
@@ -37,7 +37,7 @@
 		</div>
 	{/if}
 
-	<!-- KATEGORI 2: PERMINATAN TI -->
+	<!-- kategori 2: perminatan ti -->
 	{#if listPerminatan.length > 0}
 		<div class="section-group">
 			<h2 class="group-title">
@@ -56,7 +56,7 @@
 		</div>
 	{/if}
 
-	<!-- KATEGORI 3: PROFIL PRODI -->
+	<!-- kategori 3: profil prodi -->
 	{#if listProfil.length > 0}
 		<div class="section-group">
 			<h2 class="group-title">

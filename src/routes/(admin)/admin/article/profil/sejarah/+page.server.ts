@@ -11,14 +11,15 @@ import {
 
 export const load: PageServerLoad = async () => {
 	try {
-		const [historyContent, historyLeaders] = await Promise.all([
-			getHistoryContent(),
-			getAllHistoryLeaders()
-		]);
+		// const [historyContent, historyLeaders] = await Promise.all([
+		// 	getHistoryContent(),
+		// 	getAllHistoryLeaders()
+		// ]);
 
 		return {
-			historyContent,
-			historyLeaders
+			historyContent : await getHistoryContent(),
+
+			historyLeaders: getAllHistoryLeaders(),
 		};
 	} catch (err) {
 		console.error('Error loading history data:', err);

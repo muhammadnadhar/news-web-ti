@@ -4,6 +4,10 @@
 	import TableContent from '$lib/components/admin/tableContent.svelte';
 	import type { TableContentType } from '$lib/types/tableContent';
 	import type { PedomanTaDTO } from '$lib/types/admin/article/akademik.js';
+	import TableSkeleton from '$lib/components/tableSkeleton.svelte';
+	import { gotoEdit, mergeNewPath } from '$lib/utils.js';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
 
 	let { data } = $props();
 
@@ -19,6 +23,31 @@
 	// Sync local state
 	let pedomanList = $derived<TableContentType[]>(data.pedomanList || []);
 	let rawPedomanList = $derived<PedomanTaDTO[]>(data.rawPedomanList || []);
+	/**
+	 * Mengubah list PedomanTaDTO menjadi format TableContentType
+	 */
+	export function mapPedomanTaToTableContent(dataList: PedomanTaDTO[]): TableContentType[] {
+		if (!Array.isArray(dataList)) return [];
+
+		return dataList.map((item) => ({
+			id: item.id,
+			items: [
+				{ colomn: 'Judul Pedoman', row: item.title || '-' },
+				{ colomn: 'Gambar', row: item.image_url || '/placeholder.png', isImage: true },
+				{ colomn: 'Deskripsi', row: item.description || '-' },
+				{
+					colomn: 'Tanggal Dibuat',
+					row: item.created_at
+						? new Date(item.created_at).toLocaleDateString('id-ID', {
+								day: 'numeric',
+								month: 'short',
+								year: 'numeric'
+							})
+						: '-'
+				}
+			]
+		}));
+	}
 
 	// Filtered Data untuk TableContent
 	let filteredList = $derived(
@@ -74,130 +103,141 @@
 		>
 			<Sparkles class="text-scitech-mint h-4 w-4" /> Artikel Akademik
 		</span>
-		<h1 class="text-2xl font-extrabold tracking-tight text-white sm:text-3xl">Pedoman TA</h1>
+		<h1 class="text-2xl font-extrabold tracking-tight text-text-main sm:text-3xl">Pedoman TA</h1>
 	</div>
 
 	<!-- Component TableContent -->
-	<TableContent
-		title="Data Pedoman Tugas Akhir"
-		addButtonLabel="+ Pedoman Tugas Akhir"
-		data={filteredList}
-		onAdd={openAddModal}
-		onEdit={openEditModal}
-	/>
+
+	<!-- Component TableContent -->
+	{#await data.pedomanList}
+		<TableSkeleton showTitle={true} title="Memuat Data Kerjasama..." columnsCount={2} />
+	{:then rawList}
+		<TableContent
+			title="Data Pedoman Tugas Akhir"
+			addButtonLabel="+ Pedoman Tugas Akhir"
+			data={mapPedomanTaToTableContent(rawList)}
+			onAdd={() => goto(mergeNewPath('add'))}
+			onEdit={(data) => gotoEdit(data.id, page.url.pathname)}
+			onDelete={(data) => console.info('dlete dengan modal')}
+		/>
+	{:catch error}
+		<div class="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-400">
+			Gagal memuat data kerjasama: {error.message}
+		</div>
+	{/await}
 </div>
 
 <!-- Modal Form CRUD Pedoman TA -->
-{#if isModalOpen}
-	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
-		<div
-			class="bg-scitech-navy max-h-[90vh] w-full max-w-2xl space-y-6 overflow-y-auto rounded-3xl border border-white/15 p-6 shadow-2xl sm:p-8"
-		>
-			<div class="flex items-center justify-between border-b border-white/10 pb-4">
-				<h3 class="text-base font-bold text-white">
-					{isEditMode ? 'Edit Pedoman Tugas Akhir' : 'Tambah Pedoman Tugas Akhir'}
-				</h3>
-				<button type="button" onclick={closeModal} class="text-text-muted hover:text-white">
-					<X class="h-5 w-5" />
-				</button>
-			</div>
-
-			<form
-				method="POST"
-				action="?/save"
-				enctype="multipart/form-data"
-				use:enhance={() => {
-					return async ({ result }) => {
-						if (result.type === 'success') {
-							closeModal();
-						}
-					};
-				}}
-				class="space-y-6"
-			>
-				<input type="hidden" name="id" value={selectedId} />
-				<input type="hidden" name="is_edit" value={isEditMode ? 'true' : 'false'} />
-
-				<!-- Judul Pedoman -->
-				<div>
-					<label for="title" class="mb-1 block text-xs font-medium text-text-muted"
-						>Judul Pedoman*</label
-					>
-					<input
-						id="title"
-						name="title"
-						type="text"
-						required
-						bind:value={titleInput}
-						placeholder="Contoh: A. Buku Pedoman Penulisan Tugas Akhir"
-						class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-white/15 px-4 py-2.5 text-xs text-white focus:outline-none"
-					/>
-				</div>
-
-				<!-- Description Input -->
-				<div>
-					<label for="description" class="mb-1 block text-xs font-medium text-text-muted"
-						>Description</label
-					>
-					<textarea
-						id="description"
-						name="description"
-						rows="5"
-						bind:value={descriptionContent}
-						placeholder="Masukkan deskripsi atau informasi pedoman..."
-						class="bg-scitech-slate focus:border-scitech-mint w-full resize-none rounded-xl border border-white/15 p-3 text-xs text-white focus:outline-none"
-					></textarea>
-				</div>
-
-				<!-- Foto Sampul -->
-				<div class="space-y-2">
-					<label for="image" class="block text-xs font-medium text-text-muted"
-						>Foto Sampul / Gambar Pedoman</label
-					>
-
-					{#if currentImageUrl}
-						<div class="mb-3 flex items-center gap-4">
-							<img
-								src={currentImageUrl}
-								alt="Sampul Saat Ini"
-								class="h-20 w-28 rounded-lg border border-white/15 object-cover"
-							/>
-							<span class="text-xs text-text-muted/60 italic"
-								>Upload foto baru di bawah untuk mengganti.</span
-							>
-						</div>
-					{/if}
-
-					<div class="flex items-center gap-3">
-						<label
-							for="image"
-							class="bg-scitech-slate inline-flex cursor-pointer items-center gap-2 rounded-xl border border-white/15 px-4 py-2 text-xs font-medium text-text-muted transition-all hover:bg-white/10 hover:text-white"
-						>
-							<Upload class="h-4 w-4" />
-							<span>Pilih Foto</span>
-						</label>
-						<input id="image" name="image" type="file" accept="image/*" class="hidden" />
-					</div>
-				</div>
-
-				<!-- Form Action Buttons -->
-				<div class="flex justify-end gap-3 border-t border-white/10 pt-4">
-					<button
-						type="button"
-						onclick={closeModal}
-						class="rounded-xl bg-white/5 px-4 py-2 text-xs font-semibold text-text-muted hover:bg-white/10"
-					>
-						Batal
-					</button>
-					<button
-						type="submit"
-						class="bg-scitech-mint text-scitech-navy hover:bg-scitech-mint-hover inline-flex items-center gap-2 rounded-xl px-5 py-2 text-xs font-bold transition-all"
-					>
-						<Save class="h-4 w-4" />
-						<span>Simpan</span>
-					</button>
-				</div>
-			</form>
-		</div>
-	</div>
-{/if}
+<!-- {#if isModalOpen} -->
+<!-- 	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"> -->
+<!-- 		<div -->
+<!-- 			class="bg-scitech-navy max-h-[90vh] w-full max-w-2xl space-y-6 overflow-y-auto rounded-3xl border border-white/15 p-6 shadow-2xl sm:p-8" -->
+<!-- 		> -->
+<!-- 			<div class="flex items-center justify-between border-b border-white/10 pb-4"> -->
+<!-- 				<h3 class="text-base font-bold text-text-main"> -->
+<!-- 					{isEditMode ? 'Edit Pedoman Tugas Akhir' : 'Tambah Pedoman Tugas Akhir'} -->
+<!-- 				</h3> -->
+<!-- 				<button type="button" onclick={closeModal} class="text-text-muted hover:text-text-main"> -->
+<!-- 					<X class="h-5 w-5" /> -->
+<!-- 				</button> -->
+<!-- 			</div> -->
+<!---->
+<!-- 			<form -->
+<!-- 				method="POST" -->
+<!-- 				action="?/save" -->
+<!-- 				enctype="multipart/form-data" -->
+<!-- 				use:enhance={() => { -->
+<!-- 					return async ({ result }) => { -->
+<!-- 						if (result.type === 'success') { -->
+<!-- 							closeModal(); -->
+<!-- 						} -->
+<!-- 					}; -->
+<!-- 				}} -->
+<!-- 				class="space-y-6" -->
+<!-- 			> -->
+<!-- 				<input type="hidden" name="id" value={selectedId} /> -->
+<!-- 				<input type="hidden" name="is_edit" value={isEditMode ? 'true' : 'false'} /> -->
+<!---->
+<!-- 				<!-- Judul Pedoman --> -->
+<!-- 				<div> -->
+<!-- 					<label for="title" class="mb-1 block text-xs font-medium text-text-muted" -->
+<!-- 						>Judul Pedoman*</label -->
+<!-- 					> -->
+<!-- 					<input -->
+<!-- 						id="title" -->
+<!-- 						name="title" -->
+<!-- 						type="text" -->
+<!-- 						required -->
+<!-- 						bind:value={titleInput} -->
+<!-- 						placeholder="Contoh: A. Buku Pedoman Penulisan Tugas Akhir" -->
+<!-- 						class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-white/15 px-4 py-2.5 text-xs text-text-main focus:outline-none" -->
+<!-- 					/> -->
+<!-- 				</div> -->
+<!---->
+<!-- 				<!-- Description Input --> -->
+<!-- 				<div> -->
+<!-- 					<label for="description" class="mb-1 block text-xs font-medium text-text-muted" -->
+<!-- 						>Description</label -->
+<!-- 					> -->
+<!-- 					<textarea -->
+<!-- 						id="description" -->
+<!-- 						name="description" -->
+<!-- 						rows="5" -->
+<!-- 						bind:value={descriptionContent} -->
+<!-- 						placeholder="Masukkan deskripsi atau informasi pedoman..." -->
+<!-- 						class="bg-scitech-slate focus:border-scitech-mint w-full resize-none rounded-xl border border-white/15 p-3 text-xs text-text-main focus:outline-none" -->
+<!-- 					></textarea> -->
+<!-- 				</div> -->
+<!---->
+<!-- 				<!-- Foto Sampul --> -->
+<!-- 				<div class="space-y-2"> -->
+<!-- 					<label for="image" class="block text-xs font-medium text-text-muted" -->
+<!-- 						>Foto Sampul / Gambar Pedoman</label -->
+<!-- 					> -->
+<!---->
+<!-- 					{#if currentImageUrl} -->
+<!-- 						<div class="mb-3 flex items-center gap-4"> -->
+<!-- 							<img -->
+<!-- 								src={currentImageUrl} -->
+<!-- 								alt="Sampul Saat Ini" -->
+<!-- 								class="h-20 w-28 rounded-lg border border-white/15 object-cover" -->
+<!-- 							/> -->
+<!-- 							<span class="text-xs text-text-muted/60 italic" -->
+<!-- 								>Upload foto baru di bawah untuk mengganti.</span -->
+<!-- 							> -->
+<!-- 						</div> -->
+<!-- 					{/if} -->
+<!---->
+<!-- 					<div class="flex items-center gap-3"> -->
+<!-- 						<label -->
+<!-- 							for="image" -->
+<!-- 							class="bg-scitech-slate inline-flex cursor-pointer items-center gap-2 rounded-xl border border-white/15 px-4 py-2 text-xs font-medium text-text-muted transition-all hover:bg-white/10 hover:text-text-main" -->
+<!-- 						> -->
+<!-- 							<Upload class="h-4 w-4" /> -->
+<!-- 							<span>Pilih Foto</span> -->
+<!-- 						</label> -->
+<!-- 						<input id="image" name="image" type="file" accept="image/*" class="hidden" /> -->
+<!-- 					</div> -->
+<!-- 				</div> -->
+<!---->
+<!-- 				<!-- Form Action Buttons --> -->
+<!-- 				<div class="flex justify-end gap-3 border-t border-white/10 pt-4"> -->
+<!-- 					<button -->
+<!-- 						type="button" -->
+<!-- 						onclick={closeModal} -->
+<!-- 						class="rounded-xl bg-white/5 px-4 py-2 text-xs font-semibold text-text-muted hover:bg-white/10" -->
+<!-- 					> -->
+<!-- 						Batal -->
+<!-- 					</button> -->
+<!-- 					<button -->
+<!-- 						type="submit" -->
+<!-- 						class="bg-scitech-mint text-scitech-navy hover:bg-scitech-mint-hover inline-flex items-center gap-2 rounded-xl px-5 py-2 text-xs font-bold transition-all" -->
+<!-- 					> -->
+<!-- 						<Save class="h-4 w-4" /> -->
+<!-- 						<span>Simpan</span> -->
+<!-- 					</button> -->
+<!-- 				</div> -->
+<!-- 			</form> -->
+<!-- 		</div> -->
+<!-- 	</div> -->
+<!-- {/if} -->

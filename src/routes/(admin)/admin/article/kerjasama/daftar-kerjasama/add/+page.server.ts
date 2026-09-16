@@ -13,7 +13,10 @@ export const actions: Actions = {
 		// Validasi input wajib
 		if (!institutionName) {
 			return fail(400, {
-				error: 'Harap isi Nama Instansi / Mitra Kerjasama.',
+				success: false,
+				title: 'Gagal',
+				status: 'Warning',
+				message: 'Harap isi Nama Instansi / Mitra Kerjasama.',
 				values: { institutionName, logoUrl }
 			});
 		}
@@ -21,18 +24,24 @@ export const actions: Actions = {
 		const id = randomUUID();
 
 		try {
-			await createPartnership(id, {
-				institution_name: institutionName,
-				logo_url: logoUrl
-			});
+			await createPartnership(id, institutionName, logoUrl);
 		} catch (err) {
 			console.error('Error creating partnership:', err);
 			return fail(500, {
-				error: 'Gagal menyimpan data Kerjasama ke database.',
+				success: false,
+				title: 'Gagal',
+				status: 'Error',
+				message: 'Gagal menyimpan data Kerjasama ke database.',
 				values: { institutionName, logoUrl }
 			});
 		}
 
-		throw redirect(303, '/admin/kerjasama');
+		// throw redirect(303, '/admin/kerjasama');
+		return {
+			success: true,
+			title: 'Berhasil',
+			status: 'success' as const,
+			message: 'Data Mitra Kerjasama berhasil disimpan!'
+		};
 	}
 };

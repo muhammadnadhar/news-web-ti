@@ -9,7 +9,7 @@ import type {
 } from '$lib/types/admin/article/profile';
 
 /**
- * TAMBAH DOSEN / STAFF BARU (Create)
+ * TAMBAH DOSEN / staff baru (create)
  */
 export async function createLecturerStaff(
 	id: string,
@@ -33,6 +33,7 @@ export async function createLecturerStaff(
 		data.pddikti_url || null,
 		data.expertise,
 		data.role || 'Dosen',
+		data.is_primary || false,
 		data.photo_url || null
 	];
 
@@ -41,7 +42,7 @@ export async function createLecturerStaff(
 }
 
 /**
- * MENDAPATKAN SEMUA DOSEN & STAFF (Read All)
+ * mendapatkan semua dosen & staff (read all)
  */
 export async function getAllLecturerStaff(): Promise<LecturerStaffItemDTO[]> {
 	const sql = `SELECT * FROM ${tableLecturerStaff} ORDER BY name ASC`;
@@ -90,7 +91,7 @@ export async function getPrimaryLecturerStaffByRole(
 }
 
 /**
- * UPDATE DATA DOSEN / STAFF (Update)
+ * update data dosen / staff (update)
  */
 export async function updateLecturerStaff(
 	id: string,
@@ -113,6 +114,7 @@ export async function updateLecturerStaff(
 		data.pddikti_url || null,
 		data.expertise,
 		data.role || 'Dosen',
+		data.is_primary ?? false,
 		data.photo_url || null,
 		id
 	];
@@ -122,7 +124,7 @@ export async function updateLecturerStaff(
 }
 
 /**
- * HAPUS DOSEN / STAFF (Delete)
+ * HAPUS DOSEN / staff (delete)
  */
 export async function deleteLecturerStaff(id: string): Promise<boolean> {
 	const sql = `DELETE FROM ${tableLecturerStaff} WHERE id = ?`;

@@ -9,9 +9,9 @@ import {
 
 export const load: PageServerLoad = async () => {
 	try {
-		const orgStructures = await getAllOrgStructures();
+		// const orgStructures = await getAllOrgStructures();
 		return {
-			orgStructures
+			orgStructures: getAllOrgStructures()
 		};
 	} catch (err) {
 		console.error('Error loading organizational structure data:', err);

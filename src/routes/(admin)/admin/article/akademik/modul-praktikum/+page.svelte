@@ -3,7 +3,11 @@
 	import { Sparkles, X, Upload, Save } from 'lucide-svelte';
 	import TableContent from '$lib/components/admin/tableContent.svelte';
 	import type { TableContentType } from '$lib/types/tableContent';
-  import type { PracticumModuleDTO } from '$lib/types/admin/article/akademik';
+	import type { PracticumModuleDTO } from '$lib/types/admin/article/akademik';
+	import TableSkeleton from '$lib/components/tableSkeleton.svelte';
+	import { gotoEdit, mergeNewPath } from '$lib/utils.js';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
 
 	let { data } = $props();
 
@@ -14,6 +18,44 @@
 	let titleInput = $state('');
 	let descriptionContent = $state('');
 	let currentImageUrl = $state<string | null>(null);
+
+	/**
+	 * Mengubah list PracticumModuleDTO menjadi format TableContentType
+	 */
+	export function mapPracticumModuleToTableContent(
+		dataList: PracticumModuleDTO[]
+	): TableContentType[] {
+		if (!Array.isArray(dataList)) return [];
+
+		return dataList.map((item) => ({
+			id: item.id,
+			items: [
+				{
+					colomn: 'Judul Modul',
+					row: item.title || '-'
+				},
+				{
+					colomn: 'Gambar',
+					row: item.image_url || '/placeholder.png',
+					isImage: true
+				},
+				{
+					colomn: 'Deskripsi',
+					row: item.description || '-'
+				},
+				{
+					colomn: 'Tanggal Dibuat',
+					row: item.created_at
+						? new Date(item.created_at).toLocaleDateString('id-ID', {
+								day: 'numeric',
+								month: 'short',
+								year: 'numeric'
+							})
+						: '-'
+				}
+			]
+		}));
+	}
 
 	// Sync local state
 	let moduleList = $derived<TableContentType[]>(data.moduleList || []);
@@ -59,37 +101,58 @@
 </script>
 
 <div class="mx-auto max-w-7xl space-y-8 p-6 lg:p-10">
-	<!-- Header -->
 	<div class="border-b border-white/10 pb-6">
 		<span
 			class="text-scitech-mint mb-1 inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase"
 		>
 			<Sparkles class="text-scitech-mint h-4 w-4" /> Artikel Akademik
 		</span>
-		<h1 class="text-2xl font-extrabold tracking-tight text-white sm:text-3xl">Modul Praktikum</h1>
+		<h1 class="text-2xl font-extrabold tracking-tight text-text-main sm:text-3xl">
+			Modul Praktikum
+		</h1>
 	</div>
 
 	<!-- Component TableContent -->
-	<TableContent
-		title="Data Modul Praktikum"
-		addButtonLabel="+ Modul Praktikum"
-		data={moduleList}
-		onAdd={openAddModal}
-		onEdit={openEditModal}
-	/>
+	{#await data.rawModuleList}
+		<TableSkeleton showTitle={true} title="Memuat Data Kerjasama..." columnsCount={2} />
+	{:then rawList}
+		<TableContent
+			title="Data Modul Praktikum"
+			addButtonLabel="+ Modul Praktikum"
+			data={mapPracticumModuleToTableContent(rawList)}
+			onAdd={() => goto(mergeNewPath('add'))}
+			onEdit={(data) => gotoEdit(data.id, page.url.pathname)}
+			deleteAction="?/delete"
+			onDeleteSuccess={(res) =>
+				triggerMessage(
+					res?.status ?? 'success',
+					res?.title ?? 'Berhasil',
+					res?.message ?? 'Data angkatan berhasil dihapus.'
+				)}
+			onDeleteError={(res) =>
+				triggerMessage(
+					res?.status ?? 'error',
+					res?.title ?? 'Gagal',
+					res?.message ?? 'Gagal menghapus data angkatan.'
+				)}
+		/>
+	{:catch error}
+		<div class="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-400">
+			Gagal memuat data kerjasama: {error.message}
+		</div>
+	{/await}
 </div>
 
-<!-- Modal Form CRUD Modul Praktikum -->
 {#if isModalOpen}
 	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
 		<div
 			class="bg-scitech-navy max-h-[90vh] w-full max-w-2xl space-y-6 overflow-y-auto rounded-3xl border border-white/15 p-6 shadow-2xl sm:p-8"
 		>
 			<div class="flex items-center justify-between border-b border-white/10 pb-4">
-				<h3 class="text-base font-bold text-white">
+				<h3 class="text-base font-bold text-text-main">
 					{isEditMode ? 'Edit Modul Praktikum' : 'Tambah Modul Praktikum'}
 				</h3>
-				<button type="button" onclick={closeModal} class="text-text-muted hover:text-white">
+				<button type="button" onclick={closeModal} class="text-text-muted hover:text-text-main">
 					<X class="h-5 w-5" />
 				</button>
 			</div>
@@ -112,7 +175,9 @@
 
 				<!-- Judul Modul Praktikum -->
 				<div>
-					<label for="title" class="text-text-muted mb-1 block text-xs font-medium">Judul Modul Praktikum*</label>
+					<label for="title" class="mb-1 block text-xs font-medium text-text-muted"
+						>Judul Modul Praktikum*</label
+					>
 					<input
 						id="title"
 						name="title"
@@ -120,26 +185,29 @@
 						required
 						bind:value={titleInput}
 						placeholder="Contoh: Modul Praktikum Semester Ganjil"
-						class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-white/15 px-4 py-2.5 text-xs text-white focus:outline-none"
+						class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-white/15 px-4 py-2.5 text-xs text-text-main focus:outline-none"
 					/>
 				</div>
 
-				<!-- Description Input -->
 				<div>
-					<label for="description" class="text-text-muted mb-1 block text-xs font-medium">Description</label>
+					<label for="description" class="mb-1 block text-xs font-medium text-text-muted"
+						>Description</label
+					>
 					<textarea
 						id="description"
 						name="description"
 						rows="6"
 						bind:value={descriptionContent}
 						placeholder="Masukkan deskripsi, tabel daftar mata kuliah, atau tag HTML..."
-						class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-white/15 p-3 text-xs text-white focus:outline-none resize-none font-mono"
+						class="bg-scitech-slate focus:border-scitech-mint w-full resize-none rounded-xl border border-white/15 p-3 font-mono text-xs text-text-main focus:outline-none"
 					></textarea>
 				</div>
 
 				<!-- Foto Pendukung -->
 				<div class="space-y-2">
-					<label for="image" class="text-text-muted block text-xs font-medium">Foto Pendukung / Sampul</label>
+					<label for="image" class="block text-xs font-medium text-text-muted"
+						>Foto Pendukung / Sampul</label
+					>
 
 					{#if currentImageUrl}
 						<div class="mb-3 flex items-center gap-4">
@@ -148,14 +216,16 @@
 								alt="Sampul Saat Ini"
 								class="h-20 w-28 rounded-lg border border-white/15 object-cover"
 							/>
-							<span class="text-text-muted/60 text-xs italic">Upload foto baru di bawah untuk mengganti.</span>
+							<span class="text-xs text-text-muted/60 italic"
+								>Upload foto baru di bawah untuk mengganti.</span
+							>
 						</div>
 					{/if}
 
 					<div class="flex items-center gap-3">
 						<label
 							for="image"
-							class="bg-scitech-slate text-text-muted hover:text-white border-white/15 inline-flex cursor-pointer items-center gap-2 rounded-xl border px-4 py-2 text-xs font-medium transition-all hover:bg-white/10"
+							class="bg-scitech-slate inline-flex cursor-pointer items-center gap-2 rounded-xl border border-white/15 px-4 py-2 text-xs font-medium text-text-muted transition-all hover:bg-white/10 hover:text-text-main"
 						>
 							<Upload class="h-4 w-4" />
 							<span>Pilih Foto</span>
@@ -165,11 +235,11 @@
 				</div>
 
 				<!-- Form Action Buttons -->
-				<div class="flex justify-end gap-3 pt-4 border-t border-white/10">
+				<div class="flex justify-end gap-3 border-t border-white/10 pt-4">
 					<button
 						type="button"
 						onclick={closeModal}
-						class="text-text-muted rounded-xl bg-white/5 px-4 py-2 text-xs font-semibold hover:bg-white/10"
+						class="rounded-xl bg-white/5 px-4 py-2 text-xs font-semibold text-text-muted hover:bg-white/10"
 					>
 						Batal
 					</button>
