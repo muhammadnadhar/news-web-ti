@@ -27,6 +27,7 @@
 		onAdd,
 		onEdit,
 
+		// delete section url dan callbak function
 		deleteAction = '?/delete',
 		onDeleteSuccess,
 		onDeleteError
@@ -96,6 +97,11 @@
 			item.row.match(/\.(jpeg|jpg|gif|png|webp|svg)$/i) !== null ||
 			item.row.startsWith('data:image/')
 		);
+	}
+
+	// Helper deteksi HTML
+	function checkIsHtml(item: tableItem): boolean {
+		return Boolean(item.isHtml);
 	}
 
 	// Helper deteksi Tautan Link
@@ -227,6 +233,10 @@
 										>
 											{item.row}
 										</a>
+									{:else if checkIsHtml(item)}
+										<div class="group-hover:text-scitech-mint text-text-main transition-colors">
+											{@html item.row}
+										</div>
 									{:else}
 										<!-- Tampilan Teks Biasa -->
 										<span class="group-hover:text-scitech-mint text-text-main transition-colors">

@@ -11,26 +11,26 @@ import type { TableContentType } from '$lib/types/tableContent';
 
 export const load: PageServerLoad = async () => {
 	try {
-		const rawList = await getAllStudentPublications();
+		// const rawList = await getAllStudentPublications();
 
 		// Transformasi data DB ke format TableContentType untuk komponen TableContent
-		const publicationList: TableContentType[] = rawList.map((item) => ({
-			id: item.id,
-			items: [
-				{
-					colomn: 'Nama Mahasiswa',
-					row: item.student_name
-				},
-				{
-					colomn: 'Daftar Jurnal',
-					row: item.journal_list
-				}
-			]
-		}));
+		// const publicationList: TableContentType[] = rawList.map((item) => ({
+		// 	id: item.id,
+		// 	items: [
+		// 		{
+		// 			colomn: 'Nama Mahasiswa',
+		// 			row: item.student_name
+		// 		},
+		// 		{
+		// 			colomn: 'Daftar Jurnal',
+		// 			row: item.journal_list
+		// 		}
+		// 	]
+		// }));
 
 		return {
-			publicationList,
-			rawPublicationList: rawList
+			// publicationList,
+			rawPublicationList: getAllStudentPublications()
 		};
 	} catch (err) {
 		console.error('Error loading student publications:', err);

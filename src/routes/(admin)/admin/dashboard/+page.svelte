@@ -3,14 +3,13 @@
 </script>
 
 <div class="flex min-h-[75vh] items-center justify-center">
-	<!-- Wrapper Utama (Flex Col & Center) -->
+	<!-- wrapper utama (flex col & center) -->
 	<div class="group relative flex flex-col items-center text-center">
-		<!-- Ambient Glow Effect -->
+		<!-- ambient glow effect -->
 		<div
 			class="from-scitech-mint/30 via-scitech-cyan/20 to-scitech-mint/30 absolute -inset-8 animate-pulse rounded-full bg-gradient-to-tr opacity-80 blur-3xl transition duration-700 group-hover:opacity-100"
 		></div>
 
-		<!-- Container Ikon -->
 		<div
 			class="bg-scitech-slate/40 relative flex h-40 w-40 items-center justify-center rounded-3xl border border-white/10 p-8 shadow-2xl backdrop-blur-xl transition-transform duration-500 hover:scale-105 sm:h-52 sm:w-52"
 		>

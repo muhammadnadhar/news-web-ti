@@ -4,7 +4,11 @@
 	import TableContent from '$lib/components/admin/tableContent.svelte';
 	import FormEditor from '$lib/components/admin/formEditor.svelte';
 	import type { TableContentType } from '$lib/types/tableContent';
-  import type { StudentPublicationDTO } from '$lib/types/admin/article/penelitian';
+	import type { StudentPublicationDTO } from '$lib/types/admin/article/penelitian';
+	import TableSkeleton from '$lib/components/tableSkeleton.svelte';
+	import { gotoEdit, mergeNewPath } from '$lib/utils.js';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
 
 	let { data } = $props();
 
@@ -26,6 +30,28 @@
 		studentNameInput = '';
 		journalListInput = '';
 		isModalOpen = true;
+	}
+
+	/**
+	 * Mapper untuk mengonversi data StudentPublicationDTO dari database
+	 * ke format TableContentType yang dibutuhkan oleh komponen TableContent.
+	 */
+	export function mapStudentPublicationToTableContent(
+		items: StudentPublicationDTO[]
+	): TableContentType[] {
+		return items.map((item) => ({
+			id: item.id,
+			items: [
+				{
+					colomn: 'Nama Mahasiswa',
+					row: item.student_name || '-'
+				},
+				{
+					colomn: 'Daftar Jurnal',
+					row: item.journal_list || '-'
+				}
+			]
+		}));
 	}
 
 	function openEditModal(item: TableContentType) {
@@ -56,13 +82,7 @@
 </script>
 
 <div class="mx-auto max-w-7xl space-y-8 p-6 lg:p-10">
-	<!-- Header -->
 	<div class="border-b border-white/10 pb-6">
-		<span
-			class="text-scitech-mint mb-1 inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase"
-		>
-			<Sparkles class="text-scitech-mint h-4 w-4" /> Penelitian & Pengabdian
-		</span>
 		<h1 class="text-2xl font-extrabold tracking-tight text-white sm:text-3xl">
 			Publikasi Mahasiswa
 		</h1>
@@ -76,6 +96,35 @@
 		onAdd={openAddModal}
 		onEdit={openEditModal}
 	/>
+
+	{#await data.rawPublicationList}
+		<TableSkeleton showTitle={true} title="Memuat Data Mahasiswa Prestasi..." columnsCount={2} />
+	{:then rawList}
+		<TableContent
+			title="Penelitian Mahasiswa"
+			addButtonLabel=" Penelitan "
+			data={mapStudentPublicationToTableContent(rawList)}
+			onAdd={() => goto(mergeNewPath('add'))}
+			onEdit={(data) => gotoEdit(data.id, page.url.pathname)}
+			deleteAction="?/delete"
+			onDeleteSuccess={(res) =>
+				triggerMessage(
+					res?.status ?? 'success',
+					res?.title ?? 'Berhasil',
+					res?.message ?? 'Data angkatan berhasil dihapus.'
+				)}
+			onDeleteError={(res) =>
+				triggerMessage(
+					res?.status ?? 'error',
+					res?.title ?? 'Gagal',
+					res?.message ?? 'Gagal menghapus data angkatan.'
+				)}
+		/>
+	{:catch error}
+		<div class="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-400">
+			Gagal memuat data kerjasama: {error.message}
+		</div>
+	{/await}
 </div>
 
 <!-- Modal Form CRUD Publikasi Mahasiswa -->
@@ -110,7 +159,7 @@
 
 				<!-- Nama Mahasiswa -->
 				<div>
-					<label for="student_name" class="text-text-muted mb-1 block text-xs font-medium">
+					<label for="student_name" class="mb-1 block text-xs font-medium text-text-muted">
 						Nama Mahasiswa<span class="text-rose-400">*</span>
 					</label>
 					<input
@@ -126,20 +175,20 @@
 
 				<!-- Daftar Jurnal (Rich Text / FormEditor) -->
 				<div class="space-y-2">
-					<label for="journal_list" class="text-text-muted block text-xs font-medium">
+					<label for="journal_list" class="block text-xs font-medium text-text-muted">
 						Daftar Jurnal / Artikel<span class="text-rose-400">*</span>
 					</label>
-					
+
 					<FormEditor bind:value={journalListInput} />
 					<input type="hidden" name="journal_list" value={journalListInput} />
 				</div>
 
 				<!-- Form Action Buttons -->
-				<div class="flex justify-end gap-3 pt-4 border-t border-white/10">
+				<div class="flex justify-end gap-3 border-t border-white/10 pt-4">
 					<button
 						type="button"
 						onclick={closeModal}
-						class="text-text-muted rounded-xl bg-white/5 px-4 py-2 text-xs font-semibold hover:bg-white/10"
+						class="rounded-xl bg-white/5 px-4 py-2 text-xs font-semibold text-text-muted hover:bg-white/10"
 					>
 						Batal
 					</button>

@@ -17,11 +17,12 @@
 	} from 'lucide-svelte';
 	import type { PageData } from './$types';
 	import { goto } from '$app/navigation';
-	import { mergeNewPath } from '$lib/utils';
+	import { gotoEdit, mergeNewPath } from '$lib/utils';
 	import type { MessageStatus } from '$lib/components/admin/message.svelte';
 	import Message from '$lib/components/admin/message.svelte';
+	import { page } from '$app/state';
 
-	let data: PageData = $props();
+	let { data }: { data: PageData } = $props();
 
 	let showMessage = $state(false);
 	let messageConfig = $state<{
@@ -66,7 +67,7 @@
 
 			<button
 				type="button"
-				onclick={() => goto(ADD_DASHBOARD_PATH_URL)}
+				onclick={() => goto(mergeNewPath('profil-dashboard/add'))}
 				class="inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500 px-4 py-2.5 text-sm font-semibold text-slate-950 shadow-lg shadow-amber-500/20 transition-all hover:scale-[1.02] hover:bg-amber-400 active:scale-[0.98]"
 			>
 				<PlusIcon class="h-4 w-4" />
@@ -75,28 +76,28 @@
 		</div>
 
 		{#await data.listProfileDashboard}
+			<!-- Loading State -->
 			<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-				{#each Array(3) as _}
+				{#each Array.from({ length: 3 }) as _}
 					<div
 						class="flex animate-pulse flex-col justify-between rounded-2xl border border-white/5 bg-bg-secondary/30 p-5"
 					>
 						<div class="space-y-3">
-							<div class="flex items-center justify-between">
-								<div class="h-5 w-20 rounded-md bg-white/10"></div>
-								<div class="h-4 w-12 rounded bg-white/10"></div>
-							</div>
+							<div class="h-5 w-20 rounded-md bg-white/10"></div>
 							<div class="h-6 w-3/4 rounded-md bg-white/10"></div>
-							<div class="h-8 w-full rounded-lg bg-white/5"></div>
-							<div class="h-3 w-4/5 rounded bg-white/5"></div>
-						</div>
-						<div class="mt-5 flex justify-end border-t border-white/5 pt-4">
-							<div class="h-8 w-8 rounded-lg bg-white/5"></div>
+							<div class="h-32 w-full rounded-lg bg-white/5"></div>
 						</div>
 					</div>
 				{/each}
 			</div>
-		{:then listProfileDashboard}
-			{#if !listProfileDashboard || listProfileDashboard.length === 0}
+		{:then res}
+			<!-- 
+	           Normalisasi data 'res' menjadi Array agar aman dibaca oleh .length dan {#each}
+	       -->
+			{@const listProfileDashboard = Array.isArray(res) ? res : res ? [res] : []}
+
+			{#if listProfileDashboard.length === 0}
+				<!-- Empty State -->
 				<div
 					class="flex w-full flex-col items-center justify-center rounded-2xl border border-dashed border-amber-500/30 bg-amber-500/5 p-8 text-center backdrop-blur-sm md:p-12"
 				>
@@ -105,7 +106,6 @@
 					>
 						<LayoutDashboard class="h-8 w-8" />
 					</div>
-
 					<h3 class="text-pure-white mb-1 text-lg font-bold md:text-xl">
 						Belum Ada Path URL Profile Dashboard
 					</h3>
@@ -123,92 +123,32 @@
 					</button>
 				</div>
 			{:else}
-				<!-- GRID CARD DASHBOARD PATHS -->
+				<!-- Grid Card Profile Dashboard -->
 				<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
 					{#each listProfileDashboard as item (item.id)}
-						<div
-							class="group flex flex-col justify-between rounded-2xl border border-white/10 bg-bg-secondary/40 p-5 backdrop-blur-md transition-all hover:border-amber-500/40 hover:bg-bg-secondary/60"
-						>
-							<div class="space-y-3">
-								<!-- Header Card: Status Badge & Open External Link -->
-								<div class="flex items-center justify-between">
-									{#if item.is_active ?? true}
-										<span
-											class="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-xs font-medium text-emerald-400"
-										>
-											<CheckCircle2Icon class="h-3 w-3" />
-											<span>Aktif</span>
-										</span>
-									{:else}
-										<span
-											class="inline-flex items-center gap-1.5 rounded-full border border-rose-500/30 bg-rose-500/10 px-2.5 py-0.5 text-xs font-medium text-rose-400"
-										>
-											<XCircleIcon class="h-3 w-3" />
-											<span>Nonaktif</span>
-										</span>
-									{/if}
-
-									<a
-										href={item.url_path}
-										target="_blank"
-										rel="noopener noreferrer"
-										class="text-text-muted transition-colors hover:text-amber-400"
-										title="Buka URL"
-									>
-										<ExternalLinkIcon class="h-4 w-4" />
-									</a>
-								</div>
-
-								<!-- Title & Path Code Box -->
-								<h4
-									class="text-pure-white text-lg font-bold transition-colors group-hover:text-amber-400"
-								>
-									{item.title}
-								</h4>
-
-								<div
-									class="overflow-x-auto rounded-lg border border-white/5 bg-slate-950/50 p-2.5 font-mono text-xs text-amber-300"
-								>
-									{item.url_path}
-								</div>
-
-								{#if item.description}
-									<p class="line-clamp-2 text-sm leading-relaxed text-text-muted">
-										{item.description}
-									</p>
-								{/if}
-							</div>
-
-							<!-- Action Buttons -->
-							<div class="mt-5 flex items-center justify-end gap-2 border-t border-white/5 pt-4">
-								<button
-									type="button"
-									onclick={() => goto(`/admin/profil-dashboard/edit/${item.id}`)}
-									class="rounded-lg p-2 text-text-muted transition-colors hover:bg-white/10 hover:text-white"
-									title="Edit Path URL"
-								>
-									<Pencil class="h-4 w-4" />
-								</button>
-							</div>
-						</div>
+						<UserCard
+							imageUrl={item.image_path}
+							id={item.id}
+							description={item.title}
+							editUrl={mergeNewPath(`edit/${item.id}`)}
+						/>
 					{/each}
 				</div>
 			{/if}
 		{:catch error}
-			<!-- 3. ERROR STATE -->
 			<div
 				class="flex items-center gap-3 rounded-2xl border border-rose-500/30 bg-rose-500/10 p-5 text-rose-300"
 			>
-				<AlertCircle class="h-6 w-6 shrink-0 text-rose-400" />
+				<AlertCircleIcon class="h-6 w-6 shrink-0 text-rose-400" />
 				<div>
-					<p class="font-semibold">Gagal Memuat Data Path URL Dashboard</p>
+					<p class="font-semibold">Gagal Memuat Data Profile Dashboard</p>
 					<p class="text-xs text-rose-300/80">{error.message}</p>
 				</div>
 			</div>
 		{/await}
 	</section>
 
-	<!-- seksi  tabel dosen -->
+	<!-- section  tabel dosen -->
 	<section class="w-full space-y-6">
 		<!-- Header Section dengan Tombol Tambah di Kanan Atas -->
 		<div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -222,7 +162,7 @@
 			<!-- Tombol Tambah Dosen (Selalu Tampil di Header) -->
 			<button
 				type="button"
-				onclick={() => goto('/admin/article/profil/dosen')}
+				onclick={() => goto(mergeNewPath('dosen/add'))}
 				class="inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500 px-4 py-2.5 text-sm font-semibold text-slate-950 shadow-lg shadow-amber-500/20 transition-all hover:scale-[1.02] hover:bg-amber-400 active:scale-[0.98]"
 			>
 				<UserPlus class="h-4 w-4" />
@@ -264,7 +204,7 @@
 					</p>
 					<button
 						type="button"
-						onclick={() => goto(ADD_DOSEN_URL)}
+						onclick={() => goto('/')}
 						class="inline-flex items-center gap-2 rounded-xl bg-amber-500 px-5 py-2.5 text-sm font-semibold text-slate-950 shadow-lg shadow-amber-500/20 transition-all hover:scale-[1.02] hover:bg-amber-400 active:scale-[0.98]"
 					>
 						<UserPlus class="h-4 w-4" />
@@ -278,7 +218,7 @@
 							id={dosen.id}
 							title={dosen.name}
 							subtitle={dosen.position}
-							imageUrl={dosen.image_url}
+							imageUrl={dosen.photo_url || ''}
 							editUrl={`/dosen/edit/${dosen.id}`}
 						/>
 					{/each}
@@ -392,8 +332,8 @@
 							<div class="mt-5 flex items-center justify-end gap-2 border-t border-white/5 pt-4">
 								<button
 									type="button"
-									onclick={() => goto(`/admin/peminatan/edit/${item.id}`)}
-									class="rounded-lg p-2 text-text-muted transition-colors hover:bg-white/10 hover:text-white"
+									onclick={() => goto(`${page.url.pathname}/perminatan/edit/${item.id}`)}
+									class="rounded-lg p-2 text-text-muted transition-colors hover:bg-white/10 hover:text-text-main"
 									title="Edit"
 								>
 									<PencilIcon class="h-4 w-4" />
@@ -428,7 +368,7 @@
 
 			<button
 				type="button"
-				onclick={() => goto(mergeNewPath('profile-prodi/add'))}
+				onclick={() => goto(mergeNewPath('profil-prodi/add'))}
 				class="inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500 px-4 py-2.5 text-sm font-semibold text-slate-950 shadow-lg shadow-amber-500/20 transition-all hover:scale-[1.02] hover:bg-amber-400 active:scale-[0.98]"
 			>
 				<PlusIcon class="h-4 w-4" />
@@ -491,8 +431,8 @@
 							id={profil.id}
 							title={profil.title}
 							description={profil.description}
-							imageUrl={profil.image_url}
-							editUrl={`/admin/profile-prodi/edit/${profil.id}`}
+							imageUrl={profil.image_url || ''}
+							editUrl={`${page.url.pathname}/profil-prodi/edit/${profil.id}`}
 						/>
 					{/each}
 				</div>
@@ -510,47 +450,3 @@
 		{/await}
 	</section>
 </div>
-
-<style>
-	.container {
-		max-width: 1200px;
-		margin: 0 auto;
-		padding: 2rem 1rem;
-		font-family:
-			system-ui,
-			-apple-system,
-			sans-serif;
-	}
-
-	.page-title {
-		font-size: 2rem;
-		font-weight: 800;
-		color: #0f172a;
-		margin-bottom: 2.5rem;
-		text-align: center;
-	}
-
-	.section {
-		margin-bottom: 3rem;
-	}
-
-	.section-title {
-		font-size: 1.5rem;
-		font-weight: 700;
-		color: #1e293b;
-		margin-bottom: 1.25rem;
-		border-bottom: 2px solid #e2e8f0;
-		padding-bottom: 0.5rem;
-	}
-
-	.grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-		gap: 1.5rem;
-	}
-
-	.empty-text {
-		color: #94a3b8;
-		font-style: italic;
-	}
-</style>

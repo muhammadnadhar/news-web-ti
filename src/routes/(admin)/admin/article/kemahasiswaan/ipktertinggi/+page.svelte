@@ -8,6 +8,8 @@
 	import { gotoEdit, mergeNewPath } from '$lib/utils.js';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
+	import type { ResponseMessage } from '$lib/types/message.js';
+	import Message from '$lib/components/admin/message.svelte';
 
 	let { data } = $props();
 
@@ -51,7 +53,20 @@
 				}
 			]
 		}));
-	} // Modal Handlers
+	}
+	let showMessage = $state(false);
+	let messageConfig = $state<ResponseMessage>({
+		status: 'info',
+		title: '',
+		message: ''
+	});
+
+	function triggerMessage(status: ResponseMessage['status'], title: string, message: string) {
+		messageConfig = { status, title, message };
+		showMessage = true;
+	}
+
+	// Modal Handlers
 	function openAddModal() {
 		isEditMode = false;
 		selectedId = '';
@@ -97,6 +112,18 @@
 	}
 </script>
 
+<!-- Alert / Toast Notification -->
+{#if showMessage}
+	<Message
+		status={messageConfig.status}
+		title={messageConfig.title}
+		message={messageConfig.message}
+		dismissible={true}
+		timeout={4000}
+		onclose={() => (showMessage = false)}
+	/>
+{/if}
+
 <div class="mx-auto max-w-7xl space-y-8 p-6 lg:p-10">
 	<!-- Header -->
 	<div class="border-b border-white/10 pb-6">
@@ -120,7 +147,19 @@
 			data={mapHighGpaStudentToTableContent(rawList)}
 			onAdd={() => goto(mergeNewPath('add'))}
 			onEdit={(data) => gotoEdit(data.id, page.url.pathname)}
-			onDelete={(itm) => console.info('delete')}
+			deleteAction="?/delete"
+			onDeleteSuccess={(res) =>
+				triggerMessage(
+					res?.status ?? 'success',
+					res?.title ?? 'Berhasil',
+					res?.message ?? 'Data dokumentasi berhasil dihapus.'
+				)}
+			onDeleteError={(res) =>
+				triggerMessage(
+					res?.status ?? 'error',
+					res?.title ?? 'Gagal',
+					res?.message ?? 'Gagal menghapus data dokumentasi.'
+				)}
 		/>
 	{:catch error}
 		<div

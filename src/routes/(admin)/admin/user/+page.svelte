@@ -90,11 +90,6 @@
 		class="flex flex-col justify-between gap-4 border-b border-white/10 pb-6 sm:flex-row sm:items-center"
 	>
 		<div>
-			<span
-				class="text-scitech-mint mb-1 inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase"
-			>
-				<Sparkles class="text-scitech-mint h-4 w-4" /> Manajemen Pengguna
-			</span>
 			<h1 class="text-2xl font-extrabold tracking-tight text-text-main sm:text-3xl">Semua User</h1>
 		</div>
 
@@ -105,8 +100,9 @@
 				<Users class="h-5 w-5" />
 			</div>
 			<div>
-				<span class="text-text-muted block text-xs">Total Pengguna</span>
-				<span class="font-mono text-base font-bold text-text-main">{data.totalCount} Terdaftar</span>
+				<span class="block text-xs text-text-muted">Total Pengguna</span>
+				<span class="font-mono text-base font-bold text-text-main">{data.totalCount} Terdaftar</span
+				>
 			</div>
 		</div>
 	</div>
@@ -133,7 +129,7 @@
 		<!-- Controls Bar: Search & Page Entries -->
 		<div class="flex flex-col justify-between gap-4 pt-2 md:flex-row md:items-center">
 			<!-- Show Entries Dropdown -->
-			<div class="text-text-muted flex items-center gap-2 text-xs font-medium">
+			<div class="flex items-center gap-2 text-xs font-medium text-text-muted">
 				<span>Tampilkan</span>
 				<select
 					bind:value={entriesPerPage}
@@ -149,12 +145,12 @@
 
 			<!-- Search Field Input -->
 			<div class="relative w-full md:w-72">
-				<Search class="text-text-muted absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2" />
+				<Search class="absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-text-muted" />
 				<input
 					type="text"
 					placeholder="Cari nama, username..."
 					bind:value={searchQuery}
-					class="bg-scitech-navy/80 placeholder:text-text-muted focus:border-scitech-mint/80 focus:ring-scitech-mint/80 w-full rounded-xl border border-white/15 py-2.5 pr-4 pl-10 text-xs text-text-main transition-all focus:ring-1 focus:outline-none"
+					class="bg-scitech-navy/80 focus:border-scitech-mint/80 focus:ring-scitech-mint/80 w-full rounded-xl border border-white/15 py-2.5 pr-4 pl-10 text-xs text-text-main transition-all placeholder:text-text-muted focus:ring-1 focus:outline-none"
 				/>
 			</div>
 		</div>
@@ -164,7 +160,7 @@
 			<table class="w-full border-collapse text-left">
 				<thead>
 					<tr
-						class="bg-scitech-navy/90 text-text-muted border-b border-white/10 font-mono text-[11px] tracking-wider uppercase"
+						class="bg-scitech-navy/90 border-b border-white/10 font-mono text-[11px] tracking-wider text-text-muted uppercase"
 					>
 						<th
 							class="cursor-pointer p-4 transition-colors hover:text-text-main"
@@ -199,7 +195,7 @@
 				<tbody class="divide-y divide-white/5 text-xs">
 					{#if paginatedUsers.length === 0}
 						<tr>
-							<td colspan="4" class="text-text-muted py-12 text-center font-mono">
+							<td colspan="4" class="py-12 text-center font-mono text-text-muted">
 								Tidak ada data user yang ditemukan.
 							</td>
 						</tr>
@@ -220,7 +216,7 @@
 									</div>
 								</td>
 
-								<td class="text-text-muted p-4 font-mono">
+								<td class="p-4 font-mono text-text-muted">
 									@{user.username}
 								</td>
 								<td class="p-4">
@@ -263,7 +259,7 @@
 		<div
 			class="flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-4 sm:flex-row"
 		>
-			<span class="text-text-muted font-mono text-xs">
+			<span class="font-mono text-xs text-text-muted">
 				Menampilkan {paginatedUsers.length > 0 ? (currentPage - 1) * entriesPerPage + 1 : 0} hingga {Math.min(
 					currentPage * entriesPerPage,
 					sortedUsers.length
@@ -275,7 +271,7 @@
 				<button
 					onclick={() => (currentPage = Math.max(1, currentPage - 1))}
 					disabled={currentPage === 1}
-					class="bg-scitech-navy text-text-muted rounded-xl border border-white/10 p-2 transition-all hover:text-text-main disabled:cursor-not-allowed disabled:opacity-30"
+					class="bg-scitech-navy rounded-xl border border-white/10 p-2 text-text-muted transition-all hover:text-text-main disabled:cursor-not-allowed disabled:opacity-30"
 				>
 					<ChevronLeft class="h-4 w-4" />
 				</button>
@@ -286,7 +282,7 @@
 						class="rounded-xl border px-3 py-1.5 font-mono text-xs font-bold transition-all {currentPage ===
 						i + 1
 							? 'bg-scitech-mint text-scitech-navy border-scitech-mint shadow-md'
-							: 'bg-scitech-navy text-text-muted border-white/10 hover:text-text-main'}"
+							: 'bg-scitech-navy border-white/10 text-text-muted hover:text-text-main'}"
 					>
 						{i + 1}
 					</button>
@@ -295,7 +291,7 @@
 				<button
 					onclick={() => (currentPage = Math.min(totalPages, currentPage + 1))}
 					disabled={currentPage === totalPages}
-					class="bg-scitech-navy text-text-muted rounded-xl border border-white/10 p-2 transition-all hover:text-text-main disabled:cursor-not-allowed disabled:opacity-30"
+					class="bg-scitech-navy rounded-xl border border-white/10 p-2 text-text-muted transition-all hover:text-text-main disabled:cursor-not-allowed disabled:opacity-30"
 				>
 					<ChevronRight class="h-4 w-4" />
 				</button>
@@ -305,123 +301,126 @@
 </div>
 
 <!-- MODAL TAMBAH USER -->
-{#if isAddModalOpen}
-	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
-		<div
-			class="bg-scitech-navy relative w-full max-w-md space-y-6 rounded-3xl border border-white/15 p-6 shadow-2xl sm:p-8"
-		>
-			<div class="flex items-center justify-between border-b border-white/10 pb-4">
-				<h3 class="flex items-center gap-2 text-base font-bold text-text-main">
-					<UserPlus class="text-scitech-mint h-4 w-4" /> Tambah User Baru
-				</h3>
-				<button onclick={() => (isAddModalOpen = false)} class="text-text-muted hover:text-text-main">
-					<X class="h-5 w-5" />
-				</button>
-			</div>
-
-			<form method="POST" action="?/addUser" class="space-y-4">
-				<div>
-					<label class="text-text-muted mb-1 block text-xs font-medium" for="name"
-						>Nama Lengkap</label
-					>
-					<input
-						id="name"
-						name="name"
-						type="text"
-						required
-						bind:value={newName}
-						placeholder="Masukkan nama lengkap..."
-						class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-white/15 px-4 py-2.5 text-xs text-text-main focus:outline-none"
-					/>
-				</div>
-
-				<div>
-					<label class="text-text-muted mb-1 block text-xs font-medium" for="username"
-						>Username</label
-					>
-					<input
-						id="username"
-						name="username"
-						type="text"
-						required
-						bind:value={newUsername}
-						placeholder="Masukkan username unik..."
-						class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-white/15 px-4 py-2.5 text-xs text-text-main focus:outline-none"
-					/>
-				</div>
-
-				<div>
-					<label class="text-text-muted mb-1 block text-xs font-medium" for="role"
-						>Hak Akses / Role</label
-					>
-					<select
-						id="role"
-						name="role"
-						bind:value={newRole}
-						class="bg-scitech-slate focus:border-scitech-mint w-full cursor-pointer rounded-xl border border-white/15 px-4 py-2.5 text-xs text-text-main focus:outline-none"
-					>
-						<option value="Administrator">Administrator</option>
-						<option value="Dosen">Dosen</option>
-						<option value="Operator">Operator</option>
-						<option value="Mahasiswa">Mahasiswa</option>
-					</select>
-				</div>
-
-				<div class="flex items-center justify-end gap-3 pt-4">
-					<button
-						type="button"
-						onclick={() => (isAddModalOpen = false)}
-						class="text-text-muted rounded-xl bg-white/5 px-4 py-2 text-xs font-semibold transition-all hover:bg-white/10 hover:text-text-main"
-					>
-						Batal
-					</button>
-					<button
-						type="submit"
-						class="text-scitech-navy bg-scitech-mint hover:bg-scitech-mint-hover rounded-xl px-5 py-2 text-xs font-bold transition-all"
-					>
-						Simpan User
-					</button>
-				</div>
-			</form>
-		</div>
-	</div>
-{/if}
-
-<!-- MODAL KONFIRMASI HAPUS -->
-{#if selectedUserForDelete}
-	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
-		<div
-			class="bg-scitech-navy w-full max-w-sm space-y-5 rounded-3xl border border-white/15 p-6 text-center shadow-2xl"
-		>
-			<div
-				class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl border border-red-500/20 bg-red-500/10 text-red-400"
-			>
-				<Trash2 class="h-6 w-6" />
-			</div>
-
-			<div>
-				<h3 class="text-sm font-bold text-text-main">Hapus Data User?</h3>
-				<p class="text-text-muted mt-1 text-xs leading-relaxed">
-					Tindakan ini tidak dapat dibatalkan. User akan dihapus dari sistem secara permanen.
-				</p>
-			</div>
-
-			<form method="POST" action="?/deleteUser" class="flex items-center justify-center gap-3">
-				<input type="hidden" name="id" value={selectedUserForDelete} />
-				<button
-					type="button"
-					onclick={() => (selectedUserForDelete = null)}
-					class="text-text-muted rounded-xl bg-white/5 px-4 py-2 text-xs font-semibold transition-all hover:bg-white/10"
-				>
-					Batal
-				</button>
-				<button
-					type="submit"
-					class="rounded-xl bg-red-500 px-5 py-2 text-xs font-bold text-text-main transition-all hover:bg-red-600"
-				>
-					Ya, Hapus
-				</button>
-			</form>
-		</div>
-	</div>
-{/if}
+<!-- {#if isAddModalOpen} -->
+<!-- 	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"> -->
+<!-- 		<div -->
+<!-- 			class="bg-scitech-navy relative w-full max-w-md space-y-6 rounded-3xl border border-white/15 p-6 shadow-2xl sm:p-8" -->
+<!-- 		> -->
+<!-- 			<div class="flex items-center justify-between border-b border-white/10 pb-4"> -->
+<!-- 				<h3 class="flex items-center gap-2 text-base font-bold text-text-main"> -->
+<!-- 					<UserPlus class="text-scitech-mint h-4 w-4" /> Tambah User Baru -->
+<!-- 				</h3> -->
+<!-- 				<button -->
+<!-- 					onclick={() => (isAddModalOpen = false)} -->
+<!-- 					class="text-text-muted hover:text-text-main" -->
+<!-- 				> -->
+<!-- 					<X class="h-5 w-5" /> -->
+<!-- 				</button> -->
+<!-- 			</div> -->
+<!---->
+<!-- 			<form method="POST" action="?/addUser" class="space-y-4"> -->
+<!-- 				<div> -->
+<!-- 					<label class="mb-1 block text-xs font-medium text-text-muted" for="name" -->
+<!-- 						>Nama Lengkap</label -->
+<!-- 					> -->
+<!-- 					<input -->
+<!-- 						id="name" -->
+<!-- 						name="name" -->
+<!-- 						type="text" -->
+<!-- 						required -->
+<!-- 						bind:value={newName} -->
+<!-- 						placeholder="Masukkan nama lengkap..." -->
+<!-- 						class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-white/15 px-4 py-2.5 text-xs text-text-main focus:outline-none" -->
+<!-- 					/> -->
+<!-- 				</div> -->
+<!---->
+<!-- 				<div> -->
+<!-- 					<label class="mb-1 block text-xs font-medium text-text-muted" for="username" -->
+<!-- 						>Username</label -->
+<!-- 					> -->
+<!-- 					<input -->
+<!-- 						id="username" -->
+<!-- 						name="username" -->
+<!-- 						type="text" -->
+<!-- 						required -->
+<!-- 						bind:value={newUsername} -->
+<!-- 						placeholder="Masukkan username unik..." -->
+<!-- 						class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-white/15 px-4 py-2.5 text-xs text-text-main focus:outline-none" -->
+<!-- 					/> -->
+<!-- 				</div> -->
+<!---->
+<!-- 				<div> -->
+<!-- 					<label class="mb-1 block text-xs font-medium text-text-muted" for="role" -->
+<!-- 						>Hak Akses / Role</label -->
+<!-- 					> -->
+<!-- 					<select -->
+<!-- 						id="role" -->
+<!-- 						name="role" -->
+<!-- 						bind:value={newRole} -->
+<!-- 						class="bg-scitech-slate focus:border-scitech-mint w-full cursor-pointer rounded-xl border border-white/15 px-4 py-2.5 text-xs text-text-main focus:outline-none" -->
+<!-- 					> -->
+<!-- 						<option value="Administrator">Administrator</option> -->
+<!-- 						<option value="Dosen">Dosen</option> -->
+<!-- 						<option value="Operator">Operator</option> -->
+<!-- 						<option value="Mahasiswa">Mahasiswa</option> -->
+<!-- 					</select> -->
+<!-- 				</div> -->
+<!---->
+<!-- 				<div class="flex items-center justify-end gap-3 pt-4"> -->
+<!-- 					<button -->
+<!-- 						type="button" -->
+<!-- 						onclick={() => (isAddModalOpen = false)} -->
+<!-- 						class="rounded-xl bg-white/5 px-4 py-2 text-xs font-semibold text-text-muted transition-all hover:bg-white/10 hover:text-text-main" -->
+<!-- 					> -->
+<!-- 						Batal -->
+<!-- 					</button> -->
+<!-- 					<button -->
+<!-- 						type="submit" -->
+<!-- 						class="text-scitech-navy bg-scitech-mint hover:bg-scitech-mint-hover rounded-xl px-5 py-2 text-xs font-bold transition-all" -->
+<!-- 					> -->
+<!-- 						Simpan User -->
+<!-- 					</button> -->
+<!-- 				</div> -->
+<!-- 			</form> -->
+<!-- 		</div> -->
+<!-- 	</div> -->
+<!-- {/if} -->
+<!---->
+<!-- <!-- MODAL KONFIRMASI HAPUS --> -->
+<!-- {#if selectedUserForDelete} -->
+<!-- 	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"> -->
+<!-- 		<div -->
+<!-- 			class="bg-scitech-navy w-full max-w-sm space-y-5 rounded-3xl border border-white/15 p-6 text-center shadow-2xl" -->
+<!-- 		> -->
+<!-- 			<div -->
+<!-- 				class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl border border-red-500/20 bg-red-500/10 text-red-400" -->
+<!-- 			> -->
+<!-- 				<Trash2 class="h-6 w-6" /> -->
+<!-- 			</div> -->
+<!---->
+<!-- 			<div> -->
+<!-- 				<h3 class="text-sm font-bold text-text-main">Hapus Data User?</h3> -->
+<!-- 				<p class="mt-1 text-xs leading-relaxed text-text-muted"> -->
+<!-- 					Tindakan ini tidak dapat dibatalkan. User akan dihapus dari sistem secara permanen. -->
+<!-- 				</p> -->
+<!-- 			</div> -->
+<!---->
+<!-- 			<form method="POST" action="?/deleteUser" class="flex items-center justify-center gap-3"> -->
+<!-- 				<input type="hidden" name="id" value={selectedUserForDelete} /> -->
+<!-- 				<button -->
+<!-- 					type="button" -->
+<!-- 					onclick={() => (selectedUserForDelete = null)} -->
+<!-- 					class="rounded-xl bg-white/5 px-4 py-2 text-xs font-semibold text-text-muted transition-all hover:bg-white/10" -->
+<!-- 				> -->
+<!-- 					Batal -->
+<!-- 				</button> -->
+<!-- 				<button -->
+<!-- 					type="submit" -->
+<!-- 					class="rounded-xl bg-red-500 px-5 py-2 text-xs font-bold text-text-main transition-all hover:bg-red-600" -->
+<!-- 				> -->
+<!-- 					Ya, Hapus -->
+<!-- 				</button> -->
+<!-- 			</form> -->
+<!-- 		</div> -->
+<!-- 	</div> -->
+<!-- {/if} -->

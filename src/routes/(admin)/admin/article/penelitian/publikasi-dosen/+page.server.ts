@@ -6,35 +6,33 @@ import {
 	updateLecturerPublication,
 	deleteLecturerPublication
 } from '$lib/server/admin/repository/article/penelitian/publikasiDosen';
-
-import type { TableContentType } from '$lib/types/tableContent';
+import { errorResponse } from '$lib/helper/message';
 
 export const load: PageServerLoad = async () => {
 	try {
-		const rawList = await getAllLecturerPublications();
+		// const rawList = await getAllLecturerPublications();
 
 		// Transformasi data DB ke format TableContentType untuk komponen TableContent
-		const publicationList: TableContentType[] = rawList.map((item) => ({
-			id: item.id,
-			items: [
-				{
-					colomn: 'Nama Dosen',
-					row: item.lecturer_name
-				},
-				{
-					colomn: 'Profil SINTA',
-					row: item.sinta_link || '-'
-				},
-				{
-					colomn: 'Google Scholar',
-					row: item.scholar_link || '-'
-				}
-			]
-		}));
+		// const publicationList: TableContentType[] = rawList.map((item) => ({
+		// 	id: item.id,
+		// 	items: [
+		// 		{
+		// 			colomn: 'Nama Dosen',
+		// 			row: item.lecturer_name
+		// 		},
+		// 		{
+		// 			colomn: 'Profil SINTA',
+		// 			row: item.sinta_link || '-'
+		// 		},
+		// 		{
+		// 			colomn: 'Google Scholar',
+		// 			row: item.scholar_link || '-'
+		// 		}
+		// 	]
+		// }));
 
 		return {
-			publicationList,
-			rawPublicationList: rawList
+			rawPublicationList: getAllLecturerPublications()
 		};
 	} catch (err) {
 		console.error('Error loading lecturer publications:', err);
@@ -72,14 +70,14 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const id = formData.get('id') as string;
 
-		if (!id) return fail(400, { message: 'ID tidak valid.' });
+		if (!id) return fail(400, errorResponse('ID tidak valid.', 'Error'));
 
 		try {
 			await deleteLecturerPublication(id);
 			return { success: true };
 		} catch (err) {
 			console.error('Error deleting lecturer publication:', err);
-			return fail(500, { message: 'Gagal menghapus data Publikasi Dosen.' });
+			return fail(500, errorResponse('Gagal menghapus data Publikasi Dosen.', 'Error'));
 		}
 	}
 };

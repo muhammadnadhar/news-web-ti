@@ -33,6 +33,11 @@ export const sidebarMenu: MenuCategory[] = [
 				title: 'Angkatan',
 				iconName: 'Users',
 				href: AdminUrl + '/dataset/angkatan'
+			},
+			{
+				title: 'Jabatan Prodi',
+				iconName: 'Users',
+				href: AdminUrl + '/dataset/jabatan-prodi'
 			}
 		]
 	},

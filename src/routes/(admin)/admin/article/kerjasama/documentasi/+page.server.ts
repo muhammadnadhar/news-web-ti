@@ -7,6 +7,7 @@ import {
 	deleteActivityDocumentation
 } from '$lib/server/admin/repository/article/kerjasama/documentasi';
 import type { TableContentType } from '$lib/types/tableContent';
+import { errorResponse, successResponse } from '$lib/helper/message';
 
 export const load: PageServerLoad = async () => {
 	try {
@@ -32,7 +33,7 @@ export const load: PageServerLoad = async () => {
 		// }));
 
 		return {
-			documentationList: getAllActivityDocumentations // biarkan di tangani oleh client
+			documentationList: getAllActivityDocumentations() // biarkan di tangani oleh client
 			// rawDocumentationList:
 		};
 	} catch (err) {
@@ -68,7 +69,10 @@ export const actions: Actions = {
 			return { success: true };
 		} catch (err) {
 			console.error('Error saving activity documentation:', err);
-			return fail(500, { message: 'Gagal menyimpan data Dokumentasi Kegiatan.' });
+			return fail(
+				500,
+				errorResponse('Gagal menyimpan data Dokumentasi Kegiatan.', 'gagal Menyimpan')
+			);
 		}
 	},
 
@@ -76,14 +80,18 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const id = formData.get('id') as string;
 
-		if (!id) return fail(400, { message: 'ID tidak valid.' });
+		if (!id) {
+			return fail(400, errorResponse('ID tidak valid atau tidak ditemukan.', 'Gagal Hapus'));
+		}
 
 		try {
 			await deleteActivityDocumentation(id);
-			return { success: true };
+
+			return successResponse('Data Dokumentasi Kegiatan berhasil dihapus.', 'Berhasil Hapus');
 		} catch (err) {
 			console.error('Error deleting activity documentation:', err);
-			return fail(500, { message: 'Gagal menghapus data Dokumentasi Kegiatan.' });
+
+			return fail(500, errorResponse('Gagal menghapus data Dokumentasi Kegiatan.', 'Error Server'));
 		}
 	}
 };

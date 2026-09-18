@@ -3,12 +3,13 @@
 
 	import TableContent from '$lib/components/admin/tableContent.svelte';
 	import type { TableContentType } from '$lib/types/tableContent';
-	import { enhance } from '$app/forms';
 	import { gotoEdit, mergeNewPath } from '$lib/utils.js';
 	import { goto } from '$app/navigation';
 	import type { AngkatanDTO } from '$lib/types/admin/dataset.js';
 	import TableSkeleton from '$lib/components/tableSkeleton.svelte';
 	import { page } from '$app/state';
+	import type { ResponseMessage } from '$lib/types/message.js';
+	import Message from '$lib/components/admin/message.svelte';
 
 	// Data Angkatan sesuai Gambar 2
 	let { data } = $props();
@@ -47,6 +48,18 @@
 		}));
 	}
 
+	let showMessage = $state(false);
+	let messageConfig = $state<ResponseMessage>({
+		status: 'info',
+		title: '',
+		message: ''
+	});
+
+	function triggerMessage(status: ResponseMessage['status'], title: string, message: string) {
+		messageConfig = { status, title, message };
+		showMessage = true;
+	}
+
 	// Sync local state dengan data server
 	let angkatanList = $derived<TableContentType[]>(data.angkatanList || []);
 
@@ -81,15 +94,26 @@
 </script>
 
 <div class="mx-auto max-w-7xl space-y-8">
-	<!-- Page Header -->
 	<div class="border-b border-white/10 pb-6">
-		<span
-			class="text-scitech-mint mb-1 inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase"
-		>
-			<Sparkles class="text-scitech-mint h-4 w-4" /> Dataset Akademik
-		</span>
+		<!-- <span -->
+		<!-- 	class="text-scitech-mint mb-1 inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase" -->
+		<!-- > -->
+		<!-- 	<Sparkles class="text-scitech-mint h-4 w-4" /> Dataset Akademik -->
+		<!-- </span> -->
 		<h1 class="text-2xl font-extrabold tracking-tight text-text-main sm:text-3xl">Angkatan</h1>
 	</div>
+
+	<!-- Alert / Toast Notification -->
+	{#if showMessage}
+		<Message
+			status={messageConfig.status}
+			title={messageConfig.title}
+			message={messageConfig.message}
+			dismissible={true}
+			timeout={4000}
+			onclose={() => (showMessage = false)}
+		/>
+	{/if}
 
 	<!-- Main Table Container Card -->
 	<!-- <div -->

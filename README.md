@@ -53,7 +53,14 @@ npm run dev -- --open
 
 ### New Fiwture
 
+> beberapa fitur yg di tambhakan
+
+- desain Dashboard lebih modren
 - data dari instagram bisa langsung singkrone
+- modal peringatan saat di hapus
+- id di engcripsi
+- admin : ada Flush Message yang menampilkan informasi yang di lakukan
+- admin : scroling sidebar nyangkut dengan sempurnah wkwk
 
 ##### Admin panel
 
@@ -68,7 +75,6 @@ npm run dev -- --open
 ### Database
 
 ##### seeder
-
 
 > jalakan untuk memasukan data dummy
 

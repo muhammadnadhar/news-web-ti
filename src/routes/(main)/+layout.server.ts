@@ -1,17 +1,8 @@
 import type { LayoutServerLoad } from './$types';
-import { navMenuItems } from '$lib/data/navbar';
 import { getAchievementSemesters } from '$lib/server/admin/repository/article/kemahasiswaan/mapres';
 import { getHighGpaSemesters } from '$lib/server/admin/repository/article/kemahasiswaan/ipkTertinggi';
-import type { NavMenuItemType, SubMenuItem } from '$lib/types/navbar';
 
-// Helper function untuk memformat array semester menjadi struktur subMenu navbar
-const formatSubMenu = (semesters: { semester: string }[], basePath: string) => {
-	return semesters.map((item) => ({
-		id: item.semester.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
-		label: item.semester,
-		href: `${basePath}?semester=${encodeURIComponent(item.semester)}`
-	}));
-};
+
 
 export const load: LayoutServerLoad = async () => {
 	let academicSemesters: { semester: string }[] = [];

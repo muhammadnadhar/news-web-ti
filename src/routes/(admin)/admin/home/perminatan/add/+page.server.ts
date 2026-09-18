@@ -1,13 +1,13 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
-import { addProfilProdi } from '$lib/server/admin/repository/home/profilProdi';
+import { addPerminatanTI } from '$lib/server/admin/repository/home/tablePermitan';
+import { errorResponse } from '$lib/helper/message';
 
 export const actions: Actions = {
 	create: async ({ request }) => {
 		const formData = await request.formData();
 		const title = formData.get('title')?.toString().trim();
 		const description = formData.get('description')?.toString().trim();
-		const image_url = formData.get('image_url')?.toString().trim() || null;
 
 		// Validasi Input
 		if (!title || title.length > 150) {
@@ -15,7 +15,7 @@ export const actions: Actions = {
 				success: false,
 				status: 'warning' as const,
 				title: 'Validasi Gagal',
-				message: 'Judul profil wajib diisi dan maksimal 150 karakter.'
+				message: 'Judul peminatan wajib diisi dan maksimal 150 karakter.'
 			});
 		}
 
@@ -24,32 +24,33 @@ export const actions: Actions = {
 				success: false,
 				status: 'warning' as const,
 				title: 'Validasi Gagal',
-				message: 'Deskripsi profil wajib diisi.'
+				message: 'Deskripsi peminatan wajib diisi.'
 			});
 		}
 
-			// Memanggil fungsi addProfilProdi yang mengembalikan id (string)
-			const id = await addProfilProdi({
+		try {
+			const data = await addPerminatanTI({
 				title,
-				description,
-				image_url
+				description
 			});
 
-			// Mengembalikan respons sukses tanpa redirect
+			if (!data) {
+				return fail(403, errorResponse('gagal membuat data perminatan TI ', 'Error'));
+			}
+
 			return {
 				success: true,
 				status: 'success' as const,
 				title: 'Berhasil Disimpan!',
-				message: 'Data profil prodi baru telah berhasil ditambahkan.',
-				id
+				message: 'Data peminatan TI baru telah berhasil ditambahkan.'
 			};
 		} catch (err) {
-			console.error('Error in addProfilProdi:', err);
+			console.error('Error in addPeminatanTI:', err);
 			return fail(500, {
 				success: false,
 				status: 'error' as const,
 				title: 'Terjadi Kesalahan',
-				message: 'Gagal menyimpan data ke database. Silakan coba beberapa saat lagi.'
+				message: 'Gagal menyimpan data peminatan ke database. Silakan coba beberapa saat lagi.'
 			});
 		}
 	}

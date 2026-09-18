@@ -13,7 +13,7 @@ export async function getAllStudentPublications(): Promise<StudentPublicationDTO
 /**
  * Mengambil 1 data Publikasi Mahasiswa berdasarkan ID
  */
-export async function getStudentPublicationById(id: string): Promise<StudentPublicationDTO | null> {
+export async function getstudentpublicationbyid(id: string): Promise<StudentPublicationDTO | null> {
 	const sql = `SELECT * FROM ${tableStudentPublication} WHERE id = ? LIMIT 1`;
 	const rows = (await query(sql, [id])) as StudentPublicationDTO[];
 	return rows[0] || null;

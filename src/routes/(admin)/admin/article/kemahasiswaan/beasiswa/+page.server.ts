@@ -11,26 +11,26 @@ import type { TableContentType } from '$lib/types/tableContent';
 
 export const load: PageServerLoad = async () => {
 	try {
-		const rawList = await getAllScholarships();
+		// const rawList = await getAllScholarships();
 
 		// Transformasi data DB ke format TableContentType untuk komponen TableContent
-		const scholarshipList: TableContentType[] = rawList.map((item) => ({
-			id: item.id,
-			items: [
-				{
-					colomn: 'Nama',
-					row: item.student_name
-				},
-				{
-					colomn: 'Beasiswa',
-					row: item.scholarship_name
-				}
-			]
-		}));
+		// const scholarshipList: TableContentType[] = rawList.map((item) => ({
+		// 	id: item.id,
+		// 	items: [
+		// 		{
+		// 			colomn: 'Nama',
+		// 			row: item.student_name
+		// 		},
+		// 		{
+		// 			colomn: 'Beasiswa',
+		// 			row: item.scholarship_name
+		// 		}
+		// 	]
+		// }));
 
 		return {
-			scholarshipList,
-			rawScholarshipList: rawList
+			// scholarshipList,
+			rawScholarshipList: getAllScholarships()
 		};
 	} catch (err) {
 		console.error('Error loading scholarships:', err);

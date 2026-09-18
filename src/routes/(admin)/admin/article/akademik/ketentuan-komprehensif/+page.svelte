@@ -45,7 +45,9 @@
 				},
 				{
 					colomn: 'Deskripsi',
-					row: item.description || '-'
+					row: item.description || '-',
+
+					isHtml: true
 				},
 				{
 					colomn: 'Tanggal Dibuat',

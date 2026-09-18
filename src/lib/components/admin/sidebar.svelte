@@ -88,7 +88,10 @@
 >
 	<!-- Sidebar Header / Logo -->
 	<div>
-		<div class="flex items-center gap-3.5 border-b border-white/10 p-5" onclick={() => goto('/')}>
+		<div
+			class="flex items-center gap-3.5 border-b border-border-color/10 p-5"
+			onclick={() => goto('/')}
+		>
 			<img
 				src={uinIcon}
 				alt="Logo UIN Ar-Raniry"

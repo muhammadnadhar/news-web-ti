@@ -30,7 +30,7 @@
 			items: [
 				{ colomn: 'Judul Pedoman', row: item.title || '-' },
 				{ colomn: 'Gambar', row: item.image_url || '/placeholder.png', isImage: true },
-				{ colomn: 'Deskripsi', row: item.description || '-' },
+				{ colomn: 'Deskripsi', row: item.description || '-', isHtml: true },
 				{
 					colomn: 'Tanggal Dibuat',
 					row: item.created_at

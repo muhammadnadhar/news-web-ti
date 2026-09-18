@@ -8,7 +8,7 @@
 	import TableSkeleton from '$lib/components/tableSkeleton.svelte';
 	import { page } from '$app/state';
 	import type { SemesterDTO } from '$lib/types/admin/dataset.js';
-	import type { MessageStatus } from '$lib/types/message.js';
+	import type { MessageStatus, ResponseMessage } from '$lib/types/message.js';
 
 	let { data } = $props();
 
@@ -36,11 +36,7 @@
 		}));
 	}
 
-	let messageConfig = $state<{
-		status: MessageStatus;
-		title: string;
-		message: string;
-	}>({
+	let messageConfig = $state<ResponseMessage>({
 		status: 'info',
 		title: '',
 		message: ''

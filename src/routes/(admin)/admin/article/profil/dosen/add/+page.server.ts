@@ -4,7 +4,8 @@ import { fail, redirect, type Actions } from '@sveltejs/kit';
 import { randomUUID } from 'crypto';
 
 export const actions: Actions = {
-	default: async ({ request }) => {
+	// Action untuk Menyimpan Data Dosen / Staff
+	create: async ({ request }) => {
 		const formData = await request.formData();
 
 		const name = formData.get('name')?.toString().trim();
@@ -13,47 +14,18 @@ export const actions: Actions = {
 		const pddiktiUrl = formData.get('pddikti_url')?.toString().trim() || null;
 		const category = formData.get('category')?.toString().trim();
 
-		// Menerima input gambar (Bisa berupa File langsung atau String URL/Public ID dari Client)
-		const photoFile = formData.get('photo') as File | null;
-		let photoUrl = formData.get('photo_url')?.toString().trim() || null;
-		let publicId = formData.get('public_id')?.toString().trim() || null;
+		// Mengambil foto_url & public_id yang sudah dihandle oleh CldUploadWidget dari client
+		const photoUrl = formData.get('photo_url')?.toString().trim() || null;
+		const publicId = formData.get('public_id')?.toString().trim() || null;
 
-		// 1. Validasi Input Wajib
 		if (!name || !expertise) {
 			return fail(400, {
 				message: {
 					type: 'error',
 					text: 'Harap isi Nama Lengkap dan Bidang Keahlian / Tugas.'
 				},
-				values: { name, nidn, expertise, pddiktiUrl, category }
+				values: { name, nidn, expertise, pddiktiUrl, category, photoUrl, publicId }
 			});
-		}
-
-		// 2. Handle Upload ke Cloudinary di Sisi Server (Jika menerima Input File)
-		if (photoFile && photoFile.size > 0 && photoFile.name !== 'undefined') {
-			try {
-				// Konversi File ke Buffer -> Base64
-				const arrayBuffer = await photoFile.arrayBuffer();
-				const buffer = Buffer.from(arrayBuffer);
-				const base64Image = `data:${photoFile.type};base64,${buffer.toString('base64')}`;
-
-				// Upload langsung dari Server ke Cloudinary
-				const uploadResult = await cloudinary.uploader.upload(base64Image, {
-					folder: 'prodi-ti/dosen-staff' // Sesuaikan folder tujuan Anda
-				});
-
-				photoUrl = uploadResult.secure_url;
-				publicId = uploadResult.public_id;
-			} catch (uploadError: any) {
-				console.error('Cloudinary Server Upload Error:', uploadError);
-				return fail(500, {
-					message: {
-						type: 'error',
-						text: 'Gagal mengunggah foto ke server Cloudinary.'
-					},
-					values: { name, nidn, expertise, pddiktiUrl, category }
-				});
-			}
 		}
 
 		const id = randomUUID();
@@ -85,12 +57,9 @@ export const actions: Actions = {
 					type: 'error',
 					text: err.message || 'Gagal menyimpan data Dosen/Staff ke database.'
 				},
-				values: { name, nidn, expertise, pddiktiUrl, category }
+				values: { name, nidn, expertise, pddiktiUrl, category, photoUrl, publicId }
 			});
 		}
-
-		// Jika ingin redirect setelah sukses:
-		// throw redirect(303, '/admin/dosen-staff');
 
 		return {
 			message: {
@@ -98,5 +67,30 @@ export const actions: Actions = {
 				text: 'Berhasil menambahkan data Dosen/Staff baru!'
 			}
 		};
+	},
+
+	// Action untuk Membatalkan / Menghapus Foto dari Cloudinary
+	deletePhoto: async ({ request }) => {
+		const formData = await request.formData();
+		const publicId = formData.get('public_id')?.toString().trim();
+
+		if (!publicId) {
+			return fail(400, {
+				deleteError: 'Public ID tidak ditemukan.'
+			});
+		}
+
+		try {
+			const result = await cloudinary.uploader.destroy(publicId);
+			return {
+				deleteSuccess: true,
+				result
+			};
+		} catch (err: any) {
+			console.error('Error deleting photo from Cloudinary:', err);
+			return fail(500, {
+				deleteError: err.message || 'Gagal menghapus foto dari Cloudinary.'
+			});
+		}
 	}
 };

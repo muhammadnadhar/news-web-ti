@@ -1,7 +1,19 @@
 import { tableLecturerStaff } from '$lib/seeder/admin/article/profile';
 import { tableDosenPrimary, tablePerminatanTI, tableProfilProdi } from '$lib/seeder/admin/home';
 import { query } from '$lib/server/database/svelteDb';
-import type { DosenItemDTO, PrimaryDosenDTO } from '$lib/types/admin/home';
+import type { PrimaryDosenDTO } from '$lib/types/admin/home';
+
+//  Simpan Dosen Primary
+export async function createDosenPrimary(
+	id: string,
+	data: { lecturer_staff_id: string; position: string }
+) {
+	const sql = `
+        INSERT INTO ${tableDosenPrimary} (id, lecturer_staff_id, position)
+        VALUES (?, ?, ?)
+    `;
+	await query(sql, [id, data.lecturer_staff_id, data.position]);
+}
 
 /**
  * mendapatkan 3 dosen primary lengkap dengan detail dari tabel main (join)

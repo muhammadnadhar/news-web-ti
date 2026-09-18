@@ -39,17 +39,17 @@ export const navMenuItems: NavMenuItemType[] = [
 		bgClass: 'bg-[#0e3043] text-scitech-cyan hover:bg-scitech-cyan hover:text-scitech-navy',
 		badge: null,
 		subMenu: [
-			{ id: 'pedoman-akademik', label: 'Pedoman Akademik', href: '/akademik/pedoman-akademik' },
-			{ id: 'kalender-akademik', label: 'Kalender Akademik', href: '/akademik/kalender-akademik' },
+			// { id: 'pedoman-akademik', label: 'Pedoman Akademik', href: '/akademik/pedoman-akademik' },
+			{ id: 'kalender-akademik', label: 'Kalender Akademik', href: '/akademik/kalender' },
 			{
 				id: 'pedoman-tugas-akhir',
 				label: 'Pedoman Tugas Akhir',
-				href: '/akademik/pedoman-tugas-akhir'
+				href: '/akademik/pedoman-ta'
 			},
 			{
 				id: 'pedoman-kkp',
 				label: 'Pedoman Kuliah Kerja Praktek',
-				href: '/akademik/pedoman-kuliah-kerja-praktek'
+				href: '/akademik/pedoman-kkp'
 			},
 			{
 				id: 'ketentuan-komprehensif',
@@ -79,7 +79,7 @@ export const navMenuItems: NavMenuItemType[] = [
 			{
 				id: 'mahasiswa-ipk-tertinggi',
 				label: 'Mahasiswa IPK Tertinggi',
-				href: '/kemahasiswaan/mahasiswa-ipk-tertinggi'
+				href: '/kemahasiswaan/ipk-tertinggi'
 			},
 			{ id: 'beasiswa', label: 'Beasiswa', href: '/kemahasiswaan/beasiswa' },
 			{ id: 'hima-ti', label: 'HIMA TI', href: '/kemahasiswaan/hima' }

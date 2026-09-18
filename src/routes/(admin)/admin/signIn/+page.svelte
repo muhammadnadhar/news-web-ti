@@ -4,14 +4,43 @@
 	import type { ActionData } from './$types';
 
 	import uinIcon from '$lib/assets/uin-icon.svg'; // Sesuaikan path
+	import type { MessageStatus } from '$lib/types/message';
+	import { goto } from '$app/navigation';
+	import Message from '$lib/components/admin/message.svelte';
 
 	let { form }: { form: ActionData } = $props();
 	let isSubmitting = $state(false);
+	let showMessage = $state(false);
+
+	let messageConfig = $state<{
+		status: MessageStatus;
+		title: string;
+		message: string;
+	}>({
+		status: 'info',
+		title: '',
+		message: ''
+	});
+
+	function triggerMessage(status: MessageStatus, title: string, message: string) {
+		messageConfig = { status, title, message };
+		showMessage = true;
+	}
 </script>
 
 <svelte:head>
 	<title>Sign In | Admin Portal</title>
 </svelte:head>
+
+{#if showMessage}
+	<Message
+		status={messageConfig.status}
+		title={messageConfig.title}
+		message={messageConfig.message}
+		dismissible={true}
+		onclose={() => (showMessage = false)}
+	/>
+{/if}
 
 <div class="bg-scitech-navy flex min-h-screen items-center justify-center p-4">
 	<div
@@ -57,9 +86,30 @@
 					method="POST"
 					use:enhance={() => {
 						isSubmitting = true;
-						return async ({ update }) => {
-							await update();
+						showMessage = false;
+						return async ({ result }) => {
 							isSubmitting = false;
+
+							if (result.type === 'success' && result.data?.success) {
+								triggerMessage(
+									'success',
+									(result.data.title as string) || 'Berhasil',
+									(result.data.message as string) || 'Login berhasil!'
+								);
+
+								// Pindah halaman otomatis setelah 3 detik (3000ms)
+								setTimeout(() => {
+									goto((result.data?.redirectTo as string) || '/admin');
+								}, 3000);
+							} else if (result.type === 'failure' && result.data) {
+								triggerMessage(
+									'error',
+									(result.data.title as string) || 'Gagal Login',
+									(result.data.message as string) || 'Terjadi kesalahan saat masuk.'
+								);
+							} else {
+								triggerMessage('error', 'Error', 'Terjadi kesalahan sistem.');
+							}
 						};
 					}}
 					class="space-y-6"

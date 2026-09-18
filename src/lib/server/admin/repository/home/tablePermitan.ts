@@ -1,6 +1,7 @@
-import { tablePerminatanTI } from "$lib/seeder/admin/home";
-import { query } from "$lib/server/database/svelteDb";
-import type { PerminatanTIItemDTO } from "$lib/types/admin/home";
+import { tablePerminatanTI } from '$lib/seeder/admin/home';
+import { randomUUID } from '$lib/server/crypto';
+import { query } from '$lib/server/database/svelteDb';
+import type { PerminatanTIItemDTO } from '$lib/types/admin/home';
 
 /** READ ALL PERMINATAN TI */
 export async function getAllPerminatanTI(): Promise<PerminatanTIItemDTO[]> {
@@ -16,8 +17,10 @@ export async function getPerminatanTIById(id: string): Promise<PerminatanTIItemD
 }
 
 /** create / add perminatan ti */
-export async function addPerminatanTI(data: Omit<PerminatanTIItemDTO, 'id' | 'created_at' | 'updated_at'>): Promise<string> {
-	const id = crypto.randomUUID();
+export async function addPerminatanTI(
+	data: Omit<PerminatanTIItemDTO, 'id' | 'created_at' | 'updated_at'>
+): Promise<string> {
+	const id = randomUUID();
 	const sql = `
 		INSERT INTO ${tablePerminatanTI} (id, title, description)
 		VALUES (?, ?, ?)
@@ -27,7 +30,10 @@ export async function addPerminatanTI(data: Omit<PerminatanTIItemDTO, 'id' | 'cr
 }
 
 /** update perminatan ti */
-export async function updatePerminatanTI(id: string, data: Partial<Omit<PerminatanTIItemDTO, 'id' | 'created_at' | 'updated_at'>>): Promise<boolean> {
+export async function updatePerminatanTI(
+	id: string,
+	data: Partial<Omit<PerminatanTIItemDTO, 'id' | 'created_at' | 'updated_at'>>
+): Promise<boolean> {
 	const fields: string[] = [];
 	const values: any[] = [];
 

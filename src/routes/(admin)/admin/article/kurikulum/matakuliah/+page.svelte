@@ -1,7 +1,5 @@
 <script lang="ts">
 	import type { ActionData, PageData } from './$types';
-	import { enhance } from '$app/forms';
-	import { Sparkles, X, Upload, Save, AlertTriangleIcon, Loader2, Trash2 } from 'lucide-svelte';
 	import TableContent from '$lib/components/admin/tableContent.svelte';
 	import type { TableContentType } from '$lib/types/tableContent';
 	import type { CourseMapDTO } from '$lib/types/admin/article/kurikulum';
@@ -10,6 +8,7 @@
 	import { page } from '$app/state';
 	import TableSkeleton from '$lib/components/tableSkeleton.svelte';
 	import Message, { type MessageStatus } from '$lib/components/admin/message.svelte';
+	import type { ResponseMessage } from '$lib/types/message';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
@@ -36,11 +35,7 @@
 		message: ''
 	});
 
-	let messageConfig = $state<{
-		status: MessageStatus;
-		title: string;
-		message: string;
-	}>({
+	let messageConfig = $state<ResponseMessage>({
 		status: 'info',
 		title: '',
 		message: ''
@@ -137,7 +132,7 @@
 					res?.title ?? 'Berhasil',
 					res?.message ?? 'Data berhasil dihapus.'
 				)}
-			onDeleteError={(data) =>
+			onDeleteError={(res) =>
 				triggerMessage(
 					res?.status ?? 'error',
 					res?.title ?? 'Gagal Menyimpan',

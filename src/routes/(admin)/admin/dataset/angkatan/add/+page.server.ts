@@ -61,7 +61,6 @@ export const actions: Actions = {
 				});
 			}
 		} catch (error: any) {
-			// Penanganan Error Duplicate Entry MySQL / MariaDB
 			if (error.code === 'ER_DUP_ENTRY' || error.message?.includes('Duplicate entry')) {
 				return fail(400, {
 					success: false,

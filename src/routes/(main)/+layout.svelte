@@ -81,7 +81,7 @@
 
 		if (kemahasiswaanMenu && kemahasiswaanMenu.subMenu) {
 			const prestasiAkademik = kemahasiswaanMenu.subMenu.find((c) => c.id === 'prestasi-akademik');
-			if (prestasiAkademik && data.semesters?.academic) {
+			if (prestasiAkademik && data.academic) {
 				prestasiAkademik.subMenu = formatSubMenu(data.semesters.academic, prestasiAkademik.href);
 			}
 

@@ -1,8 +1,8 @@
-commit 6  finish desian #2  and add drive with cloudinary foto #2
-- update : mengfinishkan penyimpanana image di cloudinary
-- update : update bentuk structure table di component routing kerjasama
-- update : setiap component table di asmin , akan memuat data dengan laoding dahulu , jiak data tersebut lama di muat nya  ( performance )
-- update : setiap halaman table menggunakn sreaming dengan loading skeleton data
-- finish : bagian DATASET sudah finish tahapan pertama #1 karena sudah bisa crud 
-- update : update FormEditor agar support pengetikan dan bisa menghandle setiap baris dnegan menganti tag @html
-- finish : tableComponent sudah bisa menerima data CRUD denag amaan dan bisa menyesuikan ukuran data yang si masukan
+commit 6  finish desian #3  and fix halaman admin 
+- update : mengubah beberapa table agar menyesuikan data relation dari table lain 
+- update : penyesuikan table untuk ipktertinggi , memiliki forengkey ke table semeter dan angkatan
+- update : sekarang halaman dosen sudah bisa menambhakan data
+- add : menambahkna halaman untuk memasukan jabatan Prodi
+- add : menambhakan colom isHtml di tableCOntent ( admin ) agar code yg di simpan bisa di render
+- finish : tahapan template untuk Home sudah jalan
+update: sekarang dashboard , bisa menambhakan seendiri imag dashboard dan text nya

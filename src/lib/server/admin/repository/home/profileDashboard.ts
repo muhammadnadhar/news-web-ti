@@ -2,7 +2,7 @@ import { tableProfileDashboard } from '$lib/seeder/admin/home';
 import { query } from '$lib/server/database/svelteDb';
 import type { ProfileDashboardDTO } from '$lib/types/admin/home';
 
-/** 1. get all - mengambil semua data profile dashboard */
+/**  get all - mengambil semua data profile dashboard */
 export async function getAllProfileDashboards(): Promise<ProfileDashboardDTO[]> {
 	const sql = `
         SELECT * FROM ${tableProfileDashboard} 

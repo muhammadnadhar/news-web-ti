@@ -11,7 +11,7 @@ export const load: PageServerLoad = async () => {
 	// 	getAllProfilProdi(),
 	// 	getAllProfileDashboards()
 	// ]);
-	//
+	console.table(await getAllProfileDashboards());
 	return {
 		// primaryDosenList,
 		// listPerminatan,

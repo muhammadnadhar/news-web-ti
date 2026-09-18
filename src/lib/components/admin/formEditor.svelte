@@ -149,7 +149,6 @@
 
 			<!-- Editor Container -->
 			<div class="overflow-hidden rounded-lg border border-bg-secondary-hover bg-bg-primary">
-				<!-- Toolbar -->
 				<div
 					class="flex flex-wrap items-center gap-1 border-b border-bg-secondary-hover bg-bg-primary-glare p-2 text-text-muted"
 				>
@@ -263,7 +262,7 @@
 						<Video class="h-4 w-4" />
 					</button>
 
-					<div class="mx-1 h-4 w-[1px] bg-bg-secondary-hover"></div>
+					<div class="mx-1 h-4 w-px bg-bg-secondary-hover"></div>
 
 					<button
 						type="button"

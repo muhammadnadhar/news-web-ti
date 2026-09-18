@@ -1,39 +1,17 @@
 <script lang="ts">
 	import type { NewsItemDTO } from '$lib/types/admin/article/berita';
-	import { Calendar, ArrowRight, Sparkles, NewspaperIcon } from 'lucide-svelte';
+	import { Calendar, ArrowRight, Sparkles, NewspaperIcon, AlertCircle } from 'lucide-svelte';
 
-	
-  interface Props {
-    recentNews : NewsItemDTO[]
-  }
+	interface Props {
+		recentNews: Promise<NewsItemDTO[]>;
+	}
 
-  let data  : Props=  $props();
-// Pemetaan data dari DTO agar siap dipakai UI + fallback nilai default
-	let newsList = $derived(
-		(data.recentNews || []).map((item) => ({
-			id: item.id,
-			title: item.title,
-			category: item.category || 'Berita',
-			date: item.published_at
-				? new Date(item.published_at).toLocaleDateString('id-ID', {
-						day: 'numeric',
-						month: 'long',
-						year: 'numeric'
-					})
-				: '-',
-			image: (item as any).image_url || '/placeholder-news.jpg',
-			summary:
-				(item as any).content ||
-				(item as any).summary ||
-				'Klik untuk melihat informasi selengkapnya terkait berita ini.',
-			link: `/news/${item.id}`
-		}))
-	);
+	let { recentNews }: Props = $props();
 
 	let scrollContainer = $state<HTMLDivElement | null>(null);
 	let activeIndex = $state(0);
 
-	// State untuk kontrol Drag Mouse
+	// State untuk kontrol Drag Mouse Desktop
 	let isDown = $state(false);
 	let startX = $state(0);
 	let scrollLeftPos = $state(0);
@@ -68,7 +46,7 @@
 		}
 	}
 
-	// Fitur Click & Drag (Mouse Desktop)
+	// Fitur Click & Drag (Desktop Mouse)
 	function handleMouseDown(e: MouseEvent) {
 		if (!scrollContainer) return;
 		isDown = true;
@@ -86,6 +64,7 @@
 
 	function handleMouseMove(e: MouseEvent) {
 		if (!isDown || !scrollContainer) return;
+		e.preventDefault();
 		const x = e.pageX - scrollContainer.offsetLeft;
 		const walk = (x - startX) * 1.5;
 		scrollContainer.scrollLeft = scrollLeftPos - walk;
@@ -101,9 +80,29 @@
 				block: 'nearest'
 			});
 		}
-	}</script>
+	}
+
+	// Helper Format Tanggal
+	function formatDate(dateInput: Date | string): string {
+		if (!dateInput) return '-';
+		const date = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
+		if (isNaN(date.getTime())) return '-';
+		return new Intl.DateTimeFormat('id-ID', {
+			day: 'numeric',
+			month: 'short',
+			year: 'numeric'
+		}).format(date);
+	}
+
+	// Helper Pembersih HTML tag dari konten artikel
+	function stripHtml(html: string): string {
+		if (!html) return '';
+		return html.replace(/<[^>]*>?/gm, '');
+	}
+</script>
 
 <section class="relative w-full overflow-hidden py-16">
+	<!-- Header Section -->
 	<div class="mx-auto mb-10 max-w-xl px-6 text-center">
 		<span
 			class="text-scitech-mint mb-2 inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase"
@@ -113,120 +112,163 @@
 		<h2 class="text-2xl font-extrabold tracking-tight sm:text-3xl">Berita Terbaru</h2>
 	</div>
 
-	{#if newsList.length > 0}
-		<!-- Container Scroll Interaktif -->
+	{#await recentNews}
+		<!-- Loading Skeleton State -->
 		<div
-			bind:this={scrollContainer}
-			onscroll={handleScroll}
-			onwheel={handleWheel}
-			onmousedown={handleMouseDown}
-			onmouseleave={handleMouseLeave}
-			onmouseup={handleMouseUp}
-			onmousemove={handleMouseMove}
-			role="region"
-			aria-label="Carousel Berita"
-			class="scrollbar-none flex cursor-grab touch-pan-x snap-x snap-mandatory gap-4 overflow-x-auto
-			   px-[calc(50%-150px)] py-12 select-none active:cursor-grabbing sm:gap-8 sm:px-[calc(50%-180px)]"
+			class="flex scrollbar-none gap-6 overflow-x-auto px-[calc(50%-150px)] py-12 sm:px-[calc(50%-180px)]"
 		>
-			{#each newsList as news, index (news.id)}
-				{@const isActive = activeIndex === index}
-
-				<article
-					class="bg-scitech-slate/80 flex w-[300px] flex-none snap-center flex-col justify-between overflow-hidden rounded-2xl
-				   border backdrop-blur-md transition-all duration-500 ease-out sm:w-90
-				   {isActive
-						? 'border-scitech-mint/60 shadow-scitech-mint/10 z-20 scale-110 opacity-100 shadow-2xl'
-						: 'border-border-color z-10 scale-90 opacity-40 blur-[0.3px]'}"
+			{#each Array(3) as _}
+				<div
+					class="bg-scitech-slate/40 flex w-[300px] flex-none animate-pulse flex-col justify-between overflow-hidden rounded-2xl border border-border-color sm:w-90"
 				>
 					<div>
-						<div class="bg-scitech-navy relative h-44 w-full overflow-hidden sm:h-48">
-							<img
-								src={news.image}
-								alt={news.title}
-								class="pointer-events-none h-full w-full object-cover transition-transform duration-700 {isActive
-									? 'scale-105'
-									: 'scale-100'}"
-								draggable="false"
-								loading="lazy"
-							/>
-
-							<span
-								class="bg-scitech-navy/80 text-scitech-mint border-scitech-mint/30 absolute top-3 left-3 rounded-full border px-3 py-1 text-[10px] font-bold tracking-wider uppercase shadow-md backdrop-blur-md"
-							>
-								{news.category}
-							</span>
+						<div class="h-44 w-full bg-white/10 sm:h-48"></div>
+						<div class="space-y-3 p-5">
+							<div class="h-3 w-24 rounded-md bg-white/10"></div>
+							<div class="h-5 w-full rounded-md bg-white/10"></div>
+							<div class="h-4 w-4/5 rounded-md bg-white/10"></div>
 						</div>
+					</div>
+					<div class="p-5 pt-0">
+						<div class="h-4 w-28 rounded-md bg-white/10"></div>
+					</div>
+				</div>
+			{/each}
+		</div>
+	{:then newsList}
+		{#if newsList && newsList.length > 0}
+			<!-- Container Carousel Berita -->
+			<div
+				bind:this={scrollContainer}
+				onscroll={handleScroll}
+				onwheel={handleWheel}
+				onmousedown={handleMouseDown}
+				onmouseleave={handleMouseLeave}
+				onmouseup={handleMouseUp}
+				onmousemove={handleMouseMove}
+				role="region"
+				aria-label="Carousel Berita"
+				class="flex cursor-grab touch-pan-x snap-x snap-mandatory scrollbar-none gap-4 overflow-x-auto
+                       px-[calc(50%-150px)] py-12 select-none active:cursor-grabbing sm:gap-8 sm:px-[calc(50%-180px)]"
+			>
+				{#each newsList as news, index (news.id)}
+					{@const isActive = activeIndex === index}
 
-						<div class="p-5">
-							<div class="text-text-muted mb-2 flex items-center gap-1.5 text-xs">
-								<Calendar class="text-scitech-cyan h-3.5 w-3.5" />
-								<span>{news.date}</span>
+					<article
+						class="bg-scitech-slate/80 flex w-[300px] flex-none snap-center flex-col justify-between overflow-hidden rounded-2xl
+                               border backdrop-blur-md transition-all duration-500 ease-out sm:w-90
+                               {isActive
+							? 'border-scitech-mint/60 shadow-scitech-mint/10 z-20 scale-105 opacity-100 shadow-2xl'
+							: 'z-10 scale-95 border-border-color opacity-50 blur-[0.2px]'}"
+					>
+						<div>
+							<!-- Gambar Berita & Badge Kategori -->
+							<div class="bg-scitech-navy relative h-44 w-full overflow-hidden sm:h-48">
+								{#if news.image_url}
+									<img
+										src={news.image_url}
+										alt={news.title}
+										class="pointer-events-none h-full w-full object-cover transition-transform duration-700 {isActive
+											? 'scale-105'
+											: 'scale-100'}"
+										draggable="false"
+										loading="lazy"
+									/>
+								{:else}
+									<div
+										class="flex h-full w-full items-center justify-center bg-slate-800 text-slate-500"
+									>
+										<NewspaperIcon class="h-12 w-12 opacity-40" />
+									</div>
+								{/if}
+
+								<span
+									class="bg-scitech-navy/80 text-scitech-mint border-scitech-mint/30 absolute top-3 left-3 rounded-full border px-3 py-1 text-[10px] font-bold tracking-wider uppercase shadow-md backdrop-blur-md"
+								>
+									{news.category}
+								</span>
 							</div>
 
-							<h3
-								class="mb-2 line-clamp-2 text-sm font-bold leading-snug text-text-main sm:text-base {isActive
-									? 'text-text-main'
-									: 'text-text-main/80'}"
-							>
-								{news.title}
-							</h3>
+							<!-- Detail Konten -->
+							<div class="p-5">
+								<div class="mb-2 flex items-center gap-1.5 text-xs text-text-muted">
+									<Calendar class="text-scitech-cyan h-3.5 w-3.5" />
+									<span>{formatDate(news.published_at)}</span>
+								</div>
 
-							<p class="text-text-muted line-clamp-2 text-xs leading-relaxed">
-								{news.summary}
-							</p>
+								<h3
+									class="mb-2 line-clamp-2 text-sm leading-snug font-bold text-text-main sm:text-base {isActive
+										? 'text-text-main'
+										: 'text-text-main/80'}"
+								>
+									{news.title}
+								</h3>
+
+								<p class="line-clamp-2 text-xs leading-relaxed text-text-muted">
+									{stripHtml(news.content)}
+								</p>
+							</div>
 						</div>
-					</div>
 
-					<div class="px-5 pt-1 pb-5">
-						<a
-							href={news.link}
-							class="text-scitech-mint hover:text-scitech-mint-hover group inline-flex items-center gap-2 text-xs font-bold transition-all"
-						>
-							<span>Baca Selengkapnya</span>
-							<ArrowRight
-								class="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1"
-							/>
-						</a>
-					</div>
-				</article>
-			{/each}
-		</div>
+						<!-- Link Selengkapnya -->
+						<div class="px-5 pt-1 pb-5">
+							<a
+								href="/berita/{news.id}"
+								class="text-scitech-mint hover:text-scitech-mint-hover group inline-flex items-center gap-2 text-xs font-bold transition-all"
+							>
+								<span>Baca Selengkapnya</span>
+								<ArrowRight
+									class="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1"
+								/>
+							</a>
+						</div>
+					</article>
+				{/each}
+			</div>
 
-		<!-- Dot Indicators -->
-		<div class="mt-4 flex items-center justify-center gap-2">
-			{#each newsList as _, index}
-				<button
-					onclick={() => scrollToCard(index)}
-					aria-label="Ke slide {index + 1}"
-					class="h-2 rounded-full transition-all duration-300 {activeIndex === index
-						? 'bg-scitech-mint w-8'
-						: 'w-2 bg-white/20 hover:bg-white/40'}"
-				></button>
-			{/each}
-		</div>
-	{:else}
-		<!-- Tampilan Ketika Data Kosong (Empty State) -->
+			<!-- Dot Indicators -->
+			<div class="mt-4 flex items-center justify-center gap-2">
+				{#each newsList as _, index}
+					<button
+						onclick={() => scrollToCard(index)}
+						aria-label="Ke slide {index + 1}"
+						class="h-2 rounded-full transition-all duration-300 {activeIndex === index
+							? 'bg-scitech-mint w-8'
+							: 'w-2 bg-white/20 hover:bg-white/40'}"
+					></button>
+				{/each}
+			</div>
+		{:else}
+			<!-- Tampilan Data Kosong (Empty State) -->
+			<div
+				class="bg-scitech-slate/40 mx-auto max-w-lg rounded-2xl border border-border-color p-8 text-center backdrop-blur-md"
+			>
+				<div
+					class="bg-scitech-mint/10 text-scitech-mint mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full"
+				>
+					<NewspaperIcon class="h-7 w-7" />
+				</div>
+				<h3 class="mb-2 text-lg font-bold text-text-main">Belum Ada Berita Terbaru</h3>
+				<p class="text-xs leading-relaxed text-text-muted">
+					Saat ini belum terdapat berita atau pengumuman yang dipublikasikan. Silakan periksa
+					kembali secara berkala.
+				</p>
+			</div>
+		{/if}
+	{:catch error}
+		<!-- Error State -->
 		<div
-			class="border-border-color bg-scitech-slate/40 mx-auto max-w-lg rounded-2xl border p-8 text-center backdrop-blur-md"
+			class="mx-auto max-w-lg rounded-2xl border border-red-500/20 bg-red-950/20 p-8 text-center backdrop-blur-md"
 		>
 			<div
-				class="bg-scitech-mint/10 text-scitech-mint mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full"
+				class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-red-500/10 text-red-400"
 			>
-				<NewspaperIcon class="h-7 w-7" />
+				<AlertCircle class="h-7 w-7" />
 			</div>
-			<h3 class="mb-2 text-lg font-bold text-text-main">Belum Ada Berita Terbaru</h3>
-			<p class="text-text-muted text-xs leading-relaxed">
-				Saat ini belum terdapat berita atau pengumuman yang dipublikasikan. Silakan periksa kembali
-				secara berkala.
+			<h3 class="mb-2 text-lg font-bold text-text-main">Gagal Memuat Berita</h3>
+			<p class="text-xs leading-relaxed text-text-muted">
+				Terjadi kesalahan saat memuat daftar berita terbaru. Silakan coba muat ulang halaman.
 			</p>
 		</div>
-	{/if}
-</section><style>
-	.scrollbar-none::-webkit-scrollbar {
-		display: none;
-	}
-	.scrollbar-none {
-		-ms-overflow-style: none;
-		scrollbar-width: none;
-	}
-</style>
+	{/await}
+</section>

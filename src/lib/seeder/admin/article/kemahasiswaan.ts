@@ -1,4 +1,5 @@
 import { query } from '$lib/server/database/runtimeDb'; // di gunakan oleh runntime bawaah
+import { tableAngkatan, tableSemester } from '../dataset';
 export const tableScholarship = 'kemahasiswaan_scholarship';
 export const tableStudentAchievement = 'kemahasiswaan_student_achievement';
 export const tableHighGpaStudent = 'kemahasiswaan_high_gpa_student';
@@ -39,14 +40,16 @@ CREATE TABLE IF NOT EXISTS ${tableStudentAchievement} (
 export async function HighGpaStudentTableSeed() {
 	const sql = `
 CREATE TABLE IF NOT EXISTS ${tableHighGpaStudent} (
-    id VARCHAR(36) PRIMARY KEY, -- Primary key berupa UUID string
-    student_name VARCHAR(255) NOT NULL, -- Nama Mahasiswa (contoh: 'aesha durratul nasihah')
-    gpa DECIMAL(3, 2) NOT NULL, -- Nilai IPK (contoh: 3.79, 3.95)
-    batch_year VARCHAR(10) NOT NULL, -- Angkatan (contoh: '2020')
-    semester VARCHAR(50) NOT NULL, -- Semester (contoh: '2020')
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Waktu pembuatan data
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP -- Waktu update data
-);
+			id VARCHAR(36) PRIMARY KEY,
+			student_name VARCHAR(255) NOT NULL,
+			gpa DECIMAL(3, 2) NOT NULL,
+			angkatan_id VARCHAR(36) NOT NULL,
+			semester_id VARCHAR(36) NOT NULL,
+			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+			FOREIGN KEY (angkatan_id) REFERENCES ${tableAngkatan}(id) ON DELETE CASCADE,
+			FOREIGN KEY (semester_id) REFERENCES ${tableSemester}(id) ON DELETE CASCADE
+		);
   `;
 	await query(sql);
 }

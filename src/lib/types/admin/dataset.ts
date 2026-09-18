@@ -1,5 +1,12 @@
 // DTO
 
+// Interface DTO
+export interface JabatanProdiDTO {
+	id: string;
+	name: string;
+	created_at: Date;
+}
+
 export interface AngkatanDTO {
 	id: string;
 	year: number;

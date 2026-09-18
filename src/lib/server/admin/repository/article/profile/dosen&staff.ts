@@ -23,9 +23,11 @@ export async function createLecturerStaff(
             pddikti_url, 
             expertise, 
             role, 
+            is_primary, -- TAMBAHKAN KOLOM INI
             photo_url
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `;
+
 	const params = [
 		id,
 		data.name,
@@ -33,7 +35,7 @@ export async function createLecturerStaff(
 		data.pddikti_url || null,
 		data.expertise,
 		data.role || 'Dosen',
-		data.is_primary || false,
+		data.is_primary || false, // Urutan parameter ke-7
 		data.photo_url || null
 	];
 

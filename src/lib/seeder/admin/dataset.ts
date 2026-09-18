@@ -1,6 +1,7 @@
 import { query } from '$lib/server/database/runtimeDb';
 
 export const tableAngkatan = 'dataset_angkatan';
+export const tableJabatanProdi = 'dataset_positions_prodi';
 export const tableSemester = 'dataset_semester';
 
 // Fungsi seed untuk tabel Angkatan
@@ -28,5 +29,17 @@ CREATE TABLE IF NOT EXISTS ${tableSemester} (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP -- Waktu update data
 );
   `;
+	await query(sql);
+}
+
+export async function JabatanProdiTableSeed() {
+	const sql = `
+CREATE TABLE IF NOT EXISTS ${tableJabatanProdi} (
+    id VARCHAR(36) PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+`;
 	await query(sql);
 }

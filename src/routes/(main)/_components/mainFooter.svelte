@@ -5,8 +5,7 @@
 	let { layananOnline = [], scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' }) } =
 		$props();
 
-
-const currentYear = new Date().getFullYear();
+	const currentYear = new Date().getFullYear();
 </script>
 
 <footer class="relative mt-28 border-t border-border-color text-text-muted transition-colors">
@@ -58,7 +57,7 @@ const currentYear = new Date().getFullYear();
 				<!-- Social Media Links -->
 				<div class="flex items-center gap-3 pt-2">
 					<a
-						href="#"
+						href="https://www.youtube.com/@programstuditeknologiinfor1880"
 						aria-label="YouTube"
 						class="hover:bg-scitech-mint hover:text-scitech-navy text-scitech-mint rounded-xl border border-white/10 bg-white/5 p-2.5 shadow-md transition-all duration-300"
 					>
@@ -66,7 +65,7 @@ const currentYear = new Date().getFullYear();
 						<!-- <Youtube class="w-4 h-4" /> -->
 					</a>
 					<a
-						href="#"
+						href="https://www.instagram.com/infotech.uinarraniry?igshid=YmMyMTA2M2Y%3D"
 						aria-label="Instagram"
 						class="hover:bg-scitech-mint hover:text-scitech-navy text-scitech-mint rounded-xl border border-white/10 bg-white/5 p-2.5 shadow-md transition-all duration-300"
 					>
@@ -136,24 +135,25 @@ const currentYear = new Date().getFullYear();
 		</div>
 	</div>
 
-<div class="space-y-1">
-	<p>
-		© Copyright <span class="font-semibold text-scitech-mint">Prodi Teknologi Informasi</span> 2023-{currentYear}.
-	</p>
-	<p>
-		© Powered by <span class="font-semibold text-text-main">HIMA-TI</span>. All Rights Reserved.
-	</p>
-	<p class="flex flex-wrap items-center justify-center gap-1.5 pt-1">
-		<span>prodi-ti-website</span>
-		<a
-			href="https://github.com/muhammadnadhar/news-web-ti"
-			target="_blank"
-			rel="noopener noreferrer"
-			class="inline-flex items-center gap-1 text-scitech-cyan transition-colors hover:text-text-main hover:underline"
-		>
-			<GitBranchPlusIcon class="h-3.5 w-3.5" />
-			<!-- <span></span> -->
-		</a>
-	</p>
-</div>
+	<div class="space-y-1">
+		<p>
+			© Copyright <span class="text-scitech-mint font-semibold">Prodi Teknologi Informasi</span>
+			2023-{currentYear}.
+		</p>
+		<p>
+			© Powered by <span class="font-semibold text-text-main">HIMA-TI</span>. All Rights Reserved.
+		</p>
+		<p class="flex flex-wrap items-center justify-center gap-1.5 pt-1">
+			<span>prodi-ti-website</span>
+			<a
+				href="https://github.com/muhammadnadhar/news-web-ti"
+				target="_blank"
+				rel="noopener noreferrer"
+				class="text-scitech-cyan inline-flex items-center gap-1 transition-colors hover:text-text-main hover:underline"
+			>
+				<GitBranchPlusIcon class="h-3.5 w-3.5" />
+				<!-- <span></span> -->
+			</a>
+		</p>
+	</div>
 </footer>

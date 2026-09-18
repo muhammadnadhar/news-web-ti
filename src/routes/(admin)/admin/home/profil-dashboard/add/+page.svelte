@@ -40,14 +40,14 @@
 <div class="mx-auto max-w-3xl space-y-6">
 	<!-- Top Bar / Navigation -->
 	<div class="flex items-center gap-4">
-		<button
-			type="button"
-			onclick={() => goto('/admin/profile-dashboard')}
-			class="rounded-xl border border-white/10 bg-bg-secondary/40 p-2.5 text-text-muted transition-colors hover:bg-white/10 hover:text-white"
-			title="Kembali"
-		>
-			<ArrowLeft class="h-5 w-5" />
-		</button>
+		<!-- <button -->
+		<!-- 	type="button" -->
+		<!-- 	onclick={() => goto('/admin/profile-dashboard')} -->
+		<!-- 	class="rounded-xl border border-white/10 bg-bg-secondary/40 p-2.5 text-text-muted transition-colors hover:bg-white/10 hover:text-white" -->
+		<!-- 	title="Kembali" -->
+		<!-- > -->
+		<!-- 	<ArrowLeft class="h-5 w-5" /> -->
+		<!-- </button> -->
 		<div>
 			<h1 class="text-pure-white text-xl font-bold md:text-2xl">Tambah Profile Dashboard</h1>
 			<p class="text-sm text-text-muted">Tambahkan banner/gambar profile dashboard baru.</p>
@@ -84,7 +84,7 @@
 				required
 				value={form?.title || ''}
 				placeholder="Contoh: Banner Dashboard Utama"
-				class="w-full rounded-xl border border-white/10 bg-slate-950/50 px-4 py-3 text-sm text-white placeholder-text-muted focus:border-amber-500 focus:ring-1 focus:ring-amber-500 focus:outline-none"
+				class="w-full rounded-xl border border-white/10 bg-bg-primary-glare/50 px-4 py-3 text-sm text-text-main placeholder-text-muted focus:border-amber-500 focus:ring-1 focus:ring-amber-500 focus:outline-none"
 			/>
 		</div>
 
@@ -160,7 +160,7 @@
 		<div class="flex items-center justify-end gap-3 border-t border-white/10 pt-6">
 			<button
 				type="button"
-				onclick={() => goto('/admin/profile-dashboard')}
+				onclick={() => history.back()}
 				class="rounded-xl border border-white/10 px-5 py-2.5 text-sm font-semibold text-text-muted transition-colors hover:bg-white/10 hover:text-white"
 			>
 				Batal

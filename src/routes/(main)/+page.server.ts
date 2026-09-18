@@ -4,6 +4,7 @@ import { getRecentNews } from '$lib/server/admin/repository/article/berita';
 import { getAllPerminatanTI } from '$lib/server/admin/repository/home/tablePermitan';
 import { getAllProfilProdi } from '$lib/server/admin/repository/home/profilProdi';
 import { getPrimaryDosenList } from '$lib/server/admin/repository/home/dosenPrimary';
+import { getAllProfileDashboards } from '$lib/server/admin/repository/home/profileDashboard';
 
 export const load: PageServerLoad = async () => {
 	try {
@@ -13,18 +14,20 @@ export const load: PageServerLoad = async () => {
 		// return {
 		// 	recentNews
 		// };
-		const [recentNews, listPrimaryDosen, listPerminatan, listProfil] = await Promise.all([
-			getRecentNews(10),
-			getPrimaryDosenList(),
-			getAllPerminatanTI(),
-			getAllProfilProdi()
-		]);
+		// const [recentNews, listPrimaryDosen, listPerminatan, listProfil] = await Promise.all([
+		// 	getRecentNews(10),
+		// 	getPrimaryDosenList(),
+		// 	getAllPerminatanTI(),
+		// 	getAllProfilProdi()
+		// ]);
 
 		return {
-			recentNews,
-			listPrimaryDosen,
-			listPerminatan,
-			listProfil
+			// ( promise ) handle scereaming data dengan loading
+			profileImgDashboard: getAllProfileDashboards(),
+			recentNews: getRecentNews(10),
+			listPrimaryDosen: getPrimaryDosenList(),
+			listPerminatan: getAllPerminatanTI(),
+			listProfil: getAllProfilProdi()
 		};
 	} catch (err) {
 		console.error('Error loading recent news:', err);

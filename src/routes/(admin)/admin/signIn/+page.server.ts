@@ -6,27 +6,36 @@ import { sessionAdmin } from '$lib/types/session';
 export const actions: Actions = {
 	default: async ({ request, cookies }) => {
 		const data = await request.formData();
-		const identifier = data.get('identifier') as string; // Bisa username atau email
+		const identifier = data.get('identifier') as string; // Username atau Email
 		const password = data.get('password') as string;
 
+		const values = { identifier };
+
 		if (!identifier || !password) {
-			return fail(400, { error: 'Username/Email dan Password wajib diisi.' });
+			return fail(400, {
+				title: 'Validasi Gagal',
+				message: 'Username/Email dan Password wajib diisi.',
+				values
+			});
 		}
 
 		try {
 			const user = await findUserByUsernameOrEmail(identifier);
 
-			if (!user) {
-				return fail(401, { error: 'Kredensial tidak valid.' });
-			}
-
-			// Cek Password ( nantik disarankan menggunakan bcrypt.compare di tahap produksi)
-			if (user.password !== password) {
-				return fail(401, { error: 'Kredensial tidak valid.' });
+			if (!user || user.password !== password) {
+				return fail(401, {
+					title: 'Login Gagal',
+					message: 'Kredensial (Username/Email atau Password) tidak valid.',
+					values
+				});
 			}
 
 			if (user.status !== 'Active') {
-				return fail(403, { error: 'Akun Anda sedang dinonaktifkan.' });
+				return fail(403, {
+					title: 'Akses Ditolak',
+					message: 'Akun Anda sedang dinonaktifkan. Silakan hubungi administrator.',
+					values
+				});
 			}
 
 			cookies.set(sessionAdmin, user.id, {
@@ -37,11 +46,22 @@ export const actions: Actions = {
 				maxAge: 60 * 60 * 24 // 1 hari
 			});
 
-			throw redirect(303, '/admin');
+			// Kembalikan response sukses tanpa langsung 'throw redirect'
+			return {
+				success: true,
+				title: 'Login Berhasil',
+				message: 'Selamat datang kembali! Anda akan dialihkan ke halaman admin dalam 3 detik...',
+				redirectTo: '/admin'
+			};
 		} catch (err) {
-			if (err instanceof Response) throw err; // Penting untuk fungsi SvelteKit redirect()
+			if (isRedirect(err)) throw err;
 			console.error('Error saat login:', err);
-			return fail(500, { error: 'Terjadi kesalahan sistem, silakan coba lagi nanti.' });
+
+			return fail(500, {
+				title: 'Kesalahan Sistem',
+				message: 'Terjadi kesalahan sistem, silakan coba lagi nanti.',
+				values
+			});
 		}
 	}
 };

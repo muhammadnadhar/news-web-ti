@@ -1,6 +1,25 @@
 import { fail } from '@sveltejs/kit';
-import type { Actions } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 import { createHighGpaStudent } from '$lib/server/admin/repository/article/kemahasiswaan/ipkTertinggi';
+import { getAllAngkatan } from '$lib/server/admin/repository/dataset/angkatan';
+import { getAllSemesters } from '$lib/server/admin/repository/dataset/semester';
+
+export const load: PageServerLoad = async () => {
+	try {
+		const [angkatanList, semesterList] = await Promise.all([getAllAngkatan(), getAllSemesters()]);
+
+		return {
+			angkatanList: angkatanList || [],
+			semesterList: semesterList || []
+		};
+	} catch (error) {
+		console.error('Error loading references:', error);
+		return {
+			angkatanList: [],
+			semesterList: []
+		};
+	}
+};
 
 export const actions: Actions = {
 	default: async ({ request }) => {
@@ -8,20 +27,22 @@ export const actions: Actions = {
 
 		const studentName = formData.get('student_name')?.toString().trim();
 		const gpaRaw = formData.get('gpa')?.toString().trim();
-		const batchYear = formData.get('batch_year')?.toString().trim();
-		const semester = formData.get('semester')?.toString().trim();
+		const angkatanId = formData.get('angkatan_id')?.toString().trim();
+		const semesterId = formData.get('semester_id')?.toString().trim();
+		const imgUrl = formData.get('img_url')?.toString().trim() || '';
 
 		const gpa = gpaRaw ? parseFloat(gpaRaw) : NaN;
 
 		const values = {
 			studentName,
 			gpa: gpaRaw,
-			batchYear,
-			semester
+			angkatanId,
+			semesterId,
+			imgUrl
 		};
 
 		// 1. Validasi Input Wajib
-		if (!studentName || !gpaRaw || !batchYear || !semester) {
+		if (!studentName || !gpaRaw || !angkatanId || !semesterId) {
 			return fail(400, {
 				success: false,
 				title: 'Gagal Menyimpan',
@@ -43,7 +64,7 @@ export const actions: Actions = {
 		const id = crypto.randomUUID();
 
 		try {
-			await createHighGpaStudent(id, studentName, gpa, batchYear, semester);
+			await createHighGpaStudent(id, studentName, gpa, angkatanId, semesterId, imgUrl);
 
 			return {
 				success: true,

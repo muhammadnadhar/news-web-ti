@@ -12,19 +12,17 @@
 </script>
 
 <div class="mx-auto max-w-7xl space-y-8 p-6 lg:p-10">
-	
 	<div class="border-b border-white/10 pb-6">
 		<span
 			class="text-scitech-mint mb-1 inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase"
 		>
 			<Sparkles class="text-scitech-mint h-4 w-4" /> Penelitian & Pengabdian
 		</span>
-		<h1 class="text-2xl font-extrabold tracking-tight text-white sm:text-3xl">
+		<h1 class="text-2xl font-extrabold tracking-tight text-text-main sm:text-3xl">
 			Penelitian Dosen Prodi TI
 		</h1>
 	</div>
 
-	<!-- Container Form Ubah Data Penelitian Dosen -->
 	<div
 		class="bg-scitech-slate/60 space-y-6 rounded-3xl border border-white/10 p-6 shadow-2xl backdrop-blur-xl sm:p-8"
 	>
@@ -46,9 +44,8 @@
 			}}
 			class="space-y-6"
 		>
-			<!-- Judul Artikel (Disabled/Readonly Sesuai Gambar) -->
 			<div class="space-y-2">
-				<label for="title" class="block text-xs font-medium text-white">
+				<label for="title" class="block text-xs font-medium text-text-main">
 					Judul<span class="text-rose-400">*</span>
 				</label>
 				<input
@@ -56,24 +53,25 @@
 					type="text"
 					bind:value={titleInput}
 					readonly
-					class="bg-scitech-navy/50 text-text-muted w-full cursor-not-allowed rounded-xl border border-white/10 px-4 py-2.5 text-xs focus:outline-none"
+					class="bg-scitech-navy/50 w-full cursor-not-allowed rounded-xl border border-white/10 px-4 py-2.5 text-xs text-text-muted focus:outline-none"
 				/>
 			</div>
 
-			<!-- Isi Penelitian Dosen (Rich Text Editor) -->
 			<div class="space-y-2">
-				<label for="description" class="block text-xs font-medium text-white">
+				<label for="description" class="block text-xs font-medium text-text-main">
 					Isi Deskripsi / Rekapitulasi<span class="text-rose-400">*</span>
 				</label>
 
 				<!-- Component FormEditor -->
-				<FormEditor bind:value={descriptionContent} />
+				<FormEditor
+					showSaveButton={false}
+					title={'Penelitian Dosen'}
+					bind:value={descriptionContent}
+				/>
 
-				<!-- Hidden Input untuk dikirim via FormData -->
 				<input type="hidden" name="description" value={descriptionContent} />
 			</div>
 
-			<!-- Submit Button -->
 			<div class="pt-2">
 				<button
 					type="submit"

@@ -95,7 +95,6 @@
 				{/if}
 			</div>
 
-			<!-- Actions -->
 			<div class="form-actions">
 				<button onclick={() => history.back()} class="btn-cancel">Batal</button>
 				<button type="submit" class="btn-save">Simpan Peta MK</button>

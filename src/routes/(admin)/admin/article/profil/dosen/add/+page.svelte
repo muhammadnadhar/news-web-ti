@@ -13,7 +13,8 @@
 		Send,
 		BriefcaseIcon,
 		ChevronDownCircle,
-		ChevronDownIcon
+		ChevronDownIcon,
+		LoaderCircleIcon
 	} from 'lucide-svelte';
 	import type { ActionData } from './$types';
 	import {
@@ -35,7 +36,9 @@
 	let expertise = $state(form?.values?.expertise ?? '');
 	let pddiktiUrl = $state(form?.values?.pddiktiUrl ?? '');
 	let photoUrl = $state(form?.values?.photoUrl ?? '');
+	let publicId = $state(''); // State untuk menyimpan public_id dari Cloudinary
 	let isSubmitting = $state(false);
+	let isDeletingPhoto = $state(false); // State loading hapus foto
 	let category = $state('dosen');
 
 	function handleUpload(result: any) {
@@ -44,8 +47,28 @@
 		}
 	}
 
-	function removePhoto() {
-		photoUrl = '';
+	async function removePhoto() {
+		if (!publicId) {
+			photoUrl = '';
+			return;
+		}
+
+		isDeletingPhoto = true;
+		const formData = new FormData();
+		formData.append('public_id', publicId);
+
+		const res = await fetch('?/deletePhoto', {
+			method: 'POST',
+			body: formData
+		});
+
+		if (res.ok) {
+			photoUrl = '';
+			publicId = '';
+		} else {
+			alert('Gagal menghapus foto dari Cloudinary');
+		}
+		isDeletingPhoto = false;
 	}
 </script>
 
@@ -74,6 +97,7 @@
 
 			<form
 				method="POST"
+				action="?/create"
 				use:enhance={() => {
 					isSubmitting = true;
 					return async ({ update }) => {
@@ -96,6 +120,7 @@
 
 				<!-- Hidden input URL foto untuk backend -->
 				<input type="hidden" name="photo_url" value={photoUrl} />
+				<input type="hidden" name="public_id" value={publicId} />
 
 				<!-- Grid Utama: Foto Profil & Detail Dosen -->
 				<div class="grid grid-cols-1 gap-6 md:grid-cols-3">
@@ -122,10 +147,15 @@
 									<button
 										type="button"
 										onclick={removePhoto}
+										disabled={isDeletingPhoto}
 										class="absolute top-1 right-1 rounded-full bg-[var(--color-status-error)] p-1.5 text-white shadow transition-transform hover:scale-110"
 										title="Hapus Foto"
 									>
-										<X class="h-3.5 w-3.5" />
+										{#if isDeletingPhoto}
+											<LoaderCircleIcon class="h-3.5 w-3.5 animate-spin" />
+										{:else}
+											<X class="h-3.5 w-3.5" />
+										{/if}
 									</button>
 								</div>
 								<p class="mt-3 max-w-[180px] truncate text-[11px] text-[var(--color-text-muted)]">
@@ -278,7 +308,7 @@
 				<div class="flex justify-end border-t border-[var(--color-border-light)] pt-4">
 					<button
 						type="submit"
-						disabled={isSubmitting}
+						disabled={isSubmitting || isDeletingPhoto}
 						class="inline-flex items-center gap-2 rounded-xl bg-[var(--color-accent-primary)] px-5 py-2.5 text-xs font-bold text-[var(--color-text-dark)] shadow-md transition-all hover:opacity-90 disabled:opacity-50"
 					>
 						{#if isSubmitting}

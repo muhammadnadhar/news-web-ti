@@ -63,7 +63,7 @@
 <div
 	class=" fixed top-auto right-6 z-50 hidden md:block {isScrolled
 		? 'text-scitech-navy scale-100 border-slate-200/80 bg-white shadow-2xl backdrop-blur-xl'
-		: 'bg-scitech-navy/30 hover:bg-scitech-navy/60 scale-95 border-white/5 text-white shadow-none'}"
+		: 'bg-scitech-navy/30 hover:bg-scitech-navy/60 scale-95 border-white/5 text-text-main shadow-none'}"
 >
 	<nav
 		class="bg-scitech-navy/80 flex items-center gap-3 rounded-2xl border border-white/10 p-2 shadow-2xl backdrop-blur-md"
@@ -79,7 +79,7 @@
 
 				{#if item.badge}
 					<span
-						class="bg-scitech-error border-scitech-navy absolute -top-1 -right-1 flex h-4 w-4 animate-pulse items-center justify-center rounded-full border-2 text-[10px] font-bold text-white"
+						class="bg-scitech-error border-scitech-navy absolute -top-1 -right-1 flex h-4 w-4 animate-pulse items-center justify-center rounded-full border-2 text-[10px] font-bold text-text-main"
 					>
 						{item.badge}
 					</span>
@@ -147,7 +147,7 @@
 								<item.icon class="h-5 w-5 shrink-0" />
 								{#if item.badge}
 									<span
-										class="bg-scitech-error absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-bold text-white"
+										class="bg-scitech-error absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-bold text-text-main"
 									>
 										{item.badge}
 									</span>
@@ -172,12 +172,11 @@
 					{/if}
 				</div>
 			{/each}
-			<!-- action button: theme toggle switcher -->
 			<ThemeActionBtn />
 		</div>
 	{/if}
 
-	<!-- Tombol Utama Hamburger / FAB (Mengambang Kanan Bawah) -->
+	<!-- tombol utama hamburger / fab (mengambang kanan bawah) -->
 	<button
 		onclick={toggleMenu}
 		aria-label="Toggle Navigation Menu"

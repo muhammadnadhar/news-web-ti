@@ -1,137 +1,94 @@
 <script lang="ts">
+	import { PencilIcon, ExternalLinkIcon } from 'lucide-svelte';
 
-interface Props {
-	id: string;
-	title: string;
-	subtitle?: string | null;
-	description?: string | null;
-	imageUrl?: string | null;
-	editUrl: string;
-}
+	interface Props {
+		imageUrl: string; // Wajib (tidak boleh null)
+		id?: string | null;
+		title?: string | null;
+		subtitle?: string | null;
+		description?: string | null;
+		editUrl?: string | null;
+	}
 
-let {
-	id,
-	title,
-	subtitle = null,
-	description = null,
-	imageUrl = null,
-	editUrl
-}: Props = $props();
+	let {
+		imageUrl,
+		id = null,
+		title = null,
+		subtitle = null,
+		description = null,
+		editUrl = null
+	}: Props = $props();
 </script>
 
-<div class="card">
-	{#if imageUrl}
-		<div class="image-container">
-			<img src={imageUrl} alt={title} loading="lazy" />
+<div
+	class="group relative flex flex-col overflow-hidden rounded-2xl border border-border-color bg-bg-secondary transition-all duration-300 hover:border-accent-primary hover:bg-bg-secondary-hover hover:shadow-lg"
+>
+	<!-- Container Gambar (Wajib) -->
+	<div class="relative aspect-video w-full overflow-hidden bg-bg-primary-glare">
+		<img
+			src={imageUrl}
+			alt={title ?? 'Card Image'}
+			loading="lazy"
+			class="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+		/>
+		<div
+			class="absolute inset-0 bg-gradient-to-t from-bg-primary/60 via-transparent to-transparent"
+		></div>
+
+		<!-- Tombol Buka Gambar di Tab Baru -->
+		<a
+			href={imageUrl}
+			target="_blank"
+			rel="noopener noreferrer"
+			class="absolute top-3 right-3 flex h-8 w-8 items-center justify-center rounded-lg border border-border-light bg-bg-secondary/80 text-text-muted backdrop-blur-sm transition-all hover:border-accent-primary hover:bg-accent-primary hover:text-text-dark"
+			title="Lihat Gambar Full"
+		>
+			<ExternalLinkIcon class="h-4 w-4" />
+		</a>
+	</div>
+
+	<!-- Card Body (Hanya Tampil Jika Minimal Ada 1 Field Lain) -->
+	{#if title || subtitle || description || editUrl}
+		<div class="flex flex-1 flex-col justify-between space-y-4 p-5">
+			<div class="space-y-2">
+				<!-- Subtitle (Jika Ada) -->
+				{#if subtitle}
+					<span
+						class="inline-block text-xs font-semibold tracking-wider text-accent-primary uppercase"
+					>
+						{subtitle}
+					</span>
+				{/if}
+
+				<!-- Title (Jika Ada) -->
+				{#if title}
+					<h3
+						class="text-lg font-bold text-text-main transition-colors group-hover:text-accent-primary"
+					>
+						{title}
+					</h3>
+				{/if}
+
+				<!-- Description (Jika Ada) -->
+				{#if description}
+					<p class="line-clamp-3 text-sm leading-relaxed text-text-muted">
+						{description}
+					</p>
+				{/if}
+			</div>
+
+			<!-- Action Button (Jika editUrl Ada) -->
+			{#if editUrl}
+				<div class="pt-2">
+					<a
+						href={editUrl}
+						class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent-primary px-4 py-2.5 text-sm font-bold text-text-dark shadow-md transition-all hover:scale-[1.01] hover:bg-accent-primary-hover active:scale-[0.99]"
+					>
+						<PencilIcon class="h-4 w-4" />
+						<span>Ubah Data</span>
+					</a>
+				</div>
+			{/if}
 		</div>
 	{/if}
-
-	<div class="card-body">
-		<h3 class="card-title">{title}</h3>
-
-		{#if subtitle}
-			<p class="card-subtitle">{subtitle}</p>
-		{/if}
-
-		{#if description}
-			<p class="card-description">{description}</p>
-		{/if}
-
-		<div class="card-actions">
-			<a href={editUrl} class="btn-change">
-				<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-					<path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
-				</svg>
-				Ubah / Change
-			</a>
-		</div>
-	</div>
 </div>
-
-<style>
-	.card {
-		border: 1px solid #e2e8f0;
-		border-radius: 12px;
-		overflow: hidden;
-		background-color: #ffffff;
-		box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
-		transition: transform 0.2s ease, box-shadow 0.2s ease;
-	}
-
-	.card:hover {
-		transform: translateY(-4px);
-		box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-	}
-
-	.image-container {
-		width: 100%;
-		height: 200px;
-		background-color: #f1f5f9;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		overflow: hidden;
-	}
-
-	.image-container img {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-	}
-
-	.card-body {
-		padding: 1.25rem;
-		display: flex;
-		flex-direction: column;
-		flex-grow: 1;
-	}
-
-	.card-title {
-		font-size: 1.25rem;
-		font-weight: 700;
-		color: #1e293b;
-		margin: 0 0 0.25rem 0;
-	}
-
-	.card-subtitle {
-		font-size: 0.875rem;
-		font-weight: 600;
-		color: #2563eb;
-		margin: 0 0 0.75rem 0;
-	}
-
-	.card-description {
-		font-size: 0.875rem;
-		color: #64748b;
-		margin: 0 0 1.25rem 0;
-		line-height: 1.5;
-		flex-grow: 1;
-	}
-
-	.card-actions {
-		margin-top: auto;
-	}
-
-	.btn-change {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		gap: 0.5rem;
-		width: 100%;
-		padding: 0.5rem 1rem;
-		background-color: #0284c7;
-		color: #ffffff;
-		font-weight: 600;
-		font-size: 0.875rem;
-		border-radius: 6px;
-		text-decoration: none;
-		transition: background-color 0.2s ease;
-	}
-
-	.btn-change:hover {
-		background-color: #0369a1;
-	}
-</style>

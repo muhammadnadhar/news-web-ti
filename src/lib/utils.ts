@@ -37,9 +37,6 @@ export function gotoEdit(id: string | number, currentPathname: string) {
 	goto(`${cleanPath}/edit/${id}`);
 }
 
-
-
-
 /**
  * Helper internal untuk mengubah Buffer / Base64 / URL menjadi Data URI / String URL yang valid untuk HTML <img>
  */
@@ -81,4 +78,9 @@ export function formatDate(date?: Date | string | null): string | null {
 		month: 'short',
 		year: 'numeric'
 	}).format(d);
+}
+
+export function stripHtml(html: string): string {
+	if (!html) return '';
+	return html.replace(/<[^>]*>?/gm, '');
 }

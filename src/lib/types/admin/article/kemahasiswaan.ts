@@ -6,7 +6,6 @@ export interface ScholarshipDTO {
 	updated_at?: Date;
 }
 
-
 export interface StudentAchievementDTO {
 	id: string;
 	student_name: string;
@@ -21,9 +20,18 @@ export interface StudentAchievementDTO {
 export interface HighGpaStudentDTO {
 	id: string;
 	student_name: string;
-	gpa: number;
-	batch_year: string;
-	semester: string;
+	gpa?: number;
+	achievement_name?: string;
+	is_academic?: string;
+
+	// Foreign Key Relations
+	angkatan_id: string;
+	semester_id: string;
+
+	// Optional Joined Display Fields (dari hasil SQL JOIN)
+	batch_year?: number;
+	semester_name?: string;
+
 	created_at?: Date;
 	updated_at?: Date;
 }
