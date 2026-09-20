@@ -1,7 +1,7 @@
 import { cloudinary } from '$lib/cloudinary/server';
-import { createLecturerStaff } from '$lib/server/admin/repository/article/profile/dosen&staff';
+import { randomUUID } from '$lib/crypto';
+import { createLecturerStaff } from '$lib/repository/admin/article/profile/dosen&staff';
 import { fail, redirect, type Actions } from '@sveltejs/kit';
-import { randomUUID } from 'crypto';
 
 export const actions: Actions = {
 	// Action untuk Menyimpan Data Dosen / Staff

@@ -1,7 +1,7 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
+import { getVisiMisi } from '$lib/repository/admin/article/profile/visiMisi';
 
-import { getVisiMisi } from '$lib/server/admin/repository/article/profile/visiMisi';
 export const load: PageServerLoad = async () => {
 	try {
 		const visiMisiData = await getVisiMisi();

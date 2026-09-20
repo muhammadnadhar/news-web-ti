@@ -1,13 +1,12 @@
 import { error, fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import {
-	getAllScholarships,
-	createScholarship,
-	updateScholarship,
-	deleteScholarship
-} from '$lib/server/admin/repository/article/kemahasiswaan/beasiswa';
 
-import type { TableContentType } from '$lib/types/tableContent';
+import {
+	createScholarship,
+	deleteScholarship,
+	getAllScholarships,
+	updateScholarship
+} from '$lib/repository/admin/article/kemahasiswaan/beasiswa';
 
 export const load: PageServerLoad = async () => {
 	try {

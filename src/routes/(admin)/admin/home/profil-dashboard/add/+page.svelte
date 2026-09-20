@@ -72,7 +72,6 @@
 		<!-- Input Hidden untuk Menyimpan Path Gambar -->
 		<input type="hidden" name="image_path" value={imagePath} />
 
-		<!-- Field 1: Judul -->
 		<div class="space-y-2">
 			<label for="title" class="text-pure-white block text-sm font-semibold">
 				Profile Text <span class="text-amber-400">*</span>
@@ -132,7 +131,7 @@
 						class="inline-flex items-center gap-2 rounded-xl bg-amber-500 px-4 py-2 text-xs font-semibold text-slate-950 shadow-md shadow-amber-500/10 hover:bg-amber-400"
 					>
 						<Upload class="h-4 w-4" />
-						<span>Unggah Gambar ke Cloudinary</span>
+						<span>Unggah Gambar </span>
 					</CldUploadButton>
 					<!-- <CldUploadWidget -->
 					<!-- 	uploadPreset={upload_cloudinary_preset} -->

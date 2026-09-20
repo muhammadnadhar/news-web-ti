@@ -1,14 +1,14 @@
 import { error, fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import {
-	getAllPracticumModule,
-	createPracticumModule,
-	updatePracticumModule,
-	deletePracticumModule
-} from '$lib/server/admin/repository/article/akedemik/modulePratikum';
-import type { TableContentType } from '$lib/types/tableContent';
+
 import { writeFileSync, mkdirSync, existsSync } from 'fs';
 import { join } from 'path';
+import {
+	getAllPracticumModule,
+	updatePracticumModule,
+	deletePracticumModule,
+	createPracticumModule
+} from '$lib/repository/admin/article/akedemik/modulePratikum';
 
 export const load: PageServerLoad = async () => {
 	try {

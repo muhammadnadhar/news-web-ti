@@ -1,12 +1,8 @@
 import { fail, error, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
-import { getAllAngkatan } from '$lib/server/admin/repository/dataset/angkatan';
-import { getAllSemesters } from '$lib/server/admin/repository/dataset/semester';
-import {
-	getHighGpaStudentById,
-	updateHighGpaStudent
-} from '$lib/server/admin/repository/article/kemahasiswaan/ipkTertinggi';
-
+import { getAllAngkatan } from '$lib/repository/admin/dataset/angkatan';
+import { getAllSemesters } from '$lib/repository/admin/dataset/semester';
+import { getHighGpaStudentById } from '$lib/repository/admin/article/kemahasiswaan/ipkTertinggi';
 export const load: PageServerLoad = async ({ params }) => {
 	const { id } = params;
 

@@ -1,5 +1,4 @@
-import { query } from '$lib/server/database/runtimeDb'; // di gunakan oleh runntime bawaah
-
+import { query } from "$lib/database/runtimeDb";
 export const tableLecturerPublication = 'penelitian_lecturer_publication';
 export const tableStudentPublication = 'penelitian_student_publication';
 export const tableLecturerResearch = 'penelitian_lecturer_research';

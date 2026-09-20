@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { getAllCourseMap } from '$lib/server/admin/repository/article/kurikulum/petaMatakuliah';
+import { getAllCourseMap } from '$lib/repository/admin/article/kurikulum/petaMatakuliah';
 
 export const load: PageServerLoad = async () => {
 	try {

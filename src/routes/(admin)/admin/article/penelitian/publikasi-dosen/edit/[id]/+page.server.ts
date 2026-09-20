@@ -1,10 +1,10 @@
 import { error, fail } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
+import { errorResponse, successResponse } from '$lib/helper/message';
 import {
 	getLecturerPublicationById,
 	updateLecturerPublication
-} from '$lib/server/admin/repository/article/penelitian/publikasiDosen';
-import { errorResponse, successResponse } from '$lib/helper/message';
+} from '$lib/repository/admin/article/penelitian/publikasiDosen';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const { id } = params;

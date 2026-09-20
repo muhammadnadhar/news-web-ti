@@ -1,7 +1,7 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
-import { randomUUID } from '$lib/server/crypto';
-import { createPartnership } from '$lib/server/admin/repository/article/kerjasama/daftar';
+import { randomUUID } from '$lib/crypto';
+import { createPartnership } from '$lib/repository/admin/article/kerjasama/daftar';
 
 export const actions: Actions = {
 	default: async ({ request }) => {

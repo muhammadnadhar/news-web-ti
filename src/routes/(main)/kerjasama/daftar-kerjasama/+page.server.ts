@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { getAllPartnerships } from '$lib/server/admin/repository/article/kerjasama/daftar';
+import { getAllPartnerships } from '$lib/repository/admin/article/kerjasama/daftar';
 
 
 export const load: PageServerLoad = async () => {

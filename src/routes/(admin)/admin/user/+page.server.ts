@@ -2,11 +2,11 @@ import { fail, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { type UserItem } from './proxy+page.server';
 import {
-	createUserAdmin,
 	deleteUser,
+	createUserAdmin,
 	getUsersAdmin,
 	isUsernameTaken
-} from '$lib/server/admin/repository/userAdmin';
+} from '$lib/repository/admin/userAdmin';
 
 export const load: PageServerLoad = async ({ url }) => {
 	const search = url.searchParams.get('q')?.toLowerCase() || '';

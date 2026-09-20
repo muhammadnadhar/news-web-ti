@@ -4,13 +4,13 @@
 	import TableContent from '$lib/components/admin/tableContent.svelte';
 	import type { TableContentType } from '$lib/types/tableContent';
 
-	import type { HighGpaStudentDTO, ScholarshipDTO } from '$lib/types/admin/article/kemahasiswaan';
 	import TableSkeleton from '$lib/components/tableSkeleton.svelte';
 	import type { ResponseMessage } from '$lib/types/message.js';
 	import Message from '$lib/components/admin/message.svelte';
 	import { gotoEdit, mergeNewPath } from '$lib/utils.js';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
+	import type { ScholarshipDTO } from '$lib/dto/admin/article/kemahasiswaan.js';
 
 	let { data } = $props();
 
@@ -23,7 +23,7 @@
 
 	// Sync local state dengan data dari server
 	let scholarshipList = $derived<TableContentType[]>(data.scholarshipList || []);
-	let rawScholarshipList = $derived<ScholarshipDTO[]>(data.rawScholarshipList || []);
+	let rawScholarshipList = $derived<ScholarshipDTO>(data.rawScholarshipList || []);
 
 	/**
 	 * Mapper untuk mengonversi data ScholarshipDTO dari database

@@ -1,7 +1,7 @@
 import { fail } from '@sveltejs/kit';
 import type { Actions } from './$types';
-import { addProfileDashboard } from '$lib/server/admin/repository/home/profileDashboard';
 import { cloudinary } from '$lib/cloudinary/server';
+import { addProfileDashboard } from '$lib/repository/admin/home/profileDashboard';
 
 export const actions: Actions = {
 	default: async ({ request }) => {

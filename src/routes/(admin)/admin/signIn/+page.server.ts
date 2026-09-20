@@ -1,8 +1,7 @@
-import { fail, redirect } from '@sveltejs/kit';
+import { fail, isRedirect, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
-import { findUserByUsernameOrEmail } from '$lib/server/admin/repository/userAdmin';
-import { sessionAdmin } from '$lib/types/session';
-
+import { findUserByUsernameOrEmail } from '$lib/repository/admin/userAdmin';
+import { sessionAdmin } from '$lib/constants';
 export const actions: Actions = {
 	default: async ({ request, cookies }) => {
 		const data = await request.formData();

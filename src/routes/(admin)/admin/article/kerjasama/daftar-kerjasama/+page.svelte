@@ -3,20 +3,17 @@
 	import { Sparkles, X, Save, Image as ImageIcon } from 'lucide-svelte';
 	import TableContent from '$lib/components/admin/tableContent.svelte';
 	import type { TableContentType } from '$lib/types/tableContent';
-	import type { PartnershipDTO } from '$lib/types/admin/article/kerjasama';
 	import { gotoEdit, mergeNewPath } from '$lib/utils.js';
 	import { goto } from '$app/navigation';
 	import TableSkeleton from '$lib/components/tableSkeleton.svelte';
 	import { page } from '$app/state';
+	import type { MessageStatus, ResponseMessage } from '$lib/types/message.js';
+	import Message from '$lib/components/admin/message.svelte';
+	import type { PartnershipDTO } from '$lib/dto/admin/article/kerjasama.js';
 
 	let { data } = $props();
 
 	// State Management Modal & Form
-	let isModalOpen = $state(false);
-	let isEditMode = $state(false);
-	let selectedId = $state('');
-	let institutionNameInput = $state('');
-	let logoUrlInput = $state('');
 
 	// Sync local state dengan data server
 	// let partnershipList = $derived<TableContentType[]>(data.partnershipList || []);
@@ -76,6 +73,19 @@
 		logoUrlInput = '';
 	}
 </script>
+
+{#if showMessage}
+	<div class="mb-6">
+		<Message
+			status={messageConfig.status}
+			title={messageConfig.title}
+			message={messageConfig.message}
+			dismissible={true}
+			timeout={5000}
+			onclose={() => (showMessage = false)}
+		/>
+	</div>
+{/if}
 
 <div class="mx-auto max-w-7xl space-y-8 p-6 lg:p-10">
 	<!-- Header -->

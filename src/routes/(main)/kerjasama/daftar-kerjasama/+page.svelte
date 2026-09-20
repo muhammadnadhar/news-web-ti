@@ -18,7 +18,6 @@
 	<div class="pointer-events-none absolute -bottom-24 -right-24 h-96 w-96 rounded-full bg-blue-500/10 blur-3xl"></div>
 
 	<div class="mx-auto max-w-7xl px-6 lg:px-10 relative z-10">
-		<!-- Breadcrumb -->
 		<nav class="mb-4 flex items-center gap-2 text-xs font-medium text-text-main/60">
 			<a href="/" class="hover:text-scitech-mint transition-colors">Home</a>
 			<ChevronRight class="h-3 w-3" />
@@ -81,7 +80,6 @@
 			{/each}
 		</div>
 	{:else}
-		<!-- Empty State -->
 		<div
 			class="flex flex-col items-center justify-center rounded-3xl border border-white/10 bg-scitech-slate/40 py-16 text-center backdrop-blur-xl"
 		>

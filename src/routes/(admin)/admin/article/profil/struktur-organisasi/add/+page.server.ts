@@ -1,5 +1,6 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
+import { createOrgStructure } from '$lib/repository/admin/article/profile/structure';
 
 export const actions: Actions = {
 	default: async ({ request }) => {
@@ -22,7 +23,7 @@ export const actions: Actions = {
 		const id = crypto.randomUUID();
 
 		try {
-			const success = await createOrganizationalStructure(id, title, imageUrl, description);
+			const success = await createOrgStructure(id, { title, image_url: imageUrl, description });
 
 			if (!success) {
 				return fail(500, {

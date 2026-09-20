@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import type { getAllPracticumModule } from '$lib/server/admin/repository/article/akedemik/modulePratikum';
+import { getAllPracticumModule } from '$lib/repository/admin/article/akedemik/modulePratikum';
 
 export const load: PageServerLoad = async () => {
 	try {

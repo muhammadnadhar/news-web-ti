@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { getAllAccreditations } from '$lib/server/admin/repository/article/profile/akreditasi';
+import { getAllAccreditations } from '$lib/repository/admin/article/profile/akreditasi';
 
 export const load: PageServerLoad = async () => {
 	try {

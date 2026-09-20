@@ -1,8 +1,15 @@
-commit 6  finish desian #3  and fix halaman admin 
-- update : mengubah beberapa table agar menyesuikan data relation dari table lain 
-- update : penyesuikan table untuk ipktertinggi , memiliki forengkey ke table semeter dan angkatan
-- update : sekarang halaman dosen sudah bisa menambhakan data
-- add : menambahkna halaman untuk memasukan jabatan Prodi
-- add : menambhakan colom isHtml di tableCOntent ( admin ) agar code yg di simpan bisa di render
-- finish : tahapan template untuk Home sudah jalan
-update: sekarang dashboard , bisa menambhakan seendiri imag dashboard dan text nya
+commit 8  finish desian #4  and fix  halaman admin ( dataaset )
+- update : update navbar unutk menyesuain sub renderer
+- add : constan clas untuk memberikan jarak ke atas , cara ini menurut saya terbaik , karena gak mau menggangu dashboard utama
+- update : memishkan DTO yang sebelumnya ada di type ke Folder DTO
+- update : mengeluarkan semua lib/server ke /lib agar lebih konsisten
+- update : update bebrapa table di kemahasiswaan yang di mana setiap table memiliki image_url , yakni image spesifik 
+- update : cara menambhakan caledner bisa di loop dan memiliki setiap compoennt  akademik nya , dan editingnya bisa setiap element
+- fix : perbaiki ui di profile/visi-misi
+- update : mengubah untuk halaman /profile/sejarah , menambha menu tambhana untuk prioride dan Edit page
+- update : unpdate management pengelolaan user 
+- update : menambhakan edit dan add untuk halaman Documentasi di admin panel
+- add : add favicon icon projeck
+
+
+

@@ -1,8 +1,9 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
-import { randomUUID } from '$lib/server/crypto';
-import type { UserAdminItem } from '$lib/types/admin/user';
-import { checkUserExists, createUserAdmin } from '$lib/server/admin/repository/userAdmin';
+import type { UserAdminDTO } from '$lib/dto/admin/userAdmin';
+import { checkUserExists, createUserAdmin } from '$lib/repository/admin/userAdmin';
+import { randomUUID } from '$lib/crypto';
+import { successResponse } from '$lib/helper/message';
 
 export const actions: Actions = {
 	default: async ({ request }) => {
@@ -12,8 +13,8 @@ export const actions: Actions = {
 		const username = (data.get('username') as string)?.trim();
 		const email = (data.get('email') as string)?.trim();
 		const password = data.get('password') as string;
-		const role = data.get('role') as UserAdminItem['role'];
-		const status = (data.get('status') as UserAdminItem['status']) || 'Active';
+		const role = data.get('role') as UserAdminDTO['role'];
+		const status = (data.get('status') as UserAdminDTO['status']) || 'Active';
 
 		// Validasi Form Sederhana
 		if (!name || !username || !email || !password || !role) {
@@ -53,7 +54,7 @@ export const actions: Actions = {
 			});
 
 			// Arahkan ke daftar manajemen pengguna
-			throw redirect(303, '/admin/users');
+			return successResponse('Berhasil Menambah User', 'Succes add');
 		} catch (err) {
 			if (err instanceof Response) throw err;
 			console.error('Gagal menambahkan user:', err);

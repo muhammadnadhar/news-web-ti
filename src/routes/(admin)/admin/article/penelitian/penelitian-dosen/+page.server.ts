@@ -3,7 +3,7 @@ import type { Actions, PageServerLoad } from './$types';
 import {
 	getLecturerResearch,
 	saveOrUpdateLecturerResearch
-} from '$lib/server/admin/repository/article/penelitian/penelitianDosen';
+} from '$lib/repository/admin/article/penelitian/penelitianDosen';
 
 export const load: PageServerLoad = async () => {
 	try {

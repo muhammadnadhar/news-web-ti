@@ -2,13 +2,13 @@
 	import type { ActionData, PageData } from './$types';
 	import TableContent from '$lib/components/admin/tableContent.svelte';
 	import type { TableContentType } from '$lib/types/tableContent';
-	import type { CourseMapDTO } from '$lib/types/admin/article/kurikulum';
 	import { gotoEdit, mergeNewPath } from '$lib/utils.js';
 	import { goto, invalidateAll } from '$app/navigation';
 	import { page } from '$app/state';
 	import TableSkeleton from '$lib/components/tableSkeleton.svelte';
 	import Message, { type MessageStatus } from '$lib/components/admin/message.svelte';
 	import type { ResponseMessage } from '$lib/types/message';
+	import type { CourseMapDTO } from '$lib/dto/admin/article/kurikulum';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
@@ -108,7 +108,6 @@
 	</div>
 {/if}
 <div class="mx-auto max-w-7xl space-y-8 p-6 lg:p-10">
-	<!-- Header -->
 	<div class="border-b border-white/10 pb-6">
 		<h1 class="text-2xl font-extrabold tracking-tight text-text-main sm:text-3xl">
 			Peta Mata Kuliah

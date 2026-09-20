@@ -1,5 +1,6 @@
 <script lang="ts">
-	import type { PageData } from './$types';
+	import { classTopSpace } from '$lib/constants';
+import type { PageData } from './$types';
 	import { FlaskConical, Calendar, AlertCircle, FileText } from 'lucide-svelte';
 
 	interface Props {
@@ -9,8 +10,7 @@
 	let { data }: Props = $props();
 </script>
 
-<div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-	<!-- HEADER HALAMAN -->
+<div class={`${classTopSpace} mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8`}>
 	<div class="mb-10 border-b border-border-color/40 pb-6 text-center sm:text-left">
 		<div class="mb-3 inline-flex items-center gap-2 rounded-full bg-scitech-mint/10 px-3 py-1 text-xs font-semibold text-scitech-mint">
 			<FlaskConical class="h-4 w-4" />

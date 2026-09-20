@@ -3,11 +3,11 @@
 	import { Sparkles, X, Upload, Save } from 'lucide-svelte';
 	import TableContent from '$lib/components/admin/tableContent.svelte';
 	import type { TableContentType } from '$lib/types/tableContent';
-	import type { PedomanKkpDTO } from '$lib/types/admin/article/akademik';
 	import TableSkeleton from '$lib/components/tableSkeleton.svelte';
 	import { gotoEdit, mergeNewPath } from '$lib/utils';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
+	import type { PedomanKkpDTO } from '$lib/dto/admin/article/akademik.js';
 
 	let { data } = $props();
 

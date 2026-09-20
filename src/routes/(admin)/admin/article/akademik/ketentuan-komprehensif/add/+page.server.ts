@@ -1,6 +1,7 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
-import { createRecruitment } from '$lib/server/admin/repository/article/akedemik/ketentuan-komprehensif';
+import { createRecruitment } from '$lib/repository/admin/article/akedemik/ketentuan-komprehensif';
+import { errorResponse, successResponse } from '$lib/helper/message';
 
 export const actions: Actions = {
 	default: async ({ request }) => {
@@ -13,8 +14,9 @@ export const actions: Actions = {
 		// Validasi input wajib
 		if (!title || title.trim() === '') {
 			return fail(400, {
-				success: false,
-				message: 'Judul Rekrutmen wajib diisi.',
+				...errorResponse('Judul Rekrutmen wajib diisi.', 'Validasi Gagal', {
+					title: ['Judul Rekrutmen wajib diisi.']
+				}),
 				values: { title, imageUrl, description }
 			});
 		}
@@ -27,24 +29,19 @@ export const actions: Actions = {
 
 			if (!success) {
 				return fail(500, {
-					success: false,
-					message: 'Gagal menyimpan data Rekrutmen Asisten ke database.',
+					...errorResponse('Gagal menyimpan data Rekrutmen Asisten ke database.'),
 					values: { title, imageUrl, description }
 				});
 			}
 		} catch (error: any) {
 			return fail(500, {
-				success: false,
-				message: 'Terjadi kesalahan sistem: ' + error.message,
+				...errorResponse(`Terjadi kesalahan sistem: ${error.message}`),
 				values: { title, imageUrl, description }
 			});
 		}
 
 		// Redirect ke halaman daftar Rekrutmen Asisten
 		// throw redirect(303, '/admin/akademik/rekrutmen-asisten');
-		return {
-			success: true,
-			message: 'Data Rekrutmen Asisten berhasil ditambahkan!'
-		};
+		return successResponse('Data Rekrutmen Asisten berhasil ditambahkan!');
 	}
 };

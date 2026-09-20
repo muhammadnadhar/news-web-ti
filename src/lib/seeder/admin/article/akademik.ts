@@ -1,11 +1,13 @@
-import { query } from '$lib/server/database/runtimeDb'; // di gunakan oleh runntime bawaah
+import { query } from '$lib/database/runtimeDb';
 
 export const tablePedomanTa = 'akademik_pedoman_ta';
 export const tablePedomanKkp = 'akademik_pedoman_kkp';
 export const tableRecruitment = 'akademik_recruitment';
 export const tablePracticumModule = 'akademik_practicum_module';
+
 // ini table terpisah yang menyimpan data gambar
 export const tableKalenderAkademik = 'akademik_kalender_akademik';
+export const tableKalenderAkademikImage = 'akademik_kalendar_images'; // punya forengkey ke table kelender Akademik
 
 // Fungsi seed untuk tabel Pedoman Tugas Akhir
 export async function PedomanTaTableSeed() {
@@ -68,15 +70,41 @@ CREATE TABLE IF NOT EXISTS ${tablePracticumModule} (
 }
 
 // Fungsi seed untuk tabel Kalender Akademik (Data Kalender Akademik)
+/**
+ * Seed Tabel Utama: Kalender Akademik
+ */
 export async function AcademicCalendarTableSeed() {
 	const sql = `
 CREATE TABLE IF NOT EXISTS ${tableKalenderAkademik} (
-    id VARCHAR(36) PRIMARY KEY, -- Primary key berupa UUID string
-    title VARCHAR(255) NOT NULL, -- Judul Kalender Akademik (contoh: 'Kalender Akademik T.A 2025/2026')
-    description LONGTEXT NULL, -- Deskripsi/Tabel Kalender Akademik bertipe LONGTEXT (menampung tag HTML/Tabel)
-    is_active BOOLEAN DEFAULT TRUE, -- Status aktif/tidaknya kalender yang sedang berlaku
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Waktu pembuatan data
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP -- Waktu update data
+    id VARCHAR(36) PRIMARY KEY,                             -- UUID String
+    title VARCHAR(255) NOT NULL,                           -- Judul Kalender
+    description LONGTEXT NULL,                             -- Deskripsi HTML/Teks
+    is_active BOOLEAN DEFAULT TRUE,                        -- Status aktif
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,        -- Waktu Dibuat
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP -- Waktu Diperbarui
+);
+  `;
+	await query(sql);
+}
+
+/**
+ *  Seed Tabel Gambar: Gambar Kalender Akademik
+ * Sesuai dengan CalendarImageDTO
+ */
+export async function CalendarImageTableSeed() {
+	const sql = `
+CREATE TABLE IF NOT EXISTS ${tableKalenderAkademikImage} (
+    id VARCHAR(36) PRIMARY KEY,                             -- UUID String
+    calendar_id VARCHAR(36) NOT NULL,                       -- Foreign Key ke tabel Kalender
+    image_url TEXT NOT NULL,                                -- Path / URL Gambar
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,         -- (Opsional) Mengetahui waktu upload
+    
+    -- Relasi Foreign Key
+    CONSTRAINT fk_calendar_images_calendar_id
+        FOREIGN KEY (calendar_id) 
+        REFERENCES ${tableKalenderAkademik}(id) 
+        ON DELETE CASCADE                                  -- Hapus gambar otomatis jika kalender dihapus
+        ON UPDATE CASCADE
 );
   `;
 	await query(sql);

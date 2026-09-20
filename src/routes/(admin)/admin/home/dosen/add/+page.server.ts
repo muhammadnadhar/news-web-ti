@@ -1,9 +1,9 @@
 import { fail, redirect, type Actions } from '@sveltejs/kit';
 import { randomUUID } from 'crypto';
 import type { PageServerLoad } from './$types';
-import { getJabatanProdiList } from '$lib/server/admin/repository/dataset/jabatanProdi';
-import { createDosenPrimary } from '$lib/server/admin/repository/home/dosenPrimary';
-import { getAllLecturerStaff } from '$lib/server/admin/repository/article/profile/dosen&staff';
+import { getAllLecturerStaff } from '$lib/repository/admin/article/profile/dosen&staff';
+import { getJabatanProdiList } from '$lib/repository/admin/dataset/jabatanProdi';
+import { createDosenPrimary } from '$lib/repository/admin/home/dosenPrimary';
 
 export const load: PageServerLoad = async () => {
 	try {

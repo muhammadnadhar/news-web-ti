@@ -21,6 +21,8 @@
 		title?: string;
 		label?: string;
 		value?: string;
+
+		// ini 2 indikator value yg sama
 		showSaveButton?: boolean;
 		onSave?: (data: string) => void;
 	}
@@ -338,3 +340,25 @@
 <!-- <button onclick={handleParentSubmit} class="mt-4 border p-2"> -->
 <!--     Submit dari Parent -->
 <!-- </button> -->
+
+<!-- dengan tombol  -->
+<!-- <script lang="ts"> -->
+<!--     import Editor from './Editor.svelte'; -->
+<!---->
+<!--     let content = $state(''); -->
+<!---->
+<!--     async function handleSaveData(htmlContent: string) { -->
+<!--         // Kirim data ke API / Database -->
+<!--         await fetch('/api/konten', { -->
+<!--             method: 'POST', -->
+<!--             headers: { 'Content-Type': 'application/json' }, -->
+<!--             body: JSON.stringify({ body: htmlContent }) -->
+<!--         }); -->
+<!--     } -->
+<!-- </script> -->
+<!---->
+<!-- <Editor  -->
+<!--     title="Edit Konten"  -->
+<!--     bind:value={content}  -->
+<!--     onSave={handleSaveData}  -->
+<!-- /> -->

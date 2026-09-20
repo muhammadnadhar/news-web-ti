@@ -1,8 +1,9 @@
 import { error, fail } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import type { Actions } from './$types';
-import { deleteSemester, getAllSemesters } from '$lib/server/admin/repository/dataset/semester';
+
 import type { ResponseMessage } from '$lib/types/message';
+import { deleteSemester, getAllSemesters } from '$lib/repository/admin/dataset/semester';
 
 export const load: PageServerLoad = async () => {
 	try {

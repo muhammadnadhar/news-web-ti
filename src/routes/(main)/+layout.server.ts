@@ -1,8 +1,6 @@
+import { getHighGpaSemesters } from '$lib/repository/admin/article/kemahasiswaan/ipkTertinggi';
+import { getAchievementSemesters } from '$lib/repository/admin/article/kemahasiswaan/mapres';
 import type { LayoutServerLoad } from './$types';
-import { getAchievementSemesters } from '$lib/server/admin/repository/article/kemahasiswaan/mapres';
-import { getHighGpaSemesters } from '$lib/server/admin/repository/article/kemahasiswaan/ipkTertinggi';
-
-
 
 export const load: LayoutServerLoad = async () => {
 	let academicSemesters: { semester: string }[] = [];

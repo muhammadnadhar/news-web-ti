@@ -1,8 +1,10 @@
 import { error, fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-
-import { crypto } from '$lib/server/crypto'; // Atau panggil crypto.randomUUID() native Node.js
-import { getAccreditation, upsertAccreditation } from '$lib/server/admin/repository/article/profile/akreditasi';
+import {
+	getAccreditation,
+	upsertAccreditation
+} from '$lib/repository/admin/article/profile/akreditasi';
+import { randomUUID } from '$lib/crypto';
 
 export const load: PageServerLoad = async () => {
 	try {
@@ -20,12 +22,15 @@ export const load: PageServerLoad = async () => {
 export const actions: Actions = {
 	default: async ({ request }) => {
 		const formData = await request.formData();
-		const id = (formData.get('id') as string) || crypto.randomUUID();
+		const id = (formData.get('id') as string) || randomUUID();
 		const description = formData.get('description') as string;
 		const imageFile = formData.get('image') as File | null;
 
 		if (!description) {
-			return fail(400, { missingDescription: true, message: 'Isi deskripsi akreditasi wajib diisi.' });
+			return fail(400, {
+				missingDescription: true,
+				message: 'Isi deskripsi akreditasi wajib diisi.'
+			});
 		}
 
 		let imageUrl: string | null = (formData.get('existing_image_url') as string) || null;

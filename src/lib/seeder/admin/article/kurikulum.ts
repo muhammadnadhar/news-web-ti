@@ -1,5 +1,4 @@
-import { query } from '$lib/server/database/runtimeDb'; // di gunakan oleh runntime bawaah
-
+import { query } from "$lib/database/runtimeDb";
 export const tableCourseMap = 'kurikulum_course_map';
 export const tableObeCurriculum = 'kurikulum_obe_curriculum';
 

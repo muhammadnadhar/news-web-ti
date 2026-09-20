@@ -2,7 +2,7 @@ import { fail } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import crypto from 'crypto';
 import { errorResponse, successResponse } from '$lib/helper/message';
-import { createLecturerPublication } from '$lib/server/admin/repository/article/penelitian/publikasiDosen';
+import { createLecturerPublication } from '$lib/repository/admin/article/penelitian/publikasiDosen';
 
 export const actions: Actions = {
 	default: async ({ request }) => {

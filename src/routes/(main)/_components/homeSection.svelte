@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import UserCard from '$lib/components/admin/userCard.svelte';
 	import type { PrimaryDosenDTO } from '$lib/types/admin/home';
 	import type { PerminatanTIItemDTO } from '$lib/types/admin/home';
@@ -7,6 +8,7 @@
 	import {
 		AlertCircle,
 		ArrowRight,
+		ArrowRightIcon,
 		AwardIcon,
 		BookOpenIcon,
 		BuildingIcon,
@@ -29,10 +31,19 @@
 		listPerminatan: Promise<PerminatanTIItemDTO[]>;
 		listProfil: Promise<ProfilProdiItemDTO[]>;
 	} = $props();
+
+	// untuk sementara ini
+	const headerColors = [
+		'bg-emerald-500/20 border-emerald-500/50',
+		'bg-purple-500/20 border-purple-500/50',
+		'bg-cyan-500/20 border-cyan-500/50',
+		'bg-amber-500/20 border-amber-500/50',
+		'bg-rose-500/20 border-rose-500/50'
+	];
 </script>
 
 <!-- kategori  perminatan ti -->
-<section class=" w-full bg-bg-primary py-12">
+<section class=" relative w-full bg-bg-primary-glare py-12 md:py-20">
 	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 		{#await listPerminatan}
 			<!-- Skeleton Loading State (Menggunakan variabel tema) -->
@@ -66,19 +77,17 @@
 			{#if list && list.length > 0}
 				<div class="section-group space-y-8">
 					<!-- Header Section -->
-					<div class="flex items-center justify-center pb-5">
-						<div class="flex flex-wrap items-center gap-3">
-							<!-- <span -->
-							<!-- 	class="inline-flex items-center gap-2 rounded-full border border-accent-purple/30 bg-accent-purple/10 px-3.5 py-1.5 text-xs font-semibold tracking-wide text-accent-purple shadow-sm backdrop-blur-md" -->
-							<!-- > -->
-							<!-- 	<Layers class="h-4 w-4 text-accent-purple" /> -->
-							<!-- 	Perminatan -->
-							<!-- </span> -->
-							<h2 class="text-2xl font-extrabold tracking-tight text-text-main sm:text-3xl">
+					<div
+						class="absolute top-0 left-1/2 z-20 flex w-max max-w-[90%] -translate-x-1/2 -translate-y-1/2 justify-center"
+					>
+						<div
+							class="inline-flex flex-wrap items-center justify-center gap-3 border border-border-color bg-bg-secondary px-8 py-3 shadow-[0_4px_0_0_var(--border-color)]"
+						>
+							<h2 class="text-xl font-extrabold tracking-tight text-text-main sm:text-2xl">
 								Bidang Keahlian TI
 							</h2>
 							<span
-								class="rounded-lg border border-border-color bg-bg-secondary-hover px-2.5 py-1 text-xs font-semibold text-text-muted"
+								class="border border-border-color bg-bg-primary px-2.5 py-0.5 text-xs font-bold text-text-muted"
 							>
 								{list.length} Bidang
 							</span>
@@ -89,47 +98,32 @@
 					<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
 						{#each list as perminatan (perminatan.id)}
 							<article
-								class="group relative flex flex-col justify-center overflow-hidden rounded-3xl border border-border-color bg-bg-secondary p-6 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1.5 hover:border-accent-purple/50 hover:bg-bg-primary-glare hover:shadow-xl hover:shadow-accent-purple/5"
+								class="group flex flex-col justify-between border border-border-color bg-bg-secondary p-6
+                   shadow-[0_4px_0_0_var(--border-color)] transition-all duration-300
+                   hover:-translate-y-1 hover:scale-[1.02] hover:border-bg-secondary
+                   hover:bg-bg-secondary-hover hover:shadow-[0_8px_0_0_var(--bg-secondary)]"
 							>
-								<!-- Subtle Glow Accent saat Hover -->
-								<div
-									class="pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full bg-accent-purple/10 opacity-0 blur-3xl transition-opacity duration-500 group-hover:opacity-100"
-								></div>
-
-								<div class="relative space-y-4">
-									<div class="flex items-start gap-3.5">
+								<div class="space-y-4">
+									<!-- Icon & Title -->
+									<div class="flex items-start gap-4">
 										<div
-											class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-accent-purple/30 bg-accent-purple/10 text-accent-purple transition-all duration-300 group-hover:border-accent-purple group-hover:bg-accent-purple group-hover:text-text-dark group-hover:shadow-lg group-hover:shadow-accent-purple/20"
+											class="flex h-10 w-10 shrink-0 items-center justify-center border border-border-color bg-bg-primary text-accent-primary
+                               transition-colors duration-300 group-hover:border-accent-primary group-hover:bg-accent-primary group-hover:text-text-dark"
 										>
-											<BookOpenIcon class="h-6 w-6" />
+											<BookOpenIcon class="h-5 w-5" />
 										</div>
+
 										<h3
-											class="text-lg leading-snug font-bold text-text-main transition-colors duration-300 group-hover:text-accent-purple"
+											class="text-base leading-snug font-bold text-text-main transition-colors duration-300 group-hover:text-accent-primary sm:text-lg"
 										>
 											{perminatan.title}
 										</h3>
 									</div>
 
-									<!-- Description -->
 									<p class="line-clamp-4 text-xs leading-relaxed text-text-muted sm:text-sm">
 										{perminatan.description}
 									</p>
 								</div>
-
-								<!-- Footer Meta (Tanggal Perubahan) -->
-								{#if perminatan.updated_at || perminatan.created_at}
-									<div
-										class="relative mt-6 border-t border-border-color pt-4 text-xs font-medium text-text-muted"
-									>
-										Perubahan: {new Date(
-											perminatan.updated_at || perminatan.created_at || ''
-										).toLocaleDateString('id-ID', {
-											day: 'numeric',
-											month: 'short',
-											year: 'numeric'
-										})}
-									</div>
-								{/if}
 							</article>
 						{/each}
 					</div>
@@ -203,11 +197,6 @@
 					<!-- Header Section -->
 					<div class="flex items-center justify-center pb-5">
 						<div class="flex flex-wrap items-center gap-3">
-							<!-- <span -->
-							<!-- 	class="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3.5 py-1.5 text-xs font-semibold tracking-wide text-emerald-400 shadow-sm backdrop-blur-md" -->
-							<!-- > -->
-							<!-- 	<GraduationCapIcon class="h-4 w-4" /> Profil Prodi -->
-							<!-- </span> -->
 							<h2 class="text-2xl font-extrabold tracking-tight text-text-main sm:text-3xl">
 								Informasi & Pengaduan
 							</h2>
@@ -223,66 +212,58 @@
 					<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
 						{#each items as profil (profil.id)}
 							<article
-								class="group align-center relative flex flex-col justify-center overflow-hidden rounded-3xl border border-white/10 bg-bg-primary/30 p-5 backdrop-blur-xl transition-all duration-500 hover:-translate-y-1.5 hover:border-emerald-500/40 hover:shadow-2xl hover:shadow-emerald-500/10"
+								class="group flex flex-col justify-between border border-border-color bg-bg-secondary p-5 text-center
+                   shadow-[0_4px_0_0_var(--border-color)] transition-all duration-300
+                   hover:-translate-y-1 hover:scale-[1.02] hover:border-border-color
+                   hover:bg-bg-secondary-hover hover:shadow-[0_8px_0_0_var(--border-color)]"
 							>
-								<!-- Subtle Glow Background Effect on Hover -->
-								<div
-									class="pointer-events-none absolute -top-20 -right-20 h-40 w-40 rounded-full bg-emerald-500/10 opacity-0 blur-3xl transition-opacity duration-500 group-hover:opacity-100"
-								></div>
-
-								<div>
-									<!-- Container Gambar dengan Zoom Effect & Gradient Overlay -->
+								<div class="flex flex-col items-center">
+									<!-- Frame Gambar Sharp & Centered -->
 									<div
-										class="relative mb-5 h-48 w-full overflow-hidden rounded-2xl bg-slate-900/60 shadow-inner"
+										class="relative mb-4 h-48 w-full overflow-hidden border border-border-color bg-bg-primary
+                           transition-colors duration-300 group-hover:border-border-color"
 									>
 										{#if profil.image_url}
 											<img
 												src={profil.image_url}
 												alt={profil.title}
-												class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+												class="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
 												loading="lazy"
 											/>
 										{:else}
 											<div
-												class="flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 text-slate-400"
+												class="flex h-full w-full flex-col items-center justify-center text-text-muted"
 											>
 												<BuildingIcon
-													class="mb-2 h-10 w-10 opacity-30 transition-transform duration-500 group-hover:scale-110"
+													class="mb-2 h-10 w-10 text-text-main transition-transform duration-300 group-hover:scale-110"
 												/>
-												<span class="text-xs font-medium tracking-wide text-slate-400/80"
-													>Profil Program Studi</span
-												>
+												<span class="text-xs font-bold tracking-wider text-text-muted uppercase">
+													Profil Program Studi
+												</span>
 											</div>
 										{/if}
-
-										<!-- Multi-layer Gradient Overlay -->
-										<div
-											class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent"
-										></div>
 									</div>
 
-									<!-- Judul Prodi & Deskripsi -->
+									<!-- Judul Prodi & Deskripsi (Center Aligned) -->
 									<h3
-										class="mb-2 line-clamp-1 text-lg font-bold tracking-tight text-text-main transition-colors duration-300 group-hover:text-emerald-400"
+										class="mb-2 line-clamp-1 text-base font-bold text-text-main transition-colors duration-300 group-hover:text-text-muted sm:text-lg"
 									>
 										{profil.title}
 									</h3>
-									<p
-										class="mb-5 line-clamp-3 text-xs leading-relaxed text-text-muted/90 sm:text-sm"
-									>
+									<p class="mb-5 line-clamp-3 text-xs leading-relaxed text-text-muted sm:text-sm">
 										{stripHtml(profil.description)}
 									</p>
 								</div>
 
-								<!-- Footer Action Link -->
-								<div class="flex items-center justify-center border-t border-white/5 pt-4">
+								<!-- Footer Action Link (Centered Brutalist Button) -->
+								<div class="flex items-center justify-center border-t border-border-color pt-4">
 									<a
 										href="/prodi/{profil.id}"
-										class="group/link inline-flex items-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-2 text-xs font-semibold text-emerald-400 transition-all duration-300 hover:border-emerald-500/40 hover:bg-emerald-500 hover:text-white hover:shadow-lg hover:shadow-emerald-500/20"
+										class="group/link inline-flex items-center justify-center gap-2 border border-border-color bg-bg-primary px-4 py-2 text-xs font-bold text-text-main transition-all duration-200 hover:border-border-color hover:bg-bg-secondary-hover hover:text-text-main"
 									>
 										<span>Detail & Pengaduan</span>
 										<ArrowRight
-											class="h-3.5 w-3.5 transition-transform duration-300 group-hover/link:translate-x-1"
+											class="h-3.5 w-3.5 transition-transform duration-200 group-hover/link:translate-x-1"
 										/>
 									</a>
 								</div>
@@ -296,7 +277,7 @@
 					class="mx-auto max-w-lg rounded-3xl border border-white/10 bg-bg-primary/20 p-10 text-center shadow-xl backdrop-blur-xl"
 				>
 					<div
-						class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-emerald-500/20 bg-emerald-500/10 text-emerald-400 shadow-inner"
+						class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-border-color/20 bg-bg-primary/10 text-text-main/50 shadow-inner"
 					>
 						<Inbox class="h-8 w-8" />
 					</div>
@@ -350,7 +331,7 @@
 			</div>
 		{:then items}
 			{#if items && items.length > 0}
-				<div class="section-group space-y-6">
+				<div class="section-group">
 					<!-- Header Section -->
 					<div class="flex items-center justify-center">
 						<h2
@@ -367,89 +348,108 @@
 					</div>
 
 					<!-- Grid Dosen & Staff -->
-					<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-						{#each items as dosen (dosen.primary_id)}
-							<article
-								class="group 0 relative flex flex-col justify-center overflow-hidden rounded-2xl border border-border-color/10 bg-bg-secondary p-6 text-center backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:bg-bg-secondary/60 hover:shadow-xl hover:shadow-cyan-500/5"
-							>
-								<div
-									class="pointer-events-none absolute -top-10 -right-10 h-28 w-28 rounded-full bg-bg-secondary/5 blur-xl transition-all duration-300 group-hover:bg-bg-secondary-hover"
-								></div>
+					<!-- Retangle Belakang & Wrapper Utama -->
+					<div class="relative py-16">
+						<!-- Rectangle Absolute Kuning di Belakang -->
+						<div
+							class="bg-blend-hard-light/30 absolute inset-x-0 bottom-0 h-3/5 w-full border-y border-border-color"
+						></div>
 
-								<div class="relative flex flex-col items-center">
-									<div class="relative mb-4">
+						<div
+							class="relative z-10 mx-auto grid max-w-7xl grid-cols-1 justify-items-center gap-10 sm:grid-cols-2 lg:grid-cols-3"
+						>
+							{#each items as dosen, index (dosen.primary_id)}
+								{@const randomHeaderBg = headerColors[index % headerColors.length]}
+
+								<article
+									class="group relative flex w-full max-w-sm flex-col justify-between border border-border-color bg-bg-secondary
+                       shadow-[0_6px_0_0_var(--border-color)] transition-all duration-300
+                       hover:-translate-y-1.5 hover:shadow-[0_10px_0_0_var(--border-color)]"
+								>
+									<div>
+										<!-- 1. Header Atas Kartu (Dipertinggi) -->
 										<div
-											class="h-24 w-24 overflow-hidden rounded-full border-2 border-border-color bg-slate-800 p-0.5 shadow-md transition-transform duration-300 group-hover:scale-105 group-hover:bg-bg-secondary-hover/20"
+											class="relative flex h-36 w-full justify-center border-b border-border-color {randomHeaderBg}"
 										>
-											{#if dosen.photo_url}
-												<img
-													src={dosen.photo_url}
-													alt={dosen.name}
-													class="h-full w-full rounded-full object-cover"
-													loading="lazy"
-												/>
-											{:else}
+											<div
+												class="absolute -bottom-16 aspect-square w-[70%] max-w-[180px] border-2 border-border-color bg-bg-primary p-1 shadow-md"
+											>
+												{#if dosen.photo_url}
+													<img
+														src={dosen.photo_url}
+														alt={dosen.name}
+														class="h-full w-full object-cover"
+														loading="lazy"
+													/>
+												{:else}
+													<div
+														class="flex h-full w-full items-center justify-center bg-bg-secondary"
+													>
+														<UserIcon class="h-14 w-14 text-text-muted/60" />
+													</div>
+												{/if}
+											</div>
+										</div>
+
+										<!-- 2. Area Isi Kartu (Top Padding Disesuaikan untuk Foto Besar) -->
+										<div class="flex flex-col items-center px-6 pt-20 pb-10 text-center">
+											<span
+												class="mb-3 border border-border-color bg-bg-primary px-3 py-1 text-xs font-bold text-text-muted"
+											>
+												{dosen.position || 'Staf / Dosen'}
+											</span>
+
+											<h3
+												class="mb-3 text-lg font-extrabold tracking-tight text-text-main transition-colors group-hover:text-accent-primary-dim"
+											>
+												{dosen.name}
+											</h3>
+
+											{#if dosen.expertise}
 												<div
-													class="0 flex h-full w-full items-center justify-center rounded-full bg-slate-900"
+													class="mt-3 w-full border border-border-color bg-bg-primary/60 p-3 text-xs sm:text-sm"
 												>
-													<UserIcon class="h-10 w-10 opacity-60" />
+													<div
+														class="mb-1.5 flex items-center justify-center gap-1.5 font-bold text-text-muted"
+													>
+														<AwardIcon class="h-4 w-4 text-accent-purple" />
+														<span>Bidang Keahlian</span>
+													</div>
+													<p class="line-clamp-2 text-text-muted">
+														{dosen.expertise}
+													</p>
 												</div>
 											{/if}
 										</div>
 									</div>
 
-									<span
-										class="mb-2 inline-block rounded-md border border-white/10 bg-white/5 px-2.5 py-0.5 text-[11px] font-semibold"
-									>
-										{dosen.position || 'Staf / Dosen'}
-									</span>
-
-									<h3
-										class="mb-1 text-base leading-snug font-bold text-text-main transition-colors group-hover:bg-bg-secondary-hover"
-									>
-										{dosen.name}
-									</h3>
-
-									<!-- {#if dosen.nidn} -->
-									<!-- 	<p class="mb-3 flex items-center gap-1 text-xs text-text-muted"> -->
-									<!-- 		<IdCardIcon class="h-3.5 w-3.5 text-cyan-400/80" /> -->
-									<!-- 		<span>NIDN: {dosen.nidn}</span> -->
-									<!-- 	</p> -->
-									<!-- {/if} -->
-
-									{#if dosen.expertise}
-										<div
-											class="mt-2 w-full rounded-xl border border-border-color/5 bg-bg-primary/10 p-2.5 text-xs"
-										>
-											<div
-												class="mb-1 flex items-center justify-center gap-1 font-semibold text-text-muted/80"
-											>
-												<AwardIcon class="h-3.5 w-3.5" />
-												<span>Bidang Keahlian</span>
-											</div>
-											<p class="line-clamp-2 text-text-muted">
-												{dosen.expertise}
-											</p>
-										</div>
-									{/if}
-								</div>
-
-								<!-- Footer: PDDikti Link (Jika Ada) -->
-								{#if dosen.pddikti_url}
-									<div class="mt-5 border-t pt-3">
+									<!-- 3. Link di Pojok Kanan Bawah (Menempel Presisi di Sudut) -->
+									{#if dosen.pddikti_url}
 										<a
 											href={dosen.pddikti_url}
 											target="_blank"
 											rel="noopener noreferrer"
-											class="inline-flex items-center justify-center gap-1.5 text-xs font-semibold text-text-main transition-colors hover:text-text-main/25 hover:underline"
+											title="Lihat Profil PDDikti"
+											class="absolute -right-3 -bottom-3 flex h-11 w-11 items-center justify-center border border-border-color bg-rose-500 text-white shadow-md transition-all duration-200 hover:scale-110 hover:bg-rose-600"
 										>
-											<span>Profil PDDikti</span>
-											<ExternalLinkIcon class="h-3.5 w-3.5" />
+											<ExternalLinkIcon class="h-5 w-5" />
 										</a>
-									</div>
-								{/if}
-							</article>
-						{/each}
+									{/if}
+								</article>
+							{/each}
+						</div>
+					</div>
+
+					<div class="mt-8 flex justify-center pt-4">
+						<button
+							onclick={() => goto('/profil/dosen-staff')}
+							class="group inline-flex items-center gap-2.5 rounded-2xl border border-border-color bg-bg-secondary px-6 py-3 text-sm font-bold text-text-main shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-accent-purple/50 hover:bg-bg-secondary-hover hover:text-accent-purple hover:shadow-xl hover:shadow-accent-purple/10"
+						>
+							<span>Jelajahi Semua</span>
+							<ArrowRightIcon
+								class="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1.5"
+							/>
+						</button>
 					</div>
 				</div>
 			{:else}

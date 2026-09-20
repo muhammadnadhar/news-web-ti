@@ -1,4 +1,5 @@
-import { query } from '$lib/server/database/runtimeDb'; // di gunakan oleh runntime bawaah
+import { query } from "$lib/database/runtimeDb";
+
 export const tablePartnership = 'kerjasama_partnership';
 export const tableActivityDocumentation = 'kerjasama_activity_documentation';
 

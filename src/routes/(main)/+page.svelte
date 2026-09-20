@@ -1,13 +1,12 @@
 <script lang="ts">
 	import NewsSection from './_components/newsSection.svelte';
 	import HomeSection from './_components/homeSection.svelte';
-	import { fade } from 'svelte/transition';
 	import { onMount } from 'svelte';
 
 	import GetStartedCard from './_components/get.started.svelte';
-	import { BuildingIcon, ImageOffIcon } from 'lucide-svelte';
+	import { BuildingIcon, ImageOffIcon, PlayIcon } from 'lucide-svelte';
 	import type { ProfileDashboardDTO } from '$lib/types/admin/home.js';
-
+	import fstImg from '$lib/assets/fst.webp';
 	let { data } = $props();
 
 	// const images = [fstImg, uinFrontImg];
@@ -31,6 +30,9 @@
 
 	let currentItem = $derived(profileItems[currentIndex]);
 	let currentImage = $derived(currentItem?.image_path ?? '');
+
+	// sementara aja
+	let videoUrl = 'https://www.youtube.com/watch?v=YOUR_VIDEO_ID';
 
 	$effect(() => {
 		data.profileImgDashboard.then((items) => {
@@ -215,6 +217,50 @@
 	listPerminatan={data.listPerminatan}
 	listProfil={data.listProfil}
 />
+
+<section
+	class="relative w-full overflow-hidden border-y border-border-color bg-bg-secondary py-20 text-center"
+>
+	<div class="absolute inset-0 z-0">
+		<img
+			src={fstImg}
+			alt="Gedung Fakultas Sains dan Teknologi"
+			class="h-full w-full object-cover object-center brightness-40 contrast-120 filter"
+		/>
+		<!-- overlay warna utama sesuai tema -->
+		<div class="absolute inset-0 bg-bg-primary/80 backdrop-blur-xs"></div>
+	</div>
+
+	<!--Konten Terpusat (Centered) -->
+	<div class="relative z-10 mx-auto flex max-w-3xl flex-col items-center justify-center px-6">
+		<!-- Tombol Play Video (Brutalist 3D Style) -->
+		<a
+			href={videoUrl}
+			target="_blank"
+			rel="noopener noreferrer"
+			class="group mb-6 flex h-14 w-14 items-center justify-center border border-border-color bg-bg-secondary-hover text-text-dark
+                   shadow-[0_4px_0_0_var(--border-color)] transition-all duration-300
+                   hover:-translate-y-1 hover:scale-105 hover:shadow-[0_8px_0_0_var(--border-color)] sm:h-16 sm:w-16"
+			aria-label="Putar Video Sekilas Fakultas Saintek"
+		>
+			<PlayIcon
+				class="ml-1 h-7 w-7 fill-current transition-transform duration-300 group-hover:scale-110"
+			/>
+		</a>
+
+		<h2
+			class="mb-3 text-2xl font-extrabold tracking-tight text-accent-primary sm:text-3xl lg:text-4xl"
+		>
+			Sekilas Tentang Fakultas Saintek
+		</h2>
+
+		<p class="max-w-2xl text-xs leading-relaxed text-text-muted sm:text-sm lg:text-base">
+			Temukan informasi lengkap terkait Fakultas Sains dan Teknologi UIN Ar-Raniry melalui video
+			ini. Video ini akan menunjukkan kepada Anda setiap sudut ekosistem akademik, fasilitas
+			laboratorium, dan lingkungan kampus kami.
+		</p>
+	</div>
+</section>
 
 <!---->
 <!-- <section class="bg-scitech-navy-glare border-scitech-slate rounded-3xl border p-8"> -->

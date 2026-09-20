@@ -28,7 +28,7 @@
 				</div>
 				<div>
 					<h3 class="text-base font-bold tracking-wide text-text-main">{item.label}</h3>
-					<p class="text-[11px] text-text-muted">Navigasi Halaman</p>
+					<p class="text-11 text-text-muted">Navigasi Halaman</p>
 				</div>
 			</div>
 
@@ -42,11 +42,11 @@
 			{/if}
 		</div>
 
-		<!-- SNIPPET REKURSIF UNTUK MERENDER SUB MENU   -->
+		<!-- snippet rekursif untuk merender sub menu   -->
 		{#snippet nestedMenu(menuItems: any, level = 1)}
 			<div class="grid grid-cols-1 gap-2.5 {level === 1 ? 'sm:grid-cols-2' : 'sm:grid-cols-1'}">
 				{#each menuItems as sub (sub.id)}
-					<!-- KONDISI 1: Jika Menu memiliki Cabang Anak (cth: Prestasi Akademik -> Semester) -->
+					<!-- kondisi 1: jika menu memiliki cabang anak (cth: prestasi akademik -> semester) -->
 					{#if sub.subMenu && sub.subMenu.length > 0}
 						<div class="col-span-1 flex flex-col {level === 1 ? 'sm:col-span-2' : ''}">
 							<button

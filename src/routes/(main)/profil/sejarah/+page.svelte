@@ -16,7 +16,7 @@
 			<History class="h-4 w-4" />
 			<span>Profil Program Studi</span>
 		</div>
-		<h1 class="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+		<h1 class="text-3xl font-extrabold tracking-tight text-text-main sm:text-4xl">
 			{data.historyContent?.title ?? 'Sejarah Program Studi'}
 		</h1>
 		<p class="mt-2 text-sm text-text-muted">
@@ -24,7 +24,7 @@
 		</p>
 	</div>
 
-	<!-- BAGIAN 1: KONTEN SEJARAH UTAMA -->
+	<!-- bagian 1: konten sejarah utama -->
 	{#if data.historyContent}
 		<section class="mb-16">
 			<div class="overflow-hidden rounded-2xl border border-border-color bg-scitech-slate/40 backdrop-blur-md">
@@ -55,7 +55,7 @@
 				<Users class="h-5 w-5" />
 			</div>
 			<div>
-				<h2 class="text-2xl font-bold text-white">Sejarah Pimpinan Jurusan</h2>
+				<h2 class="text-2xl font-bold text-text-main">Sejarah Pimpinan Jurusan</h2>
 				<p class="text-xs text-text-muted">Daftar Ketua dan Sekretaris Program Studi berdasarkan periode kepemimpinan.</p>
 			</div>
 		</div>
@@ -64,7 +64,6 @@
 			<div class="space-y-8">
 				{#each data.historyLeaders as leader (leader.id)}
 					<div class="overflow-hidden rounded-2xl border border-border-color bg-scitech-slate/40 backdrop-blur-md p-6 sm:p-8">
-						<!-- Periode Tag -->
 						<div class="mb-6 flex items-center gap-2 border-b border-border-color/40 pb-4">
 							<Calendar class="h-4 w-4 text-scitech-cyan" />
 							<span class="text-base font-bold text-scitech-mint">Periode {leader.period}</span>
@@ -72,7 +71,6 @@
 
 						<!-- Grid Ketua & Sekretaris -->
 						<div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-							<!-- KETUA PRODI -->
 							<div class="flex flex-col sm:flex-row items-center sm:items-start gap-4 rounded-xl border border-border-color/30 bg-scitech-navy/50 p-4">
 								<div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-xl border border-border-color bg-scitech-slate flex items-center justify-center">
 									{#if leader.head_photo}
@@ -87,11 +85,10 @@
 								</div>
 								<div class="text-center sm:text-left">
 									<span class="text-[11px] font-semibold tracking-wider text-scitech-cyan uppercase">Ketua Program Studi</span>
-									<h3 class="mt-1 text-base font-bold text-white">{leader.head_name}</h3>
+									<h3 class="mt-1 text-base font-bold text-text-main">{leader.head_name}</h3>
 								</div>
 							</div>
 
-							<!-- SEKRETARIS PRODI -->
 							<div class="flex flex-col sm:flex-row items-center sm:items-start gap-4 rounded-xl border border-border-color/30 bg-scitech-navy/50 p-4">
 								<div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-xl border border-border-color bg-scitech-slate flex items-center justify-center">
 									{#if leader.secretary_photo}
@@ -106,7 +103,7 @@
 								</div>
 								<div class="text-center sm:text-left">
 									<span class="text-[11px] font-semibold tracking-wider text-scitech-mint uppercase">Sekretaris Program Studi</span>
-									<h3 class="mt-1 text-base font-bold text-white">{leader.secretary_name}</h3>
+									<h3 class="mt-1 text-base font-bold text-text-main">{leader.secretary_name}</h3>
 								</div>
 							</div>
 						</div>
@@ -118,7 +115,7 @@
 				<div class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-amber-500/10 text-amber-500">
 					<AlertCircle class="h-6 w-6" />
 				</div>
-				<h3 class="text-lg font-bold text-white">Data Pimpinan Belum Tersedia</h3>
+				<h3 class="text-lg font-bold text-text-main">Data Pimpinan Belum Tersedia</h3>
 				<p class="mt-1 max-w-md text-xs text-text-muted">
 					Belum ada riwayat pimpinan jurusan yang ditambahkan.
 				</p>

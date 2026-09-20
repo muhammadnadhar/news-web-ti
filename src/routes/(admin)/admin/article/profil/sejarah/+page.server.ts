@@ -1,13 +1,13 @@
 import { error, fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import {
+	deleteHistoryLeader,
 	getHistoryContent,
 	upsertHistoryContent,
 	getAllHistoryLeaders,
 	createHistoryLeader,
-	updateHistoryLeader,
-	deleteHistoryLeader
-} from '$lib/server/admin/repository/article/profile/sejarah';
+	updateHistoryLeader
+} from '$lib/repository/admin/article/profile/sejarah';
 
 export const load: PageServerLoad = async () => {
 	try {
@@ -17,9 +17,9 @@ export const load: PageServerLoad = async () => {
 		// ]);
 
 		return {
-			historyContent : await getHistoryContent(),
+			historyContent: await getHistoryContent(),
 
-			historyLeaders: getAllHistoryLeaders(),
+			historyLeaders: getAllHistoryLeaders()
 		};
 	} catch (err) {
 		console.error('Error loading history data:', err);

@@ -1,8 +1,9 @@
 // semua seeder akan di jalkan di foler ini yang menjadi entry point data utama
-import { createUserAdmin } from '$lib/server/admin/repository/userAdmin';
-import { dbName, initializeDatabase, pool } from '$lib/server/database/runtimeDb';
+import { initializeDatabase, pool } from '$lib/database/runtimeDb';
+import { dbName } from '$lib/database/runtimeDb';
 import {
 	AcademicCalendarTableSeed,
+	CalendarImageTableSeed,
 	PedomanKkpTableSeed,
 	PedomanTaTableSeed,
 	PracticumModuleTableSeed,
@@ -55,6 +56,7 @@ try {
 	await RecruitmentTableSeed();
 	await PracticumModuleTableSeed();
 	await AcademicCalendarTableSeed();
+	await CalendarImageTableSeed();
 
 	// ARTICLE - profile
 	await HistoryContentTableSeed();

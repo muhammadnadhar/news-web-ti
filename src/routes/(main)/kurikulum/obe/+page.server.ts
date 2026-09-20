@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { getObeCurriculum } from '$lib/server/admin/repository/article/kurikulum/obe';
+import { getObeCurriculum } from '$lib/repository/admin/article/kurikulum/obe';
 
 export const load: PageServerLoad = async () => {
 	try {

@@ -1,5 +1,4 @@
-import { query } from '$lib/server/database/runtimeDb'; // di gunakan oleh runntime
-
+import { query } from "$lib/database/runtimeDb";
 // sejarah
 export const tableSejarahContent = 'profile_sejarah_content';
 export const tableSejarahLeaders = 'profile_sejarah_leaders';
@@ -27,21 +26,29 @@ CREATE TABLE IF NOT EXISTS ${tableSejarahContent} (
 
 // Tabel untuk menyimpan Data Sejarah Pimpinan Jurusan berdasarkan Periode
 export async function HistoryLeadersTableSeed() {
-	const sql = `
+    const sql = `
 CREATE TABLE IF NOT EXISTS ${tableSejarahLeaders} (
     id VARCHAR(36) PRIMARY KEY, -- Primary key berupa UUID string
-    period VARCHAR(100) NOT NULL, -- Periode Jabatan (contoh: '2018 - Sekarang')
-    -- Data Ketua Program Studi
-    head_name VARCHAR(150) NOT NULL, -- Nama Ketua Program Studi
-    head_photo LONGBLOB NULL, -- File Foto Ketua (Gunakan LONGBLOB untuk simpan file langsung, atau VARCHAR(255) jika simpan URL/Path)
-    -- Data Sekretaris Program Studi
-    secretary_name VARCHAR(150) NOT NULL, -- Nama Sekretaris Program Studi
-    secretary_photo LONGBLOB NULL, -- File Foto Sekretaris (Gunakan LONGBLOB untuk simpan file langsung, atau VARCHAR(255) jika simpan URL/Path)
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Waktu pembuatan data
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP -- Waktu update data)
-    )`;
+    period VARCHAR(100) NOT NULL, -- Periode Jabatan (contoh: '2018 - 2022')
+    
+    -- Foreign Key merujuk ke tabel Dosen & Staff
+    head_id VARCHAR(36) NULL, -- Referensi ke ID Ketua (LecturerStaff)
+    secretary_id VARCHAR(36) NULL, -- Referensi ke ID Sekretaris (LecturerStaff)
+    
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-	await query(sql);
+    -- Constraint Foreign Key
+    CONSTRAINT fk_history_leaders_head 
+        FOREIGN KEY (head_id) REFERENCES ${tableLecturerStaff}(id) 
+        ON DELETE SET NULL ON UPDATE CASCADE,
+        
+    CONSTRAINT fk_history_leaders_secretary 
+        FOREIGN KEY (secretary_id) REFERENCES ${tableLecturerStaff}(id) 
+        ON DELETE SET NULL ON UPDATE CASCADE
+);`;
+
+    await query(sql);
 }
 
 // Fungsi seed untuk tabel Visi Misi (hanya menyimpan teks HTML)

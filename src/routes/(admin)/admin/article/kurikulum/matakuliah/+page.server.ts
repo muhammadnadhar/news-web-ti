@@ -1,15 +1,14 @@
 import { error, fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import {
-	getAllCourseMap,
-	createCourseMap,
-	updateCourseMap,
-	deleteCourseMap
-} from '$lib/server/admin/repository/article/kurikulum/petaMatakuliah';
-import type { TableContentType } from '$lib/types/tableContent';
 import { writeFileSync, mkdirSync, existsSync } from 'fs';
 import { join } from 'path';
 import { errorResponse } from '$lib/helper/message';
+import {
+	createCourseMap,
+	deleteCourseMap,
+	getAllCourseMap,
+	updateCourseMap
+} from '$lib/repository/admin/article/kurikulum/petaMatakuliah';
 
 export const load: PageServerLoad = async () => {
 	try {

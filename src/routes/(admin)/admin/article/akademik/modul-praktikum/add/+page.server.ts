@@ -1,6 +1,6 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
-import { createPracticumModule } from '$lib/server/admin/repository/article/akedemik/modulePratikum';
+import { createPracticumModule } from '$lib/repository/admin/article/akedemik/modulePratikum';
 
 export const actions: Actions = {
 	default: async ({ request }) => {

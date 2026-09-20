@@ -1,7 +1,6 @@
-import { toMySQLDateTime } from '$lib/server/database/core';
-import { query } from '$lib/server/database/runtimeDb'; // di gunakan oleh runntime bawaah
-import type { UserAdminItem } from '$lib/types/admin/user';
-import { createAttachmentKey } from 'svelte/attachments';
+import { toMySQLDateTime } from '$lib/database/core';
+import { query } from '$lib/database/runtimeDb';
+import { type UserAdminDTO } from '$lib/dto/admin/userAdmin';
 
 export const tableAdminUser = 'usersAdmin';
 
@@ -26,7 +25,7 @@ role VARCHAR(20) NOT NULL CHECK (role IN ('Administrator', 'Supervisor', 'Author
  * Memasukkan data user default/seed ke dalam database secara bulk
  * @param {UserAdminItem[]} data - Array berisi data user default
  */
-export async function defaultUsersDatas(data: UserAdminItem[]) {
+export async function defaultUsersDatas(data: UserAdminDTO[]) {
 	if (!data || data.length === 0) return;
 
 	// Transformasikan array objek menjadi array kontainer nilai
@@ -65,7 +64,7 @@ export async function defaultUsersDatas(data: UserAdminItem[]) {
  * Memasukkan atau memperbarui satu data user default/seed ke dalam database
  * @param {UserAdminItem} user - Single object data user
  */
-export async function defaultUserData(user: UserAdminItem) {
+export async function defaultUserData(user: UserAdminDTO) {
 	if (!user) return;
 	const createdAtFormatted = toMySQLDateTime(user.createdAt);
 

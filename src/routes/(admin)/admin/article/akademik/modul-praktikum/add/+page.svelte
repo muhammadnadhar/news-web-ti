@@ -11,6 +11,7 @@
 		upload_cloudinary_preset
 	} from '$lib/cloudinary/client';
 	import { UploadCloud } from 'lucide-svelte';
+	import type { ResponseMessage } from '$lib/types/message';
 
 	let { form }: { form: ActionData } = $props();
 
@@ -32,11 +33,7 @@
 	let isSubmitting = $state(false);
 	let showMessage = $state(false);
 
-	let messageConfig = $state<{
-		status: MessageStatus;
-		title: string;
-		message: string;
-	}>({
+	let messageConfig = $state<ResponseMessage>({
 		status: 'info',
 		title: '',
 		message: ''

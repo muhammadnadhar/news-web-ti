@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { getAllRecruitment } from '$lib/server/admin/repository/article/akedemik/ketentuan-komprehensif';
+import { getAllRecruitment } from '$lib/repository/admin/article/akedemik/ketentuan-komprehensif';
 
 export const load: PageServerLoad = async () => {
 	try {

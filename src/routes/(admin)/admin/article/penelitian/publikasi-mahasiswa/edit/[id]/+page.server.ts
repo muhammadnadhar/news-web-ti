@@ -1,10 +1,10 @@
 import { error, fail } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
+import { errorResponse, successResponse } from '$lib/helper/message';
 import {
 	getstudentpublicationbyid,
 	updateStudentPublication
-} from '$lib/server/admin/repository/article/penelitian/publikasiMahasiswa';
-import { errorResponse, successResponse } from '$lib/helper/message';
+} from '$lib/repository/admin/article/penelitian/publikasiMahasiswa';
 
 // Fetch data berdasarkan ID untuk dimasukkan ke dalam form edit
 export const load: PageServerLoad = async ({ params }) => {

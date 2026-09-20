@@ -1,13 +1,9 @@
 import { error, fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import {
-	getAllPedomanTa,
-	createPedomanTa,
-	updatePedomanTa,
-	deletePedomanTa
-} from '$lib/server/admin/repository/article/akedemik/pedomanTa';
+
 import { writeFileSync, mkdirSync, existsSync } from 'fs';
 import { join } from 'path';
+import { createPedomanTa, deletePedomanTa, getAllPedomanTa, updatePedomanTa } from '$lib/repository/admin/article/akedemik/pedomanTa';
 
 export const load: PageServerLoad = async () => {
 	try {

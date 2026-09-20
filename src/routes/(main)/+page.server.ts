@@ -1,10 +1,10 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { getRecentNews } from '$lib/server/admin/repository/article/berita';
-import { getAllPerminatanTI } from '$lib/server/admin/repository/home/tablePermitan';
-import { getAllProfilProdi } from '$lib/server/admin/repository/home/profilProdi';
-import { getPrimaryDosenList } from '$lib/server/admin/repository/home/dosenPrimary';
-import { getAllProfileDashboards } from '$lib/server/admin/repository/home/profileDashboard';
+import { getRecentNews } from '$lib/repository/admin/article/berita';
+import { getAllProfileDashboards } from '$lib/repository/admin/home/profileDashboard';
+import { getPrimaryDosenList } from '$lib/repository/admin/home/dosenPrimary';
+import { getAllPerminatanTI } from '$lib/repository/admin/home/tablePermitan';
+import { getAllProfilProdi } from '$lib/repository/admin/home/profilProdi';
 
 export const load: PageServerLoad = async () => {
 	try {

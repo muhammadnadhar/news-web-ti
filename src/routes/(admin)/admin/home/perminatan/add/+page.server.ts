@@ -1,7 +1,7 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
-import { addPerminatanTI } from '$lib/server/admin/repository/home/tablePermitan';
 import { errorResponse } from '$lib/helper/message';
+import { addPerminatanTI } from '$lib/repository/admin/home/tablePermitan';
 
 export const actions: Actions = {
 	create: async ({ request }) => {

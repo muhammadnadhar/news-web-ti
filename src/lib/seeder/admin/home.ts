@@ -1,5 +1,5 @@
-import { query } from '$lib/server/database/runtimeDb';
 import { tableLecturerStaff } from './article/profile';
+import { query } from '$lib/database/runtimeDb';
 
 export const tableProfileDashboard = 'home_profileDashboard';
 export const tableDosenPrimary = 'home_dosenPrimary';

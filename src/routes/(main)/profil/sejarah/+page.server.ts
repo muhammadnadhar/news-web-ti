@@ -1,7 +1,7 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
+import { getAllHistoryLeaders, getHistoryContent } from '$lib/repository/admin/article/profile/sejarah';
 
-import { getHistoryContent , getAllHistoryLeaders } from '$lib/server/admin/repository/article/profile/sejarah';
 
 // Helper untuk mengonversi Buffer / BLOB foto ke Base64 Data URL
 function formatPhoto(photo: Buffer | string | null | undefined): string | null {

@@ -1,6 +1,6 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
-import { createAngkatan, getAngkatanByYear } from '$lib/server/admin/repository/dataset/angkatan';
+import { createAngkatan, getAngkatanByYear } from '$lib/repository/admin/dataset/angkatan';
 
 export const actions: Actions = {
 	default: async ({ request }) => {

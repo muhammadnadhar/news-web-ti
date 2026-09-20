@@ -1,4 +1,4 @@
-import { query } from '$lib/server/database/runtimeDb';
+import { query } from '$lib/database/runtimeDb';
 
 export const tableAngkatan = 'dataset_angkatan';
 export const tableJabatanProdi = 'dataset_positions_prodi';

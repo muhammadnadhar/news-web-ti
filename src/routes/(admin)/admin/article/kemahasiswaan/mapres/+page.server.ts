@@ -1,13 +1,12 @@
 import { error, fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import {
-	getAllStudentAchievements,
 	createStudentAchievement,
-	updateStudentAchievement,
-	deleteStudentAchievement
-} from '$lib/server/admin/repository/article/kemahasiswaan/mapres';
-
-import type { TableContentType } from '$lib/types/tableContent';
+	deleteStudentAchievement,
+	getAllStudentAchievements,
+	updateStudentAchievement
+} from '$lib/repository/admin/article/kemahasiswaan/mapres';
+import { errorResponse } from '$lib/helper/message';
 
 export const load: PageServerLoad = async () => {
 	try {
@@ -40,7 +39,7 @@ export const load: PageServerLoad = async () => {
 		// }));
 
 		return {
-			rawAchievementList: getAllStudentAchievements(),
+			rawAchievementList: getAllStudentAchievements()
 		};
 	} catch (err) {
 		console.error('Error loading student achievements:', err);
@@ -58,9 +57,13 @@ export const actions: Actions = {
 		const batchYear = formData.get('batch_year') as string;
 		const semester = formData.get('semester') as string;
 		const achievementName = formData.get('achievement_name') as string;
+		const imageUrl = formData.get('image_url') as string;
 
 		if (!studentName || !batchYear || !semester || !achievementName) {
 			return fail(400, { message: 'Semua kolom form wajib diisi.' });
+		}
+		if (!imageUrl || imageUrl.trim().length < 0) {
+			return fail(400, errorResponse('Membutuhkan Gambar', 'gagal'));
 		}
 
 		try {
@@ -71,7 +74,8 @@ export const actions: Actions = {
 					isAcademic,
 					batchYear,
 					semester,
-					achievementName
+					achievementName,
+					imageUrl
 				);
 			} else {
 				await createStudentAchievement(
@@ -80,7 +84,8 @@ export const actions: Actions = {
 					isAcademic,
 					batchYear,
 					semester,
-					achievementName
+					achievementName,
+					imageUrl
 				);
 			}
 			return { success: true };

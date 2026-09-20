@@ -4,8 +4,8 @@ import type { PageServerLoad, Actions } from './$types';
 import {
 	getStudentAchievementById,
 	updateStudentAchievement
-} from '$lib/server/admin/repository/article/kemahasiswaan/mapres';
-
+} from '$lib/repository/admin/article/kemahasiswaan/mapres';
+import { errorResponse } from '$lib/helper/message';
 export const load: PageServerLoad = async ({ params }) => {
 	const { id } = params;
 
@@ -42,6 +42,7 @@ export const actions: Actions = {
 		const isAcademic = formData.get('is_academic')?.toString() || 'y';
 		const batchYear = formData.get('batch_year')?.toString().trim();
 		const semester = formData.get('semester')?.toString().trim();
+		const imageUrl = formData.get('image_url')?.toString().trim();
 
 		const values = {
 			studentName,
@@ -60,6 +61,10 @@ export const actions: Actions = {
 			});
 		}
 
+		if (!imageUrl) {
+			return fail(400, errorResponse('Buuhkan Gambar', 'Error'));
+		}
+
 		try {
 			// TODO: Jalankan query update ke database Anda
 			// await db.prestasi.update({ where: { id }, data: { ... } });
@@ -69,7 +74,8 @@ export const actions: Actions = {
 				isAcademic ? 'y' : 'n',
 				batchYear,
 				semester,
-				achievementName
+				achievementName,
+				imageUrl
 			);
 
 			return {

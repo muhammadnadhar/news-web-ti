@@ -3,25 +3,30 @@
 	import { Sparkles, X, Upload, Save } from 'lucide-svelte';
 	import TableContent from '$lib/components/admin/tableContent.svelte';
 	import type { TableContentType } from '$lib/types/tableContent';
-	import type { KetentuanKompreDTO } from '$lib/types/admin/article/akademik';
 	import TableSkeleton from '$lib/components/tableSkeleton.svelte';
 	import { gotoEdit, mergeNewPath } from '$lib/utils.js';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
+	import type { KetentuanKompreDTO } from '$lib/dto/admin/article/akademik.js';
+	import type { MessageStatus, ResponseMessage } from '$lib/types/message.js';
+	import Message from '$lib/components/admin/message.svelte';
 
 	let { data } = $props();
 
 	// State Management
-	let isModalOpen = $state(false);
-	let isEditMode = $state(false);
-	let selectedId = $state('');
-	let titleInput = $state('');
-	let descriptionContent = $state('');
-	let currentImageUrl = $state<string | null>(null);
+	let showMessage = $state(false);
+	let messageConfig = $state<ResponseMessage>({
+		status: 'info',
+		title: '',
+		message: ''
+	});
 
-	// Sync local state
-	let recruitmentList = $derived<TableContentType[]>(data.recruitmentList || []);
-	let rawRecruitmentList = $derived<KetentuanKompreDTO[]>(data.rawRecruitmentList || []);
+	function triggerMessage(status: MessageStatus, title: string, message: string) {
+		messageConfig = { status, title, message };
+		showMessage = true;
+	}
+
+
 
 	/**
 	 * Mengubah list KetentuanKompreDTO menjadi format TableContentType
@@ -63,53 +68,31 @@
 		}));
 	}
 
-	// Modal Handlers
-	function openAddModal() {
-		isEditMode = false;
-		selectedId = '';
-		titleInput = '';
-		descriptionContent = '';
-		currentImageUrl = null;
-		isModalOpen = true;
-	}
-
-	function openEditModal(item: TableContentType) {
-		isEditMode = true;
-		selectedId = item.id;
-
-		const rawData = rawRecruitmentList.find((p) => p.id === item.id);
-		if (rawData) {
-			titleInput = rawData.title;
-			descriptionContent = rawData.description || '';
-			currentImageUrl = rawData.image_url;
-		} else {
-			const titleCol = item.items.find((col) => col.colomn === 'Judul');
-			const descCol = item.items.find((col) => col.colomn === 'Description');
-			titleInput = titleCol ? String(titleCol.row) : '';
-			descriptionContent = descCol ? String(descCol.row) : '';
-			currentImageUrl = null;
-		}
-
-		isModalOpen = true;
-	}
-
-	function closeModal() {
-		isModalOpen = false;
-		selectedId = '';
-		titleInput = '';
-		descriptionContent = '';
-		currentImageUrl = null;
-	}
 </script>
+
+	{#if showMessage}
+		<div class="mb-6">
+			<Message
+				status={messageConfig.status}
+				title={messageConfig.title}
+				message={messageConfig.message}
+				dismissible={true}
+				timeout={5000}
+				onclose={() => (showMessage = false)}
+			/>
+		</div>
+	{/if}
+
+
 
 <div class="mx-auto max-w-7xl space-y-8 p-6 lg:p-10">
 	<!-- Header -->
 	<div class="border-b border-white/10 pb-6">
-		<span
-			class="text-scitech-mint mb-1 inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase"
-		>
-			<Sparkles class="text-scitech-mint h-4 w-4" /> Artikel Akademik
-		</span>
+		<!-- <span -->
+		<!-- 	class="text-scitech-mint mb-1 inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase" -->
+		<!-- > -->
+		<!-- 	<Sparkles class="text-scitech-mint h-4 w-4" /> Artikel Akademik -->
+		<!-- </span> -->
 		<h1 class="text-2xl font-extrabold tracking-tight text-text-main sm:text-3xl">Rekrutmen</h1>
 	</div>
 
@@ -123,7 +106,18 @@
 			data={mapKetentuanKompreToTableContent(rawList)}
 			onAdd={() => goto(mergeNewPath('add'))}
 			onEdit={(data) => gotoEdit(data.id, page.url.pathname)}
-			onDelete={(data) => console.info('delete')}
+				onDeleteSuccess={(res) =>
+				triggerMessage(
+					res?.status ?? 'success',
+					res?.title ?? 'Berhasil',
+					res?.message ?? 'Data angkatan berhasil dihapus.'
+				)}
+			onDeleteError={(res) =>
+				triggerMessage(
+					res?.status ?? 'error',
+					res?.title ?? 'Gagal',
+					res?.message ?? 'Gagal menghapus data angkatan.'
+				)}
 		/>
 	{:catch error}
 		<div class="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-400">

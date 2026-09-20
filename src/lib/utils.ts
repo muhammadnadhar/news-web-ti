@@ -1,5 +1,7 @@
 import { goto } from '$app/navigation';
 
+
+
 export function mergeNewPath(newPath: string): string {
 	// Ambil URL saat ini
 	const url = new URL(window.location.href);

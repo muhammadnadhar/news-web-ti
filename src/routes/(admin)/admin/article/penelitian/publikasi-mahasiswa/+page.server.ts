@@ -1,13 +1,13 @@
 import { error, fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import {
-	getAllStudentPublications,
-	createStudentPublication,
-	updateStudentPublication,
-	deleteStudentPublication
-} from '$lib/server/admin/repository/article/penelitian/publikasiMahasiswa';
 
 import type { TableContentType } from '$lib/types/tableContent';
+import {
+	deleteStudentPublication,
+	getAllStudentPublications,
+	createStudentPublication,
+	updateStudentPublication
+} from '$lib/repository/admin/article/penelitian/publikasiMahasiswa';
 
 export const load: PageServerLoad = async () => {
 	try {

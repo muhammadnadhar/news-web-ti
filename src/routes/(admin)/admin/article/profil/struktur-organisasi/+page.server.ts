@@ -1,12 +1,11 @@
 import { error, fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import {
+	deleteOrgStructure,
 	getAllOrgStructures,
 	createOrgStructure,
-	updateOrgStructure,
-	deleteOrgStructure
-} from '$lib/server/admin/repository/article/profile/structure';
-
+	updateOrgStructure
+} from '$lib/repository/admin/article/profile/structure';
 export const load: PageServerLoad = async () => {
 	try {
 		// const orgStructures = await getAllOrgStructures();

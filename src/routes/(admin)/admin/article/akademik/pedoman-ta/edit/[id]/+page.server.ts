@@ -1,10 +1,8 @@
 import { error, fail } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
-import {
-	getPedomanTaById,
-	updatePedomanTa
-} from '$lib/server/admin/repository/article/akedemik/pedomanTa';
+
 import { errorResponse, successResponse } from '$lib/helper/message';
+import { getPedomanTaById, updatePedomanTa } from '$lib/repository/admin/article/akedemik/pedomanTa';
 
 // Fetch data awal berdasarkan ID
 export const load: PageServerLoad = async ({ params }) => {

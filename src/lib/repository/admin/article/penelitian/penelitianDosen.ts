@@ -1,0 +1,39 @@
+import { query } from '$lib/database/svelteDb';
+import type { LecturerResearchDTO } from '$lib/dto/admin/article/penelitian';
+import { tableLecturerResearch } from '$lib/seeder/admin/article/penelitian';
+
+/**
+ * Mengambil semua data Penelitian Dosen (Read All)
+ */
+export async function getAllLecturerResearch(): Promise<LecturerResearchDTO[]> {
+	const sql = `SELECT * FROM ${tableLecturerResearch} ORDER BY created_at DESC`;
+	const rows = (await query(sql)) as LecturerResearchDTO[];
+	return rows;
+}
+
+/**
+ * Mengambil data Penelitian Dosen (Ambil baris pertama)
+ */
+export async function getLecturerResearch(): Promise<LecturerResearchDTO | null> {
+	const sql = `SELECT * FROM ${tableLecturerResearch} LIMIT 1`;
+	const rows = (await query(sql)) as LecturerResearchDTO[];
+	return rows[0] || null;
+}
+
+/**
+ * Menyimpan atau Memperbarui data Penelitian Dosen (UPSERT logic)
+ */
+export async function saveOrUpdateLecturerResearch(description: string): Promise<boolean> {
+	const existing = await getLecturerResearch();
+
+	if (existing) {
+		const sql = `UPDATE ${tableLecturerResearch} SET description = ?, updated_at = NOW() WHERE id = ?`;
+		const result = (await query(sql, [description, existing.id])) as any;
+		return result.affectedRows > 0;
+	} else {
+		const newId = crypto.randomUUID();
+		const sql = `INSERT INTO ${tableLecturerResearch} (id, description) VALUES (?, ?)`;
+		const result = (await query(sql, [newId, description])) as any;
+		return result.affectedRows > 0;
+	}
+}

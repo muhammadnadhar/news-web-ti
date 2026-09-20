@@ -1,4 +1,4 @@
-import { getAllNews } from '$lib/server/admin/repository/article/berita';
+import { getAllNews } from '$lib/repository/admin/article/berita';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {

@@ -1,6 +1,8 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
-import { createCourseMap } from '$lib/server/admin/repository/article/kurikulum/petaMatakuliah';
+import { createCourseMap } from '$lib/repository/admin/article/kurikulum/petaMatakuliah';
+import { successResponse } from '$lib/helper/message';
+import { randomUUID } from '$lib/crypto';
 
 export const actions: Actions = {
 	default: async ({ request }) => {
@@ -28,7 +30,7 @@ export const actions: Actions = {
 		}
 
 		// Generate UUID unik untuk Primary Key
-		const id = crypto.randomUUID();
+		const id = randomUUID();
 
 		try {
 			const success = await createCourseMap(id, title, imageUrl);
@@ -36,7 +38,7 @@ export const actions: Actions = {
 			if (!success) {
 				return fail(500, {
 					success: false,
-					message: 'Gagal menyimpan data Peta Mata Kuliah ke database.',
+					message: 'Gagal menyimpan data Peta Mata Kuliah.',
 					values: { title, imageUrl }
 				});
 			}
@@ -49,6 +51,7 @@ export const actions: Actions = {
 		}
 
 		// Redirect ke halaman daftar Peta Mata Kuliah
-		throw redirect(303, '/admin/akademik/peta-matakuliah');
+		// throw redirect(303, '/admin/akademik/peta-matakuliah')
+			return successResponse( "Berhasil menyimpan Data Mata Kuliah" ,"Success")
 	}
 };

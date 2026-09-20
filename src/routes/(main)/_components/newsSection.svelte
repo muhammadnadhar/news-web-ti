@@ -101,14 +101,14 @@
 	}
 </script>
 
-<section class="relative w-full overflow-hidden py-16">
+<section class="relative w-full overflow-hidden py-12 md:py-24">
 	<!-- Header Section -->
 	<div class="mx-auto mb-10 max-w-xl px-6 text-center">
-		<span
-			class="text-scitech-mint mb-2 inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase"
-		>
-			<Sparkles class="text-scitech-mint h-4 w-4" /> Information Hub
-		</span>
+		<!-- <span -->
+		<!-- 	class="text-scitech-mint mb-2 inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase" -->
+		<!-- > -->
+		<!-- 	<Sparkles class="text-scitech-mint h-4 w-4" /> Information Hub -->
+		<!-- </span> -->
 		<h2 class="text-2xl font-extrabold tracking-tight sm:text-3xl">Berita Terbaru</h2>
 	</div>
 

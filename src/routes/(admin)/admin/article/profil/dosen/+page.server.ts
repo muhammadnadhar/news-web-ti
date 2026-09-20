@@ -1,12 +1,11 @@
 import { error, fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import {
+	deleteLecturerStaff,
 	getAllLecturerStaff,
 	createLecturerStaff,
-	updateLecturerStaff,
-	deleteLecturerStaff
-} from '$lib/server/admin/repository/article/profile/dosen&staff';
-
+	updateLecturerStaff
+} from '$lib/repository/admin/article/profile/dosen&staff';
 export const load: PageServerLoad = async () => {
 	try {
 		// const lecturerStaffList = await getAllLecturerStaff();

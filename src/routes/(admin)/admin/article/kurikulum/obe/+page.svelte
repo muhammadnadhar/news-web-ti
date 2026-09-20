@@ -2,15 +2,39 @@
 	import { enhance } from '$app/forms';
 	import { Sparkles, Send } from 'lucide-svelte';
 	import FormEditor from '$lib/components/admin/formEditor.svelte';
+	import type { ResponseMessage } from '$lib/types/message.js';
+	import Message from '$lib/components/admin/message.svelte';
 
 	let { data } = $props();
 
 	let descriptionContent = $state(data.obeData?.description || '');
 	let isSaving = $state(false);
+
+
+	let showMessage = $state(false);
+	let messageConfig = $state<ResponseMessage>({
+		status: 'info',
+		title: '',
+		message: ''
+	});
+
+
 </script>
 
+
+	<!-- Alert / Toast Notification -->
+	{#if showMessage}
+		<Message
+			status={messageConfig.status}
+			title={messageConfig.title}
+			message={messageConfig.message}
+			dismissible={true}
+			timeout={4000}
+			onclose={() => (showMessage = false)}
+		/>
+	{/if}
+
 <div class="mx-auto max-w-7xl space-y-8 p-6 lg:p-10">
-	<!-- Header -->
 	<div class="border-b border-white/10 pb-6">
 		<span
 			class="text-scitech-mint mb-1 inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase"
@@ -54,7 +78,6 @@
 				<input type="hidden" name="description" value={descriptionContent} />
 			</div>
 
-			<!-- Submit Button -->
 			<div class="pt-2">
 				<button
 					type="submit"

@@ -1,13 +1,13 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { getActiveAcademicCalendar } from '$lib/server/admin/repository/article/akedemik/kalender';
+import {  getActiveAcademicCalendarWithImage } from '$lib/repository/admin/article/akedemik/kalender';
 
 export const load: PageServerLoad = async () => {
 	try {
-		const activeCalendar = await getActiveAcademicCalendar();
+		// const activeCalendar = await getActiveAcademicCalendar();
 
 		return {
-			activeCalendar
+			calendars : getActiveAcademicCalendarWithImage()
 		};
 	} catch (err) {
 		console.error('Error loading Active Academic Calendar:', err);

@@ -1,6 +1,6 @@
 import { error, fail } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
-import { getSemesterById, updateSemester } from '$lib/server/admin/repository/dataset/semester';
+import { getSemesterById, updateSemester } from '$lib/repository/admin/dataset/semester';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const { id } = params;

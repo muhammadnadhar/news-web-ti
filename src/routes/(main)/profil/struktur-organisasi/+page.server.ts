@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { getAllOrgStructures } from '$lib/server/admin/repository/article/profile/structure';
+import { getAllOrgStructures } from '$lib/repository/admin/article/profile/structure';
 
 export const load: PageServerLoad = async () => {
 	try {

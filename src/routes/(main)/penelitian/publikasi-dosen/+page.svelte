@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { classTopSpace } from '$lib/constants';
 	import type { PageData } from './$types';
 	import { GraduationCap, ExternalLink, BookOpen, UserCheck, AlertCircle, Search } from 'lucide-svelte';
 
@@ -19,8 +20,7 @@
 	);
 </script>
 
-<div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-	<!-- HEADER HALAMAN -->
+<div class={`mx-auto ${classTopSpace} max-w-7xl px-4 py-12 sm:px-6 lg:px-8`}>
 	<div class="mb-10 border-b border-border-color/40 pb-6 text-center sm:text-left">
 		<div class="mb-3 inline-flex items-center gap-2 rounded-full bg-scitech-mint/10 px-3 py-1 text-xs font-semibold text-scitech-mint">
 			<GraduationCap class="h-4 w-4" />

@@ -1,8 +1,8 @@
 // src/routes/admin/berita/tambah/+page.server.ts
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
-import { randomUUID } from '$lib/server/crypto';
-import { createNews } from '$lib/server/admin/repository/article/berita';
+import { randomUUID } from '$lib/crypto';
+import { createNews } from '$lib/repository/admin/article/berita';
 
 export const actions: Actions = {
 	default: async ({ request }) => {

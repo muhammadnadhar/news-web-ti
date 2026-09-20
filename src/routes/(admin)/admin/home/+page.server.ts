@@ -1,9 +1,8 @@
+import { getPrimaryDosenList } from '$lib/repository/admin/home/dosenPrimary';
+import { getAllProfileDashboards } from '$lib/repository/admin/home/profileDashboard';
+import { getAllProfilProdi } from '$lib/repository/admin/home/profilProdi';
+import { getAllPerminatanTI } from '$lib/repository/admin/home/tablePermitan';
 import type { PageServerLoad } from './$types';
-import { getAllPerminatanTI } from '$lib/server/admin/repository/home/tablePermitan';
-import { getAllProfilProdi } from '$lib/server/admin/repository/home/profilProdi';
-import { getPrimaryDosenList } from '$lib/server/admin/repository/home/dosenPrimary';
-import { getAllProfileDashboards } from '$lib/server/admin/repository/home/profileDashboard';
-
 export const load: PageServerLoad = async () => {
 	// const [primaryDosenList, listPerminatan, listProfil, listProfileDashboard] = await Promise.all([
 	// 	getPrimaryDosenList(),

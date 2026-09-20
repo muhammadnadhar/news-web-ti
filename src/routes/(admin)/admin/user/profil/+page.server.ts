@@ -1,8 +1,9 @@
 import { error, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
-import { sessionAdmin } from '$lib/types/session';
-import { getUserById, updateUser } from '$lib/server/admin/repository/userAdmin';
-import { fail } from 'assert';
+import { sessionAdmin } from '$lib/constants';
+import { fail } from '@sveltejs/kit';
+import { getUserById, updateUser } from '$lib/repository/admin/userAdmin';
+import { updateJabatanProdi } from '$lib/repository/admin/dataset/jabatanProdi';
 
 export const load: PageServerLoad = async ({ locals, cookies }) => {
 	const userId = locals.user?.id || cookies.get(sessionAdmin);
@@ -52,7 +53,7 @@ export const actions: Actions = {
 			});
 		}
 
-		const success = await updateUser(userId, { avatar: avatarUrl });
+		const success = await updateJabatanProdi(userId, { avatar: avatarUrl });
 		if (!success)
 			return fail(500, {
 				success: false,

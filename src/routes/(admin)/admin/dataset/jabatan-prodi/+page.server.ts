@@ -1,9 +1,7 @@
 import { fail, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import {
-	deleteJabatanProdi,
-	getAllJabatanProdi
-} from '$lib/server/admin/repository/dataset/jabatanProdi';
+import { deleteJabatanProdi, getAllJabatanProdi } from '$lib/repository/admin/dataset/jabatanProdi';
+
 export const load: PageServerLoad = async () => {
 	try {
 		const positions = getAllJabatanProdi(); // lazyload

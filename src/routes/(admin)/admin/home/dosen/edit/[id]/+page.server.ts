@@ -2,10 +2,12 @@ import { error, fail } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 import {
 	getLecturerStaffById,
-	getLecturerStaffByRole,
-	updateLecturerStaff
-} from '$lib/server/admin/repository/article/profile/dosen&staff';
-import { getPrimaryDosenList, updatePrimaryDosenSlot } from '$lib/server/admin/repository/home/dosenPrimary';
+	getLecturerStaffByRole
+} from '$lib/repository/admin/article/profile/dosen&staff';
+import {
+	getPrimaryDosenList,
+	updatePrimaryDosenSlot
+} from '$lib/repository/admin/home/dosenPrimary';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const { id } = params;
@@ -27,7 +29,7 @@ export const load: PageServerLoad = async ({ params }) => {
 };
 
 export const actions: Actions = {
-updateSlot: async ({ request }) => {
+	updateSlot: async ({ request }) => {
 		const formData = await request.formData();
 		const primaryId = formData.get('primary_id') as string;
 		const lecturerStaffId = formData.get('lecturer_staff_id') as string;
@@ -47,29 +49,29 @@ updateSlot: async ({ request }) => {
 	}
 
 	// Action khusus untuk mengubah status is_primary
-// 	togglePrimary: async ({ params, request }) => {
-// 		const formData = await request.formData();
-// 		const isPrimary = formData.get('is_primary') === 'true';
-//
-// 		const dosen = await getLecturerStaffById(params.id);
-// 		if (!dosen) {
-// 			return fail(404, { message: 'Data dosen tidak ditemukan' });
-// 		}
-//
-// 		const success = await updateLecturerStaff(params.id, {
-// 			...dosen,
-// 			is_primary: isPrimary
-// 		});
-//
-// 		if (!success) {
-// 			return fail(500, { message: 'Gagal memperbarui status tampilan Home' });
-// 		}
-//
-// 		return {
-// 			success: true,
-// 			message: isPrimary
-// 				? 'Dosen berhasil ditandai sebagai data utama di Home'
-// 				: 'Dosen diubah menjadi data reguler'
-// 		};
-// 	}
-// };
+	// 	togglePrimary: async ({ params, request }) => {
+	// 		const formData = await request.formData();
+	// 		const isPrimary = formData.get('is_primary') === 'true';
+	//
+	// 		const dosen = await getLecturerStaffById(params.id);
+	// 		if (!dosen) {
+	// 			return fail(404, { message: 'Data dosen tidak ditemukan' });
+	// 		}
+	//
+	// 		const success = await updateLecturerStaff(params.id, {
+	// 			...dosen,
+	// 			is_primary: isPrimary
+	// 		});
+	//
+	// 		if (!success) {
+	// 			return fail(500, { message: 'Gagal memperbarui status tampilan Home' });
+	// 		}
+	//
+	// 		return {
+	// 			success: true,
+	// 			message: isPrimary
+	// 				? 'Dosen berhasil ditandai sebagai data utama di Home'
+	// 				: 'Dosen diubah menjadi data reguler'
+	// 		};
+	// 	}
+};

@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { getAllPedomanTa } from '$lib/server/admin/repository/article/akedemik/pedomanTa';
+import { getAllPedomanTa } from '$lib/repository/admin/article/akedemik/pedomanTa';
 
 export const load: PageServerLoad = async () => {
 	try {

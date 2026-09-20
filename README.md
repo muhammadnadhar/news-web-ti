@@ -55,12 +55,13 @@ npm run dev -- --open
 
 > beberapa fitur yg di tambhakan
 
-- desain Dashboard lebih modren
+- desain Dashboard lebih modern
 - data dari instagram bisa langsung singkrone
 - modal peringatan saat di hapus
 - id di engcripsi
 - admin : ada Flush Message yang menampilkan informasi yang di lakukan
 - admin : scroling sidebar nyangkut dengan sempurnah wkwk
+- admin : kalender bisa di tambhakan berdasarkan tahun ajar
 
 ##### Admin panel
 

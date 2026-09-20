@@ -1,6 +1,7 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
-import { createPedomanTa } from '$lib/server/admin/repository/article/akedemik/pedomanTa';
+import { createPedomanTa } from '$lib/repository/admin/article/akedemik/pedomanTa';
+import { successResponse } from '$lib/helper/message';
 
 export const actions: Actions = {
 	default: async ({ request }) => {
@@ -41,6 +42,7 @@ export const actions: Actions = {
 		}
 
 		// Redirect kembali ke halaman daftar setelah berhasil
-		throw redirect(303, '/admin/akademik/pedoman-ta');
+		// throw redirect(303, '/admin/akademik/pedoman-ta');
+    return successResponse( 'Pedoman TA berhasil disimpan.',"Berhasil");
 	}
 };

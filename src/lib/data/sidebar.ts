@@ -119,7 +119,7 @@ export const sidebarMenu: MenuCategory[] = [
 				iconName: 'Handshake',
 				children: [
 					{ title: 'Mitra Industri', href: AdminUrl + '/article/kerjasama/daftar-kerjasama' },
-					{ title: 'Documentasi Kegiatan', href: AdminUrl + '/article/kerjasama/documentasi' }
+					{ title: 'Documentasi Kegiatan', href: AdminUrl + '/article/kerjasama/dokumentasi' }
 				]
 			},
 			{

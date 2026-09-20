@@ -1,13 +1,8 @@
 import { error, fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import {
-	getAllAngkatan,
-	createAngkatan,
-	updateAngkatan,
-	deleteAngkatan
-} from '$lib/server/admin/repository/dataset/angkatan';
-import type { TableContentType } from '$lib/types/tableContent';
+
 import { errorResponse, successResponse } from '$lib/helper/message';
+import { deleteAngkatan, getAllAngkatan } from '$lib/repository/admin/dataset/angkatan';
 export const load: PageServerLoad = async () => {
 	try {
 		// const rawAngkatanList = await getAllAngkatan();

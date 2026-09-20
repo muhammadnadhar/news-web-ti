@@ -1,14 +1,12 @@
 import { error, fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import {
-	getAllRecruitment,
+import { writeFileSync, mkdirSync, existsSync } from 'fs';
+import { join } from 'path';
+import { getAllRecruitment ,
 	createRecruitment,
 	updateRecruitment,
 	deleteRecruitment
-} from '$lib/server/admin/repository/article/akedemik/ketentuan-komprehensif';
-import type { TableContentType } from '$lib/types/tableContent';
-import { writeFileSync, mkdirSync, existsSync } from 'fs';
-import { join } from 'path';
+} from '$lib/repository/admin/article/akedemik/ketentuan-komprehensif';
 
 export const load: PageServerLoad = async () => {
 	try {

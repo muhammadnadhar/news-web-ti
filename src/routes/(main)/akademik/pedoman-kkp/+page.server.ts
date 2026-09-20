@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { getAllPedomanKkp } from '$lib/server/admin/repository/article/akedemik/pedomanKKP';
+import { getAllPedomanKkp } from '$lib/repository/admin/article/akedemik/pedomanKKP';
 
 export const load: PageServerLoad = async () => {
 	try {

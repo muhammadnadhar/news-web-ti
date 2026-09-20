@@ -1,7 +1,7 @@
 import { error, fail } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
-import { getAngkatanById, updateAngkatan } from '$lib/server/admin/repository/dataset/angkatan';
 import { errorResponse, successResponse } from '$lib/helper/message';
+import { getAngkatanById, updateAngkatan } from '$lib/repository/admin/dataset/angkatan';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const { id } = params;

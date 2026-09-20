@@ -140,7 +140,7 @@
   {/if}
 
 	<!-- content render (sveltekit slot) -->
-	<div class="grow">
+	<div class="grow ">
 		<!-- <slot /> -->
 		{@render children()}
 	</div>
@@ -153,7 +153,7 @@
 			class="bg-scitech-navy/95 fixed inset-0 z-50 flex flex-col justify-between p-8 backdrop-blur-2xl lg:p-16"
 		>
 			<div class="border-scitech-slate flex items-center justify-between border-b pb-6">
-				<span class="text-lg font-bold text-white">Menu Utama</span>
+				<span class="text-lg font-bold text-text-main">Menu Utama</span>
 				<button
 					onclick={toggleDrawer}
 					class="bg-scitech-slate hover:bg-scitech-error rounded-xl p-2 transition-all"

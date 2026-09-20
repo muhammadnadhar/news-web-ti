@@ -1,6 +1,7 @@
 import { fail } from '@sveltejs/kit';
 import type { Actions } from './$types';
-import { createStudentAchievement } from '$lib/server/admin/repository/article/kemahasiswaan/mapres';
+import { createStudentAchievement } from '$lib/repository/admin/article/kemahasiswaan/mapres';
+import { errorResponse, successResponse } from '$lib/helper/message';
 
 export const actions: Actions = {
 	default: async ({ request }) => {
@@ -11,6 +12,7 @@ export const actions: Actions = {
 		const batchYear = formData.get('batch_year')?.toString().trim();
 		const semester = formData.get('semester')?.toString().trim();
 		const achievementName = formData.get('achievement_name')?.toString().trim();
+		const imageUrl = formData.get('image_url')?.toString().trim();
 
 		const values = {
 			studentName,
@@ -27,6 +29,9 @@ export const actions: Actions = {
 				message: 'Harap isi semua bidang form yang wajib (*).',
 				values
 			});
+		}
+		if (!imageUrl || imageUrl.trim().length < 0) {
+			return fail(400, errorResponse('Gambar Wajib ada', 'Gagal'));
 		}
 
 		//  Validasi Jenis Prestasi
@@ -48,14 +53,11 @@ export const actions: Actions = {
 				isAcademic as 'y' | 'n',
 				batchYear,
 				semester,
-				achievementName
+				achievementName,
+				imageUrl
 			);
 
-			return {
-				success: true,
-				title: 'Berhasil',
-				message: 'Data Prestasi Mahasiswa berhasil disimpan!'
-			};
+			return successResponse('Data Prestasi Mahasiswa berhasil disimpan!', 'Success');
 		} catch (err) {
 			console.error('Error creating student achievement:', err);
 			return fail(500, {

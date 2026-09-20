@@ -60,42 +60,4 @@
 	{/if}
 </div>
 
-<style>
-	/* Styling typography tambahan untuk struktur tag HTML di dalam {@html} */
-	:global(.prose h1),
-	:global(.prose h2),
-	:global(.prose h3) {
-		color: #ffffff;
-		font-weight: 700;
-		margin-top: 1.5em;
-		margin-bottom: 0.5em;
-	}
-	:global(.prose h2) {
-		font-size: 1.5rem;
-		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-		padding-bottom: 0.4rem;
-		color: #2dd4bf; /* Mint highlight */
-	}
-	:global(.prose p) {
-		color: #cbd5e1;
-		line-height: 1.75;
-		margin-bottom: 1em;
-	}
-	:global(.prose ul) {
-		list-style-type: disc;
-		padding-left: 1.5rem;
-		margin-top: 0.5rem;
-		margin-bottom: 1rem;
-		color: #cbd5e1;
-	}
-	:global(.prose ol) {
-		list-style-type: decimal;
-		padding-left: 1.5rem;
-		margin-top: 0.5rem;
-		margin-bottom: 1rem;
-		color: #cbd5e1;
-	}
-	:global(.prose li) {
-		margin-bottom: 0.35rem;
-	}
-</style>
+

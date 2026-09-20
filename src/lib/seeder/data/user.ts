@@ -1,6 +1,6 @@
-import type { UserAdminItem } from '$lib/types/admin/user';
+import type { UserAdminDTO } from '$lib/dto/admin/userAdmin';
 
-export let mockAdminUsers: UserAdminItem[] = [
+export let mockAdminUsers: UserAdminDTO[] = [
 	{
 		id: 'usr-001',
 		name: 'Aesha Durratul Nasihah',

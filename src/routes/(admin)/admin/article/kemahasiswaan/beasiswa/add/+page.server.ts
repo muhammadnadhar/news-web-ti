@@ -1,6 +1,6 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
-import { createScholarship } from '$lib/server/admin/repository/article/kemahasiswaan/beasiswa';
+import { createScholarship } from '$lib/repository/admin/article/kemahasiswaan/beasiswa';
 
 export const actions: Actions = {
 	default: async ({ request }) => {
@@ -15,6 +15,14 @@ export const actions: Actions = {
 			return fail(400, {
 				success: false,
 				message: 'Nama Mahasiswa wajib diisi.',
+				values: { studentName, scholarshipName, imageUrl }
+			});
+		}
+
+	if (!imageUrl || imageUrl.trim() === '') {
+			return fail(400, {
+				success: false,
+				message: 'Foto wajib diisi.',
 				values: { studentName, scholarshipName, imageUrl }
 			});
 		}

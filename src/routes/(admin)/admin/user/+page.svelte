@@ -1,4 +1,8 @@
 <script lang="ts">
+	//
+	// Di sini data user menggunaka Tbale Manula bukan Component TableContent
+	//
+
 	import {
 		UserPlus,
 		Search,
@@ -6,15 +10,15 @@
 		Edit3,
 		Trash2,
 		ShieldCheck,
-		UserCheck,
-		X,
-		Check,
-		Sparkles,
 		ChevronLeft,
 		ChevronRight,
 		Users
 	} from 'lucide-svelte';
 	import type { PageData } from './$types';
+	import { gotoEdit, mergeNewPath } from '$lib/utils';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
+	import { Author } from '$lib/constants';
 
 	let { data }: { data: PageData } = $props();
 
@@ -118,7 +122,7 @@
 			</div>
 
 			<button
-				onclick={() => (isAddModalOpen = true)}
+				onclick={() => goto(mergeNewPath('add'))}
 				class="bg-scitech-mint text-scitech-navy hover:bg-scitech-mint-hover shadow-scitech-mint/20 inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-bold shadow-lg transition-all duration-200 active:scale-95 sm:text-sm"
 			>
 				<UserPlus class="h-4 w-4" />
@@ -155,7 +159,7 @@
 			</div>
 		</div>
 
-		<!-- DATA TABLE SECTION -->
+		<!-- data table section -->
 		<div class="bg-scitech-navy/40 overflow-x-auto rounded-2xl border border-white/10 shadow-inner">
 			<table class="w-full border-collapse text-left">
 				<thead>
@@ -231,24 +235,28 @@
 								</td>
 
 								<!-- Column Action Menu -->
-								<td class="p-4">
-									<div class="flex items-center justify-center gap-2">
-										<button
-											title="Edit User"
-											class="bg-scitech-cyan/10 hover:bg-scitech-cyan/20 text-scitech-cyan border-scitech-cyan/30 rounded-lg border p-2 transition-all active:scale-95"
-										>
-											<Edit3 class="h-3.5 w-3.5" />
-										</button>
+								<!-- action tidak berlaku untuk Author  -->
+								{#if user.name !== Author.name && user.email !== Author.email}
+									<td class="p-4">
+										<div class="flex items-center justify-center gap-2">
+											<button
+												title="Edit User"
+												onclick={() => gotoEdit(user.id, page.url.pathname)}
+												class="bg-scitech-cyan/10 hover:bg-scitech-cyan/20 text-scitech-cyan border-scitech-cyan/30 rounded-lg border p-2 transition-all active:scale-95"
+											>
+												<Edit3 class="h-3.5 w-3.5" />
+											</button>
 
-										<button
-											title="Hapus User"
-											onclick={() => (selectedUserForDelete = user.id)}
-											class="rounded-lg border border-red-500/30 bg-red-500/10 p-2 text-red-400 transition-all hover:bg-red-500/20 active:scale-95"
-										>
-											<Trash2 class="h-3.5 w-3.5" />
-										</button>
-									</div>
-								</td>
+											<button
+												title="Hapus User"
+												onclick={() => (selectedUserForDelete = user.id)}
+												class="rounded-lg border border-red-500/30 bg-red-500/10 p-2 text-red-400 transition-all hover:bg-red-500/20 active:scale-95"
+											>
+												<Trash2 class="h-3.5 w-3.5" />
+											</button>
+										</div>
+									</td>
+								{/if}
 							</tr>
 						{/each}
 					{/if}

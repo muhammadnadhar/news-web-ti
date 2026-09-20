@@ -1,7 +1,7 @@
 import { fail, type Actions } from '@sveltejs/kit';
 import { randomUUID } from 'crypto';
 import type { ResponseMessage } from '$lib/types/message';
-import { createJabatanProdi } from '$lib/server/admin/repository/dataset/jabatanProdi';
+import { createJabatanProdi } from '$lib/repository/admin/dataset/jabatanProdi';
 
 export const actions: Actions = {
 	default: async ({ request }) => {

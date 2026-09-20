@@ -1,7 +1,11 @@
 import { error, fail, type Actions } from '@sveltejs/kit';
-import { getJabatanProdiById, updateJabatanProdi } from '$lib/server/db/jabatanProdi';
+
 import type { PageServerLoad } from './$types';
 import type { ResponseMessage } from '$lib/types/message';
+import {
+	getJabatanProdiById,
+	updateJabatanProdi
+} from '$lib/repository/admin/dataset/jabatanProdi';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const { id } = params;

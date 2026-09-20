@@ -1,6 +1,6 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
-import { createSemester } from '$lib/server/admin/repository/dataset/semester';
+import { createSemester } from '$lib/repository/admin/dataset/semester';
 
 export const actions: Actions = {
 	default: async ({ request }) => {

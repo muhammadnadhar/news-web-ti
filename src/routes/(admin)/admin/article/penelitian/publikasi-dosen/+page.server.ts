@@ -1,12 +1,12 @@
 import { error, fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
+import { errorResponse } from '$lib/helper/message';
 import {
+	deleteLecturerPublication,
 	getAllLecturerPublications,
 	createLecturerPublication,
-	updateLecturerPublication,
-	deleteLecturerPublication
-} from '$lib/server/admin/repository/article/penelitian/publikasiDosen';
-import { errorResponse } from '$lib/helper/message';
+	updateLecturerPublication
+} from '$lib/repository/admin/article/penelitian/publikasiDosen';
 
 export const load: PageServerLoad = async () => {
 	try {

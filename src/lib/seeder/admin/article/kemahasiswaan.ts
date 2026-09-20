@@ -1,4 +1,4 @@
-import { query } from '$lib/server/database/runtimeDb'; // di gunakan oleh runntime bawaah
+import { query } from '$lib/database/runtimeDb';
 import { tableAngkatan, tableSemester } from '../dataset';
 export const tableScholarship = 'kemahasiswaan_scholarship';
 export const tableStudentAchievement = 'kemahasiswaan_student_achievement';
@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS ${tableStudentAchievement} (
     is_academic VARCHAR(10) NOT NULL DEFAULT 'y', -- Jenis prestasi Akademik (y/n)
     batch_year VARCHAR(10) NOT NULL, -- Angkatan (contoh: '2020', '2021')
     semester VARCHAR(100) NOT NULL, -- Semester (contoh: 'Semester Genap 2022/2023')
+    image_url VARCHAR(255) NOT NULL,
     achievement_name TEXT NOT NULL, -- Nama Prestasi yang diraih
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Waktu pembuatan data
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP -- Waktu update data
@@ -45,6 +46,7 @@ CREATE TABLE IF NOT EXISTS ${tableHighGpaStudent} (
 			gpa DECIMAL(3, 2) NOT NULL,
 			angkatan_id VARCHAR(36) NOT NULL,
 			semester_id VARCHAR(36) NOT NULL,
+    image_url VARCHAR(255) NOT NULL,
 			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 			FOREIGN KEY (angkatan_id) REFERENCES ${tableAngkatan}(id) ON DELETE CASCADE,

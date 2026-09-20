@@ -1,136 +1,83 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
-	import { Sparkles, Save, Image as ImageIcon, Upload, Trash2 } from 'lucide-svelte';
-	import FormEditor from '$lib/components/admin/formEditor.svelte';
+	import { Loader2, Plus } from 'lucide-svelte';
+	import FormKalenderItem from './_component/formKalenderItem.svelte';
+	import { goto } from '$app/navigation';
+	import { mergeNewPath } from '$lib/utils.js';
 
 	let { data } = $props();
 
-	// State
-	let calendarData = $derived(data.calendar);
-	let descriptionContent = $state(calendarData?.description || '');
-	let titleInput = $state(calendarData?.title || 'Kalender Akademik T.A 2024/2025');
+	// Mengambil array daftar kalender dari server
+	let calendarList = $derived(data.calendars ?? []);
 
-	// Dummy Gambar Sebelumnya (Dapat diganti dengan data dari relasi DB/Array)
-	let existingImages = $state<string[]>([
-		'/images/kalender/page1.jpg',
-		'/images/kalender/page2.jpg',
-		'/images/kalender/page3.jpg',
-		'/images/kalender/page4.jpg',
-		'/images/kalender/page5.jpg',
-		'/images/kalender/page6.jpg',
-		'/images/kalender/page7.jpg'
-	]);
-
-	function removeExistingImage(index: number) {
-		existingImages = existingImages.filter((_, i) => i !== index);
+	function handleDelete(id: string) {
+		if (confirm('Apakah Anda yakin ingin menghapus kalender ini?')) {
+			const form = document.createElement('form');
+			form.method = 'POST';
+			form.action = '?/delete';
+			const input = document.createElement('input');
+			input.type = 'hidden';
+			input.name = 'id';
+			input.value = id;
+			form.appendChild(input);
+			document.body.appendChild(form);
+			form.submit();
+		}
 	}
 </script>
 
 <div class="mx-auto max-w-7xl space-y-8 p-6 lg:p-10">
-	<!-- Page Header -->
-	<div class="border-b border-white/10 pb-6">
-		<span
-			class="text-scitech-mint mb-1 inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase"
-		>
-			<Sparkles class="text-scitech-mint h-4 w-4" /> Artikel Akademik
-		</span>
-		<h1 class="text-2xl font-extrabold tracking-tight text-text-main sm:text-3xl">
-			Kalender Akademik
-		</h1>
-	</div>
-
-	<!-- Main Form Container -->
 	<div
-		class="bg-scitech-slate/60 space-y-6 rounded-3xl border border-white/10 p-6 shadow-2xl backdrop-blur-xl sm:p-8"
+		class="flex flex-col gap-4 border-b border-white/10 pb-6 sm:flex-row sm:items-center sm:justify-between"
 	>
-		<div class="border-b border-white/10 pb-4">
-			<h2 class="text-scitech-mint text-base font-bold">Form Ubah Data Kalender Akademik</h2>
+		<div>
+			<h1 class="text-2xl font-extrabold tracking-tight text-text-main sm:text-3xl">
+				Daftar Kalender Akademik
+			</h1>
 		</div>
 
-		<form method="POST" action="?/save" enctype="multipart/form-data" use:enhance class="space-y-6">
-			<input type="hidden" name="id" value={calendarData?.id || ''} />
+		<!-- Tombol Pindah ke Halaman Tambah Kalender -->
+		<button
+			type="button"
+			onclick={() => goto(mergeNewPath('add'))}
+			class="bg-scitech-mint text-scitech-navy hover:bg-scitech-mint-hover inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-bold shadow-lg transition-all active:scale-95"
+		>
+			<Plus class="h-4 w-4" />
+			<span>Tambah Kalender</span>
+		</button>
+	</div>
 
-			<!-- Title Input -->
-			<div>
-				<label for="title" class="mb-2 block text-xs font-medium text-text-muted"
-					>Judul Kalender*</label
+	<!-- looping form (dengan penanganan promise {#await}) -->
+	<div class="space-y-8">
+		{#await calendarList}
+			<div
+				class="bg-scitech-slate/20 flex flex-col items-center justify-center gap-3 rounded-2xl border border-white/10 p-12 text-center"
+			>
+				<Loader2 class="text-scitech-mint h-8 w-8 animate-spin" />
+				<p class="text-xs text-text-muted">Memuat daftar kalender akademik...</p>
+			</div>
+		{:then rawdata}
+			<!-- normalisasi: ubah single object / array / null menjadi bentuk array yang konsisten -->
+			{@const calendarList = Array.isArray(rawdata) ? rawdata : rawdata ? [rawdata] : []}
+
+			{#if calendarList.length === 0}
+				<div
+					class="bg-scitech-slate/40 rounded-2xl border border-white/10 p-8 text-center text-xs text-text-muted"
 				>
-				<input
-					id="title"
-					name="title"
-					type="text"
-					required
-					bind:value={titleInput}
-					class="bg-scitech-navy/80 focus:border-scitech-mint w-full rounded-xl border border-white/15 px-4 py-2.5 text-xs text-text-main focus:outline-none"
-				/>
-			</div>
-
-			<!-- Rich Text Editor -->
-			<div class="space-y-2">
-				<label for="description" class="block text-xs font-medium text-text-muted"
-					>Description*</label
-				>
-				<FormEditor bind:value={descriptionContent} />
-				<input type="hidden" name="description" value={descriptionContent} />
-			</div>
-
-			<!-- Foto Sebelumnya Grid -->
-			<div class="space-y-3">
-				<span class="block text-xs font-medium text-text-muted">Foto Sebelumnya:</span>
-
-				{#if existingImages.length === 0}
-					<p class="text-xs text-text-muted italic">Belum ada foto yang diunggah.</p>
-				{:else}
-					<div class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-						{#each existingImages as img, idx}
-							<div
-								class="group bg-scitech-navy/50 relative overflow-hidden rounded-xl border border-white/10 p-2 shadow-md"
-							>
-								<img
-									src={img}
-									alt={`Halaman Kalender ${idx + 1}`}
-									class="h-36 w-full rounded-lg object-cover transition-transform duration-300 group-hover:scale-105"
-								/>
-								<button
-									type="button"
-									onclick={() => removeExistingImage(idx)}
-									class="absolute top-3 right-3 rounded-lg bg-rose-500/80 p-1.5 text-text-main opacity-0 transition-opacity group-hover:opacity-100 hover:bg-rose-600"
-									title="Hapus foto"
-								>
-									<Trash2 class="h-4 w-4" />
-								</button>
-							</div>
-						{/each}
-					</div>
-				{/if}
-			</div>
-
-			<!-- Upload Multiple Images -->
-			<div class="space-y-2">
-				<label for="images" class="block text-xs font-medium text-text-muted">
-					Foto* <span class="text-text-muted/60">(bisa lebih dari satu)</span>
-				</label>
-				<div class="flex items-center gap-3">
-					<label
-						for="images"
-						class="bg-scitech-navy hover:bg-scitech-navy/80 inline-flex cursor-pointer items-center gap-2 rounded-xl border border-white/15 px-4 py-2 text-xs font-medium text-text-muted transition-all hover:text-text-main"
-					>
-						<Upload class="h-4 w-4" />
-						<span>Browse...</span>
-					</label>
-					<input id="images" name="images" type="file" multiple accept="image/*" class="hidden" />
+					Belum ada data kalender akademik. Klik tombol
+					<strong class="text-scitech-mint">"Tambah Kalender"</strong> di atas.
 				</div>
+			{:else}
+				{#each calendarList as item (item.id)}
+					<FormKalenderItem calendar={item} onDelete={handleDelete} isBtnActive={true} />
+				{/each}
+			{/if}
+		{:catch error}
+			<!-- state error jika promise reject -->
+			<div
+				class="rounded-2xl border border-rose-500/20 bg-rose-500/10 p-6 text-center text-xs text-rose-400"
+			>
+				Gagal memuat data kalender: {error.message}
 			</div>
-
-			<div class="pt-4">
-				<button
-					type="submit"
-					class="bg-scitech-mint text-scitech-navy hover:bg-scitech-mint-hover inline-flex items-center gap-2 rounded-xl px-6 py-2.5 text-xs font-bold shadow-lg transition-all active:scale-95"
-				>
-					<Save class="h-4 w-4" />
-					<span>Simpan Perubahan</span>
-				</button>
-			</div>
-		</form>
+		{/await}
 	</div>
 </div>

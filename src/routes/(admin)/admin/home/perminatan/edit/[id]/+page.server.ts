@@ -1,8 +1,6 @@
-import {
-	getPerminatanTIById,
-	updatePerminatanTI
-} from '$lib/server/admin/repository/home/tablePermitan';
-import { error, fail, type Actions, type PageServerLoad } from '@sveltejs/kit';
+import { getPerminatanTIById, updatePerminatanTI } from '$lib/repository/admin/home/tablePermitan';
+import { error, fail, type Actions } from '@sveltejs/kit';
+import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const peminatan = await getPerminatanTIById(params.id);

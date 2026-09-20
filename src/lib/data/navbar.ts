@@ -131,7 +131,7 @@ export const navMenuItems: NavMenuItemType[] = [
 			{
 				id: 'dokumentasi-kegiatan',
 				label: 'Dokumentasi Kegiatan',
-				href: '/kerjasama/dokumentasi-kegiatan'
+				href: '/kerjasama/dokumentasi'
 			}
 		]
 	},

@@ -1,6 +1,6 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
-import { createPedomanKkp } from '$lib/server/admin/repository/article/akedemik/pedomanKKP';
+import { createPedomanKkp } from '$lib/repository/admin/article/akedemik/pedomanKKP';
 
 export const actions: Actions = {
 	default: async ({ request }) => {

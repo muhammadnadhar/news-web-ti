@@ -1,13 +1,12 @@
 import { error, fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import {
-	getAllHighGpaStudents,
 	createHighGpaStudent,
-	updateHighGpaStudent,
-	deleteHighGpaStudent
-} from '$lib/server/admin/repository/article/kemahasiswaan/ipkTertinggi';
-
-import type { TableContentType } from '$lib/types/tableContent';
+	deleteHighGpaStudent,
+	getAllHighGpaStudents,
+	updateHighGpaStudent
+} from '$lib/repository/admin/article/kemahasiswaan/ipkTertinggi';
+import { errorResponse } from '$lib/helper/message';
 
 export const load: PageServerLoad = async () => {
 	try {
@@ -55,11 +54,15 @@ export const actions: Actions = {
 		const gpaRaw = formData.get('gpa') as string;
 		const batchYear = formData.get('batch_year') as string;
 		const semester = formData.get('semester') as string;
+		const image_url = formData.get('image_url') as string;
 
 		const gpa = parseFloat(gpaRaw);
 
 		if (!studentName || isNaN(gpa) || !batchYear || !semester) {
 			return fail(400, { message: 'Semua kolom form wajib diisi dengan benar.' });
+		}
+		if (!image_url || image_url.trim().length < 0) {
+			return fail(400, errorResponse('gambar Wajib di Isi', 'Gagal'));
 		}
 
 		if (gpa < 0 || gpa > 4.0) {
@@ -68,9 +71,9 @@ export const actions: Actions = {
 
 		try {
 			if (isEdit) {
-				await updateHighGpaStudent(id, studentName, gpa, batchYear, semester);
+				await updateHighGpaStudent(id, studentName, gpa, batchYear, semester, image_url);
 			} else {
-				await createHighGpaStudent(id, studentName, gpa, batchYear, semester);
+				await createHighGpaStudent(id, studentName, gpa, batchYear, semester, image_url);
 			}
 			return { success: true };
 		} catch (err) {

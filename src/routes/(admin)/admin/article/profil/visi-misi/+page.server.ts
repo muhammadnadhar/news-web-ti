@@ -1,6 +1,7 @@
 import { error, fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { getVisiMisi, upsertVisiMisi } from '$lib/server/admin/repository/article/profile/visiMisi';
+import { getVisiMisi, upsertVisiMisi } from '$lib/repository/admin/article/profile/visiMisi';
+import { errorResponse, successResponse } from '$lib/helper/message';
 
 export const load: PageServerLoad = async () => {
 	try {
@@ -10,8 +11,7 @@ export const load: PageServerLoad = async () => {
 			visiMisi
 		};
 	} catch (err) {
-		console.error('Error loading Visi Misi data:', err);
-		throw error(500, 'Gagal mengambil data Visi Misi dari server');
+		return fail(500, errorResponse('Gagal mengambil data Visi Misi dari server'));
 	}
 };
 
@@ -22,20 +22,24 @@ export const actions: Actions = {
 		const content = formData.get('content') as string;
 
 		if (!content || content.trim() === '') {
-			return fail(400, { missingContent: true, message: 'Isi Visi Misi tidak boleh kosong.' });
+			return fail(
+				400,
+				errorResponse('Isi Visi Misi tidak boleh kosong.', 'Validasi Gagal', {
+					content: ['Isi Visi Misi wajib diisi.']
+				})
+			);
 		}
 
 		try {
 			const success = await upsertVisiMisi(id, { content });
 
 			if (!success) {
-				return fail(500, { message: 'Gagal memperbarui data Visi Misi.' });
+				return fail(500, errorResponse('Gagal memperbarui data Visi Misi.'));
 			}
 
-			return { success: true };
+			return successResponse('Data Visi Misi berhasil disimpan!');
 		} catch (err) {
-			console.error('Error saving Visi Misi:', err);
-			return fail(500, { message: 'Terjadi kesalahan sistem saat menyimpan data.' });
+			return fail(500, errorResponse('Terjadi kesalahan sistem saat menyimpan data.'));
 		}
 	}
 };

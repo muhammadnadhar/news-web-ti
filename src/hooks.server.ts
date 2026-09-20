@@ -1,4 +1,4 @@
-import { sessionAdmin } from '$lib/types/session';
+import { sessionAdmin } from '$lib/constants';
 import { redirect, type Handle } from '@sveltejs/kit';
 
 export const handle: Handle = async ({ event, resolve }) => {

@@ -1,12 +1,11 @@
 import { error, fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import {
-	getAllPartnerships,
 	createPartnership,
-	updatePartnership,
-	deletePartnership
-} from '$lib/server/admin/repository/article/kerjasama/daftar';
-import type { TableContentType } from '$lib/types/tableContent';
+	deletePartnership,
+	getAllPartnerships,
+	updatePartnership
+} from '$lib/repository/admin/article/kerjasama/daftar';
 
 export const load: PageServerLoad = async () => {
 	try {

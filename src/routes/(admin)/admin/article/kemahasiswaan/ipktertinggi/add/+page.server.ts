@@ -1,8 +1,9 @@
 import { fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { createHighGpaStudent } from '$lib/server/admin/repository/article/kemahasiswaan/ipkTertinggi';
-import { getAllAngkatan } from '$lib/server/admin/repository/dataset/angkatan';
-import { getAllSemesters } from '$lib/server/admin/repository/dataset/semester';
+import { getAllAngkatan } from '$lib/repository/admin/dataset/angkatan';
+import { getAllSemesters } from '$lib/repository/admin/dataset/semester';
+import { createHighGpaStudent } from '$lib/repository/admin/article/kemahasiswaan/ipkTertinggi';
+
 
 export const load: PageServerLoad = async () => {
 	try {
