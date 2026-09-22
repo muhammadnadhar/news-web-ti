@@ -3,15 +3,11 @@
 	import {
 		AlertCircleIcon,
 		BookOpenIcon,
-		CheckCircle2Icon,
-		ExternalLinkIcon,
 		FileText,
 		LayoutDashboard,
 		PencilIcon,
 		PlusIcon,
 		UserPlus,
-		UserPlus2,
-		UserPlusIcon,
 		UsersIcon,
 		XCircleIcon
 	} from 'lucide-svelte';
@@ -68,7 +64,7 @@
 			<button
 				type="button"
 				onclick={() => goto(mergeNewPath('profil-dashboard/add'))}
-				class="inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500 px-4 py-2.5 text-sm font-semibold text-slate-950 shadow-lg shadow-amber-500/20 transition-all hover:scale-[1.02] hover:bg-amber-400 active:scale-[0.98]"
+				class="inline-flex items-center justify-center gap-2 rounded-xl bg-bg-secondary px-4 py-2.5 text-sm font-semibold text-slate-950 shadow-lg shadow-amber-500/20 transition-all hover:scale-[1.02] hover:bg-bg-secondary-hover active:scale-[0.98]"
 			>
 				<PlusIcon class="h-4 w-4" />
 				<span>Tambah URL Path</span>

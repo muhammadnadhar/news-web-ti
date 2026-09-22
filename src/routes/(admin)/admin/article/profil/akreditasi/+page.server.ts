@@ -5,6 +5,7 @@ import {
 	upsertAccreditation
 } from '$lib/repository/admin/article/profile/akreditasi';
 import { randomUUID } from '$lib/crypto';
+import { errorResponse, successResponse } from '$lib/helper/message';
 
 export const load: PageServerLoad = async () => {
 	try {
@@ -49,13 +50,18 @@ export const actions: Actions = {
 			});
 
 			if (!success) {
-				return fail(500, { message: 'Gagal memperbarui data akreditasi.' });
+				return fail(500, errorResponse('Gagal memperbarui data akreditasi.', 'Gagal Memperbarui'));
 			}
 
-			return { success: true };
+			// Mengembalikan success response dari helper
+			return successResponse('Data akreditasi berhasil diperbarui.', 'Berhasil');
 		} catch (err) {
 			console.error('Error saving accreditation:', err);
-			return fail(500, { message: 'Terjadi kesalahan sistem saat menyimpan data.' });
+
+			return fail(
+				500,
+				errorResponse('Terjadi kesalahan sistem saat menyimpan data.', 'Kesalahan Sistem')
+			);
 		}
 	}
 };

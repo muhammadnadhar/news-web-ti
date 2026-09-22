@@ -1,11 +1,10 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import Message from '$lib/components/admin/message.svelte';
 	import TableContent from '$lib/components/admin/tableContent.svelte';
 	import TableSkeleton from '$lib/components/tableSkeleton.svelte';
-	import type { LecturerStaffItemDTO } from '$lib/types/admin/article/profile.js';
+	import type { LecturerStaffItemDTO } from '$lib/dto/admin/article/profile.js';
 	import type { MessageStatus, ResponseMessage } from '$lib/types/message.js';
 	import type { TableContentType } from '$lib/types/tableContent.js';
 	import { gotoEdit, mergeNewPath } from '$lib/utils.js';

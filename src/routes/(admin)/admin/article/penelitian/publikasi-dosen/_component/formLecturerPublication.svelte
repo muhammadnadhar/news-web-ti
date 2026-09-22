@@ -14,8 +14,15 @@
 		BookOpen
 	} from 'lucide-svelte';
 
+	interface LecturerItem {
+		id: string;
+		name: string;
+		nidn?: string | null;
+	}
+
 	interface LecturerData {
 		id?: string;
+		lecturer_id?: string;
 		lecturer_name?: string;
 		sinta_link?: string | null;
 		scholar_link?: string | null;
@@ -24,10 +31,12 @@
 	let {
 		form,
 		initialData = null,
+		lecturers = [],
 		isEdit = false
 	}: {
 		form: any;
 		initialData?: LecturerData | null;
+		lecturers?: LecturerItem[];
 		isEdit?: boolean;
 	} = $props();
 
@@ -46,13 +55,12 @@
 </script>
 
 <div class="mx-auto max-w-3xl space-y-6">
-	<!-- Header Navigation -->
 	<div class="flex items-center justify-between border-b border-white/10 pb-4">
 		<div class="flex items-center gap-3">
 			<button
 				type="button"
 				onclick={() => goto(removeLastPath())}
-				class="rounded-xl border border-white/10 p-2.5 text-text-muted transition-all hover:border-white/20 hover:bg-white/10 hover:text-white active:scale-95"
+				class="rounded-xl border border-white/10 p-2.5 text-text-muted transition-all hover:border-white/20 hover:bg-white/10 hover:text-text-main active:scale-95"
 				title="Kembali"
 			>
 				<ArrowLeft class="h-5 w-5" />
@@ -67,7 +75,7 @@
 				<p class="text-xs text-text-muted">
 					{isEdit
 						? 'Perbarui informasi profil dosen dan tautan portal publikasi.'
-						: 'Isi profil dosen beserta tautan portal publikasi SINTA dan Google Scholar.'}
+						: 'Pilih dosen beserta tautan portal publikasi SINTA dan Google Scholar.'}
 				</p>
 			</div>
 		</div>
@@ -124,27 +132,41 @@
 			}}
 			class="space-y-6"
 		>
-			<!-- Field 1: Nama Dosen (Required) -->
 			<div class="space-y-2">
 				<label
-					for="lecturer_name"
+					for="lecturer_id"
 					class="flex items-center gap-2 text-xs font-semibold text-text-main"
 				>
 					<User class="text-scitech-cyan h-4 w-4" />
-					<span>Nama Lengkap Dosen & Gelar</span>
+					<span>Pilih Dosen</span>
 					<span class="text-red-400">*</span>
 				</label>
 
-				<input
-					type="text"
-					id="lecturer_name"
-					name="lecturer_name"
-					value={form?.values?.lecturer_name ?? initialData?.lecturer_name ?? ''}
-					placeholder="Contoh: Aulia Syarif Aziz, S.Kom., M.Sc"
+				<select
+					id="lecturer_id"
+					name="lecturer_id"
 					required
 					disabled={isSubmitting}
 					class="bg-scitech-navy focus:border-scitech-mint focus:ring-scitech-mint/20 w-full rounded-xl border border-white/10 px-4 py-3 text-xs text-text-main placeholder-text-muted transition-all focus:ring-2 focus:outline-none disabled:opacity-50"
-				/>
+				>
+					<option
+						value=""
+						disabled
+						selected={!(form?.values?.lecturer_id ?? initialData?.lecturer_id)}
+					>
+						-- Pilih Dosen --
+					</option>
+
+					{#each lecturers as lecturer (lecturer.id)}
+						<option
+							value={lecturer.id}
+							selected={(form?.values?.lecturer_id ?? initialData?.lecturer_id) === lecturer.id}
+						>
+							{lecturer.name}
+							{lecturer.nidn ? `(NIDN: ${lecturer.nidn})` : ''}
+						</option>
+					{/each}
+				</select>
 			</div>
 
 			<!-- Field 2: SINTA Link (Optional) -->
@@ -193,9 +215,9 @@
 			<div class="flex items-center justify-end gap-3 border-t border-white/10 pt-6">
 				<button
 					type="button"
-					onclick={() => goto(removeLastPath())}
+					onclick={() => history.back()}
 					disabled={isSubmitting}
-					class="rounded-xl border border-white/10 bg-white/5 px-5 py-2.5 text-xs font-semibold text-text-muted transition-all hover:bg-white/10 hover:text-white active:scale-95 disabled:opacity-50"
+					class="rounded-xl border border-white/10 bg-white/5 px-5 py-2.5 text-xs font-semibold text-text-muted transition-all hover:bg-white/10 hover:text-text-main active:scale-95 disabled:opacity-50"
 				>
 					Batal
 				</button>

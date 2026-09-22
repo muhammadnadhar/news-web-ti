@@ -1,15 +1,13 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
-	import { Sparkles, X, Save, Image as ImageIcon } from 'lucide-svelte';
 	import TableContent from '$lib/components/admin/tableContent.svelte';
 	import type { TableContentType } from '$lib/types/tableContent';
 	import { gotoEdit, mergeNewPath } from '$lib/utils.js';
 	import { goto } from '$app/navigation';
 	import TableSkeleton from '$lib/components/tableSkeleton.svelte';
 	import { page } from '$app/state';
-	import type { MessageStatus, ResponseMessage } from '$lib/types/message.js';
 	import Message from '$lib/components/admin/message.svelte';
 	import type { PartnershipDTO } from '$lib/dto/admin/article/kerjasama.js';
+	import type { ResponseMessage } from '$lib/types/message.js';
 
 	let { data } = $props();
 
@@ -40,37 +38,16 @@
 		}));
 	}
 
-	// Modal Handlers
-	function openAddModal() {
-		isEditMode = false;
-		selectedId = '';
-		institutionNameInput = '';
-		logoUrlInput = '';
-		isModalOpen = true;
-	}
+	let messageConfig = $state<ResponseMessage>({
+		status: 'info',
+		title: '',
+		message: ''
+	});
+	let showMessage = $state(false);
 
-	function openEditModal(item: TableContentType) {
-		isEditMode = true;
-		selectedId = item.id;
-
-		const rawData = rawPartnershipList.find((p) => p.id === item.id);
-		if (rawData) {
-			institutionNameInput = rawData.institution_name;
-			logoUrlInput = rawData.logo_url || '';
-		} else {
-			const nameCol = item.items.find((col) => col.colomn === 'Nama');
-			institutionNameInput = nameCol ? String(nameCol.row) : '';
-			logoUrlInput = '';
-		}
-
-		isModalOpen = true;
-	}
-
-	function closeModal() {
-		isModalOpen = false;
-		selectedId = '';
-		institutionNameInput = '';
-		logoUrlInput = '';
+	function triggerMessage(status: MessageStatus, title: string, message: string) {
+		messageConfig = { status, title, message };
+		showMessage = true;
 	}
 </script>
 
@@ -90,11 +67,11 @@
 <div class="mx-auto max-w-7xl space-y-8 p-6 lg:p-10">
 	<!-- Header -->
 	<div class="border-b border-white/10 pb-6">
-		<span
-			class="text-scitech-mint mb-1 inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase"
-		>
-			<Sparkles class="text-scitech-mint h-4 w-4" /> Kerjasama
-		</span>
+		<!-- <span -->
+		<!-- 	class="text-scitech-mint mb-1 inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase" -->
+		<!-- > -->
+		<!-- 	<Sparkles class="text-scitech-mint h-4 w-4" /> Kerjasama -->
+		<!-- </span> -->
 		<h1 class="text-2xl font-extrabold tracking-tight text-white sm:text-3xl">Daftar Kerjasama</h1>
 	</div>
 

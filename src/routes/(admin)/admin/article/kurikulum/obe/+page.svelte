@@ -2,15 +2,14 @@
 	import { enhance } from '$app/forms';
 	import { Sparkles, Send } from 'lucide-svelte';
 	import FormEditor from '$lib/components/admin/formEditor.svelte';
-	import type { ResponseMessage } from '$lib/types/message.js';
+	import type { MessageStatus, ResponseMessage } from '$lib/types/message.js';
 	import Message from '$lib/components/admin/message.svelte';
 
 	let { data } = $props();
 
 	let descriptionContent = $state(data.obeData?.description || '');
 	let isSaving = $state(false);
-
-
+	let isSubmitting = $state(false);
 	let showMessage = $state(false);
 	let messageConfig = $state<ResponseMessage>({
 		status: 'info',
@@ -18,6 +17,20 @@
 		message: ''
 	});
 
+	let formElement = $state<HTMLFormElement | null>(null);
+
+	function handleParentSubmit(editorData: string) {
+		descriptionContent = editorData; // Sinkronisasi ulang (opsional karena sudah bind:value)
+
+		// Trigger pengiriman form parent ke SvelteKit Form Action
+		if (formElement) {
+			formElement.requestSubmit();
+		}
+	}
+	function triggerMessage(status: MessageStatus, title: string, message: string) {
+		messageConfig = { status, title, message };
+		showMessage = true;
+	}
 
 </script>
 
@@ -55,39 +68,39 @@
 		</div>
 
 		<form
+	bind:this={formElement}
 			method="POST"
-			action="?/save"
 			use:enhance={() => {
-				isSaving = true;
-				return async ({ update }) => {
-					await update();
-					isSaving = false;
+				isSubmitting = true;
+				return async ({ result, update }) => {
+					isSubmitting = false;
+
+					if (result.type === 'success') {
+						triggerMessage('success', 'Berhasil', 'Data Visi Misi berhasil disimpan!');
+					} else if (result.type === 'failure') {
+						triggerMessage(
+							'error',
+							'Gagal',
+							(result.data?.message as string) || 'Gagal menyimpan data.'
+						);
+					}
+
+					await update({ reset: false });
 				};
 			}}
+
 			class="space-y-6"
 		>
 			<div class="space-y-2">
-				<label for="description" class="block text-xs font-medium text-white">
-					Isi Description<span class="text-rose-400">*</span>
-				</label>
+			
 				
 				<!-- Component FormEditor -->
-				<FormEditor bind:value={descriptionContent} />
+				<FormEditor label={"isi description Kurikulum Obe"} bind:value={descriptionContent} onSave={handleParentSubmit} />
 				
 				<!-- Hidden Input untuk dikirim via FormData -->
 				<input type="hidden" name="description" value={descriptionContent} />
 			</div>
 
-			<div class="pt-2">
-				<button
-					type="submit"
-					disabled={isSaving}
-					class="bg-scitech-mint text-scitech-navy hover:bg-scitech-mint-hover inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-bold transition-all active:scale-95 disabled:opacity-50"
-				>
-					<Send class="h-4 w-4" />
-					<span>{isSaving ? 'Menyimpan...' : 'Simpan Data'}</span>
-				</button>
-			</div>
 		</form>
 	</div>
 </div>

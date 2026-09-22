@@ -1,13 +1,10 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
 	import TableContent from '$lib/components/admin/tableContent.svelte';
-	import type { OrgStructureItemDTO } from '$lib/types/admin/article/profile.js';
-	import { mergeNewPath } from '$lib/utils.js';
-	import { Plus, Edit, Trash2, Image as ImageIcon } from 'lucide-svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import type { TableContentType } from '$lib/types/tableContent.js';
 	import TableSkeleton from '$lib/components/tableSkeleton.svelte';
+	import type { OrgStructureItemDTO } from '$lib/dto/admin/article/profile.js';
 
 	let { data } = $props();
 
@@ -55,11 +52,7 @@
 		goto(`${page.url.pathname}/edit/${item.id}`);
 	}
 
-	// Handle Delete
-	async function handleDelete(item: TableContentType) {
-		// Panggil API / Form Action untuk menghapus data berdasarkan item.id
-		console.log('Menghapus ID:', item.id);
-	}
+
 </script>
 
 {#await data.orgStructures}
@@ -71,7 +64,20 @@
 		data={mapToTableContent(orgStructures)}
 		onAdd={handleAdd}
 		onEdit={handleEdit}
-		onDelete={handleDelete}
+    
+		deleteAction="?/delete"
+		onDeleteSuccess={(res) =>
+			triggerMessage(
+				res?.status ?? 'success',
+				res?.title ?? 'Berhasil',
+				res?.message ?? 'Data angkatan berhasil dihapus.'
+			)}
+		onDeleteError={(res) =>
+			triggerMessage(
+				res?.status ?? 'error',
+				res?.title ?? 'Gagal',
+				res?.message ?? 'Gagal menghapus data angkatan.'
+			)}
 	/>
 {:catch error}
 	<div class="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-500">

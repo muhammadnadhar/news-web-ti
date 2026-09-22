@@ -8,6 +8,7 @@ import {
 	createHistoryLeader,
 	updateHistoryLeader
 } from '$lib/repository/admin/article/profile/sejarah';
+import { errorResponse, successResponse } from '$lib/helper/message';
 
 export const load: PageServerLoad = async () => {
 	try {
@@ -44,10 +45,17 @@ export const actions: Actions = {
 
 		try {
 			await upsertHistoryContent(id, { title, image_url: imageUrl, description });
-			return { success: true, formType: 'content' };
+			return {
+				...successResponse('Konten Sejarah berhasil diperbarui.', 'Berhasil'),
+				formType: 'content'
+			};
 		} catch (err) {
 			console.error('Error saving history content:', err);
-			return fail(500, { message: 'Gagal memperbarui Konten Sejarah.' });
+
+			return fail(500, {
+				...errorResponse('Gagal memperbarui Konten Sejarah.', 'Kesalahan Sistem'),
+				formType: 'content'
+			});
 		}
 	},
 
@@ -66,10 +74,20 @@ export const actions: Actions = {
 			} else {
 				await createHistoryLeader(id, period);
 			}
-			return { success: true, formType: 'leader' };
+			return {
+				...successResponse(
+					`Periode pimpinan berhasil ${isEdit ? 'diperbarui' : 'disimpan'}.`,
+					'Berhasil'
+				),
+				formType: 'leader'
+			};
 		} catch (err) {
 			console.error('Error saving leader period:', err);
-			return fail(500, { message: 'Gagal menyimpan periode pimpinan.' });
+
+			return fail(500, {
+				...errorResponse('Gagal menyimpan periode pimpinan.', 'Kesalahan Sistem'),
+				formType: 'leader'
+			});
 		}
 	},
 
@@ -78,12 +96,27 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const id = formData.get('id') as string;
 
+		if (!id) {
+			return fail(400, {
+				...errorResponse('ID periode tidak ditemukan.', 'Gagal Menghapus'),
+				formType: 'leader'
+			});
+		}
+
 		try {
 			await deleteHistoryLeader(id);
-			return { success: true, formType: 'leader' };
+
+			// Success Response digabung dengan formType
+			return {
+				...successResponse('Periode pimpinan berhasil dihapus.', 'Berhasil'),
+				formType: 'leader'
+			};
 		} catch (err) {
 			console.error('Error deleting leader period:', err);
-			return fail(500, { message: 'Gagal menghapus periode.' });
+			return fail(500, {
+				...errorResponse('Gagal menghapus periode.', 'Kesalahan Sistem'),
+				formType: 'leader'
+			});
 		}
 	}
 };

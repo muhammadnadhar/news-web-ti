@@ -1,6 +1,8 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { createPedomanKkp } from '$lib/repository/admin/article/akedemik/pedomanKKP';
+import { randomUUID } from '$lib/crypto';
+import { successResponse } from '$lib/helper/message';
 
 export const actions: Actions = {
 	default: async ({ request }) => {
@@ -20,7 +22,7 @@ export const actions: Actions = {
 		}
 
 		// Generate UUID unik untuk Primary Key
-		const id = crypto.randomUUID();
+		const id = randomUUID();
 
 		try {
 			const success = await createPedomanKkp(id, title, imageUrl, description);
@@ -41,6 +43,7 @@ export const actions: Actions = {
 		}
 
 		// Redirect ke halaman daftar Pedoman KKP
-		throw redirect(303, '/admin/akademik/pedoman-kkp');
+		// throw redirect(303, '/admin/akademik/pedoman-kkp');
+		return successResponse(' menambah Pedoman KKP ', 'Berhasil');
 	}
 };

@@ -7,7 +7,9 @@ import {
 	SearchIcon,
 	HandshakeIcon,
 	Building2Icon,
-    UsersIcon
+	UsersIcon,
+	BookOpen,
+	BookOpenIcon
 } from 'lucide-svelte';
 
 // dari halaman utama menggunkan sub pages
@@ -17,7 +19,7 @@ export const navMenuItems: NavMenuItemType[] = [
 		id: 'profil',
 		label: 'Profil',
 		icon: Building2Icon,
-		bgClass: 'bg-scitech-mint-dim text-scitech-mint hover:bg-scitech-mint hover:text-scitech-navy',
+		bgClass: ' bg-text-main text-bg-primary hover:bg-scitech-mint hover:text-scitech-navy',
 		badge: null,
 		subMenu: [
 			{ id: 'sejarah', label: 'Sejarah', href: '/profil/sejarah' },
@@ -27,7 +29,7 @@ export const navMenuItems: NavMenuItemType[] = [
 				label: 'Struktur Organisasi',
 				href: '/profil/struktur-organisasi'
 			},
-			{ id: 'dosen-staf', label: 'Dosen & Staf', href: '/profil/dosen-staf' },
+			{ id: 'dosen-staff', label: 'Dosen & Staf', href: '/profil/dosen-staf' },
 			{ id: 'akreditasi', label: 'Akreditasi', href: '/profil/akreditasi' },
 			{ id: 'kurikulum', label: 'Kurikulum', href: '/profil/kurikulum' }
 		]
@@ -36,7 +38,8 @@ export const navMenuItems: NavMenuItemType[] = [
 		id: 'akademik',
 		label: 'Akademik',
 		icon: GraduationCap,
-		bgClass: 'bg-[#0e3043] text-scitech-cyan hover:bg-scitech-cyan hover:text-scitech-navy',
+		bgClass:
+			' bg-text-main text-bg-primary text-scitech-cyan hover:bg-scitech-cyan hover:text-scitech-navy',
 		badge: null,
 		subMenu: [
 			// { id: 'pedoman-akademik', label: 'Pedoman Akademik', href: '/akademik/pedoman-akademik' },
@@ -63,7 +66,9 @@ export const navMenuItems: NavMenuItemType[] = [
 		id: 'kemahasiswaan',
 		label: 'Kemahasiswaan',
 		icon: UsersIcon,
-		bgClass: 'bg-[#23224d] text-scitech-purple hover:bg-scitech-purple hover:text-scitech-navy',
+
+		bgClass: '  text-bg-main hover:bg-scitech-slate-hover',
+
 		badge: null,
 		subMenu: [
 			{
@@ -85,12 +90,31 @@ export const navMenuItems: NavMenuItemType[] = [
 			{ id: 'hima-ti', label: 'HIMA TI', href: '/kemahasiswaan/hima' }
 		]
 	},
-
+	{
+		id: 'kurikulum',
+		label: 'Kurikulum',
+		icon: BookOpenIcon,
+		bgClass:
+			'bg-text-main text-bg-primary text-scitech-cyan hover:bg-scitech-cyan hover:text-scitech-navy',
+		badge: null,
+		subMenu: [
+			{
+				id: 'matakuliah',
+				label: 'Mata Kuliah',
+				href: '/kurikulum/matakuliah'
+			},
+			{
+				id: 'kurikulum-obe',
+				label: 'Kurikulum OBE',
+				href: '/kurikulum/obe'
+			}
+		]
+	},
 	{
 		id: 'penelitian',
 		label: 'Penelitian',
 		icon: SearchIcon, // Anda bisa mengganti 'Search' atau 'BookOpen' sesuai kebutuhan ikon Anda
-		bgClass: 'bg-scitech-slate hover:bg-scitech-slate-hover text-text-main',
+		bgClass: '  text-bg-main hover:bg-scitech-slate-hover',
 		badge: null,
 		subMenu: [
 			{
@@ -120,7 +144,7 @@ export const navMenuItems: NavMenuItemType[] = [
 		id: 'kerjasama',
 		label: 'Kerjasama',
 		icon: HandshakeIcon, // Anda bisa mengganti 'Handshake' dengan ikon lucide-react yang sesuai
-		bgClass: 'bg-[#23224d] text-scitech-purple hover:bg-scitech-purple hover:text-scitech-navy',
+		bgClass: ' bg-text-main text-bg-primary hover:bg-scitech-purple hover:text-scitech-navy',
 		badge: null,
 		subMenu: [
 			{
@@ -139,8 +163,7 @@ export const navMenuItems: NavMenuItemType[] = [
 		id: 'berita',
 		label: 'Berita',
 		icon: Newspaper,
-		bgClass:
-			'bg-scitech-navy-glare text-scitech-mint hover:bg-scitech-mint hover:text-scitech-navy',
+		bgClass: ' bg-text-main text-bg-primary hover:bg-scitech-mint hover:text-scitech-navy',
 		badge: 2,
 		subMenu: [{ id: 'berita', label: 'Berita', href: '/berita' }]
 	}

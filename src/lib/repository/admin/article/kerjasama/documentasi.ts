@@ -29,15 +29,17 @@ export async function createActivityDocumentation(
 	title: string,
 	imageUrl: string,
 	description: string | null,
-	eventDate: string | null
+	eventDate: string | null,
+	link_drive: string | null
 ): Promise<boolean> {
-	const sql = `INSERT INTO ${tableActivityDocumentation} (id, title, image_url, description, event_date) VALUES (?, ?, ?, ?, ?)`;
+	const sql = `INSERT INTO ${tableActivityDocumentation} (id, title, image_url, description, event_date , link_drive ) VALUES (?, ?, ?, ?, ? , ?)`;
 	const result = (await query(sql, [
 		id,
 		title,
 		imageUrl,
 		description || null,
-		eventDate || null
+		eventDate || null,
+		link_drive
 	])) as any;
 	return result.affectedRows > 0;
 }
@@ -50,14 +52,16 @@ export async function updateActivityDocumentation(
 	title: string,
 	imageUrl: string,
 	description: string | null,
-	eventDate: string | null
+	eventDate: string | null,
+	link_drive: string | null
 ): Promise<boolean> {
-	const sql = `UPDATE ${tableActivityDocumentation} SET title = ?, image_url = ?, description = ?, event_date = ?, updated_at = NOW() WHERE id = ?`;
+	const sql = `UPDATE ${tableActivityDocumentation} SET title = ?, image_url = ?, description = ?, event_date = ?, link_drive = ? , updated_at = NOW() WHERE id = ?`;
 	const result = (await query(sql, [
 		title,
 		imageUrl,
 		description || null,
 		eventDate || null,
+		link_drive,
 		id
 	])) as any;
 	return result.affectedRows > 0;

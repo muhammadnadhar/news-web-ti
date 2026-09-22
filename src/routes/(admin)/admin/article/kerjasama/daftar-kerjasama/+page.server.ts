@@ -6,6 +6,7 @@ import {
 	getAllPartnerships,
 	updatePartnership
 } from '$lib/repository/admin/article/kerjasama/daftar';
+import { errorResponse, successResponse } from '$lib/helper/message';
 
 export const load: PageServerLoad = async () => {
 	try {
@@ -45,7 +46,7 @@ export const actions: Actions = {
 		const logoUrl = formData.get('logo_url') as string;
 
 		if (!institutionName || institutionName.trim() === '') {
-			return fail(400, { message: 'Nama Instansi / Mitra wajib diisi.' });
+			return fail(400, errorResponse('Nama Instansi / Mitra wajib diisi.', 'Validasi Gagal'));
 		}
 
 		try {
@@ -54,10 +55,15 @@ export const actions: Actions = {
 			} else {
 				await createPartnership(id, institutionName, logoUrl);
 			}
-			return { success: true };
+
+			return successResponse(
+				`Data Daftar Kerjasama berhasil ${isEdit ? 'diperbarui' : 'disimpan'}.`,
+				'Berhasil'
+			);
 		} catch (err) {
 			console.error('Error saving partnership:', err);
-			return fail(500, { message: 'Gagal menyimpan data Daftar Kerjasama.' });
+
+			return fail(500, errorResponse('Gagal menyimpan data Daftar Kerjasama.', 'Kesalahan Sistem'));
 		}
 	},
 
@@ -65,14 +71,21 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const id = formData.get('id') as string;
 
-		if (!id) return fail(400, { message: 'ID tidak valid.' });
+		// Validasi ID
+		if (!id) {
+			return fail(400, errorResponse('ID tidak valid.', 'Gagal'));
+		}
 
 		try {
 			await deletePartnership(id);
-			return { success: true };
+
+			//  Success Response
+			return successResponse('Data Daftar Kerjasama berhasil dihapus.', 'Berhasil');
 		} catch (err) {
 			console.error('Error deleting partnership:', err);
-			return fail(500, { message: 'Gagal menghapus data Daftar Kerjasama.' });
+
+			//  Error Response Sistem
+			return fail(500, errorResponse('Gagal menghapus data Daftar Kerjasama.', 'Kesalahan Sistem'));
 		}
 	}
 };

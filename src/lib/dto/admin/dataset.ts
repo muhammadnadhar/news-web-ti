@@ -36,3 +36,41 @@ export type UpdateSemesterInputDTO = {
 	academic_year: string;
 	is_active?: boolean;
 };
+
+
+// nantik akan di gunakna oleh table berita , forengkey ke sini
+export interface NewsCategoryDTO {
+	id: string;
+	name: string;
+	slug?: string | null;
+	created_at?: Date | string;
+	updated_at?: Date | string;
+}
+
+export type CreateNewsCategoryData = {
+	name: string;
+	slug?: string | null;
+};
+
+export type UpdateNewsCategoryData = {
+	name?: string;
+	slug?: string | null;
+};
+
+export interface CreateNewsData {
+	title: string;
+	category_id: string;
+	content: string;
+	image_url?: string | null;
+	published_at?: Date | string;
+}
+
+export interface UpdateNewsData {
+	title?: string;
+	category_id?: string;
+	content?: string;
+	image_url?: string | null;
+	published_at?: Date | string;
+}
+
+

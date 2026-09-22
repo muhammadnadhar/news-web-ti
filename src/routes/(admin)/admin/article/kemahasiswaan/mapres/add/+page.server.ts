@@ -2,6 +2,7 @@ import { fail } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { createStudentAchievement } from '$lib/repository/admin/article/kemahasiswaan/mapres';
 import { errorResponse, successResponse } from '$lib/helper/message';
+import { randomUUID } from '$lib/crypto';
 
 export const actions: Actions = {
 	default: async ({ request }) => {
@@ -21,30 +22,60 @@ export const actions: Actions = {
 			semester,
 			achievementName
 		};
+		if (!studentName || !isAcademic || !batchYear || !semester || !achievementName) {
+			return fail(400, {
+				...errorResponse('Harap isi semua bidang form yang wajib (*).', 'Gagal Menyimpan'),
+				values
+			});
+		}
+
+		// 2. Validasi Keberadaan Gambar
+		if (!imageUrl || imageUrl.trim().length === 0) {
+			// Diperbaiki dari < 0 menjadi === 0 karena panjang string minimal 0
+			return fail(400, {
+				...errorResponse('Gambar Wajib ada', 'Gagal'),
+				values
+			});
+		}
+
+		// 3. Validasi Jenis Prestasi
+		if (isAcademic !== 'y' && isAcademic !== 'n') {
+			return fail(400, {
+				...errorResponse(
+					'Jenis prestasi harus berupa Akademik atau Non-Akademik.',
+					'Validasi Gagal'
+				),
+				values
+			});
+		}
+		const id = randomUUID();
 
 		if (!studentName || !isAcademic || !batchYear || !semester || !achievementName) {
 			return fail(400, {
-				success: false,
-				title: 'Gagal Menyimpan',
-				message: 'Harap isi semua bidang form yang wajib (*).',
+				...errorResponse('Harap isi semua bidang form yang wajib (*).', 'Gagal Menyimpan'),
 				values
 			});
 		}
-		if (!imageUrl || imageUrl.trim().length < 0) {
-			return fail(400, errorResponse('Gambar Wajib ada', 'Gagal'));
+
+		// 2. Validasi Keberadaan Gambar
+		if (!imageUrl || imageUrl.trim().length === 0) {
+			// Diperbaiki dari < 0 menjadi === 0 karena panjang string minimal 0
+			return fail(400, {
+				...errorResponse('Gambar Wajib ada', 'Gagal'),
+				values
+			});
 		}
 
-		//  Validasi Jenis Prestasi
+		// 3. Validasi Jenis Prestasi
 		if (isAcademic !== 'y' && isAcademic !== 'n') {
 			return fail(400, {
-				success: false,
-				title: 'Validasi Gagal',
-				message: 'Jenis prestasi harus berupa Akademik atau Non-Akademik.',
+				...errorResponse(
+					'Jenis prestasi harus berupa Akademik atau Non-Akademik.',
+					'Validasi Gagal'
+				),
 				values
 			});
 		}
-
-		const id = crypto.randomUUID();
 
 		try {
 			await createStudentAchievement(
@@ -60,12 +91,11 @@ export const actions: Actions = {
 			return successResponse('Data Prestasi Mahasiswa berhasil disimpan!', 'Success');
 		} catch (err) {
 			console.error('Error creating student achievement:', err);
-			return fail(500, {
-				success: false,
-				title: 'Kesalahan Sistem',
-				message: 'Gagal menyimpan data Prestasi Mahasiswa ke database.',
-				values
-			});
+
+			return fail(
+				500,
+				errorResponse('Gagal menyimpan data Prestasi Mahasiswa ke database.', 'Kesalahan Sistem')
+			);
 		}
 	}
 };

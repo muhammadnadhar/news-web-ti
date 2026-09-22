@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
 	import { Sparkles, X, Save, CameraIcon, AlertCircle } from 'lucide-svelte';
 	import TableContent from '$lib/components/admin/tableContent.svelte';
 	import type { TableContentType } from '$lib/types/tableContent';
@@ -42,7 +41,7 @@
 							})
 						: '-'
 				},
-				{ colomn: 'Deskripsi', row: item.description || '-' }
+				{ colomn: 'Deskripsi', row: item.description || '-', isHtml: true }
 			]
 		}));
 	}

@@ -18,8 +18,9 @@ export const load: PageServerLoad = async ({ params }) => {
 		};
 	} catch (err: any) {
 		if (err.status === 404) throw err;
-		console.error('Error fetching student publication:', err);
-		throw error(500, 'Gagal mengambil data publikasi mahasiswa.');
+		// console.error('Error fetching student publication:', err);
+		// throw error(500, 'Gagal mengambil data publikasi mahasiswa.');
+		return errorResponse('Gagal mengambil data publikasi mahasiswa.', 'Kesalahan Sistem');
 	}
 };
 

@@ -39,6 +39,7 @@ export const actions: Actions = {
 		const imageUrl = formData.get('image_url')?.toString().trim() || '';
 		const eventDate = formData.get('event_date')?.toString().trim() || null;
 		const description = formData.get('description')?.toString().trim() || null;
+		const linkDrive = formData.get('link_drive')?.toString().trim() || null;
 
 		// Objek nilai untuk dikembalikan jika terjadi kegagalan/validasi
 		const values = {
@@ -75,7 +76,8 @@ export const actions: Actions = {
 				title,
 				imageUrl,
 				description,
-				eventDate
+				eventDate,
+				linkDrive
 			);
 
 			if (!isSuccess) {

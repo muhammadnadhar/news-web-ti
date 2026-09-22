@@ -18,5 +18,9 @@ export default defineConfig({
 			// See https://svelte.dev/docs/kit/adapters for more information about adapters.
 			adapter: adapter()
 		})
-	]
+	],
+	server: {
+		// Mengizinkan semua host (termasuk domain ngrok)
+		allowedHosts: true
+	}
 });

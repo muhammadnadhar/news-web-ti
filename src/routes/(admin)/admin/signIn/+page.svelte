@@ -3,7 +3,7 @@
 	import { Mail, Lock, LogIn, AlertCircle } from 'lucide-svelte';
 	import type { ActionData } from './$types';
 
-	import uinIcon from '$lib/assets/uin-icon.svg'; // Sesuaikan path
+	import uinIcon from '$lib/assets/favicon.svg'; // Sesuaikan path
 	import type { MessageStatus } from '$lib/types/message';
 	import { goto } from '$app/navigation';
 	import Message from '$lib/components/admin/message.svelte';

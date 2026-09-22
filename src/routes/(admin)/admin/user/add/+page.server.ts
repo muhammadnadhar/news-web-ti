@@ -3,7 +3,8 @@ import type { Actions } from './$types';
 import type { UserAdminDTO } from '$lib/dto/admin/userAdmin';
 import { checkUserExists, createUserAdmin } from '$lib/repository/admin/userAdmin';
 import { randomUUID } from '$lib/crypto';
-import { successResponse } from '$lib/helper/message';
+import { errorResponse, successResponse } from '$lib/helper/message';
+import { Argon2id } from 'oslo/password';
 
 export const actions: Actions = {
 	default: async ({ request }) => {
@@ -42,13 +43,23 @@ export const actions: Actions = {
 
 			// const id = crypto.randomUUID();
 			const id = randomUUID();
+			let passHash = '';
+
+			try {
+				passHash = await new Argon2id().hash(password);
+			} catch (err: any) {
+				return fail(
+					429,
+					errorResponse('Terjadi kesalahan sistem saat mengamankan kata sandi', 'Error pasword')
+				);
+			}
 
 			await createUserAdmin({
 				id,
 				name,
 				username,
 				email,
-				password,
+				password: passHash,
 				role,
 				status
 			});

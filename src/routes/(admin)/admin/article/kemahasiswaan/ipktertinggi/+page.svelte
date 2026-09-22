@@ -125,13 +125,12 @@
 {/if}
 
 <div class="mx-auto max-w-7xl space-y-8 p-6 lg:p-10">
-	<!-- Header -->
 	<div class="border-b border-white/10 pb-6">
-		<span
-			class="text-scitech-mint mb-1 inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase"
-		>
-			<Sparkles class="text-scitech-mint h-4 w-4" /> Kemahasiswaan
-		</span>
+		<!-- <span -->
+		<!-- 	class="text-scitech-mint mb-1 inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase" -->
+		<!-- > -->
+		<!-- 	<Sparkles class="text-scitech-mint h-4 w-4" /> Kemahasiswaan -->
+		<!-- </span> -->
 		<h1 class="text-2xl font-extrabold tracking-tight text-text-main sm:text-3xl">
 			Mahasiswa IPK Tertinggi
 		</h1>

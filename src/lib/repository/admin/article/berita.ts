@@ -1,22 +1,21 @@
 import { query } from '$lib/database/svelteDb';
 import type { NewsItemDTO } from '$lib/dto/admin/article/berita';
+import type { CreateNewsData, UpdateNewsData } from '$lib/dto/admin/dataset';
 import { tableNews } from '$lib/seeder/admin/article/berita';
-
-export type CreateNewsData = Omit<NewsItemDTO, 'id' | 'created_at' | 'updated_at'>;
-export type UpdateNewsData = Partial<CreateNewsData>;
+import { tableNewsCategory } from '$lib/seeder/admin/dataset';
 
 /**
- * tambah berita baru (create)
+ * Tambah berita baru (Create)
  */
 export async function createNews(id: string, data: CreateNewsData): Promise<boolean> {
 	const sql = `
-        INSERT INTO ${tableNews} (id, title, category, published_at)
-        VALUES (?, ?, ?, ?)
-    `;
+		INSERT INTO ${tableNews} (id, title, category_id, content, image_url, published_at)
+		VALUES (?, ?, ?, ?, ?, ?)
+	`;
 	const params = [
 		id,
 		data.title,
-		data.category,
+		data.category_id,
 		data.content,
 		data.image_url || null,
 		data.published_at || new Date()
@@ -27,41 +26,81 @@ export async function createNews(id: string, data: CreateNewsData): Promise<bool
 }
 
 /**
- *  mendapatkan semua berita (read all)
- * Diurutkan berdasarkan tanggal terbit terbaru
+ * Mendapatkan semua berita (Read All)
+ * Diurutkan berdasarkan tanggal terbit terbaru beserta nama kategorinya
  */
 export async function getAllNews(): Promise<NewsItemDTO[]> {
-	const sql = `SELECT * FROM ${tableNews} ORDER BY published_at DESC`;
+	const sql = `
+        SELECT 
+            n.id,
+            n.title,
+            n.category_id,
+            n.content,
+            n.image_url,
+            n.published_at,
+            n.created_at,
+            n.updated_at,
+            c.name AS category_name
+        FROM ${tableNews} n
+        LEFT JOIN ${tableNewsCategory} c ON n.category_id = c.id
+        ORDER BY n.published_at DESC
+    `;
 	const rows = (await query(sql)) as NewsItemDTO[];
 	return rows;
 }
 
 /**
- * 3. mendapatkan berita berdasarkan id (read one)
+ *  Mendapatkan berita berdasarkan ID (Read One)
  */
 export async function getNewsById(id: string): Promise<NewsItemDTO | null> {
-	const sql = `SELECT * FROM ${tableNews} WHERE id = ? LIMIT 1`;
+	const sql = `
+		SELECT 
+			n.*,
+			c.name AS category_name
+		FROM ${tableNews} n
+		LEFT JOIN ${tableNewsCategory} c ON n.category_id = c.id
+		WHERE n.id = ? 
+		LIMIT 1
+	`;
 	const rows = (await query(sql, [id])) as NewsItemDTO[];
 	return rows.length > 0 ? rows[0] : null;
 }
 
 /**
- *  mendapatkan berita berdasarkan kategori
+ * 4. Mendapatkan berita berdasarkan ID Kategori
  */
-export async function getNewsByCategory(category: string): Promise<NewsItemDTO[]> {
-	const sql = `SELECT * FROM ${tableNews} WHERE category = ? ORDER BY published_at DESC`;
-	const rows = (await query(sql, [category])) as NewsItemDTO[];
+export async function getNewsByCategoryId(categoryId: string): Promise<NewsItemDTO[]> {
+	const sql = `
+		SELECT 
+			n.*,
+			c.name AS category_name
+		FROM ${tableNews} n
+		LEFT JOIN ${tableNewsCategory} c ON n.category_id = c.id
+		WHERE n.category_id = ? 
+		ORDER BY n.published_at DESC
+	`;
+	const rows = (await query(sql, [categoryId])) as NewsItemDTO[];
 	return rows;
 }
 
 /**
- * Mengambil 10 data berita terbaru berdasarkan tanggal publikasi (published_at)
+ * 5. Mengambil data berita terbaru (termasuk pagination/limit)
  */
 export async function getRecentNews(limit: number = 10): Promise<NewsItemDTO[]> {
 	const sql = `
-		SELECT id, title, category, published_at, created_at, updated_at 
-		FROM ${tableNews} 
-		ORDER BY published_at DESC 
+		SELECT 
+			n.id, 
+			n.title, 
+			n.category_id, 
+			n.content,
+			n.image_url,
+			n.published_at, 
+			n.created_at, 
+			n.updated_at,
+			c.name AS category_name
+		FROM ${tableNews} n
+		LEFT JOIN ${tableNewsCategory} c ON n.category_id = c.id
+		ORDER BY n.published_at DESC 
 		LIMIT ?
 	`;
 	const rows = (await query(sql, [limit])) as NewsItemDTO[];
@@ -69,7 +108,7 @@ export async function getRecentNews(limit: number = 10): Promise<NewsItemDTO[]> 
 }
 
 /**
- * 5. UPDATE BERITA (Update)
+ *  Update berita (Update)
  * Memperbarui data berita secara dinamis berdasarkan kolom yang dikirim
  */
 export async function updateNews(id: string, data: UpdateNewsData): Promise<boolean> {
@@ -78,7 +117,9 @@ export async function updateNews(id: string, data: UpdateNewsData): Promise<bool
 
 	const columnMapping: Record<string, string> = {
 		title: 'title',
-		category: 'category',
+		category_id: 'category_id',
+		content: 'content',
+		image_url: 'image_url',
 		published_at: 'published_at'
 	};
 
@@ -91,7 +132,7 @@ export async function updateNews(id: string, data: UpdateNewsData): Promise<bool
 }
 
 /**
- * 6. HAPUS BERITA (Delete)
+ * 7. Hapus berita (Delete)
  */
 export async function deleteNews(id: string): Promise<boolean> {
 	const sql = `DELETE FROM ${tableNews} WHERE id = ?`;

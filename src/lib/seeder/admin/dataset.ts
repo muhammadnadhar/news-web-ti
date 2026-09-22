@@ -3,6 +3,7 @@ import { query } from '$lib/database/runtimeDb';
 export const tableAngkatan = 'dataset_angkatan';
 export const tableJabatanProdi = 'dataset_positions_prodi';
 export const tableSemester = 'dataset_semester';
+export  const tableNewsCategory = "dataset_news_kategory"
 
 // Fungsi seed untuk tabel Angkatan
 export async function AngkatanTableSeed() {
@@ -41,5 +42,19 @@ CREATE TABLE IF NOT EXISTS ${tableJabatanProdi} (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 `;
+	await query(sql);
+}
+
+// Fungsi seed untuk tabel Kategori Berita
+export async function NewsCategoryTableSeed() {
+	const sql = `
+CREATE TABLE IF NOT EXISTS ${tableNewsCategory} (
+	id VARCHAR(36) PRIMARY KEY, -- Primary key berupa UUID string
+	name VARCHAR(100) NOT NULL UNIQUE, -- Nama Kategori (misal: Berita Mahasiswa, Akreditasi, Webinar)
+	slug VARCHAR(100) NULL, -- URL slug opsional (misal: berita-mahasiswa)
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+	`;
 	await query(sql);
 }

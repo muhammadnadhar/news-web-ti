@@ -2,10 +2,14 @@
 	import { enhance } from '$app/forms';
 	import { CldUploadWidget } from 'svelte-cloudinary';
 	import type { ActionData } from './$types';
-	import { goto } from '$app/navigation';
 	import { ImageIcon } from 'lucide-svelte';
 	import type { MessageStatus } from '$lib/components/admin/message.svelte';
 	import Message from '$lib/components/admin/message.svelte';
+	import {
+		folder_cloudinary_admin_article_kemahasiswaan,
+		getUploadOptions,
+		upload_cloudinary_preset
+	} from '$lib/cloudinary/client';
 
 	let { form }: { form: ActionData } = $props();
 
@@ -140,13 +144,13 @@
 					</div>
 				{:else}
 					<CldUploadWidget
-						uploadPreset="ml_default"
-						options={getUploadOptions()}
+						uploadPreset={upload_cloudinary_preset}
+						options={getUploadOptions(folder_cloudinary_admin_article_kemahasiswaan)}
 						onSuccess={handleUploadSuccess}
 						let:open
 					>
 						<button type="button" class="btn-upload" onclick={() => open()}>
-							<ImageIcon />Unggah Foto Mahasiswa (Cloudinary)
+							<ImageIcon />Unggah Foto Mahasiswa
 						</button>
 					</CldUploadWidget>
 				{/if}

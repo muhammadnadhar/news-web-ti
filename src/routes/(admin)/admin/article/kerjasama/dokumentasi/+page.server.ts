@@ -1,6 +1,6 @@
 import { error, fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { errorResponse, successResponse } from '$lib/helper/message';
+import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
 import {
 	createActivityDocumentation,
 	deleteActivityDocumentation,
@@ -51,12 +51,16 @@ export const actions: Actions = {
 		const description = formData.get('description') as string;
 		const eventDate = formData.get('event_date') as string;
 
+		// Validasi Input Wajib
 		if (!title || title.trim() === '') {
-			return fail(400, { message: 'Judul / Nama kegiatan wajib diisi.' });
+			return fail(400, warningResponse('Judul / Nama kegiatan wajib diisi.', 'Validasi Gagal'));
 		}
 
 		if (!imageUrl || imageUrl.trim() === '') {
-			return fail(400, { message: 'URL / Path foto dokumentasi wajib diisi.' });
+			return fail(
+				400,
+				warningResponse('URL / Path foto dokumentasi wajib diisi.', 'Validasi Gagal')
+			);
 		}
 
 		try {
@@ -65,12 +69,17 @@ export const actions: Actions = {
 			} else {
 				await createActivityDocumentation(id, title, imageUrl, description, eventDate);
 			}
-			return { success: true };
+
+			// Success Response Dinamis (Tambah / Edit)
+			return successResponse(
+				`Data Dokumentasi Kegiatan berhasil ${isEdit ? 'diperbarui' : 'disimpan'}.`,
+				'Berhasil Disimpan'
+			);
 		} catch (err) {
 			console.error('Error saving activity documentation:', err);
 			return fail(
 				500,
-				errorResponse('Gagal menyimpan data Dokumentasi Kegiatan.', 'gagal Menyimpan')
+				errorResponse('Gagal menyimpan data Dokumentasi Kegiatan.', 'Gagal Menyimpan')
 			);
 		}
 	},
@@ -79,33 +88,27 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const id = formData.get('id')?.toString().trim();
 
+		//Validasi ID wajib ada
 		if (!id) {
-			return fail(400, {
-				success: false,
-				message: 'ID dokumentasi wajib disertakan.'
-			});
+			return fail(400, warningResponse('ID dokumentasi wajib disertakan.', 'Gagal'));
 		}
 
 		try {
 			const isSuccess = await deleteActivityDocumentation(id);
 
+			//  Validasi status keberhasilan hapus dari database
 			if (!isSuccess) {
-				return fail(400, {
-					success: false,
-					message: 'Gagal menghapus data atau data tidak ditemukan.'
-				});
+				return fail(400, errorResponse('Gagal menghapus data atau data tidak ditemukan.', 'Gagal'));
 			}
 
-			return {
-				success: true,
-				message: 'Dokumentasi kegiatan berhasil dihapus.'
-			};
+			//  Success Response Hapus
+			return successResponse('Dokumentasi kegiatan berhasil dihapus.', 'Berhasil');
 		} catch (err: any) {
 			console.error('Error saat menghapus dokumentasi:', err);
-			return fail(500, {
-				success: false,
-				message: 'Terjadi kesalahan sistem saat menghapus data.'
-			});
+			return fail(
+				500,
+				errorResponse('Terjadi kesalahan sistem saat menghapus data.', 'Kesalahan Sistem')
+			);
 		}
 	}
 };

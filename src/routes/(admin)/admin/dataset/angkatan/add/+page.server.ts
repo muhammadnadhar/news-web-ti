@@ -1,6 +1,8 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { createAngkatan, getAngkatanByYear } from '$lib/repository/admin/dataset/angkatan';
+import { randomUUID } from '$lib/crypto';
+import { errorResponse, successResponse } from '$lib/helper/message';
 
 export const actions: Actions = {
 	default: async ({ request }) => {
@@ -12,19 +14,19 @@ export const actions: Actions = {
 		// Validasi Input Wajib & Harus Angka
 		if (!yearRaw || isNaN(year)) {
 			return fail(400, {
-				success: false,
-				message: 'Tahun Angkatan wajib diisi dengan angka yang valid.',
+				...errorResponse('Tahun Angkatan wajib diisi dengan angka yang valid.', 'Validasi Gagal'),
 				values: { year: yearRaw }
 			});
 		}
 
-		// Validasi  Batas Logis Tahun (Contoh: 2000 - 2100)
+		//  Validasi Batas Logis Tahun (Contoh: 1990 - 2036)
 		const currentYear = new Date().getFullYear();
 		if (year < 1990 || year > currentYear + 10) {
 			return fail(400, {
-				success: false,
-				title: 'Gagal',
-				message: `Tahun Angkatan harus berada di kisaran antara 1990 dan ${currentYear + 10}.`,
+				...errorResponse(
+					`Tahun Angkatan harus berada di kisaran antara 1990 dan ${currentYear + 10}.`,
+					'Gagal'
+				),
 				values: { year: yearRaw }
 			});
 		}
@@ -46,54 +48,32 @@ export const actions: Actions = {
 		}
 
 		// Generate UUID unik untuk Primary Key
-		const id = crypto.randomUUID();
+		const id = randomUUID();
 
 		try {
 			const success = await createAngkatan(id, year);
 
 			if (!success) {
 				return fail(500, {
-					success: false,
-
-					title: 'Gagal',
-					message: 'Gagal menyimpan data Angkatan ke database.',
+					...errorResponse('Gagal menyimpan data Angkatan ke database.', 'Gagal'),
 					values: { year: yearRaw }
 				});
 			}
 		} catch (error: any) {
+			// Pengecekan entri ganda/duplicate entry database
 			if (error.code === 'ER_DUP_ENTRY' || error.message?.includes('Duplicate entry')) {
 				return fail(400, {
-					success: false,
-
-					title: 'Gagal',
-					message: `Tahun Angkatan ${year} sudah terdaftar.`,
+					...errorResponse(`Tahun Angkatan ${year} sudah terdaftar.`, 'Gagal'),
 					values: { year: yearRaw }
 				});
 			}
-
 			return fail(500, {
-				success: false,
-
-				title: 'Gagal',
-				message: 'Terjadi kesalahan sistem: ' + error.message,
+				...errorResponse('Terjadi kesalahan sistem: ' + error.message, 'Gagal'),
 				values: { year: yearRaw }
 			});
 		}
-
 		// Redirect ke halaman daftar Angkatan
 		// throw redirect(303, '/admin/akademik/angkatan');
-		return {
-			success: true,
-
-			title: 'Berhasil',
-
-			status: 'success' as const,
-			message: `Angkatan ${year} berhasil ditambahkan!`
-			// data: {
-			//     id,
-			//     year,
-			//     createdAt: new Date()
-			// }
-		};
+		return successResponse(`Angkatan ${year} berhasil ditambahkan!`, 'Berhasil');
 	}
 };

@@ -1,6 +1,7 @@
 import { Author } from '$lib/constants';
 import { initializeDatabase, pool } from '$lib/database/runtimeDb';
 import { dbName } from '$lib/database/runtimeDb';
+import { Argon2id } from 'oslo/password';
 import { defaultUserData } from './admin/userAdmin';
 
 try {
@@ -19,7 +20,7 @@ try {
 		role: 'Author',
 		status: 'Active',
 		email: Author.email,
-		password: Author.password,
+		password: await new Argon2id().hash( Author.password),
 		createdAt: Date.now().toString()
 	});
 

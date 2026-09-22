@@ -30,7 +30,7 @@ import {
 	OrganizationalStructureTableSeed,
 	VisiMisiTableSeed
 } from './admin/article/profile';
-import { AngkatanTableSeed, JabatanProdiTableSeed, SemesterTableSeed } from './admin/dataset';
+import { AngkatanTableSeed, JabatanProdiTableSeed, NewsCategoryTableSeed, SemesterTableSeed } from './admin/dataset';
 import {
 	DosenPrimaryTableSeed,
 	PerminatanTITableSeed,
@@ -59,16 +59,17 @@ try {
 	await CalendarImageTableSeed();
 
 	// ARTICLE - profile
+  await LecturerStaffTableSeed();
 	await HistoryContentTableSeed();
-	await HistoryLeadersTableSeed();
+	await HistoryLeadersTableSeed(); // forengkey ke LecturerStaffTableSeed
 	await VisiMisiTableSeed();
 	await OrganizationalStructureTableSeed();
-	await LecturerStaffTableSeed();
 	await AccreditationTableSeed();
 
 	// DATASET
 	await AngkatanTableSeed();
 	await SemesterTableSeed();
+  await NewsCategoryTableSeed(); // forengkey dari table NewsTableSeed 
 
 	// ARTICLE - kemahasiswaan
 	await ScholarshipTableSeed();

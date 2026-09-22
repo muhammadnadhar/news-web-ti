@@ -38,6 +38,11 @@ export const sidebarMenu: MenuCategory[] = [
 				title: 'Jabatan Prodi',
 				iconName: 'Users',
 				href: AdminUrl + '/dataset/jabatan-prodi'
+			},
+		{
+				title: 'Kategori Berita',
+				iconName: 'Users',
+				href: AdminUrl + '/dataset/kategori-berita'
 			}
 		]
 	},
@@ -89,7 +94,7 @@ export const sidebarMenu: MenuCategory[] = [
 				title: 'Kurikulum',
 				iconName: 'BookOpen',
 				children: [
-					{ title: 'Capaian Pembelajaran', href: AdminUrl + '/article/kurikulum/obe' },
+					{ title: 'Kurikulum OBE', href: AdminUrl + '/article/kurikulum/obe' },
 					{ title: 'Daftar Mata Kuliah', href: AdminUrl + '/article/kurikulum/matakuliah' }
 				]
 			},

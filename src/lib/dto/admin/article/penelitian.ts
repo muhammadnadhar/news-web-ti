@@ -1,6 +1,8 @@
 export interface LecturerPublicationDTO {
 	id: string;
-	lecturer_name: string;
+	lecturer_id: string; //  Foreign Key merujuk ke LecturerStaffItemDTO.id
+	lecturer_name?: string; //  Diambil dari hasil JOIN dengan tableLecturerStaff
+	nidn?: string | null; // (Opsional) jika ingin menampilkan NIDN dosen saat dipanggil
 	sinta_link: string | null;
 	scholar_link: string | null;
 	created_at?: Date;
@@ -21,5 +23,3 @@ export interface LecturerResearchDTO {
 	created_at?: Date;
 	updated_at?: Date;
 }
-
-

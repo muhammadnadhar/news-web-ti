@@ -2,6 +2,7 @@ import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { randomUUID } from '$lib/crypto';
 import { createPartnership } from '$lib/repository/admin/article/kerjasama/daftar';
+import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
 
 export const actions: Actions = {
 	default: async ({ request }) => {
@@ -11,12 +12,10 @@ export const actions: Actions = {
 		const logoUrl = formData.get('logo_url')?.toString().trim() || null;
 
 		// Validasi input wajib
+
 		if (!institutionName) {
 			return fail(400, {
-				success: false,
-				title: 'Gagal',
-				status: 'Warning',
-				message: 'Harap isi Nama Instansi / Mitra Kerjasama.',
+				...warningResponse('Harap isi Nama Instansi / Mitra Kerjasama.', 'Gagal'),
 				values: { institutionName, logoUrl }
 			});
 		}
@@ -27,21 +26,14 @@ export const actions: Actions = {
 			await createPartnership(id, institutionName, logoUrl);
 		} catch (err) {
 			console.error('Error creating partnership:', err);
+
 			return fail(500, {
-				success: false,
-				title: 'Gagal',
-				status: 'Error',
-				message: 'Gagal menyimpan data Kerjasama ke database.',
+				...errorResponse('Gagal menyimpan data Kerjasama ke database.', 'Gagal'),
 				values: { institutionName, logoUrl }
 			});
 		}
 
 		// throw redirect(303, '/admin/kerjasama');
-		return {
-			success: true,
-			title: 'Berhasil',
-			status: 'success' as const,
-			message: 'Data Mitra Kerjasama berhasil disimpan!'
-		};
+		return successResponse('Data Mitra Kerjasama berhasil disimpan!', 'Berhasil');
 	}
 };

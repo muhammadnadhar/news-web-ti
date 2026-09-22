@@ -3,9 +3,9 @@ import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {
 	// Mengambil semua daftar berita dari database
-	const newsList = await getAllNews();
+	// const newsList = await getAllNews();
 
 	return {
-		news: newsList
+		news: getAllNews()
 	};
 };

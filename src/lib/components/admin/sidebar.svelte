@@ -59,7 +59,7 @@
 	<button
 		onclick={toggleMobile}
 		aria-label="Toggle Navigation"
-		class="bg-scitech-slate hover:text-scitech-mint rounded-xl border border-white/10 p-2 text-white transition-colors"
+		class="bg-scitech-slate hover:text-scitech-mint rounded-xl border border-white/10 p-2 text-text-main transition-colors"
 	>
 		{#if isMobileOpen}
 			<X class="h-6 w-6" />
@@ -86,9 +86,8 @@
          {isMobileOpen ? 'w-72 translate-x-0' : '-translate-x-full lg:translate-x-0'} 
          {isCollapsed ? 'lg:w-20' : 'lg:w-72'}"
 >
-	<!-- Sidebar Header / Logo -->
 	<div>
-		<div
+		<button
 			class="flex items-center gap-3.5 border-b border-border-color/10 p-5"
 			onclick={() => goto('/')}
 		>
@@ -100,19 +99,17 @@
 
 			{#if !isCollapsed}
 				<div class="overflow-hidden transition-all duration-300">
-					<h1 class="truncate text-sm font-extrabold tracking-wide text-white">TI AR-RANIRY</h1>
+					<h1 class="truncate text-sm font-extrabold tracking-wide text-text-main">TI AR-RANIRY</h1>
 					<p class="text-scitech-mint truncate text-[11px] font-medium tracking-tight">
 						Sistem Informasi
 					</p>
 				</div>
 			{/if}
-		</div>
+		</button>
 
-		<!-- Navigation List -->
 		<nav class="space-y-6 p-3">
 			{#each sidebarMenu as section}
 				<div class="space-y-1.5">
-					<!-- Category Title Header -->
 					{#if !isCollapsed}
 						<h2
 							class="text-scitech-mint/70 mb-2 px-3 text-[10px] font-extrabold tracking-widest uppercase"
@@ -156,7 +153,7 @@
 		before:absolute before:top-1/2 before:-left-3.5 before:h-px before:w-2.5 before:bg-white/20 before:content-['']
 		{isSubActive
 													? 'bg-scitech-mint/10 border-scitech-mint/30 text-scitech-mint border font-bold shadow-sm'
-													: 'text-text-muted hover:bg-white/5 hover:text-white'}"
+													: 'text-text-muted hover:bg-white/5 hover:text-text-main'}"
 											>
 												<span>{sub.title}</span>
 											</button>
@@ -186,7 +183,7 @@
 								class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-semibold transition-all duration-200
                        {isActive
 									? 'bg-scitech-mint/15 text-scitech-mint border-scitech-mint/40 shadow-scitech-mint/5 border shadow-lg'
-									: 'hover:bg-scitech-slate/80 text-text-muted hover:text-white'}"
+									: 'hover:bg-scitech-slate/80 text-text-muted hover:text-text-main'}"
 							>
 								<IconComponent
 									class="h-4 w-4 shrink-0 {isActive ? 'text-scitech-mint' : 'text-scitech-cyan'}"

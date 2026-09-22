@@ -2,12 +2,16 @@ import { fail, error, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 import { getAllAngkatan } from '$lib/repository/admin/dataset/angkatan';
 import { getAllSemesters } from '$lib/repository/admin/dataset/semester';
-import { getHighGpaStudentById } from '$lib/repository/admin/article/kemahasiswaan/ipkTertinggi';
+import {
+	getHighGpaStudentById,
+	updateHighGpaStudent
+} from '$lib/repository/admin/article/kemahasiswaan/ipkTertinggi';
+import { errorResponse, successResponse } from '$lib/helper/message';
 export const load: PageServerLoad = async ({ params }) => {
 	const { id } = params;
 
 	try {
-		// 1. Fetch data referensi dropdown & data mahasiswa berdasarkan ID
+		// Fetch data referensi dropdown & data mahasiswa berdasarkan ID
 		/*
 		const [angkatanList, semesterList, mahasiswa] = await Promise.all([
 			db.angkatan.findMany(),
@@ -37,7 +41,7 @@ export const load: PageServerLoad = async ({ params }) => {
 };
 
 export const actions: Actions = {
-	default: async ({ request, params }) => {
+	update: async ({ request, params }) => {
 		const formData = await request.formData();
 
 		const id = params.id || (formData.get('id') as string);
@@ -49,19 +53,18 @@ export const actions: Actions = {
 
 		const values = { id, studentName, gpa, angkatanId, semesterId, imgUrl };
 
-		// Validation Simple
+		// Validasi Input Wajib
 		if (!studentName || !gpa || !angkatanId || !semesterId) {
 			return fail(400, {
-				title: 'Validasi Gagal',
-				message: 'Mohon isi semua field yang wajib (*).',
+				...errorResponse('Mohon isi semua field yang wajib (*).', 'Validasi Gagal'),
 				values
 			});
 		}
 
+		//  Validasi Rentang Nilai IPK
 		if (isNaN(gpa) || gpa < 0 || gpa > 4.0) {
 			return fail(400, {
-				title: 'Nilai IPK Tidak Valid',
-				message: 'IPK harus bernilai antara 0.00 hingga 4.00.',
+				...errorResponse('IPK harus bernilai antara 0.00 hingga 4.00.', 'Nilai IPK Tidak Valid'),
 				values
 			});
 		}
@@ -80,18 +83,18 @@ export const actions: Actions = {
 				}
 			});
 			*/
-			await updateHighGpaStudent(id, studentName, gpa, angkatanId, semesterId);
+			await updateHighGpaStudent(id, studentName, gpa, angkatanId, semesterId, imgUrl);
 
-			return {
-				success: true,
-				title: 'Berhasil Diperbarui',
-				message: `Data mahasiswa ${studentName} berhasil diperbarui.`
-			};
+			return successResponse(
+				`Data mahasiswa ${studentName} berhasil diperbarui.`,
+				'Berhasil Diperbarui'
+			);
 		} catch (err) {
 			console.error('Error updating data:', err);
+
+			// Menggunakan helper errorResponse dan digabung dengan data values sebelumnya
 			return fail(500, {
-				title: 'Gagal Memproses',
-				message: 'Terjadi kesalahan pada server saat memperbarui data.',
+				...errorResponse('Terjadi kesalahan pada server saat memperbarui data.', 'Gagal Memproses'),
 				values
 			});
 		}

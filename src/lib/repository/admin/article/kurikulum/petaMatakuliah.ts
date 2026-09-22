@@ -40,6 +40,10 @@ export async function updateCourseMap(
 	title: string,
 	imageUrl: string | null
 ): Promise<boolean> {
+	if (!id) {
+		throw new Error('ID Peta Mata Kuliah tidak ditemukan.');
+	}
+
 	let sql: string;
 	let params: any[];
 
@@ -47,7 +51,8 @@ export async function updateCourseMap(
 		sql = `UPDATE ${tableCourseMap} SET title = ?, image_url = ?, updated_at = NOW() WHERE id = ?`;
 		params = [title, imageUrl, id];
 	} else {
-		sql = `UPDATE ${tableCourseMap} SET title = ?, updated_at = NOW() WHERE id = ?`;
+		// Tetap update title, tetapi set image_url menjadi NULL
+		sql = `UPDATE ${tableCourseMap} SET title = ?, image_url = NULL, updated_at = NOW() WHERE id = ?`;
 		params = [title, id];
 	}
 

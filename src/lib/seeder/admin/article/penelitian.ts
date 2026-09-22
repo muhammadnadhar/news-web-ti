@@ -1,4 +1,5 @@
-import { query } from "$lib/database/runtimeDb";
+import { query } from '$lib/database/runtimeDb';
+import { tableLecturerStaff } from './profile';
 export const tableLecturerPublication = 'penelitian_lecturer_publication';
 export const tableStudentPublication = 'penelitian_student_publication';
 export const tableLecturerResearch = 'penelitian_lecturer_research';
@@ -7,18 +8,21 @@ export const tableLecturerResearch = 'penelitian_lecturer_research';
 export async function LecturerPublicationTableSeed() {
 	const sql = `
 CREATE TABLE IF NOT EXISTS ${tableLecturerPublication} (
-    id VARCHAR(36) PRIMARY KEY, -- Primary key berupa UUID string
-    lecturer_name VARCHAR(255) NOT NULL, -- Nama lengkap dosen beserta gelar (contoh: 'Aulia Syarif Aziz, S.Kom., M.Sc')
-    sinta_link VARCHAR(255) NULL, -- URL profil SINTA dosen
-    scholar_link VARCHAR(255) NULL, -- URL profil Google Scholar dosen
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Waktu pembuatan data
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP -- Waktu update data
-);
-  `;
-	await query(sql);
-}
+	id VARCHAR(36) PRIMARY KEY, -- Primary key berupa UUID string
+	lecturer_id VARCHAR(36) NOT NULL, -- Foreign key ke tabel dosen
+	sinta_link VARCHAR(255) NULL, -- URL profil SINTA dosen
+	scholar_link VARCHAR(255) NULL, -- URL profil Google Scholar dosen
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Waktu pembuatan data
+	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- Waktu update data
 
-// Fungsi seed untuk tabel Publikasi Mahasiswa (Data Publikasi Mahasiswa)
+	CONSTRAINT fk_lecturer_publication_staff 
+		FOREIGN KEY (lecturer_id) 
+		REFERENCES ${tableLecturerStaff}(id) 
+		ON DELETE CASCADE
+);
+	`;
+	await query(sql);
+} // Fungsi seed untuk tabel Publikasi Mahasiswa (Data Publikasi Mahasiswa)
 export async function StudentPublicationTableSeed() {
 	const sql = `
 CREATE TABLE IF NOT EXISTS ${tableStudentPublication} (

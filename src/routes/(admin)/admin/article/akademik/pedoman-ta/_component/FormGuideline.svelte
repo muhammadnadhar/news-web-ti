@@ -52,31 +52,29 @@
 	let imageUrl = $state(form?.values?.image_url ?? initialData?.image_url ?? '');
 	let description = $state(form?.values?.description ?? initialData?.description ?? '');
 
-
 	// Hapus foto jika ingin mengganti
 	function removeImage() {
 		imageUrl = '';
 	}
-function handleUploadSuccess(result: any) {
-    if (result?.info?.secure_url) {
-        imageUrl = result.info.secure_url;
-        // Pulihkan scroll body yang terkunci oleh Cloudinary
-        if (typeof document !== 'undefined') {
-            document.body.style.overflow = 'auto';
-        }
-    }
-}
+	function handleUploadSuccess(result: any) {
+		if (result?.info?.secure_url) {
+			imageUrl = result.info.secure_url;
+			// Pulihkan scroll body yang terkunci oleh Cloudinary
+			if (typeof document !== 'undefined') {
+				document.body.style.overflow = 'auto';
+			}
+		}
+	}
 
-function handleUpload(result: any) {
-    if (result?.event === 'success') {
-        imageUrl = result.info.secure_url;
-        // Pulihkan scroll body yang terkunci oleh Cloudinary
-        if (typeof document !== 'undefined') {
-            document.body.style.overflow = 'auto';
-        }
-    }
-}
-
+	function handleUpload(result: any) {
+		if (result?.event === 'success') {
+			imageUrl = result.info.secure_url;
+			// Pulihkan scroll body yang terkunci oleh Cloudinary
+			if (typeof document !== 'undefined') {
+				document.body.style.overflow = 'auto';
+			}
+		}
+	}
 
 	function triggerMessage(status: ResponseMessage['status'], title: string, message: string) {
 		messageConfig = { status, title, message };

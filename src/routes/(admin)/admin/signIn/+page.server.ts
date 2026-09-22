@@ -2,6 +2,9 @@ import { fail, isRedirect, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { findUserByUsernameOrEmail } from '$lib/repository/admin/userAdmin';
 import { sessionAdmin } from '$lib/constants';
+import { Argon2id } from 'oslo/password';
+import { errorResponse, warningResponse } from '$lib/helper/message';
+
 export const actions: Actions = {
 	default: async ({ request, cookies }) => {
 		const data = await request.formData();
@@ -12,27 +15,32 @@ export const actions: Actions = {
 
 		if (!identifier || !password) {
 			return fail(400, {
-				title: 'Validasi Gagal',
-				message: 'Username/Email dan Password wajib diisi.',
+				...warningResponse('Username/Email dan Password wajib diisi.', 'Validasi Gagal'),
 				values
 			});
 		}
 
 		try {
 			const user = await findUserByUsernameOrEmail(identifier);
+			if (!user?.password) {
+				return fail(403, errorResponse('password tidak di temukan', 'Error Password'));
+			}
 
-			if (!user || user.password !== password) {
+			const isPassword = await new Argon2id().verify(user.password, password);
+
+			if (!user || !isPassword) {
 				return fail(401, {
-					title: 'Login Gagal',
-					message: 'Kredensial (Username/Email atau Password) tidak valid.',
+					...errorResponse('Kredensial (Username/Email atau Password) tidak valid.', 'Login Gagal'),
 					values
 				});
 			}
 
 			if (user.status !== 'Active') {
 				return fail(403, {
-					title: 'Akses Ditolak',
-					message: 'Akun Anda sedang dinonaktifkan. Silakan hubungi administrator.',
+					...errorResponse(
+						'Akun Anda sedang dinonaktifkan. Silakan hubungi administrator.',
+						'Akses Ditolak'
+					),
 					values
 				});
 			}

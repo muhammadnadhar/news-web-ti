@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Sidebar from '$lib/components/admin/sidebar.svelte';
-	import { Bell, User } from 'lucide-svelte';
+	import { Bell, CameraIcon, ExternalLinkIcon, GitBranchPlusIcon, User } from 'lucide-svelte';
 	// import { navigating } from '$app/stores'; // depecrate
 	import { navigating } from '$app/state';
 	import { goto } from '$app/navigation';
@@ -70,7 +70,7 @@
 				<!-- Profile Badge -->
 				<button
 					onclick={() => goto(mergeNewPath('profil'))}
-					class="flex items-center gap-3 border-l border-border-color pl-4"
+					class="flex items-center gap-3 border-l border-border-color pl-4 hover:cursor-pointer"
 				>
 					<div class="text-right">
 						<span class="block text-xs font-bold text-text-main">Profile</span>
@@ -98,11 +98,49 @@
 		<main class="flex-1 p-4 sm:p-8">
 			{@render children()}
 		</main>
-		<!-- Footer Copyright -->
+
 		<footer
-			class="bg-scitech-navy/90 border-t border-white/10 px-8 py-4 text-center font-mono text-xs text-text-muted"
+			class="relative z-20 border-t border-border-color bg-bg-secondary/95 px-4 py-6 font-mono text-xs text-text-muted sm:px-8"
 		>
-			<p>© 2026 Prodi Teknologi Informasi UIN Ar-Raniry Banda Aceh. All rights reserved.</p>
+			<div
+				class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 sm:flex-row sm:gap-6"
+			>
+				<!-- Copyright Text -->
+				<div class="text-center sm:text-left">
+					<p class="font-semibold text-text-main">
+						© 2026 <span class="text-scitech-mint">Prodi TI UIN Ar-Raniry</span> Banda Aceh.
+					</p>
+					<p class="mt-0.5 text-[11px] text-text-muted">All rights reserved. FST UIN Ar-Raniry.</p>
+				</div>
+
+				<!-- Links Actions (GitHub Repository & Instagram Designer) -->
+				<div class="flex flex-wrap items-center justify-center gap-3">
+					<a
+						href="https://github.com/muhammadnadhar/news-web-ti"
+						target="_blank"
+						rel="noopener noreferrer"
+						class="hover:bg-scitech-navy hover:text-scitech-mint inline-flex items-center gap-2 border border-border-color bg-bg-primary px-3 py-1.5 text-xs font-bold text-text-main shadow-[3px_3px_0px_0px_rgba(0,0,0,0.4)] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,0.5)] active:scale-95"
+						title="Lihat Repository GitHub Proyek"
+					>
+						<GitBranchPlusIcon class="text-scitech-cyan h-4 w-4" />
+						<span>Source Code</span>
+						<ExternalLinkIcon class="h-3 w-3 opacity-60" />
+					</a>
+
+					<!-- Link Designed By / Instagram -->
+					<a
+						href="https://www.instagram.com/nadhar2005/"
+						target="_blank"
+						rel="noopener noreferrer"
+						class="hover:bg-scitech-navy hover:text-scitech-mint inline-flex items-center gap-1.5 border border-border-color bg-bg-primary px-3 py-1.5 text-xs font-bold text-text-main shadow-[3px_3px_0px_0px_rgba(0,0,0,0.4)] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,0.5)] active:scale-95"
+						title="Kunjungi Instagram Desainer"
+					>
+						<span>Developed by</span>
+						<CameraIcon class="h-4 w-4 text-rose-400" />
+						<span class="text-scitech-mint">@nadhar2005</span>
+					</a>
+				</div>
+			</div>
 		</footer>
 	</div>
 </div>

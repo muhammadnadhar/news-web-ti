@@ -14,6 +14,7 @@ export async function getAllHighGpaStudents(): Promise<HighGpaStudentDTO[]> {
 			h.gpa,
 			h.angkatan_id,
 			h.semester_id,
+h.image_url,
 			h.created_at,
 			h.updated_at,
 			a.year AS batch_year,
@@ -53,6 +54,7 @@ export async function getHighGpaStudentById(id: string): Promise<HighGpaStudentD
 			h.student_name,
 			h.gpa,
 			h.angkatan_id,
+      h.image_url,
 			h.semester_id,
 			h.created_at,
 			h.updated_at,
@@ -103,7 +105,7 @@ export async function updateHighGpaStudent(
 	gpa: number,
 	angkatanId: string,
 	semesterId: string,
-	image_url: string
+	image_url?: string | null
 ): Promise<boolean> {
 	const sql = `
 		UPDATE ${tableHighGpaStudent} 
@@ -121,7 +123,7 @@ export async function updateHighGpaStudent(
 		gpa,
 		angkatanId,
 		semesterId,
-		image_url,
+		image_url || null,
 		id
 	])) as any;
 	return result.affectedRows > 0;

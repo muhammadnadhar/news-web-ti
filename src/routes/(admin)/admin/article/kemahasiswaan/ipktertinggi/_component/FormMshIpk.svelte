@@ -1,6 +1,13 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import {
+		getUploadConfig,
+		folder_cloudinary_admin_article_kemahasiswaan,
+		getUploadOptions,
+		upload_cloudinary_preset
+	} from '$lib/cloudinary/client';
 	import Message, { type MessageStatus } from '$lib/components/admin/message.svelte';
+	import type { HighGpaStudentDTO } from '$lib/dto/admin/article/kemahasiswaan';
 	import {
 		TrendingUp,
 		User,
@@ -9,23 +16,17 @@
 		Save,
 		Loader2,
 		Award,
-		Image as ImageIcon
+		Image as ImageIcon,
+		UploadCloudIcon,
+		X
 	} from 'lucide-svelte';
+	import { CldUploadWidget } from 'svelte-cloudinary';
 
 	interface OptionItem {
 		id: string | number;
 		year?: string | number;
 		name?: string;
 		nama?: string;
-	}
-
-	interface InitialData {
-		id?: string | number;
-		studentName?: string;
-		gpa?: number | string;
-		angkatanId?: string | number;
-		semesterId?: string | number;
-		imgUrl?: string;
 	}
 
 	// Props Svelte 5 Runes
@@ -35,10 +36,10 @@
 		angkatanList = [],
 		semesterList = [],
 		isEdit = false,
-		action = ''
+		action = '?/save'
 	}: {
-		form?: any;
-		initialData?: InitialData | null;
+		form?: HighGpaStudentDTO | null;
+		initialData?: HighGpaStudentDTO | null;
 		angkatanList: OptionItem[];
 		semesterList: OptionItem[];
 		isEdit?: boolean;
@@ -50,7 +51,24 @@
 	let showMessage = $state(false);
 
 	// Default/prefilled value priority: form validation rerun > initialData > empty
-	let imgPreview = $state(form?.values?.imgUrl ?? initialData?.imgUrl ?? '');
+	let imgPreview = $state(form?.image_url ?? initialData?.image_url ?? '');
+
+	function handleUploadSuccess(result: any) {
+		if (result?.info?.secure_url) {
+			imgPreview = result.info.secure_url;
+		}
+	}
+
+	function handleUpload(result: any) {
+		if (result?.event === 'success') {
+			imgPreview = result.info.secure_url;
+		}
+	}
+
+	// Function untuk mengosongkan foto
+	function removePhoto() {
+		imgPreview = '';
+	}
 
 	let messageConfig = $state<{
 		status: MessageStatus;
@@ -160,7 +178,7 @@
 							type="text"
 							id="student_name"
 							name="student_name"
-							value={form?.values?.studentName ?? initialData?.studentName ?? ''}
+							value={form?.student_name ?? initialData?.student_name ?? ''}
 							placeholder="Masukkan nama lengkap mahasiswa..."
 							required
 							disabled={isSubmitting}
@@ -187,7 +205,7 @@
 							step="0.01"
 							min="0.00"
 							max="4.00"
-							value={form?.values?.gpa ?? initialData?.gpa ?? ''}
+							value={form?.gpa ?? initialData?.gpa ?? ''}
 							placeholder="Contoh: 3.95"
 							required
 							disabled={isSubmitting}
@@ -217,7 +235,7 @@
 						>
 							<option value="">-- Pilih Angkatan --</option>
 							{#each angkatanList as angkatan}
-								{@const selectedId = form?.values?.angkatanId ?? initialData?.angkatanId}
+								{@const selectedId = form?.angkatan_id ?? initialData?.angkatan_id}
 								<option value={angkatan.id} selected={String(selectedId) === String(angkatan.id)}>
 									{angkatan.year || angkatan.nama || angkatan.id}
 								</option>
@@ -246,7 +264,7 @@
 						>
 							<option value="">-- Pilih Semester --</option>
 							{#each semesterList as semester}
-								{@const selectedId = form?.values?.semesterId ?? initialData?.semesterId}
+								{@const selectedId = form?.semester_id ?? initialData?.semester_id}
 								<option value={semester.id} selected={String(selectedId) === String(semester.id)}>
 									{semester.name || semester.nama || semester.id}
 								</option>
@@ -255,66 +273,102 @@
 					</div>
 				</div>
 
-				<!-- URL Foto Mahasiswa / img_url -->
+				<!-- URL / Upload Foto Mahasiswa (img_url) -->
 				<div class="space-y-2 md:col-span-2">
-					<label for="img_url" class="block text-sm font-semibold text-slate-700">
-						URL Foto Mahasiswa
+					<label
+						for="img_url"
+						class="block text-sm font-semibold text-slate-700 dark:text-slate-200"
+					>
+						Foto Mahasiswa
 					</label>
-					<div class="relative rounded-lg shadow-sm">
-						<div
-							class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"
-						>
-							<ImageIcon class="h-5 w-5" />
-						</div>
-						<input
-							type="url"
-							id="img_url"
-							name="img_url"
-							bind:value={imgPreview}
-							placeholder="https://example.com/foto-mahasiswa.jpg"
-							disabled={isSubmitting}
-							class="block w-full rounded-lg border border-slate-300 bg-slate-50 py-2.5 pr-4 pl-10 text-sm text-slate-800 transition-all focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-500 disabled:opacity-50"
-						/>
-					</div>
 
-					<!-- Preview Foto Jika URL Diisi -->
+					<input type="hidden" id="img_url" name="img_url" value={imgPreview} />
+
 					{#if imgPreview}
-						<div class="mt-2 flex items-center gap-3 rounded-lg border border-slate-200 p-2">
+						<!-- Preview Foto jika sudah terunggah -->
+						<div
+							class="flex items-center gap-4 rounded-xl border border-slate-200 bg-slate-50 p-3 shadow-sm dark:border-slate-800 dark:bg-slate-800/50"
+						>
 							<img
 								src={imgPreview}
-								alt="Preview Foto"
-								class="h-16 w-16 rounded-md object-cover"
+								alt="Preview Foto Mahasiswa"
+								class="h-20 w-20 rounded-lg object-cover shadow-sm ring-1 ring-slate-200 dark:ring-slate-700"
 								onerror={(e) => ((e.currentTarget as HTMLImageElement).style.display = 'none')}
 							/>
-							<span class="text-xs text-slate-500">Preview foto mahasiswa</span>
+							<div class="flex flex-1 flex-col gap-1">
+								<span class="text-xs font-medium text-slate-500 dark:text-slate-400"
+									>Foto Mahasiswa Terunggah</span
+								>
+								<p class="max-w-xs truncate text-xs text-slate-700 dark:text-slate-300">
+									{imgPreview}
+								</p>
+								<button
+									type="button"
+									onclick={removePhoto}
+									disabled={isSubmitting}
+									class="mt-1 inline-flex w-fit items-center gap-1.5 rounded-lg border border-red-200 bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-600 transition-all hover:bg-red-100 disabled:opacity-50 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-400 dark:hover:bg-red-900/50"
+								>
+									<X class="h-3.5 w-3.5" />
+									<span>Hapus / Ganti Foto</span>
+								</button>
+							</div>
 						</div>
+					{:else}
+						<!-- Widget Cloudinary Upload jika belum ada foto -->
+						<CldUploadWidget
+							config={getUploadConfig()}
+							uploadPreset={upload_cloudinary_preset}
+							options={getUploadOptions(folder_cloudinary_admin_article_kemahasiswaan)}
+							onSuccess={handleUploadSuccess}
+							onUpload={handleUpload}
+							let:open
+						>
+							<button
+								type="button"
+								onclick={() => open()}
+								disabled={isSubmitting}
+								class="group flex w-full flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-slate-50/50 p-6 text-center transition-all hover:border-emerald-500 hover:bg-emerald-50/30 disabled:opacity-50 dark:border-slate-700 dark:bg-slate-800/40 dark:hover:border-emerald-400 dark:hover:bg-slate-800"
+							>
+								<div
+									class="mb-2 rounded-full border border-slate-200 bg-white p-3 text-slate-600 shadow-sm transition-transform group-hover:scale-110 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+								>
+									<UploadCloudIcon class="h-6 w-6 text-emerald-600" />
+								</div>
+								<span class="text-sm font-semibold text-slate-700 dark:text-slate-200">
+									Unggah Foto Mahasiswa
+								</span>
+								<span class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+									Klik untuk memilih foto
+								</span>
+							</button>
+						</CldUploadWidget>
 					{/if}
 				</div>
-			</div>
 
-			<!-- Form Actions -->
-			<div class="flex items-center justify-end gap-3 border-t border-slate-200 pt-4">
-				<button
-					type="button"
-					onclick={() => history.back()}
-					disabled={isSubmitting}
-					class="rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 transition-all hover:bg-slate-50 focus:ring-2 focus:ring-slate-200 focus:outline-none disabled:opacity-50"
-				>
-					Batal
-				</button>
-				<button
-					type="submit"
-					disabled={isSubmitting}
-					class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-6 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:bg-emerald-700 focus:ring-2 focus:ring-emerald-500/50 focus:outline-none disabled:opacity-50"
-				>
-					{#if isSubmitting}
-						<Loader2 class="h-4 w-4 animate-spin" />
-						<span>Menyimpan...</span>
-					{:else}
-						<Save class="h-4 w-4" />
-						<span>{isEdit ? 'Perbarui Data' : 'Simpan Data IPK'}</span>
-					{/if}
-				</button>
+				<!-- Form Actions -->
+				<div class="flex items-center justify-end gap-3 border-t border-slate-200 pt-4">
+					<button
+						type="button"
+						onclick={() => history.back()}
+						disabled={isSubmitting}
+						class="rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 transition-all hover:bg-slate-50 focus:ring-2 focus:ring-slate-200 focus:outline-none disabled:opacity-50"
+					>
+						Batal
+					</button>
+					<button
+						type="submit"
+						disabled={isSubmitting}
+						class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-6 py-2.5 text-sm font-medium text-text-main shadow-sm transition-all hover:bg-emerald-700 focus:ring-2 focus:ring-emerald-500/50 focus:outline-none disabled:opacity-50"
+					>
+						{#if isSubmitting}
+							<Loader2 class="h-4 w-4 animate-spin" />
+							<span>Menyimpan...</span>
+						{:else}
+							<Save class="h-4 w-4" />
+							<span>{isEdit ? 'Perbarui Data' : 'Simpan Data IPK'}</span>
+						{/if}
+					</button>
+				</div>
 			</div>
 		</form>
 	</div>

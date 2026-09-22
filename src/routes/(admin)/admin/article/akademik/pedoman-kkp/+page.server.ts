@@ -4,8 +4,12 @@ import type { TableContentType } from '$lib/types/tableContent';
 import { writeFileSync, mkdirSync, existsSync } from 'fs';
 import { join } from 'path';
 import { getAllPedomanTa } from '$lib/repository/admin/article/akedemik/pedomanTa';
-import { createPedomanKkp, deletePedomanKkp, updatePedomanKkp } from '$lib/repository/admin/article/akedemik/pedomanKKP';
-
+import {
+	createPedomanKkp,
+	deletePedomanKkp,
+	updatePedomanKkp
+} from '$lib/repository/admin/article/akedemik/pedomanKKP';
+import { errorResponse, successResponse } from '$lib/helper/message';
 
 export const load: PageServerLoad = async () => {
 	try {
@@ -75,10 +79,12 @@ export const actions: Actions = {
 			} else {
 				await createPedomanKkp(id, title, imageUrl, description);
 			}
-			return { success: true };
+			// return { success: true };
+			return successResponse('Berhaisil menyimpan Pedoman KKP');
 		} catch (err) {
 			console.error('Error saving pedoman KKP:', err);
-			return fail(500, { message: 'Gagal menyimpan data Pedoman KKP.' });
+			// return fail(500, { message: 'Gagal menyimpan data Pedoman KKP.' });
+			return fail(500, errorResponse('Gagal menyimpan data Pedoman KKP'));
 		}
 	},
 

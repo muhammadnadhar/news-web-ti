@@ -1,5 +1,6 @@
 import { cloudinary } from '$lib/cloudinary/server';
 import { randomUUID } from '$lib/crypto';
+import { errorResponse, successResponse } from '$lib/helper/message';
 import { createLecturerStaff } from '$lib/repository/admin/article/profile/dosen&staff';
 import { fail, redirect, type Actions } from '@sveltejs/kit';
 
@@ -20,10 +21,7 @@ export const actions: Actions = {
 
 		if (!name || !expertise) {
 			return fail(400, {
-				message: {
-					type: 'error',
-					text: 'Harap isi Nama Lengkap dan Bidang Keahlian / Tugas.'
-				},
+				...errorResponse('Harap isi Nama Lengkap dan Bidang Keahlian / Tugas.', 'Validasi Gagal'),
 				values: { name, nidn, expertise, pddiktiUrl, category, photoUrl, publicId }
 			});
 		}
@@ -46,27 +44,24 @@ export const actions: Actions = {
 			if (publicId) {
 				try {
 					await cloudinary.uploader.destroy(publicId);
-					console.log(`Rollback: Berhasil menghapus foto ${publicId} dari Cloudinary`);
+					return successResponse('Berhasil memberhasihkan foto ', 'Rolback');
 				} catch (cleanupErr) {
 					console.error('Gagal melakukan cleanup Cloudinary:', cleanupErr);
 				}
 			}
 
+			// Menggunakan helper errorResponse dan menyertakan values
 			return fail(500, {
-				message: {
-					type: 'error',
-					text: err.message || 'Gagal menyimpan data Dosen/Staff ke database.'
-				},
+				...errorResponse(
+					err.message || 'Gagal menyimpan data Dosen/Staff ke database.',
+					'Kesalahan Sistem'
+				),
 				values: { name, nidn, expertise, pddiktiUrl, category, photoUrl, publicId }
 			});
 		}
 
-		return {
-			message: {
-				type: 'success',
-				text: 'Berhasil menambahkan data Dosen/Staff baru!'
-			}
-		};
+		// Menggunakan helper successResponse untuk hasil sukses
+		return successResponse('Berhasil menambahkan data Dosen/Staff baru!', 'Berhasil');
 	},
 
 	// Action untuk Membatalkan / Menghapus Foto dari Cloudinary

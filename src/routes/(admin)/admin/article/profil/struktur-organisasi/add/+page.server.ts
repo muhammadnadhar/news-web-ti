@@ -1,6 +1,8 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { createOrgStructure } from '$lib/repository/admin/article/profile/structure';
+import { randomUUID } from '$lib/crypto';
+import { errorResponse, successResponse } from '$lib/helper/message';
 
 export const actions: Actions = {
 	default: async ({ request }) => {
@@ -13,34 +15,36 @@ export const actions: Actions = {
 		// Validasi input wajib: Judul
 		if (!title || title.trim() === '') {
 			return fail(400, {
-				success: false,
-				message: 'Judul Struktur Organisasi wajib diisi.',
+				...errorResponse('Judul Struktur Organisasi wajib diisi.', 'Validasi Gagal'),
 				values: { title, imageUrl, description }
 			});
 		}
 
 		// Generate UUID unik untuk Primary Key
-		const id = crypto.randomUUID();
+		const id = randomUUID();
 
 		try {
 			const success = await createOrgStructure(id, { title, image_url: imageUrl, description });
 
 			if (!success) {
 				return fail(500, {
-					success: false,
-					message: 'Gagal menyimpan data Struktur Organisasi ke database.',
+					...errorResponse(
+						'Gagal menyimpan data Struktur Organisasi ke database.',
+						'Gagal Menyimpan'
+					),
 					values: { title, imageUrl, description }
 				});
 			}
 		} catch (error: any) {
 			return fail(500, {
-				success: false,
-				message: 'Terjadi kesalahan sistem: ' + error.message,
+				...errorResponse('Terjadi kesalahan sistem: ' + error.message, 'Kesalahan Sistem'),
 				values: { title, imageUrl, description }
 			});
 		}
 
 		// Redirect ke halaman daftar Struktur Organisasi
-		throw redirect(303, '/admin/profil/struktur-organisasi');
+		// throw redirect(303, '/admin/profil/struktur-organisasi');
+		//
+		return successResponse('Data Struktur Organisasi berhasil disimpan!', 'Berhasil');
 	}
 };

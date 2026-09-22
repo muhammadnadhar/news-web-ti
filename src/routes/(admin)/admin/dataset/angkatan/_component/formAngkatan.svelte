@@ -2,7 +2,6 @@
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import Message from '$lib/components/admin/message.svelte';
-	import { removeLastPath } from '$lib/utils';
 	import type { ResponseMessage } from '$lib/types/message';
 	import { ArrowLeft, Save, Loader2Icon, Calendar } from 'lucide-svelte';
 
@@ -41,15 +40,7 @@
 	<!-- Header & Navigation Bar -->
 	<div class="flex items-center justify-between border-b border-white/10 pb-4">
 		<div class="flex items-center gap-3">
-			<button
-				type="button"
-				onclick={() => goto(removeLastPath())}
-				class="rounded-xl border border-white/10 p-2.5 text-text-muted transition-all hover:border-white/20 hover:bg-white/10 hover:text-white active:scale-95"
-				title="Kembali"
-			>
-				<ArrowLeft class="h-5 w-5" />
-			</button>
-			<div>
+					<div>
 				<h1 class="text-scitech-mint text-lg font-bold tracking-wide sm:text-xl">{title}</h1>
 				<p class="text-xs text-text-muted">
 					Isi formulir di bawah ini untuk mengelola data angkatan.
@@ -70,7 +61,6 @@
 		/>
 	{/if}
 
-	<!-- Card Form Glassmorphism -->
 	<div
 		class="bg-scitech-slate/50 rounded-2xl border border-white/10 p-6 shadow-2xl backdrop-blur-xl sm:p-8"
 	>
@@ -116,7 +106,6 @@
 			}}
 			class="space-y-6"
 		>
-			<!-- Field Input: Tahun Angkatan -->
 			<div class="space-y-2">
 				<label for="year" class="flex items-center gap-2 text-xs font-semibold text-text-main">
 					<Calendar class="text-scitech-cyan h-4 w-4" />
@@ -149,7 +138,7 @@
 			<div class="flex items-center justify-end gap-3 border-t border-white/10 pt-6">
 				<button
 					type="button"
-					onclick={() => goto(removeLastPath())}
+					onclick={() => history.back()}
 					disabled={isSubmitting}
 					class="rounded-xl border border-white/10 bg-white/5 px-5 py-2.5 text-xs font-semibold text-text-muted transition-all hover:bg-white/10 hover:text-white active:scale-95 disabled:opacity-50"
 				>

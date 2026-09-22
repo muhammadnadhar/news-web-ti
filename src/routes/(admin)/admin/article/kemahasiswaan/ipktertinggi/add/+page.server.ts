@@ -3,7 +3,7 @@ import type { Actions, PageServerLoad } from './$types';
 import { getAllAngkatan } from '$lib/repository/admin/dataset/angkatan';
 import { getAllSemesters } from '$lib/repository/admin/dataset/semester';
 import { createHighGpaStudent } from '$lib/repository/admin/article/kemahasiswaan/ipkTertinggi';
-
+import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
 
 export const load: PageServerLoad = async () => {
 	try {
@@ -45,19 +45,18 @@ export const actions: Actions = {
 		// 1. Validasi Input Wajib
 		if (!studentName || !gpaRaw || !angkatanId || !semesterId) {
 			return fail(400, {
-				success: false,
-				title: 'Gagal Menyimpan',
-				message: 'Harap isi semua bidang form yang wajib (*).',
+				...warningResponse('Harap isi semua bidang form yang wajib (*).', 'Gagal Menyimpan'),
 				values
 			});
 		}
 
-		// 2. Validasi Nilai IPK (0.00 - 4.00)
+		//  Validasi Nilai IPK (0.00 - 4.00)
 		if (isNaN(gpa) || gpa < 0 || gpa > 4.0) {
 			return fail(400, {
-				success: false,
-				title: 'Validasi IPK Gagal',
-				message: 'Nilai IPK harus berupa angka rentang 0.00 hingga 4.00.',
+				...warningResponse(
+					'Nilai IPK harus berupa angka rentang 0.00 hingga 4.00.',
+					'Validasi IPK Gagal'
+				),
 				values
 			});
 		}
@@ -67,17 +66,16 @@ export const actions: Actions = {
 		try {
 			await createHighGpaStudent(id, studentName, gpa, angkatanId, semesterId, imgUrl);
 
-			return {
-				success: true,
-				title: 'Berhasil',
-				message: 'Data Mahasiswa IPK Tertinggi berhasil disimpan!'
-			};
+			// Return langsung untuk success response standar SvelteKit
+			return successResponse('Data Mahasiswa IPK Tertinggi berhasil disimpan!', 'Berhasil');
 		} catch (err) {
 			console.error('Error creating high GPA student:', err);
+
 			return fail(500, {
-				success: false,
-				title: 'Kesalahan Sistem',
-				message: 'Gagal menyimpan data Mahasiswa IPK Tertinggi ke database.',
+				...errorResponse(
+					'Gagal menyimpan data Mahasiswa IPK Tertinggi ke database.',
+					'Kesalahan Sistem'
+				),
 				values
 			});
 		}

@@ -1,6 +1,8 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { createActivityDocumentation } from '$lib/repository/admin/article/kerjasama/documentasi';
+import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
+import { randomUUID } from '$lib/crypto';
 
 export const actions: Actions = {
 	default: async ({ request }) => {
@@ -10,14 +12,19 @@ export const actions: Actions = {
 		const imageUrl = formData.get('image_url') as string;
 		const description = (formData.get('description') as string) || null;
 		const eventDate = (formData.get('event_date') as string) || null;
+		const linkDrive = (formData.get('link_drive') as string) || null;
+
+		console.log('=== DATA FORMULIR ===');
+		console.log('Title:', title);
+		console.log('Image URL:', imageUrl);
+		console.log('Description:', description);
+		console.log('Event Date:', eventDate);
+		console.log('Link Drive:', linkDrive);
 
 		// Validasi input wajib: Judul
 		if (!title || title.trim() === '') {
 			return fail(400, {
-				success: false,
-
-				title: 'Gagal',
-				message: 'Judul Kegiatan / Nama Dokumentasi wajib diisi.',
+				...warningResponse('Judul Kegiatan / Nama Dokumentasi wajib diisi.', 'Gagal'),
 				values: { title, imageUrl, description, eventDate }
 			});
 		}
@@ -25,15 +32,12 @@ export const actions: Actions = {
 		// Validasi input wajib: Foto Media (karena kolom DB NOT NULL)
 		if (!imageUrl || imageUrl.trim() === '') {
 			return fail(400, {
-				success: false,
-
-				title: 'Gagal',
-				message: 'Foto / Media Dokumentasi wajib diunggah.',
-				values: { title, imageUrl, description, eventDate }
+				...errorResponse('Foto / Media Dokumentasi wajib diunggah.', 'Gagal'),
+				values: { title, imageUrl, description, eventDate, linkDrive }
 			});
 		}
 
-		const id = crypto.randomUUID();
+		const id = randomUUID();
 
 		try {
 			const success = await createActivityDocumentation(
@@ -41,34 +45,26 @@ export const actions: Actions = {
 				title,
 				imageUrl,
 				description,
-				eventDate
+				eventDate,
+				linkDrive
 			);
 
 			if (!success) {
 				return fail(500, {
-					title: 'Gagal',
-					success: false,
-					message: 'Gagal menyimpan data Dokumentasi Kegiatan ke database.',
+					...errorResponse('Gagal menyimpan data Dokumentasi Kegiatan ke database.', 'Gagal'),
 					values: { title, imageUrl, description, eventDate }
 				});
 			}
 		} catch (error: any) {
 			return fail(500, {
-				success: false,
-
-				title: 'Gagal',
-				message: 'Terjadi kesalahan sistem: ' + error.message,
+				...errorResponse('Terjadi kesalahan sistem: ' + error.message, 'Gagal'),
 				values: { title, imageUrl, description, eventDate }
 			});
 		}
 
 		// Redirect ke halaman daftar Dokumentasi Kegiatan
 		// throw redirect(303, '/admin/kegiatan/dokumentasi');
-		return {
-			success: true,
-			title: 'Berhasil',
-			status: 'success' as const,
-			message: 'Data Mitra Documentasi berhasil disimpan!'
-		};
+
+		return successResponse('Data Mitra Documentasi berhasil disimpan!', 'Berhasil');
 	}
 };

@@ -5,9 +5,11 @@
 
 	import GetStartedCard from './_components/get.started.svelte';
 	import { BuildingIcon, ImageOffIcon, PlayIcon } from 'lucide-svelte';
-	import type { ProfileDashboardDTO } from '$lib/types/admin/home.js';
 	import fstImg from '$lib/assets/fst.webp';
+	import type { ProfileDashboardDTO } from '$lib/dto/admin/home.js';
 	let { data } = $props();
+
+	$inspect(data);
 
 	// const images = [fstImg, uinFrontImg];
 	// let captions = $state([
@@ -31,8 +33,8 @@
 	let currentItem = $derived(profileItems[currentIndex]);
 	let currentImage = $derived(currentItem?.image_path ?? '');
 
-	// sementara aja
-	let videoUrl = 'https://www.youtube.com/watch?v=YOUR_VIDEO_ID';
+	// sementara aja | manual
+	let videoUrl = 'https://drive.google.com/file/d/1T2lsUdBBipXG_MS2Npwcu1rVlDqNWjxn/view?t=0.019';
 
 	$effect(() => {
 		data.profileImgDashboard.then((items) => {

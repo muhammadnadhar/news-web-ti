@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { type NavMenuItemType, type SubMenuItem } from '$lib/types/navbar';
+	import { type SubMenuItem } from '$lib/types/navbar';
 	import { ChevronDown, ChevronRight, Layers } from 'lucide-svelte';
 	import { slide } from 'svelte/transition';
 

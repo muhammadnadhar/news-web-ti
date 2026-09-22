@@ -8,6 +8,10 @@ News TI ( UIN Ar-Raniry )
 
 <br>
 
+#### Current note
+
+- tiru halaman admin/artcel/kurikulum/matakuliah untuk delete image
+
 ### Stack
 
 <p align="center">
@@ -29,7 +33,7 @@ News TI ( UIN Ar-Raniry )
 - `tsx` : typescrip yang akan di gunakan di
 - `bun` : runtime yang di gunakan di projek ini
 - `svelte-cloudinary` : koneksi ke cloudinary untuk menyimpan file gambar
-
+= `olso` : for password auth
 <br>
 
 ### Start
@@ -62,6 +66,7 @@ npm run dev -- --open
 - admin : ada Flush Message yang menampilkan informasi yang di lakukan
 - admin : scroling sidebar nyangkut dengan sempurnah wkwk
 - admin : kalender bisa di tambhakan berdasarkan tahun ajar
+- admin : dataset baru utnuk berita yang bisa menambah kategory berita untuk di gunakan memilih berita
 
 ##### Admin panel
 

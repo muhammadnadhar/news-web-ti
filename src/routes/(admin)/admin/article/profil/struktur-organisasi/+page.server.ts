@@ -6,6 +6,7 @@ import {
 	createOrgStructure,
 	updateOrgStructure
 } from '$lib/repository/admin/article/profile/structure';
+import { errorResponse, successResponse } from '$lib/helper/message';
 export const load: PageServerLoad = async () => {
 	try {
 		// const orgStructures = await getAllOrgStructures();
@@ -54,14 +55,18 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const id = formData.get('id') as string;
 
-		if (!id) return fail(400, { message: 'ID tidak valid.' });
+		if (!id) {
+			return fail(400, errorResponse('ID tidak valid.', 'Gagal'));
+		}
 
 		try {
 			await deleteOrgStructure(id);
-			return { success: true };
+			return successResponse('Data Struktur Organisasi berhasil dihapus.', 'Berhasil');
 		} catch (err) {
 			console.error('Error deleting organizational structure:', err);
-			return fail(500, { message: 'Gagal menghapus data.' });
+
+			// Error Response Sistem
+			return fail(500, errorResponse('Gagal menghapus data.', 'Kesalahan Sistem'));
 		}
 	}
 };

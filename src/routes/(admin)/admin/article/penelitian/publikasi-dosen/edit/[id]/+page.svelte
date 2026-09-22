@@ -9,4 +9,9 @@
 	<title>Edit Publikasi Dosen | Admin SciTech</title>
 </svelte:head>
 
-<FormLecturerPublication initialData={data.lecturerPublication} isEdit={true} {form} />
+<FormLecturerPublication
+	lecturers={data.lecturers}
+	initialData={data.lecturerPublication}
+	isEdit={true}
+	{form}
+/>

@@ -12,7 +12,10 @@ import {
  */
 export function getUploadOptions(folder: string = 'default') {
 	return {
-		folder: folder
+		folder: folder,
+
+		multiple: false,
+		singleUploadAutoSubmit: false // 👈 Menahan gambar agar tidak langsung upload
 	};
 }
 
@@ -39,6 +42,7 @@ export const folder_cloudinary_admin_article_berita = 'admin/article/berita';
 export const folder_cloudinary_admin_article_kerjasama = 'admin/article/kerjasama';
 export const folder_cloudinary_admin_article_kurikulum = 'admin/article/kurikulum';
 export const folder_cloudinary_admin_article_penelitian = 'admin/article/penelitan';
+export const folder_cloudinary_admin_article_kemahasiswaan = 'admin/article/kemahasiswana';
 export const folder_cloudinary_admin_article_profil = 'admin/article/profil';
 
 export const folder_cloudinary_admin_dataset_angkatan = 'admin/dataset/angkatan';

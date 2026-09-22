@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
-	import { Sparkles, X, Upload, Save } from 'lucide-svelte';
 	import TableContent from '$lib/components/admin/tableContent.svelte';
 	import type { TableContentType } from '$lib/types/tableContent';
 	import TableSkeleton from '$lib/components/tableSkeleton.svelte';
@@ -10,6 +8,7 @@
 	import type { KetentuanKompreDTO } from '$lib/dto/admin/article/akademik.js';
 	import type { MessageStatus, ResponseMessage } from '$lib/types/message.js';
 	import Message from '$lib/components/admin/message.svelte';
+	import { classTopSpace } from '$lib/constants.js';
 
 	let { data } = $props();
 
@@ -25,8 +24,6 @@
 		messageConfig = { status, title, message };
 		showMessage = true;
 	}
-
-
 
 	/**
 	 * Mengubah list KetentuanKompreDTO menjadi format TableContentType
@@ -67,25 +64,22 @@
 			]
 		}));
 	}
-
 </script>
 
-	{#if showMessage}
-		<div class="mb-6">
-			<Message
-				status={messageConfig.status}
-				title={messageConfig.title}
-				message={messageConfig.message}
-				dismissible={true}
-				timeout={5000}
-				onclose={() => (showMessage = false)}
-			/>
-		</div>
-	{/if}
+{#if showMessage}
+	<div class="mb-6">
+		<Message
+			status={messageConfig.status}
+			title={messageConfig.title}
+			message={messageConfig.message}
+			dismissible={true}
+			timeout={5000}
+			onclose={() => (showMessage = false)}
+		/>
+	</div>
+{/if}
 
-
-
-<div class="mx-auto max-w-7xl space-y-8 p-6 lg:p-10">
+<div class={`mx-auto max-w-7xl space-y-8 p-6 lg:p-10 ${classTopSpace}`}>
 	<!-- Header -->
 	<div class="border-b border-white/10 pb-6">
 		<!-- <span -->
@@ -106,7 +100,7 @@
 			data={mapKetentuanKompreToTableContent(rawList)}
 			onAdd={() => goto(mergeNewPath('add'))}
 			onEdit={(data) => gotoEdit(data.id, page.url.pathname)}
-				onDeleteSuccess={(res) =>
+			onDeleteSuccess={(res) =>
 				triggerMessage(
 					res?.status ?? 'success',
 					res?.title ?? 'Berhasil',

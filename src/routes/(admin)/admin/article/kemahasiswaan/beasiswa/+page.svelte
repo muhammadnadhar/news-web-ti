@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
-	import { Sparkles, X, Save } from 'lucide-svelte';
 	import TableContent from '$lib/components/admin/tableContent.svelte';
 	import type { TableContentType } from '$lib/types/tableContent';
 
@@ -155,7 +153,7 @@
 	{/await}
 </div>
 
-<!-- <!-- Modal Form CRUD Beasiswa --> -->
+<!-- <!-- Modal Form CRUD Beasiswa -->
 <!-- {#if isModalOpen} -->
 <!-- 	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"> -->
 <!-- 		<div -->
@@ -185,7 +183,7 @@
 <!-- 				<input type="hidden" name="id" value={selectedId} /> -->
 <!-- 				<input type="hidden" name="is_edit" value={isEditMode ? 'true' : 'false'} /> -->
 <!---->
-<!-- 				<!-- Nama Mahasiswa --> -->
+<!-- 				<!-- Nama Mahasiswa -->
 <!-- 				<div> -->
 <!-- 					<label for="student_name" class="text-text-muted mb-1 block text-xs font-medium"> -->
 <!-- 						Nama Mahasiswa<span class="text-rose-400">*</span> -->

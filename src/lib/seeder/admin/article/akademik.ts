@@ -96,7 +96,7 @@ export async function CalendarImageTableSeed() {
 CREATE TABLE IF NOT EXISTS ${tableKalenderAkademikImage} (
     id VARCHAR(36) PRIMARY KEY,                             -- UUID String
     calendar_id VARCHAR(36) NOT NULL,                       -- Foreign Key ke tabel Kalender
-    image_url TEXT NOT NULL,                                -- Path / URL Gambar
+    image_url VARCHAR(255) NULL,                                -- Path / URL Gambar
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,         -- (Opsional) Mengetahui waktu upload
     
     -- Relasi Foreign Key

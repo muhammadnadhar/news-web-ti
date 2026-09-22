@@ -1,48 +1,71 @@
-// src/routes/admin/berita/tambah/+page.server.ts
-import { fail, redirect } from '@sveltejs/kit';
+import { fail } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { randomUUID } from '$lib/crypto';
 import { createNews } from '$lib/repository/admin/article/berita';
+import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
+import { getAllNewsCategories } from '$lib/repository/admin/dataset/beritaKategory';
+import type { PageServerLoad } from '../$types';
+
+export const load: PageServerLoad = async () => {
+	// Ambil semua daftar kategori berita dari database
+	const categories = await getAllNewsCategories();
+
+	return {
+		categories
+	};
+};
 
 export const actions: Actions = {
-	default: async ({ request }) => {
+	create: async ({ request }) => {
 		const formData = await request.formData();
 
-		const title = formData.get('title')?.toString().trim();
-		const category = formData.get('category')?.toString().trim();
-		const content = formData.get('content')?.toString().trim();
-		// Mengambil URL Cloudinary dari hidden input name="imageUrl"
+		const title = formData.get('title')?.toString().trim() || '';
+		const category = formData.get('category')?.toString().trim() || '';
+		const content = formData.get('content')?.toString().trim() || '';
 		const imageUrl = formData.get('imageUrl')?.toString().trim() || null;
+
+    console.info("data  : ",title,category,content,imageUrl)
 
 		if (!title || !category || !content) {
 			return fail(400, {
-				error: 'Harap isi semua kolom yang wajib (*).',
+				...warningResponse('Harap isi semua kolom yang wajib (*).', 'warning'),
 				values: { title, category, content, imageUrl }
 			});
 		}
+    console.info("data masuk : ",title)
 
 		const newsId = randomUUID();
 
 		try {
-			await createNews(newsId, {
+			// Memanggil method createNews sesuai struktur CreateNewsData
+			const isCreated = await createNews(newsId, {
 				title,
-				category,
+				category_id: category, // Disesuaikan dengan parameter SQL: category_id
 				content,
 				image_url: imageUrl,
 				published_at: new Date()
 			});
+
+			if (!isCreated) {
+				return fail(500, {
+					...warningResponse('Gagal menyimpan berita.', 'warning'),
+					values: { title, category, content, imageUrl }
+				});
+			}
 		} catch (err) {
 			console.error('Error creating news:', err);
 			return fail(500, {
-				error: 'Gagal menyimpan data berita ke.',
+				...warningResponse('Terjadi kesalahan server saat menyimpan berita.', 'warning'),
 				values: { title, category, content, imageUrl }
 			});
 		}
 
+		// Jika ingin redirect ke halaman daftar berita setelah berhasil:
 		// throw redirect(303, '/admin/berita');
+
+		// Jika ingin tetap di halaman dan menampilkan notifikasi sukses:
 		return {
-			error: 'Gagal m',
-			values: { title, category, content, imageUrl }
+			...successResponse('Berhasil membuat Berita', 'Success')
 		};
 	}
 };

@@ -10,8 +10,7 @@
 	import type { SubMenuItem } from '$lib/types/navbar';
 	import { navMenuItems } from '$lib/data/navbar';
 
-
-	import uinIcon from '$lib/assets/uin-icon.svg'; // Sesuaikan path
+	import uinIcon from '$lib/assets/favicon.svg'; // Sesuaikan path
 	import GlobalSkeletonUser from '$lib/components/globalSkeletonUser.svelte';
 	import { navigating } from '$app/state';
 	interface Props {
@@ -27,45 +26,45 @@
 
 	let isDrawerOpen = $state(false);
 
- let showLoading = $state(false);
-  let    timer: ReturnType<typeof setTimeout> | null = null;;
-  const DELAY_MS = 300;
+	let showLoading = $state(false);
+	let timer: ReturnType<typeof setTimeout> | null = null;
+	const DELAY_MS = 300;
 
 	function toggleDrawer() {
 		isDrawerOpen = !isDrawerOpen;
 	}
 
-// $effect akan otomatis berjalan setiap kali nilai $navigating berubah
-  $effect(() => {
-    // Membaca store $navigating (tetap reaktif di dalam $effect)
-    const currentNavigating = navigating.to;
+	// $effect akan otomatis berjalan setiap kali nilai $navigating berubah
+	$effect(() => {
+		// Membaca store $navigating (tetap reaktif di dalam $effect)
+		const currentNavigating = navigating.to;
 
-    if (currentNavigating) {
-      if (!timer) {
-        timer = setTimeout(() => {
-          showLoading = true;
-        }, DELAY_MS);
-      }
-    } else {
-      if (timer) {
-        clearTimeout(timer);
-        timer = null;
-      }
-      showLoading = false;
-    }
+		if (currentNavigating) {
+			if (!timer) {
+				timer = setTimeout(() => {
+					showLoading = true;
+				}, DELAY_MS);
+			}
+		} else {
+			if (timer) {
+				clearTimeout(timer);
+				timer = null;
+			}
+			showLoading = false;
+		}
 
-    // Fungsi cleanup otomatis jika komponen hancur
-    return () => {
-      if (timer) {
-        clearTimeout(timer);
-      }
-    };
-  });
+		// Fungsi cleanup otomatis jika komponen hancur
+		return () => {
+			if (timer) {
+				clearTimeout(timer);
+			}
+		};
+	});
 
 	// Helper function untuk memformat menu
 	const formatSubMenu = (semesters: { semester: string }[], basePath: string): SubMenuItem[] => {
 		return semesters.map((item) => ({
-			id: item.semester.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+			id: item.semester?.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
 			label: item.semester,
 			href: `${basePath}?semester=${encodeURIComponent(item.semester)}`
 		}));
@@ -137,10 +136,10 @@
 
 	{#if showLoading}
 		<GlobalSkeletonUser />
-  {/if}
+	{/if}
 
 	<!-- content render (sveltekit slot) -->
-	<div class="grow ">
+	<div class="grow">
 		<!-- <slot /> -->
 		{@render children()}
 	</div>

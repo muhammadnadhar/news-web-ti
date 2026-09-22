@@ -17,7 +17,7 @@ export const load: PageServerLoad = async () => {
 };
 
 export const actions: Actions = {
-	save: async ({ request }) => {
+	default: async ({ request }) => {
 		const formData = await request.formData();
 		const description = String(formData.get('description') ?? '').trim();
 
@@ -32,5 +32,6 @@ export const actions: Actions = {
 			console.error('Error saving OBE curriculum:', err);
 			return fail(500, errorResponse('Gagal menyimpan data Kurikulum OBE.', 'error'));
 		}
-	}
+	},
+
 };

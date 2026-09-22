@@ -45,6 +45,7 @@
 		"l": "^0.6.0",
 		"lucide-svelte": "^1.0.1",
 		"mysql2": "^3.24.3",
+		"oslo": "^1.2.1",
 		"svelte-cloudinary": "^2.4.0"
 	}
 }

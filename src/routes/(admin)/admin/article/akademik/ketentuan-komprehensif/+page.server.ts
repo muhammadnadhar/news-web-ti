@@ -2,11 +2,13 @@ import { error, fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { writeFileSync, mkdirSync, existsSync } from 'fs';
 import { join } from 'path';
-import { getAllRecruitment ,
+import {
+	getAllRecruitment,
 	createRecruitment,
 	updateRecruitment,
 	deleteRecruitment
 } from '$lib/repository/admin/article/akedemik/ketentuan-komprehensif';
+import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
 
 export const load: PageServerLoad = async () => {
 	try {
@@ -37,7 +39,8 @@ export const load: PageServerLoad = async () => {
 		};
 	} catch (err) {
 		console.error('Error loading recruitment:', err);
-		throw error(500, 'Gagal mengambil data Rekrutmen.');
+		// throw error(500, 'Gagal mengambil data Rekrutmen.');
+		return errorResponse('Gagal mengambil data rekrutmen', 'Gagal');
 	}
 };
 
@@ -80,7 +83,7 @@ export const actions: Actions = {
 			return { success: true };
 		} catch (err) {
 			console.error('Error saving recruitment:', err);
-			return fail(500, { message: 'Gagal menyimpan data Rekrutmen.' });
+			return fail(500, errorResponse('Gagal menyimpan data Rekrutmen'));
 		}
 	},
 
@@ -88,14 +91,15 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const id = formData.get('id') as string;
 
-		if (!id) return fail(400, { message: 'ID tidak valid.' });
+		if (!id) return fail(400, warningResponse('ID tidak valid'));
 
 		try {
 			await deleteRecruitment(id);
-			return { success: true };
+			// return { success: true };
+			return successResponse('Berhasil mengahapus data Rekrutmen', 'success Response');
 		} catch (err) {
 			console.error('Error deleting recruitment:', err);
-			return fail(500, { message: 'Gagal menghapus data Rekrutmen.' });
+			return fail(500, errorResponse('Gagal menghapus data Rekrutmen', 'Gagal'));
 		}
 	}
 };
