@@ -2,6 +2,7 @@
 	import { Loader2, CalendarX } from 'lucide-svelte';
 	import FormAcademic from './_components/formAcademic.svelte';
 	import { classTopSpace } from '$lib/constants.js';
+	import EmptyData from '../../_components/emptyData.svelte';
 
 	let { data } = $props();
 
@@ -35,16 +36,10 @@
 		{:then calendars}
 			<!-- Gunakan Array.isArray untuk memastikan variabel bernilai Array -->
 			{#if !Array.isArray(calendars) || calendars.length === 0}
-				<!-- State Kosong -->
-				<div
-					class="bg-scitech-slate/20 flex flex-col items-center justify-center border border-border-color p-12 text-center"
-				>
-					<CalendarX class="mb-3 h-10 w-10 text-text-muted/50" />
-					<h3 class="text-base font-semibold text-text-main">Belum Ada Kalender Akademik</h3>
-					<p class="mt-1 text-xs text-text-muted">
-						Saat ini belum ada informasi kalender akademik aktif yang dapat ditampilkan.
-					</p>
-				</div>
+				<EmptyData
+					title="Belum Ada Kalender Akademik"
+					description="	Saat ini belum ada informasi kalender akademik aktif yang dapat ditampilkan."
+				/>
 			{:else}
 				<div class="flex flex-col gap-8">
 					{#each calendars as calendarItem (calendarItem.id)}

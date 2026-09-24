@@ -3,9 +3,10 @@ import type { Actions } from './$types';
 import { createOrgStructure } from '$lib/repository/admin/article/profile/structure';
 import { randomUUID } from '$lib/crypto';
 import { errorResponse, successResponse } from '$lib/helper/message';
+import { cloudinary } from '$lib/cloudinary/server';
 
 export const actions: Actions = {
-	default: async ({ request }) => {
+	create: async ({ request }) => {
 		const formData = await request.formData();
 
 		const title = formData.get('title') as string;
@@ -46,5 +47,23 @@ export const actions: Actions = {
 		// throw redirect(303, '/admin/profil/struktur-organisasi');
 		//
 		return successResponse('Data Struktur Organisasi berhasil disimpan!', 'Berhasil');
+	},
+	deletePhoto: async ({ request }) => {
+		const formData = await request.formData();
+		const publicId = formData.get('public_id')?.toString();
+
+		console.info('deleted', publicId);
+
+		if (!publicId) {
+			return fail(400, errorResponse('Public Id tidak di temukan', 'Error'));
+		}
+
+		try {
+			await cloudinary.uploader.destroy(publicId);
+			return successResponse('Berhasil di batalkan', 'Succcess');
+		} catch (err) {
+			console.error('Error deleting photo:', err);
+			return fail(500, errorResponse('Gagal menghapus foto ', 'Gagal'));
+		}
 	}
 };

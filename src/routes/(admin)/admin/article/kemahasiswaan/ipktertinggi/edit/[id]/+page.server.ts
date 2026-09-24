@@ -7,6 +7,7 @@ import {
 	updateHighGpaStudent
 } from '$lib/repository/admin/article/kemahasiswaan/ipkTertinggi';
 import { errorResponse, successResponse } from '$lib/helper/message';
+import { cloudinary } from '$lib/cloudinary/server';
 export const load: PageServerLoad = async ({ params }) => {
 	const { id } = params;
 
@@ -97,6 +98,22 @@ export const actions: Actions = {
 				...errorResponse('Terjadi kesalahan pada server saat memperbarui data.', 'Gagal Memproses'),
 				values
 			});
+		}
+	},
+	deletePhoto: async ({ request }) => {
+		const formData = await request.formData();
+		const publicId = formData.get('public_id')?.toString();
+
+		if (!publicId) {
+			return fail(400, { ...errorResponse('Public Id tidak di temukan', 'Error') });
+		}
+
+		try {
+			await cloudinary.uploader.destroy(publicId);
+			return successResponse('Berhasil di batalkan', 'Succcess');
+		} catch (err) {
+			console.error('Error deleting photo:', err);
+			return fail(500, errorResponse('Gagal menghapus foto ', 'Gagal'));
 		}
 	}
 };

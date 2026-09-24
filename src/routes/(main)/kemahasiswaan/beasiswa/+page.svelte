@@ -1,4 +1,5 @@
 <script lang="ts">
+	import EmptyData from '../../_components/emptyData.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -11,11 +12,10 @@
 	</header>
 
 	{#if data.scholarships.length === 0}
-		<div class="empty-state">
-			<div class="icon">🎓</div>
-			<h3>Belum Ada Data Beasiswa</h3>
-			<p>Data penerima beasiswa belum dimasukkan atau belum tersedia saat ini.</p>
-		</div>
+		<EmptyData
+			title="Belum ada Data Beasiswa"
+			description="Data penerima beasiswa belum dimasukkan atau belum tersedia saat ini."
+		/>
 	{:else}
 		<div class="scholarship-grid">
 			{#each data.scholarships as item (item.id)}

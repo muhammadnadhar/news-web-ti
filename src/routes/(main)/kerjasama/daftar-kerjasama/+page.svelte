@@ -2,6 +2,7 @@
 	import { Handshake, Building2, ChevronRight } from 'lucide-svelte';
 	import type { PartnershipDTO } from '$lib/types/admin/article/kerjasama';
 	import { classTopSpace } from '$lib/constants';
+	import EmptyData from '../../_components/emptyData.svelte';
 
 	let { data } = $props();
 
@@ -85,17 +86,10 @@
 			{/each}
 		</div>
 	{:else}
-		<!-- EMPTY STATE KOSONG -->
-		<div
-			class="bg-scitech-slate/20 flex flex-col items-center justify-center border border-border-color py-16 text-center shadow-[6px_6px_0px_0px_rgba(0,0,0,0.4)] backdrop-blur-md"
-		>
-			<div
-				class="mb-3 flex h-12 w-12 items-center justify-center border border-amber-500/30 bg-amber-500/10 text-amber-500 shadow-[3px_3px_0px_0px_rgba(0,0,0,0.3)]"
-			>
-				<Building2 class="h-6 w-6" />
-			</div>
-			<h3 class="text-base font-semibold text-text-main">Belum Ada Data Kerjasama</h3>
-			<p class="mt-1 text-xs text-text-muted">Data mitra kerjasama akan segera diperbarui.</p>
-		</div>
+		<!-- empty state kosong -->
+		<EmptyData
+			title="Belum ada Data Kerjasama"
+			description="Data mitra kerjasama akan segera diperbarui."
+		/>
 	{/if}
 </section>

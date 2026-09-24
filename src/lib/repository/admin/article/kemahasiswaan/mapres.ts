@@ -1,40 +1,91 @@
 import { query } from '$lib/database/svelteDb';
 import type { StudentAchievementDTO } from '$lib/dto/admin/article/kemahasiswaan';
+import type { SemesterDTO } from '$lib/dto/admin/dataset';
 import { tableStudentAchievement } from '$lib/seeder/admin/article/kemahasiswaan';
+import { tableAngkatan, tableSemester } from '$lib/seeder/admin/dataset';
 
 //
 // Mapress  : Mahasiswa Prestasi
 //
-
 /**
- * Mengambil seluruh data Mahasiswa Prestasi
+ * Mengambil seluruh data Mahasiswa Prestasi (Lengkap dengan detail Angkatan & Semester)
  */
 export async function getAllStudentAchievements(): Promise<StudentAchievementDTO[]> {
-	const sql = `SELECT * FROM ${tableStudentAchievement} ORDER BY created_at DESC`;
+	const sql = `
+		SELECT 
+			sa.*,
+			a.year AS batch_year,
+			s.name AS semester_name,
+			s.academic_year AS academic_year
+		FROM ${tableStudentAchievement} sa
+		LEFT JOIN ${tableAngkatan} a ON sa.angkatan_id = a.id
+		LEFT JOIN ${tableSemester} s ON sa.semester_id = s.id
+		ORDER BY sa.created_at DESC
+	`;
 	return (await query(sql)) as StudentAchievementDTO[];
 }
 
-export async function getAchievementSemesters(isAcademic: 'y' | 'n'): Promise<{ semester: string }[]> {
-    const sql = `SELECT DISTINCT semester FROM ${tableStudentAchievement} WHERE is_academic = ? ORDER BY semester DESC`;
-    return (await query(sql, [isAcademic])) as { semester: string }[];
+/**
+ * Mengambil semester unik berdasarkan jenis prestasi (Akademik / Non-Akademik)
+ */
+export async function getAchievementSemesters(
+	isAcademic: 'y' | 'n'
+): Promise<SemesterDTO[]> {
+	const sql = `
+		SELECT DISTINCT 
+			s.id,
+			s.name,
+			s.academic_year,
+			s.is_active,
+			s.created_at,
+			s.updated_at
+		FROM ${tableStudentAchievement} sa
+		INNER JOIN ${tableSemester} s ON sa.semester_id = s.id
+		WHERE sa.is_academic = ?
+		ORDER BY s.academic_year DESC, s.name DESC
+	`;
+	return (await query(sql, [isAcademic])) as SemesterDTO[];
 }
 
 /**
- * Mengambil 1 data Mahasiswa Prestasi berdasarkan ID
+ * Mengambil 1 data Mahasiswa Prestasi berdasarkan ID (Lengkap dengan JOIN)
  */
-export async function getStudentAchievementById(id: string): Promise<StudentAchievementDTO | null> {
-	const sql = `SELECT * FROM ${tableStudentAchievement} WHERE id = ? LIMIT 1`;
+export async function getStudentAchievementById(
+	id: string
+): Promise<StudentAchievementDTO | null> {
+	const sql = `
+		SELECT 
+			sa.*,
+			a.year AS batch_year,
+			s.name AS semester_name,
+			s.academic_year AS academic_year
+		FROM ${tableStudentAchievement} sa
+		LEFT JOIN ${tableAngkatan} a ON sa.angkatan_id = a.id
+		LEFT JOIN ${tableSemester} s ON sa.semester_id = s.id
+		WHERE sa.id = ?
+		LIMIT 1
+	`;
 	const rows = (await query(sql, [id])) as StudentAchievementDTO[];
 	return rows[0] || null;
 }
 
 /**
- *   Mengambil semester unik dan mengurutkannya
-
+ * Mengambil seluruh data semester unik yang memiliki data prestasi
  */
-export async function getDistinctSemesters(): Promise<{ semester: string }[]> {
-    const sql = `SELECT DISTINCT semester FROM ${tableStudentAchievement} ORDER BY semester DESC`;
-    return (await query(sql)) as { semester: string }[];
+export async function getDistinctSemesters(): Promise<SemesterDTO[]> {
+	const sql = `
+		SELECT DISTINCT 
+			s.id,
+			s.name,
+			s.academic_year,
+			s.is_active,
+			s.created_at,
+			s.updated_at
+		FROM ${tableStudentAchievement} sa
+		INNER JOIN ${tableSemester} s ON sa.semester_id = s.id
+		ORDER BY s.academic_year DESC, s.name DESC
+	`;
+	return (await query(sql)) as SemesterDTO[];
 }
 
 /**
@@ -44,13 +95,31 @@ export async function createStudentAchievement(
 	id: string,
 	studentName: string,
 	isAcademic: 'y' | 'n',
-	batchYear: string,
-	semester: string,
+	angkatanId: string,
+	semesterId: string,
 	achievementName: string,
-  image_url : string, 
+	imageUrl: string | null
 ): Promise<boolean> {
-	const sql = `INSERT INTO ${tableStudentAchievement} (id, student_name, is_academic, batch_year, semester, achievement_name , image_url ) VALUES (?, ?, ?, ?, ?, ?,?)`;
-	const result = (await query(sql, [id, studentName, isAcademic, batchYear, semester, achievementName ,image_url])) as any;
+	const sql = `
+		INSERT INTO ${tableStudentAchievement} (
+			id, 
+			student_name, 
+			is_academic, 
+			angkatan_id, 
+			semester_id, 
+			achievement_name, 
+			image_url
+		) VALUES (?, ?, ?, ?, ?, ?, ?)
+	`;
+	const result = (await query(sql, [
+		id,
+		studentName,
+		isAcademic,
+		angkatanId,
+		semesterId,
+		achievementName,
+		imageUrl
+	])) as any;
 	return result.affectedRows > 0;
 }
 
@@ -61,13 +130,32 @@ export async function updateStudentAchievement(
 	id: string,
 	studentName: string,
 	isAcademic: 'y' | 'n',
-	batchYear: string,
-	semester: string,
+	angkatanId: string,
+	semesterId: string,
 	achievementName: string,
-  image_url : string,
+	imageUrl: string | null
 ): Promise<boolean> {
-	const sql = `UPDATE ${tableStudentAchievement} SET student_name = ?, is_academic = ?, batch_year = ?, semester = ?, achievement_name = ?, image_url = ?  , updated_at = NOW() WHERE id = ?`;
-	const result = (await query(sql, [studentName, isAcademic, batchYear, semester, achievementName, image_url,id])) as any;
+	const sql = `
+		UPDATE ${tableStudentAchievement} 
+		SET 
+			student_name = ?, 
+			is_academic = ?, 
+			angkatan_id = ?, 
+			semester_id = ?, 
+			achievement_name = ?, 
+			image_url = ?, 
+			updated_at = NOW() 
+		WHERE id = ?
+	`;
+	const result = (await query(sql, [
+		studentName,
+		isAcademic,
+		angkatanId,
+		semesterId,
+		achievementName,
+		imageUrl,
+		id
+	])) as any;
 	return result.affectedRows > 0;
 }
 

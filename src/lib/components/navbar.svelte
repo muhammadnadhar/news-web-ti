@@ -24,12 +24,20 @@
 	let isOpen = $state(false);
 	let activeDesktopMenu = $state<NavMenuItemType | null>(null);
 	let activeMobileMenuId = $state<string | null>(null);
+	let desktopNavRef = $state<HTMLElement | null>(null);
 
 	// Toggle drawer floating mobile
 	function toggleMenu() {
 		isOpen = !isOpen;
 		if (!isOpen) {
 			activeMobileMenuId = null;
+		}
+	}
+
+	// Handler Click Outside untuk Desktop (Svelte 5)
+	function handleWindowClick(event: MouseEvent) {
+		if (activeDesktopMenu && desktopNavRef && !desktopNavRef.contains(event.target as Node)) {
+			activeDesktopMenu = null;
 		}
 	}
 
@@ -59,11 +67,13 @@
 	}
 </script>
 
+<svelte:window bind:scrollY onclick={handleWindowClick} />
 <!-- ==================== desktop navbar ==================== -->
 <div
-	class=" fixed top-auto right-6 z-50 hidden md:block {isScrolled
-		? 'text-scitech-navy scale-100 border-slate-200/80 bg-white shadow-2xl backdrop-blur-xl'
-		: 'bg-scitech-navy/30 hover:bg-scitech-navy/60 scale-95 border-white/5 text-text-main shadow-none'}"
+	bind:this={desktopNavRef}
+	class=" fixed top-auto right-6 z-50 hidden transition-all md:block {isScrolled
+		? ' scale-100 border-border-color/80  backdrop-blur-xl'
+		: ' scale-95 border-white/5 text-text-main '}"
 >
 	<nav
 		class="bg-scitech-navy/80 flex items-center gap-3 rounded-2xl border border-white/10 p-2 shadow-2xl backdrop-blur-md"

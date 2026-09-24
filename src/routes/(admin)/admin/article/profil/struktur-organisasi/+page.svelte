@@ -18,9 +18,9 @@
 		return items.map((item) => ({
 			id: item.id,
 			items: [
-				{ colomn: 'Gambar', row: item.image_url || '-', isImage: true },
-				{ colomn: 'Judul / Jabatan', row: item.title },
-				{ colomn: 'Deskripsi', row: item.description || '-' }
+				{ colomn: 'Foto', row: item.image_url || '-', isImage: true },
+				{ colomn: 'Judul', row: item.title },
+				{ colomn: 'Deskripsi', row: item.description || '-', isHtml: true }
 			]
 		}));
 	}
@@ -51,8 +51,6 @@
 	function handleEdit(item: TableContentType) {
 		goto(`${page.url.pathname}/edit/${item.id}`);
 	}
-
-
 </script>
 
 {#await data.orgStructures}
@@ -64,7 +62,6 @@
 		data={mapToTableContent(orgStructures)}
 		onAdd={handleAdd}
 		onEdit={handleEdit}
-    
 		deleteAction="?/delete"
 		onDeleteSuccess={(res) =>
 			triggerMessage(

@@ -4,6 +4,7 @@ import { getAllAngkatan } from '$lib/repository/admin/dataset/angkatan';
 import { getAllSemesters } from '$lib/repository/admin/dataset/semester';
 import { createHighGpaStudent } from '$lib/repository/admin/article/kemahasiswaan/ipkTertinggi';
 import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
+import { cloudinary } from '$lib/cloudinary/server';
 
 export const load: PageServerLoad = async () => {
 	try {
@@ -23,7 +24,7 @@ export const load: PageServerLoad = async () => {
 };
 
 export const actions: Actions = {
-	default: async ({ request }) => {
+	create: async ({ request }) => {
 		const formData = await request.formData();
 
 		const studentName = formData.get('student_name')?.toString().trim();
@@ -78,6 +79,22 @@ export const actions: Actions = {
 				),
 				values
 			});
+		}
+	},
+	deletePhoto: async ({ request }) => {
+		const formData = await request.formData();
+		const publicId = formData.get('public_id')?.toString();
+
+		if (!publicId) {
+			return fail(400, { ...errorResponse('Public Id tidak di temukan', 'Error') });
+		}
+
+		try {
+			await cloudinary.uploader.destroy(publicId);
+			return successResponse('Berhasil di batalkan', 'Succcess');
+		} catch (err) {
+			console.error('Error deleting photo:', err);
+			return fail(500, errorResponse('Gagal menghapus foto ', 'Gagal'));
 		}
 	}
 };

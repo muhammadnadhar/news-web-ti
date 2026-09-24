@@ -130,7 +130,7 @@ export const navMenuItems: NavMenuItemType[] = [
 			{
 				id: 'penelitian-dosen',
 				label: 'Penelitian Dosen Prodi TI',
-				href: '/penelitian/publikasi-dosen'
+				href: '/penelitian/penelitian-dosen'
 			},
 			{
 				id: 'jurnal-jintech',

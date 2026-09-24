@@ -36,6 +36,8 @@ export const actions: Actions = {
 		try {
 			const success = await createSemester(id, name, academicYear, isActive);
 
+			console.info(success);
+
 			if (!success) {
 				return fail(500, {
 					...errorResponse('Gagal menyimpan data Semester ke database.', 'Gagal'),

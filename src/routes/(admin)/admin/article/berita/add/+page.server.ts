@@ -5,6 +5,7 @@ import { createNews } from '$lib/repository/admin/article/berita';
 import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
 import { getAllNewsCategories } from '$lib/repository/admin/dataset/beritaKategory';
 import type { PageServerLoad } from '../$types';
+import { cloudinary } from '$lib/cloudinary/server';
 
 export const load: PageServerLoad = async () => {
 	// Ambil semua daftar kategori berita dari database
@@ -24,7 +25,7 @@ export const actions: Actions = {
 		const content = formData.get('content')?.toString().trim() || '';
 		const imageUrl = formData.get('imageUrl')?.toString().trim() || null;
 
-    console.info("data  : ",title,category,content,imageUrl)
+		console.info('data  : ', title, category, content, imageUrl);
 
 		if (!title || !category || !content) {
 			return fail(400, {
@@ -32,7 +33,7 @@ export const actions: Actions = {
 				values: { title, category, content, imageUrl }
 			});
 		}
-    console.info("data masuk : ",title)
+		console.info('data masuk : ', title);
 
 		const newsId = randomUUID();
 
@@ -67,5 +68,20 @@ export const actions: Actions = {
 		return {
 			...successResponse('Berhasil membuat Berita', 'Success')
 		};
+	},
+	deletePhoto: async ({ request }) => {
+		const formData = await request.formData();
+		const publicId = formData.get('public_id')?.toString();
+
+		if (!publicId) {
+			return fail(400, { ...errorResponse('Public Id tidak di temukan', 'Error') });
+		}
+		try {
+			await cloudinary.uploader.destroy(publicId);
+			return successResponse('Berhasil di batalkan', 'Succcess');
+		} catch (err) {
+			console.error('Error deleting photo:', err);
+			return fail(500, errorResponse('Gagal menghapus foto ', 'Gagal'));
+		}
 	}
 };

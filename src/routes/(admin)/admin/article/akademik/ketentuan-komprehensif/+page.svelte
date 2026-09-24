@@ -87,12 +87,14 @@
 		<!-- > -->
 		<!-- 	<Sparkles class="text-scitech-mint h-4 w-4" /> Artikel Akademik -->
 		<!-- </span> -->
-		<h1 class="text-2xl font-extrabold tracking-tight text-text-main sm:text-3xl">Rekrutmen</h1>
+		<h1 class="text-2xl font-extrabold tracking-tight text-text-main sm:text-3xl">
+			Ketentuan Koprehensif
+		</h1>
 	</div>
 
 	<!-- Component TableContent -->
 	{#await data.rawRecruitmentList}
-		<TableSkeleton showTitle={true} title="Memuat Data Kerjasama..." columnsCount={4} />
+		<TableSkeleton showTitle={true} title="Memuat Data Kerjasama..." columnsCount={2} />
 	{:then rawList}
 		<TableContent
 			title="Data Ketentuan Rekrutmen Asisten Lab TI"

@@ -3,87 +3,86 @@ import type { Actions } from './$types';
 import { createStudentAchievement } from '$lib/repository/admin/article/kemahasiswaan/mapres';
 import { errorResponse, successResponse } from '$lib/helper/message';
 import { randomUUID } from '$lib/crypto';
+import type { PageServerLoad } from '../$types';
+import { getAllSemesters } from '$lib/repository/admin/dataset/semester';
+import { getAllAngkatan } from '$lib/repository/admin/dataset/angkatan';
+import { cloudinary } from '$lib/cloudinary/server';
+
+export const load: PageServerLoad = async () => {
+	try {
+		const [angkatanList, semesterList] = await Promise.all([getAllAngkatan(), getAllSemesters()]);
+
+		return {
+			angkatanList: angkatanList || [],
+			semesterList: semesterList || []
+		};
+	} catch (error) {
+		console.error('Error loading references:', error);
+		return {
+			angkatanList: [],
+			semesterList: []
+		};
+	}
+};
 
 export const actions: Actions = {
-	default: async ({ request }) => {
+	create: async ({ request }) => {
 		const formData = await request.formData();
 
 		const studentName = formData.get('student_name')?.toString().trim();
 		const isAcademic = formData.get('is_academic')?.toString().trim();
-		const batchYear = formData.get('batch_year')?.toString().trim();
-		const semester = formData.get('semester')?.toString().trim();
+		const angkatanId = formData.get('angkatan_id')?.toString().trim();
+		const semesterId = formData.get('semester_id')?.toString().trim();
 		const achievementName = formData.get('achievement_name')?.toString().trim();
 		const imageUrl = formData.get('image_url')?.toString().trim();
+
+		// console.log({ studentName, isAcademic, angkatanId, semesterId, achievementName, imageUrl });
 
 		const values = {
 			studentName,
 			isAcademic: isAcademic || 'y',
-			batchYear,
-			semester,
-			achievementName
+			angkatanId,
+			semesterId,
+			achievementName,
+			imageUrl
 		};
-		if (!studentName || !isAcademic || !batchYear || !semester || !achievementName) {
+
+		//  Validasi Field Wajib
+		if (!studentName || !isAcademic || !angkatanId || !semesterId || !achievementName) {
 			return fail(400, {
 				...errorResponse('Harap isi semua bidang form yang wajib (*).', 'Gagal Menyimpan'),
 				values
 			});
 		}
 
-		// 2. Validasi Keberadaan Gambar
-		if (!imageUrl || imageUrl.trim().length === 0) {
-			// Diperbaiki dari < 0 menjadi === 0 karena panjang string minimal 0
+		//  Validasi Keberadaan Gambar
+		if (!imageUrl || imageUrl.length === 0) {
 			return fail(400, {
-				...errorResponse('Gambar Wajib ada', 'Gagal'),
+				...errorResponse('Gambar wajib diunggah/diisi.', 'Validasi Gagal'),
 				values
 			});
 		}
 
-		// 3. Validasi Jenis Prestasi
+		//  Validasi Jenis Prestasi
 		if (isAcademic !== 'y' && isAcademic !== 'n') {
 			return fail(400, {
 				...errorResponse(
-					'Jenis prestasi harus berupa Akademik atau Non-Akademik.',
+					'Jenis prestasi harus berupa Akademik (y) atau Non-Akademik (n).',
 					'Validasi Gagal'
 				),
 				values
 			});
 		}
+
 		const id = randomUUID();
-
-		if (!studentName || !isAcademic || !batchYear || !semester || !achievementName) {
-			return fail(400, {
-				...errorResponse('Harap isi semua bidang form yang wajib (*).', 'Gagal Menyimpan'),
-				values
-			});
-		}
-
-		// 2. Validasi Keberadaan Gambar
-		if (!imageUrl || imageUrl.trim().length === 0) {
-			// Diperbaiki dari < 0 menjadi === 0 karena panjang string minimal 0
-			return fail(400, {
-				...errorResponse('Gambar Wajib ada', 'Gagal'),
-				values
-			});
-		}
-
-		// 3. Validasi Jenis Prestasi
-		if (isAcademic !== 'y' && isAcademic !== 'n') {
-			return fail(400, {
-				...errorResponse(
-					'Jenis prestasi harus berupa Akademik atau Non-Akademik.',
-					'Validasi Gagal'
-				),
-				values
-			});
-		}
 
 		try {
 			await createStudentAchievement(
 				id,
 				studentName,
 				isAcademic as 'y' | 'n',
-				batchYear,
-				semester,
+				angkatanId,
+				semesterId,
 				achievementName,
 				imageUrl
 			);
@@ -92,10 +91,31 @@ export const actions: Actions = {
 		} catch (err) {
 			console.error('Error creating student achievement:', err);
 
-			return fail(
-				500,
-				errorResponse('Gagal menyimpan data Prestasi Mahasiswa ke database.', 'Kesalahan Sistem')
-			);
+			return fail(500, {
+				...errorResponse(
+					'Gagal menyimpan data Prestasi Mahasiswa ke database.',
+					'Kesalahan Sistem'
+				),
+				values
+			});
+		}
+	},
+	// url action untuk Gambar yang di batalin akan mengguanka url ini , karena
+	// cloudinary akan meng upload duluan ke cloud nya
+	deletePhoto: async ({ request }) => {
+		const formData = await request.formData();
+		const publicId = formData.get('public_id')?.toString();
+
+		if (!publicId) {
+			return fail(400, errorResponse('Public Id tidak di temukan', 'Error'));
+		}
+
+		try {
+			await cloudinary.uploader.destroy(publicId);
+			return successResponse('Berhasil di batalkan', 'Succcess');
+		} catch (err) {
+			console.error('Error deleting photo:', err);
+			return fail(500, errorResponse('Gagal menghapus foto ', 'Gagal'));
 		}
 	}
 };

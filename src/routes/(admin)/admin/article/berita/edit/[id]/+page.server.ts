@@ -20,7 +20,8 @@ export const load: PageServerLoad = async ({ params }) => {
 	const [berita, categories] = await Promise.all([getNewsById(newsId), getAllNewsCategories()]);
 
 	if (!berita) {
-		throw error(404, 'Berita tidak ditemukan');
+		// throw error(404, 'Berita tidak ditemukan');
+		return warningResponse('Berita tidak di temukan', 'Tidak Di temukan');
 	}
 
 	// Format data agar sesuai dengan prop initialData pada FormBerita.svelte

@@ -1,8 +1,8 @@
 import { fail } from '@sveltejs/kit';
 import type { Actions } from './$types';
-import crypto from 'crypto';
 import { errorResponse, successResponse } from '$lib/helper/message';
 import { createStudentPublication } from '$lib/repository/admin/article/penelitian/publikasiMahasiswa';
+import { randomUUID } from '$lib/crypto';
 
 export const actions: Actions = {
 	default: async ({ request }) => {
@@ -26,7 +26,7 @@ export const actions: Actions = {
 		}
 
 		try {
-			const id = crypto.randomUUID();
+			const id = randomUUID();
 
 			await createStudentPublication(id, student_name, journal_list);
 

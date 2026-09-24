@@ -5,7 +5,7 @@ import { errorResponse, successResponse, warningResponse } from '$lib/helper/mes
 import { randomUUID } from '$lib/crypto';
 
 export const actions: Actions = {
-	default: async ({ request }) => {
+	create: async ({ request }) => {
 		const formData = await request.formData();
 
 		const studentName = formData.get('student_name') as string;

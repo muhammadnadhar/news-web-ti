@@ -39,7 +39,7 @@ export const actions: Actions = {
 					success: false,
 
 					title: 'Gagal',
-					message: `Tahun Angkatan ${year} sudah ada di database.`,
+					message: `Tahun Angkatan ${year} sudah ada`,
 					values: { year: yearRaw }
 				});
 			}

@@ -6,7 +6,8 @@ import {
 	getAllHighGpaStudents,
 	updateHighGpaStudent
 } from '$lib/repository/admin/article/kemahasiswaan/ipkTertinggi';
-import { errorResponse } from '$lib/helper/message';
+import { errorResponse, successResponse } from '$lib/helper/message';
+import { cloudinary } from '$lib/cloudinary/server';
 
 export const load: PageServerLoad = async () => {
 	try {
@@ -94,6 +95,22 @@ export const actions: Actions = {
 		} catch (err) {
 			console.error('Error deleting high GPA student:', err);
 			return fail(500, { message: 'Gagal menghapus data Mahasiswa IPK Tertinggi.' });
+		}
+	},
+	deletePhoto: async ({ request }) => {
+		const formData = await request.formData();
+		const publicId = formData.get('public_id')?.toString();
+
+		if (!publicId) {
+			return fail(400, { ...errorResponse('Public Id tidak di temukan', 'Error') });
+		}
+
+		try {
+			await cloudinary.uploader.destroy(publicId);
+			return successResponse('Berhasil di batalkan', 'Succcess');
+		} catch (err) {
+			console.error('Error deleting photo:', err);
+			return fail(500, errorResponse('Gagal menghapus foto ', 'Gagal'));
 		}
 	}
 };

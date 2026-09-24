@@ -11,12 +11,13 @@
 	import Message from '$lib/components/admin/message.svelte';
 	import type { ResponseMessage } from '$lib/types/message';
 	import FormEditor from '$lib/components/admin/formEditor.svelte';
+	import { LoaderCircle, Trash2 } from 'lucide-svelte';
 
 	export interface ArticleData {
 		id?: string;
 		title?: string;
 		category?: string; // ID kategori yang dipilih (misal: berita.category_id)
-		categories?: NewsCategoryDTO[]; // Daftar pilihan kategori untuk <select>
+		categories?: NewsCategoryDTO[];
 		content?: string;
 		imageUrl?: string;
 	}
@@ -68,6 +69,9 @@
 		}
 	}
 
+	let photoPublicId = $state(''); // Simpan public_id dari Cloudinary
+	let isDeletingPhoto = $state(false);
+
 	// State untuk Pesan/Notifikasi
 	let showMessage = $state(false);
 	let messageConfig = $state<ResponseMessage>({
@@ -82,8 +86,37 @@
 	}
 
 	// Fungsi untuk mengosongkan gambar jika ingin mengganti
-	function removeImage() {
-		imageUrl = '';
+
+	// Fungsi untuk menghapus foto dari Cloudinary & mereset state
+	async function removeImage() {
+		if (!photoPublicId) {
+			imageUrl = '';
+			return;
+		}
+
+		isDeletingPhoto = true;
+
+		try {
+			const formData = new FormData();
+			formData.append('public_id', photoPublicId);
+
+			// Panggil named action '?/deletePhoto'
+			const response = await fetch('?/deletePhoto', {
+				method: 'POST',
+				body: formData
+			});
+
+			if (response.ok) {
+				imageUrl = '';
+				photoPublicId = '';
+			} else {
+				alert('Gagal menghapus gambar dari Cloudinary');
+			}
+		} catch (err) {
+			console.error('Error deleting photo:', err);
+		} finally {
+			isDeletingPhoto = false;
+		}
 	}
 </script>
 
@@ -179,7 +212,6 @@
 					<input type="hidden" id="imageUrl" name="imageUrl" value={imageUrl} />
 
 					{#if imageUrl}
-						<!-- Tampilan Pratinjau Jika Gambar Sudah Diunggah -->
 						<div
 							class="relative overflow-hidden rounded-md border border-border-light bg-bg-primary p-2"
 						>
@@ -193,7 +225,12 @@
 									onclick={removeImage}
 									class="rounded bg-status-error/20 px-2 py-1 text-xs text-status-error hover:bg-status-error/30"
 								>
-									Hapus / Ganti
+									<Trash2 class="h-3.5 w-3.5" />
+									{#if isDeletingPhoto}
+										<LoaderCircle class="h-4 w-4 animate-spin" />
+									{:else}
+										<span>Hapus Foto</span>
+									{/if}
 								</button>
 							</div>
 						</div>

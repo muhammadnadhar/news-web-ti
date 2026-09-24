@@ -5,7 +5,11 @@ import {
 	getStudentAchievementById,
 	updateStudentAchievement
 } from '$lib/repository/admin/article/kemahasiswaan/mapres';
-import { errorResponse } from '$lib/helper/message';
+import { errorResponse, successResponse } from '$lib/helper/message';
+import { getAllSemesters } from '$lib/repository/admin/dataset/semester';
+import { getAllAngkatan } from '$lib/repository/admin/dataset/angkatan';
+import { cloudinary } from '$lib/cloudinary/server';
+
 export const load: PageServerLoad = async ({ params }) => {
 	const { id } = params;
 
@@ -19,13 +23,23 @@ export const load: PageServerLoad = async ({ params }) => {
 		// 	batchYear: '2023',
 		// 	semester: 'Semester Ganjil 2025/2026'
 		// };
-		const prestasi = await getStudentAchievementById(id);
+		// const prestasi = await getStudentAchievementById(id);
+
+		const [angkatanList, semesterList, prestasi] = await Promise.all([
+			getAllAngkatan(),
+			getAllSemesters(),
+			getStudentAchievementById(id)
+		]);
+
 		if (!prestasi) {
 			throw error(404, 'Data prestasi tidak ditemukan');
 		}
 
 		return {
-			prestasi
+			prestasi,
+
+			angkatanList: angkatanList || [],
+			semesterList: semesterList || []
 		};
 	} catch (e) {
 		throw error(404, 'Data prestasi tidak ditemukan');
@@ -33,7 +47,7 @@ export const load: PageServerLoad = async ({ params }) => {
 };
 
 export const actions: Actions = {
-	default: async ({ request, params }) => {
+	update: async ({ request, params }) => {
 		const { id } = params;
 		const formData = await request.formData();
 
@@ -90,6 +104,24 @@ export const actions: Actions = {
 				message: 'Terjadi kesalahan sistem saat memperbarui data.',
 				values
 			});
+		}
+	},
+	deletePhoto: async ({ request }) => {
+		const formData = await request.formData();
+		const publicId = formData.get('public_id')?.toString();
+
+		console.info('deleted', publicId);
+
+		if (!publicId) {
+			return fail(400, errorResponse('Public Id tidak di temukan', 'Error'));
+		}
+
+		try {
+			await cloudinary.uploader.destroy(publicId);
+			return successResponse('Berhasil di batalkan', 'Succcess');
+		} catch (err) {
+			console.error('Error deleting photo:', err);
+			return fail(500, errorResponse('Gagal menghapus foto ', 'Gagal'));
 		}
 	}
 };

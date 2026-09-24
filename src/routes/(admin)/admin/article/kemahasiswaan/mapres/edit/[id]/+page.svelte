@@ -19,7 +19,11 @@
 
 <FormMhsPrestasi
 	form={activeFormState}
+	initData={data.prestasi}
+	action="?/update"
 	title="Edit Prestasi Mahasiswa"
 	subtitle="Perbarui data prestasi mahasiswa di bawah ini."
 	submitLabel="Simpan Perubahan"
+	angkatanList={data.angkatanList}
+	semesterList={data.semesterList}
 />

@@ -1,14 +1,10 @@
-commit 9  finish desian #6  and auth with olso frmawework and debuger 
-- add : olso framework for auth with hashing Argo algortm
-- update : semua table image akan di ubah ke null dati not null , karena datanya akan di hapus dahulu dari cloudifnary nantinya
-- fix : fix bagaiman data di tampilkan pada edit di admin/kemahasiswaan/ipktertinggi untuk image priview dan add
-- update : table publikasi dosen bisa menerima atau mengambil data dosen untuk halman penelitian/publikasi-dosen
-- update : update beberapa response message response
-- add : kategory berita di dataset
-- update : desain and update admin/berita  
-- add : pages dataset untuk kategory berita , sekarang kategory bisa di tambhakan 
-- update : update bagian admin/document agar bisa mengupload beberapa filed  = { title, imageUrl, description, eventDate, linkDrive }
-- desahn halaman Kerjasam ( documentasi , dan daftar kegiatan )
-- desain priviews halaman akacemik 
-- desian peta matakuliah dari kurikulum/matakuliah
-- update : update footer di admin
+commit 10  finish desian #7 and debuger 
+- update : module pratikum /admin di pisahkan ke component untuk edit dan add
+- update : update halaman admin/home untuk katagory desain Utama
+- update : halaman profil-prodi
+- update :  halaman /admin/komprehensif -> update halaman edit dan add , di pisahkan ke component 
+- update : table mappress untuk di /admin memiliki forengkey ke dataset semester dna angkatan
+- add  : handle untuk membatalin gambar yang telah di upload , pada sesi ( add image url dengan fecth ke url "deletePhoto")
+- update : update desian halaman /admin/penelitian/publikasi dosen dna desin halamna utamanaya
+
+

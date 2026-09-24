@@ -39,7 +39,7 @@ export const sidebarMenu: MenuCategory[] = [
 				iconName: 'Users',
 				href: AdminUrl + '/dataset/jabatan-prodi'
 			},
-		{
+			{
 				title: 'Kategori Berita',
 				iconName: 'Users',
 				href: AdminUrl + '/dataset/kategori-berita'
@@ -59,11 +59,11 @@ export const sidebarMenu: MenuCategory[] = [
 	{
 		category: 'article',
 		items: [
-			{
-				title: 'Home article ',
-				iconName: 'Home',
-				href: AdminUrl + '/article'
-			},
+			// {
+			// 	title: 'Home article ',
+			// 	iconName: 'Home',
+			// 	href: AdminUrl + '/article'
+			// },
 			{
 				title: 'Profil',
 				iconName: 'BadgeIdentity',

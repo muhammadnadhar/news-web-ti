@@ -4,6 +4,7 @@
 	interface Props {
 		data: PageData;
 	}
+	import EmptyData from '../../_components/emptyData.svelte';
 
 	let { data }: Props = $props();
 
@@ -185,32 +186,23 @@
 				>".
 			</p>
 		</div>
+		<EmptyData />
 	{:else}
 		<!-- EMPTY STATE KOSONG -->
-		<div
-			class="bg-scitech-slate/20 flex flex-col items-center justify-center border border-border-color p-12 text-center shadow-[6px_6px_0px_0px_rgba(0,0,0,0.4)] backdrop-blur-md"
-		>
-			<div
-				class="mb-4 flex h-12 w-12 items-center justify-center border border-amber-500/30 bg-amber-500/10 text-amber-500 shadow-[3px_3px_0px_0px_rgba(0,0,0,0.3)]"
-			>
-				<AlertCircle class="h-6 w-6" />
-			</div>
-			<h3 class="text-lg font-bold text-text-main">Dokumentasi Belum Tersedia</h3>
-			<p class="mt-1 max-w-md text-xs text-text-muted">
-				Belum ada foto atau arsip dokumentasi kegiatan yang diunggah.
-			</p>
-		</div>
+		<EmptyData
+			title="Dokumentasi Belum Tersedia"
+			description="Belum ada foto atau arsip dokumentasi kegiatan yang diunggah."
+		/>
 	{/if}
 </div>
 
-<!-- MODAL LIGHTBOX / ZOOM FOTO -->
+<!-- modal lightbox / zoom foto -->
 {#if selectedMedia}
 	<div
 		class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
 		role="dialog"
 		aria-modal="true"
 	>
-		<!-- Overlay Backdrop Click -->
 		<button
 			onclick={closeModal}
 			class="absolute inset-0 h-full w-full cursor-default"
@@ -220,7 +212,6 @@
 		<div
 			class="bg-scitech-slate relative z-10 flex max-h-[90vh] max-w-4xl flex-col overflow-hidden border border-border-color shadow-[12px_12px_0px_0px_rgba(0,0,0,0.7)]"
 		>
-			<!-- Header Modal -->
 			<div
 				class="bg-scitech-navy flex items-center justify-between border-b border-border-color px-6 py-4"
 			>

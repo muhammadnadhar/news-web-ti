@@ -1,4 +1,5 @@
 <script lang="ts">
+	import EmptyData from '../../_components/emptyData.svelte';
 	import type { PageData } from './$types';
 	import { History, Users, User, Calendar, AlertCircle } from 'lucide-svelte';
 
@@ -11,8 +12,10 @@
 
 <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
 	<!-- HEADER HALAMAN -->
-	<div class="mb-12 text-center sm:text-left border-b border-border-color/40 pb-6">
-		<div class="mb-3 inline-flex items-center gap-2 rounded-full bg-scitech-mint/10 px-3 py-1 text-xs font-semibold text-scitech-mint">
+	<div class="mb-12 border-b border-border-color/40 pb-6 text-center sm:text-left">
+		<div
+			class="bg-scitech-mint/10 text-scitech-mint mb-3 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold"
+		>
 			<History class="h-4 w-4" />
 			<span>Profil Program Studi</span>
 		</div>
@@ -27,7 +30,9 @@
 	<!-- bagian 1: konten sejarah utama -->
 	{#if data.historyContent}
 		<section class="mb-16">
-			<div class="overflow-hidden rounded-2xl border border-border-color bg-scitech-slate/40 backdrop-blur-md">
+			<div
+				class="bg-scitech-slate/40 overflow-hidden rounded-2xl border border-border-color backdrop-blur-md"
+			>
 				{#if data.historyContent.image_url}
 					<div class="relative h-64 w-full sm:h-96">
 						<img
@@ -35,12 +40,14 @@
 							alt={data.historyContent.title}
 							class="h-full w-full object-cover"
 						/>
-						<div class="absolute inset-0 bg-gradient-to-t from-scitech-navy/90 via-transparent to-transparent"></div>
+						<div
+							class="from-scitech-navy/90 absolute inset-0 bg-gradient-to-t via-transparent to-transparent"
+						></div>
 					</div>
 				{/if}
 
 				{#if data.historyContent.description}
-					<div class="prose prose-invert prose-scitech max-w-none p-6 sm:p-10">
+					<div class="prose-scitech prose max-w-none p-6 prose-invert sm:p-10">
 						{@html data.historyContent.description}
 					</div>
 				{/if}
@@ -51,28 +58,38 @@
 	<!-- BAGIAN 2: SEJARAH PIMPINAN (PERIODE) -->
 	<section>
 		<div class="mb-8 flex items-center gap-3">
-			<div class="flex h-10 w-10 items-center justify-center rounded-xl bg-scitech-mint/10 text-scitech-mint">
+			<div
+				class="bg-scitech-mint/10 text-scitech-mint flex h-10 w-10 items-center justify-center rounded-xl"
+			>
 				<Users class="h-5 w-5" />
 			</div>
 			<div>
 				<h2 class="text-2xl font-bold text-text-main">Sejarah Pimpinan Jurusan</h2>
-				<p class="text-xs text-text-muted">Daftar Ketua dan Sekretaris Program Studi berdasarkan periode kepemimpinan.</p>
+				<p class="text-xs text-text-muted">
+					Daftar Ketua dan Sekretaris Program Studi berdasarkan periode kepemimpinan.
+				</p>
 			</div>
 		</div>
 
 		{#if data.historyLeaders && data.historyLeaders.length > 0}
 			<div class="space-y-8">
 				{#each data.historyLeaders as leader (leader.id)}
-					<div class="overflow-hidden rounded-2xl border border-border-color bg-scitech-slate/40 backdrop-blur-md p-6 sm:p-8">
+					<div
+						class="bg-scitech-slate/40 overflow-hidden rounded-2xl border border-border-color p-6 backdrop-blur-md sm:p-8"
+					>
 						<div class="mb-6 flex items-center gap-2 border-b border-border-color/40 pb-4">
-							<Calendar class="h-4 w-4 text-scitech-cyan" />
-							<span class="text-base font-bold text-scitech-mint">Periode {leader.period}</span>
+							<Calendar class="text-scitech-cyan h-4 w-4" />
+							<span class="text-scitech-mint text-base font-bold">Periode {leader.period}</span>
 						</div>
 
 						<!-- Grid Ketua & Sekretaris -->
 						<div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-							<div class="flex flex-col sm:flex-row items-center sm:items-start gap-4 rounded-xl border border-border-color/30 bg-scitech-navy/50 p-4">
-								<div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-xl border border-border-color bg-scitech-slate flex items-center justify-center">
+							<div
+								class="bg-scitech-navy/50 flex flex-col items-center gap-4 rounded-xl border border-border-color/30 p-4 sm:flex-row sm:items-start"
+							>
+								<div
+									class="bg-scitech-slate flex h-24 w-24 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border-color"
+								>
 									{#if leader.head_photo}
 										<img
 											src={leader.head_photo}
@@ -84,13 +101,19 @@
 									{/if}
 								</div>
 								<div class="text-center sm:text-left">
-									<span class="text-[11px] font-semibold tracking-wider text-scitech-cyan uppercase">Ketua Program Studi</span>
+									<span class="text-scitech-cyan text-[11px] font-semibold tracking-wider uppercase"
+										>Ketua Program Studi</span
+									>
 									<h3 class="mt-1 text-base font-bold text-text-main">{leader.head_name}</h3>
 								</div>
 							</div>
 
-							<div class="flex flex-col sm:flex-row items-center sm:items-start gap-4 rounded-xl border border-border-color/30 bg-scitech-navy/50 p-4">
-								<div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-xl border border-border-color bg-scitech-slate flex items-center justify-center">
+							<div
+								class="bg-scitech-navy/50 flex flex-col items-center gap-4 rounded-xl border border-border-color/30 p-4 sm:flex-row sm:items-start"
+							>
+								<div
+									class="bg-scitech-slate flex h-24 w-24 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border-color"
+								>
 									{#if leader.secretary_photo}
 										<img
 											src={leader.secretary_photo}
@@ -102,7 +125,9 @@
 									{/if}
 								</div>
 								<div class="text-center sm:text-left">
-									<span class="text-[11px] font-semibold tracking-wider text-scitech-mint uppercase">Sekretaris Program Studi</span>
+									<span class="text-scitech-mint text-[11px] font-semibold tracking-wider uppercase"
+										>Sekretaris Program Studi</span
+									>
 									<h3 class="mt-1 text-base font-bold text-text-main">{leader.secretary_name}</h3>
 								</div>
 							</div>
@@ -111,15 +136,10 @@
 				{/each}
 			</div>
 		{:else}
-			<div class="flex flex-col items-center justify-center rounded-2xl border border-border-color bg-scitech-slate/20 p-12 text-center backdrop-blur-md">
-				<div class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-amber-500/10 text-amber-500">
-					<AlertCircle class="h-6 w-6" />
-				</div>
-				<h3 class="text-lg font-bold text-text-main">Data Pimpinan Belum Tersedia</h3>
-				<p class="mt-1 max-w-md text-xs text-text-muted">
-					Belum ada riwayat pimpinan jurusan yang ditambahkan.
-				</p>
-			</div>
+			<EmptyData
+				title="Data Pimpinan Belum Tersedia"
+				description="	Belum ada riwayat pimpinan jurusan yang ditambahkan."
+			/>
 		{/if}
 	</section>
 </div>

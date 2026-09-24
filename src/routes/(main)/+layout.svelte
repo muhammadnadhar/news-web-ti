@@ -62,7 +62,13 @@
 	});
 
 	// Helper function untuk memformat menu
-	const formatSubMenu = (semesters: { semester: string }[], basePath: string): SubMenuItem[] => {
+
+	const formatSubMenu = (
+		semesters: { semester: string }[] | undefined,
+		basePath: string
+	): SubMenuItem[] => {
+		if (!semesters || !Array.isArray(semesters) || semesters.length === 0) return [];
+
 		return semesters.map((item) => ({
 			id: item.semester?.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
 			label: item.semester,
@@ -80,7 +86,7 @@
 
 		if (kemahasiswaanMenu && kemahasiswaanMenu.subMenu) {
 			const prestasiAkademik = kemahasiswaanMenu.subMenu.find((c) => c.id === 'prestasi-akademik');
-			if (prestasiAkademik && data.academic) {
+			if (prestasiAkademik && data.semesters) {
 				prestasiAkademik.subMenu = formatSubMenu(data.semesters.academic, prestasiAkademik.href);
 			}
 
@@ -118,7 +124,7 @@
 			<div
 				class="bg-scitech-navy-glare border-scitech-mint/30 flex h-12 w-12 items-center justify-center rounded-xl border p-2 shadow-lg"
 			>
-				<img src={uinIcon} class="text-scitech-mint h-7 w-7" alt="UIN Logo" />
+				<img src={uinIcon} class=" h-7 w-7" alt="UIN Logo" />
 			</div>
 			<div>
 				<h1 class="text-scitech-mint text-xs font-bold tracking-widest uppercase sm:text-sm">

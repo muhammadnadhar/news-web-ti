@@ -13,7 +13,8 @@
 		Trash2,
 		Save,
 		Loader2Icon,
-		Upload
+		Upload,
+		LoaderCircle
 	} from 'lucide-svelte';
 	import FormEditor from '$lib/components/admin/formEditor.svelte';
 	import {
@@ -33,12 +34,17 @@
 	let {
 		form,
 		initialData = null,
-		isEdit = false
+		isEdit = false,
+		action
 	}: {
 		form: any;
 		initialData?: GuidelineData | null;
+		action?: string;
 		isEdit?: boolean;
 	} = $props();
+
+	let photoPublicId = $state(''); // Simpan public_id dari Cloudinary
+	let isDeletingPhoto = $state(false);
 
 	let isSubmitting = $state(false);
 	let showMessage = $state(false);
@@ -52,13 +58,43 @@
 	let imageUrl = $state(form?.values?.image_url ?? initialData?.image_url ?? '');
 	let description = $state(form?.values?.description ?? initialData?.description ?? '');
 
-	// Hapus foto jika ingin mengganti
-	function removeImage() {
-		imageUrl = '';
+	// Fungsi untuk menghapus foto dari Cloudinary & mereset state
+	async function removeImage() {
+		if (!photoPublicId) {
+			imageUrl = '';
+			return;
+		}
+
+		isDeletingPhoto = true;
+
+		try {
+			const formData = new FormData();
+			formData.append('public_id', photoPublicId);
+
+			// Panggil named action '?/deletePhoto'
+			const response = await fetch('?/deletePhoto', {
+				method: 'POST',
+				body: formData
+			});
+
+			if (response.ok) {
+				imageUrl = '';
+				photoPublicId = '';
+			} else {
+				alert('Gagal menghapus gambar dari Cloudinary');
+			}
+		} catch (err) {
+			console.error('Error deleting photo:', err);
+		} finally {
+			isDeletingPhoto = false;
+		}
 	}
+
 	function handleUploadSuccess(result: any) {
 		if (result?.info?.secure_url) {
 			imageUrl = result.info.secure_url;
+			photoPublicId = result.info.public_id; // Dapatkan public_id
+
 			// Pulihkan scroll body yang terkunci oleh Cloudinary
 			if (typeof document !== 'undefined') {
 				document.body.style.overflow = 'auto';
@@ -69,6 +105,7 @@
 	function handleUpload(result: any) {
 		if (result?.event === 'success') {
 			imageUrl = result.info.secure_url;
+			photoPublicId = result.info.public_id; // Dapatkan public_id
 			// Pulihkan scroll body yang terkunci oleh Cloudinary
 			if (typeof document !== 'undefined') {
 				document.body.style.overflow = 'auto';
@@ -128,6 +165,7 @@
 	>
 		<form
 			method="POST"
+			{action}
 			use:enhance={() => {
 				isSubmitting = true;
 				showMessage = false;
@@ -208,11 +246,15 @@
 								<button
 									type="button"
 									onclick={removeImage}
-									disabled={isSubmitting}
+									disabled={isDeletingPhoto}
 									class="inline-flex items-center gap-1.5 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-xs font-medium text-red-400 transition-all hover:bg-red-500/20 active:scale-95 disabled:opacity-50"
 								>
 									<Trash2 class="h-3.5 w-3.5" />
-									<span>Hapus Foto</span>
+									{#if isDeletingPhoto}
+										<LoaderCircle class="h-4 w-4 animate-spin" />
+									{:else}
+										<span>Hapus Foto</span>
+									{/if}
 								</button>
 							</div>
 						</div>

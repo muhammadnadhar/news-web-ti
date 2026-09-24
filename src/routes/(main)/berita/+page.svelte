@@ -3,6 +3,7 @@
 	import { User, Calendar, ArrowRight, ImagesIcon } from 'lucide-svelte';
 	import SidebarWidgetPriview from '$lib/components/admin/sidebarWidgetPriview.svelte';
 	import { CldImage } from 'svelte-cloudinary';
+	import { mergeNewPath } from '$lib/utils';
 	let data: PageData = $props();
 
 	// Tracker status loading gambar untuk skeleton effect
@@ -106,7 +107,7 @@
 							<!-- Tombol Read More -->
 							<div class="flex justify-end pt-2">
 								<a
-									href={`/news/${news.id}`}
+									href={`${mergeNewPath('edit')}/${news.id}`}
 									class="inline-flex items-center gap-2 rounded-lg bg-[var(--color-bg-secondary-hover)] px-5 py-2.5 text-xs font-semibold text-[var(--color-text-main)] shadow-sm transition-all hover:bg-[var(--color-accent-purple)] hover:text-white"
 								>
 									<span>Read More</span>

@@ -5,11 +5,11 @@
 	import type { TableContentType } from '$lib/types/tableContent';
 	import { gotoEdit, mergeNewPath } from '$lib/utils.js';
 	import { goto } from '$app/navigation';
-	import type { AngkatanDTO } from '$lib/types/admin/dataset.js';
 	import TableSkeleton from '$lib/components/tableSkeleton.svelte';
 	import { page } from '$app/state';
 	import type { ResponseMessage } from '$lib/types/message.js';
 	import Message from '$lib/components/admin/message.svelte';
+	import type { AngkatanDTO } from '$lib/dto/admin/dataset.js';
 
 	// Data Angkatan sesuai Gambar 2
 	let { data } = $props();
@@ -219,7 +219,7 @@
 <!-- pindahkan ke table sekarang -->
 
 {#await data.angkatanList}
-	<TableSkeleton showTitle={true} title="Memuat Data Kerjasama..." columnsCount={4} />
+	<TableSkeleton showTitle={true} title="Memuat Data Kerjasama..." columnsCount={2} />
 {:then rawList}
 	<TableContent
 		title="Data Angkatan Teknologi Informasi"

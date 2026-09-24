@@ -9,7 +9,7 @@
 
 <FormMshIpk
 	{form}
-	action={'?/update'}
+	action="?/update"
 	initialData={data.mhsipk}
 	angkatanList={data.angkatanList}
 	semesterList={data.semesterList}

@@ -1,16 +1,8 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { goto } from '$app/navigation';
 	import { CldUploadButton, CldUploadWidget } from 'svelte-cloudinary';
 
-	import {
-		ArrowLeft,
-		Upload,
-		Image as ImageIcon,
-		LayoutDashboard,
-		Trash2,
-		AlertCircle
-	} from 'lucide-svelte';
+	import { Upload, Image as ImageIcon, LayoutDashboard, Trash2 } from 'lucide-svelte';
 	import Message from '$lib/components/admin/message.svelte';
 	import {
 		folder_cloudinary_admin_home_profilDashboard,
@@ -18,6 +10,7 @@
 		getUploadOptions,
 		upload_cloudinary_preset
 	} from '$lib/cloudinary/client.js';
+	import type { MessageStatus, ResponseMessage } from '$lib/types/message.js';
 
 	let { form } = $props();
 
@@ -35,46 +28,86 @@
 	function handleRemoveImage() {
 		imagePath = '';
 	}
+
+	let showMessage = $state(false);
+
+	let messageConfig = $state<ResponseMessage>({
+		status: 'info',
+		title: '',
+		message: ''
+	});
+
+	function triggerMessage(status: MessageStatus, title: string, message: string) {
+		messageConfig = { status, title, message };
+		showMessage = true;
+	}
 </script>
 
 <div class="mx-auto max-w-3xl space-y-6">
-	<!-- Top Bar / Navigation -->
 	<div class="flex items-center gap-4">
-		<!-- <button -->
-		<!-- 	type="button" -->
-		<!-- 	onclick={() => goto('/admin/profile-dashboard')} -->
-		<!-- 	class="rounded-xl border border-white/10 bg-bg-secondary/40 p-2.5 text-text-muted transition-colors hover:bg-white/10 hover:text-white" -->
-		<!-- 	title="Kembali" -->
-		<!-- > -->
-		<!-- 	<ArrowLeft class="h-5 w-5" /> -->
-		<!-- </button> -->
 		<div>
-			<h1 class="text-pure-white text-xl font-bold md:text-2xl">Tambah Profile Dashboard</h1>
+			<h1 class="text-xl font-bold text-text-main md:text-2xl">Tambah Profile Dashboard</h1>
 			<p class="text-sm text-text-muted">Tambahkan banner/gambar profile dashboard baru.</p>
 		</div>
 	</div>
 
-	{#if form?.message}
-		<Message type={form.message.type} text={form.message.text} />
+	<!-- Notifikasi Pesan -->
+	{#if showMessage}
+		<div class="transition-all duration-300">
+			<Message
+				status={messageConfig.status}
+				title={messageConfig.title}
+				message={messageConfig.message}
+				dismissible={true}
+				timeout={5000}
+				onclose={() => (showMessage = false)}
+			/>
+		</div>
 	{/if}
 
 	<form
 		method="POST"
 		use:enhance={() => {
 			isSubmitting = true;
-			return async ({ update }) => {
+			showMessage = false;
+
+			return async ({ result, update }) => {
 				isSubmitting = false;
-				await update();
+
+				if (result.type === 'success') {
+					const resData = (result.data as ResponseMessage) ?? {
+						status: 'success',
+						title: 'Berhasil',
+						message: 'Data angkatan berhasil disimpan.'
+					};
+					triggerMessage(resData.status, resData.title, resData.message);
+					await update({ reset: true });
+				} else if (result.type === 'failure') {
+					const resData = (result.data as ResponseMessage) ?? {
+						status: 'error',
+						title: 'Gagal',
+						message: 'Gagal menyimpan data angkatan.'
+					};
+					triggerMessage(resData.status, resData.title, resData.message);
+					await update();
+				} else {
+					const resData: ResponseMessage = {
+						status: 'error',
+						title: 'Kesalahan Sistem',
+						message: 'Terjadi kesalahan sistem yang tidak diketahui.'
+					};
+					triggerMessage(resData.status, resData.title, resData.message);
+					await update();
+				}
 			};
 		}}
-		class="space-y-6 rounded-2xl border border-white/10 bg-bg-secondary/40 p-6 backdrop-blur-md md:p-8"
+		class="space-y-6 border border-border-color bg-bg-secondary p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,0.4)] md:p-8"
 	>
-		<!-- Input Hidden untuk Menyimpan Path Gambar -->
 		<input type="hidden" name="image_path" value={imagePath} />
 
 		<div class="space-y-2">
-			<label for="title" class="text-pure-white block text-sm font-semibold">
-				Profile Text <span class="text-amber-400">*</span>
+			<label for="title" class="block text-sm font-bold text-text-main">
+				Profile Text <span class="text-status-error">*</span>
 			</label>
 			<input
 				type="text"
@@ -83,41 +116,42 @@
 				required
 				value={form?.title || ''}
 				placeholder="Contoh: Banner Dashboard Utama"
-				class="w-full rounded-xl border border-white/10 bg-bg-primary-glare/50 px-4 py-3 text-sm text-text-main placeholder-text-muted focus:border-amber-500 focus:ring-1 focus:ring-amber-500 focus:outline-none"
+				class="w-full border border-border-color bg-bg-primary px-4 py-3 text-sm text-text-main transition-all placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
 			/>
 		</div>
 
 		<!-- Field 2: Upload Gambar via svelte-cloudinary -->
 		<div class="space-y-2">
-			<label class="text-pure-white block text-sm font-semibold">
-				Upload Gambar <span class="text-amber-400">*</span>
+			<label class="block text-sm font-bold text-text-main">
+				Upload Gambar <span class="text-status-error">*</span>
 			</label>
 
 			{#if imagePath}
+				<!-- Frame Pratinjau Gambar 3D -->
 				<div
-					class="relative flex flex-col items-center justify-center overflow-hidden rounded-2xl border border-amber-500/30 bg-slate-950/60 p-4"
+					class="relative flex flex-col items-center justify-center border border-border-color bg-bg-primary p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)]"
 				>
 					<img
 						src={imagePath}
 						alt="Preview Profile Dashboard"
-						class="max-h-56 rounded-lg object-contain"
+						class="max-h-56 border border-border-color object-contain"
 					/>
 					<button
 						type="button"
 						onclick={handleRemoveImage}
-						class="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-rose-500/30 bg-rose-500/10 px-3 py-1.5 text-xs font-semibold text-rose-400 transition-colors hover:bg-rose-500/20"
+						class="mt-3 inline-flex items-center gap-1.5 border border-status-error/30 bg-status-error/10 px-3 py-2 text-xs font-bold text-status-error transition-all hover:bg-status-error/20 active:scale-95"
 					>
 						<Trash2 class="h-3.5 w-3.5" />
 						<span>Hapus Gambar</span>
 					</button>
 				</div>
 			{:else}
-				<!-- Component Cloudinary Upload Button -->
+				<!-- Dropzone Box Upload Gambar 3D -->
 				<div
-					class="flex w-full flex-col items-center justify-center rounded-2xl border border-dashed border-white/15 bg-slate-950/40 p-6 text-center transition-all hover:border-amber-500/40"
+					class="flex w-full flex-col items-center justify-center border-2 border-dashed border-border-color bg-bg-primary p-6 text-center transition-all hover:bg-bg-primary-glare"
 				>
 					<div
-						class="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-amber-500/10 text-amber-400"
+						class="mb-3 flex h-12 w-12 items-center justify-center border border-border-color bg-bg-secondary text-accent-primary shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]"
 					>
 						<ImageIcon class="h-6 w-6" />
 					</div>
@@ -128,46 +162,28 @@
 						options={getUploadOptions(folder_cloudinary_admin_home_profilDashboard)}
 						config={getUploadConfig()}
 						onSuccess={handleUploadSuccess}
-						class="inline-flex items-center gap-2 rounded-xl bg-amber-500 px-4 py-2 text-xs font-semibold text-slate-950 shadow-md shadow-amber-500/10 hover:bg-amber-400"
+						class="inline-flex items-center gap-2 border border-border-color bg-accent-primary px-4 py-2 text-xs font-bold text-text-dark shadow-[3px_3px_0px_0px_rgba(0,0,0,0.4)] transition-all hover:bg-accent-primary-hover active:scale-95"
 					>
 						<Upload class="h-4 w-4" />
-						<span>Unggah Gambar </span>
+						<span>Unggah Gambar</span>
 					</CldUploadButton>
-					<!-- <CldUploadWidget -->
-					<!-- 	uploadPreset={upload_cloudinary_preset} -->
-					<!-- 	options={getUploadOptions(folder_cloudinary_admin_home_profilDashboard)} -->
-					<!-- 	config={getUploadConfig()} -->
-					<!-- 	onSuccess={handleUploadSuccess} -->
-					<!-- 	let:open -->
-					<!-- 	let:isLoading -->
-					<!-- > -->
-					<!-- 	<button -->
-					<!-- 		type="button" -->
-					<!-- 		on:click={() => open()} -->
-					<!-- 		disabled={isLoading} -->
-					<!-- 		class="inline-flex items-center gap-2 rounded-xl bg-amber-500 px-4 py-2 text-xs font-semibold text-slate-950 shadow-md shadow-amber-500/10 hover:bg-amber-400 disabled:opacity-50" -->
-					<!-- 	> -->
-					<!-- 		<Upload class="h-4 w-4" /> -->
-					<!-- 		<span>{isLoading ? 'Memuat Widget...' : 'Unggah Gambar ke Cloudinary'}</span> -->
-					<!-- 	</button> -->
-					<!-- </CldUploadWidget> -->
 				</div>
 			{/if}
 		</div>
 
-		<!-- Form Action Buttons -->
-		<div class="flex items-center justify-end gap-3 border-t border-white/10 pt-6">
+		<div class="flex items-center justify-end gap-3 border-t border-border-color pt-6">
 			<button
 				type="button"
 				onclick={() => history.back()}
-				class="rounded-xl border border-white/10 px-5 py-2.5 text-sm font-semibold text-text-muted transition-colors hover:bg-white/10 hover:text-white"
+				class="border border-border-color bg-bg-primary px-5 py-2.5 text-sm font-semibold text-text-main transition-all hover:bg-bg-secondary-hover active:scale-95"
 			>
 				Batal
 			</button>
+
 			<button
 				type="submit"
 				disabled={isSubmitting || !imagePath}
-				class="inline-flex items-center gap-2 rounded-xl bg-amber-500 px-6 py-2.5 text-sm font-semibold text-slate-950 shadow-lg shadow-amber-500/20 transition-all hover:scale-[1.02] hover:bg-amber-400 active:scale-[0.98] disabled:opacity-50"
+				class="inline-flex items-center gap-2 border border-border-color bg-accent-primary px-6 py-2.5 text-sm font-bold text-text-dark shadow-[4px_4px_0px_0px_rgba(0,0,0,0.4)] transition-all hover:bg-accent-primary-hover active:scale-95 disabled:opacity-50"
 			>
 				<LayoutDashboard class="h-4 w-4" />
 				<span>{isSubmitting ? 'Menyimpan...' : 'Simpan Data'}</span>

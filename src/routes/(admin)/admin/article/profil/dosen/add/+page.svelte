@@ -9,7 +9,6 @@
 		UploadCloud,
 		X,
 		UserCheck,
-		ArrowLeft,
 		Send,
 		BriefcaseIcon,
 		ChevronDownCircle,
@@ -24,6 +23,7 @@
 		upload_cloudinary_preset
 	} from '$lib/cloudinary/client';
 	import Message from '$lib/components/admin/message.svelte';
+	import type { MessageStatus, ResponseMessage } from '$lib/types/message';
 
 	interface Props {
 		form?: ActionData;
@@ -40,10 +40,23 @@
 	let isSubmitting = $state(false);
 	let isDeletingPhoto = $state(false); // State loading hapus foto
 	let category = $state('dosen');
+	let showMessage = $state(false);
+
+	let messageConfig = $state<ResponseMessage>({
+		status: 'info',
+		title: '',
+		message: ''
+	});
+
+	function triggerMessage(status: MessageStatus, title: string, message: string) {
+		messageConfig = { status, title, message };
+		showMessage = true;
+	}
 
 	function handleUpload(result: any) {
 		if (result?.event === 'success') {
 			photoUrl = result.info.secure_url;
+			publicId = result.info.public_id;
 		}
 	}
 
@@ -54,27 +67,50 @@
 		}
 
 		isDeletingPhoto = true;
-		const formData = new FormData();
-		formData.append('public_id', publicId);
+		try {
+			const formData = new FormData();
+			formData.append('public_id', publicId);
 
-		const res = await fetch('?/deletePhoto', {
-			method: 'POST',
-			body: formData
-		});
+			const res = await fetch('?/deletePhoto', {
+				method: 'POST',
+				body: formData,
+				headers: {
+					'x-sveltekit-action': 'true'
+				}
+			});
 
-		if (res.ok) {
-			photoUrl = '';
-			publicId = '';
-		} else {
-			alert('Gagal menghapus foto dari Cloudinary');
+			if (res.ok) {
+				photoUrl = '';
+				publicId = '';
+				triggerMessage('success', 'Berhasil', 'Foto berhasil dihapus.');
+			} else {
+				triggerMessage('error', 'Gagal', 'Gagal menghapus foto dari Cloudinary.');
+			}
+		} catch (error) {
+			triggerMessage('error', 'Error', 'Terjadi kesalahan sistem saat menghapus foto.');
+		} finally {
+			isDeletingPhoto = false;
 		}
-		isDeletingPhoto = false;
 	}
 </script>
 
 <svelte:head>
 	<title>Tambah Dosen & Staff - Admin Portal</title>
 </svelte:head>
+
+<!-- Message Component Notification -->
+{#if showMessage}
+	<div class="transition-all duration-300">
+		<Message
+			status={messageConfig.status}
+			title={messageConfig.title}
+			message={messageConfig.message}
+			dismissible={true}
+			timeout={5000}
+			onclose={() => (showMessage = false)}
+		/>
+	</div>
+{/if}
 
 <div class="min-h-screen bg-[var(--color-bg-primary)] p-4 text-[var(--color-text-main)] md:p-8">
 	<div class="mx-auto max-w-4xl space-y-6">
@@ -100,24 +136,53 @@
 				action="?/create"
 				use:enhance={() => {
 					isSubmitting = true;
-					return async ({ update }) => {
+					showMessage = false;
+
+					return async ({ result, update }) => {
 						isSubmitting = false;
-						await update();
+
+						if (result.type === 'success') {
+							const data = result.data;
+
+							if (!data || data.status === 'success' || data.success) {
+								triggerMessage(
+									'success',
+									(data?.title as string) || 'Berhasil',
+									(data?.message as string) || 'Data berhasil disimpan!'
+								);
+								// Reset nilai form
+								name = '';
+								nidn = '';
+								expertise = '';
+								pddiktiUrl = '';
+								photoUrl = '';
+								publicId = '';
+								category = 'dosen';
+								await update({ reset: true });
+							} else {
+								triggerMessage(
+									'error',
+									(data?.title as string) || 'Gagal Menyimpan',
+									(data?.message as string) || 'Terjadi kesalahan.'
+								);
+								await update({ reset: false });
+							}
+						} else if (result.type === 'failure' && result.data) {
+							const data = result.data;
+							triggerMessage(
+								'error',
+								(data.title as string) || 'Gagal Menyimpan',
+								(data.message as string) || 'Terjadi kesalahan saat memproses data.'
+							);
+							await update({ reset: false });
+						} else {
+							triggerMessage('error', 'Error', 'Terjadi kesalahan koneksi/sistem.');
+							await update({ reset: false });
+						}
 					};
 				}}
 				class="space-y-6 p-6"
 			>
-				<!-- {#if form?.error} -->
-				<!-- 	<div -->
-				<!-- 		class="rounded-lg border border-[var(--color-status-error)]/40 bg-[var(--color-status-error)]/20 p-3.5 text-xs font-medium text-[var(--color-status-error)]" -->
-				<!-- 	> -->
-				<!-- 		{form.error} -->
-				<!-- 	</div> -->
-				<!-- {/if} -->
-				{#if form?.message}
-					<Message type={form.message.type} text={form.message.text} />
-				{/if}
-
 				<!-- Hidden input URL foto untuk backend -->
 				<input type="hidden" name="photo_url" value={photoUrl} />
 				<input type="hidden" name="public_id" value={publicId} />
@@ -148,7 +213,7 @@
 										type="button"
 										onclick={removePhoto}
 										disabled={isDeletingPhoto}
-										class="absolute top-1 right-1 rounded-full bg-[var(--color-status-error)] p-1.5 text-text-main shadow transition-transform hover:scale-110"
+										class="absolute top-1 right-1 z-20 rounded-full bg-[var(--color-status-error)] p-1.5 text-[var(--color-text-main)] shadow transition-transform hover:scale-110 disabled:opacity-50"
 										title="Hapus Foto"
 									>
 										{#if isDeletingPhoto}
@@ -158,11 +223,11 @@
 										{/if}
 									</button>
 								</div>
-								<p class="mt-3 max-w-[180px] truncate text-[11px] text-text-muted">
+								<p class="mt-3 max-w-[180px] truncate text-[11px] text-[var(--color-text-muted)]">
 									{photoUrl}
 								</p>
 							{:else}
-								<!-- Placeholder Lucide Icon & Widget CldUploadWidget -->
+								<!-- Placeholder Icon & CldUploadWidget -->
 								<div
 									class="mb-3 flex h-32 w-32 items-center justify-center rounded-full border border-[var(--color-border-light)] bg-[var(--color-bg-secondary)] text-[var(--color-text-muted)]"
 								>
@@ -189,7 +254,6 @@
 							{/if}
 						</div>
 					</div>
-
 					<!-- Kolom Form Isian -->
 					<div class="space-y-4 md:col-span-2">
 						<!-- Nama Lengkap beserta Gelar -->
@@ -204,7 +268,7 @@
 									name="name"
 									bind:value={name}
 									required
-									placeholder="Contoh: Aulia Syarif Aziz, S.Kom., M.Sc"
+									placeholder="Contoh: Nama Dosen S.Kom., M.Sc"
 									class="w-full rounded-xl border border-[var(--color-border-light)] bg-[var(--color-bg-primary)] py-2.5 pr-3 pl-10 text-xs text-[var(--color-text-main)] transition-colors focus:border-[var(--color-accent-primary)] focus:outline-none"
 								/>
 								<User class="absolute top-3 left-3 h-4 w-4 text-[var(--color-text-muted)]" />

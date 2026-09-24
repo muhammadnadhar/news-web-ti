@@ -1,9 +1,11 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { createPracticumModule } from '$lib/repository/admin/article/akedemik/modulePratikum';
+import { errorResponse, successResponse } from '$lib/helper/message';
+import { cloudinary } from '$lib/cloudinary/server';
 
 export const actions: Actions = {
-	default: async ({ request }) => {
+	create: async ({ request }) => {
 		const formData = await request.formData();
 
 		const title = formData.get('title') as string;
@@ -34,13 +36,30 @@ export const actions: Actions = {
 			}
 		} catch (error: any) {
 			return fail(500, {
-				success: false,
-				message: 'Terjadi kesalahan sistem: ' + error.message,
+				...errorResponse('Terjaid kesalah sistem'),
 				values: { title, imageUrl, description }
 			});
 		}
 
 		// Redirect ke halaman daftar Modul Praktikum
-		throw redirect(303, '/admin/akademik/modul-praktikum');
+		// throw redirect(303, '/admin/akademik/modul-praktikum');
+		return successResponse('berhasil membuat module Praktikum');
+	},
+
+	deletePhoto: async ({ request }) => {
+		const formData = await request.formData();
+		const publicId = formData.get('public_id')?.toString();
+
+		if (!publicId) {
+			return fail(400, { ...errorResponse('Public Id tidak di temukan', 'Error') });
+		}
+
+		try {
+			await cloudinary.uploader.destroy(publicId);
+			return successResponse('Berhasil di batalkan', 'Succcess');
+		} catch (err) {
+			console.error('Error deleting photo:', err);
+			return fail(500, errorResponse('Gagal menghapus foto ', 'Gagal'));
+		}
 	}
 };

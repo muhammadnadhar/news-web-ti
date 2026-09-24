@@ -1,23 +1,55 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { Sparkles, Send } from 'lucide-svelte';
+	import { Send } from 'lucide-svelte';
 	import FormEditor from '$lib/components/admin/formEditor.svelte';
+	import Message from '$lib/components/admin/message.svelte';
+	import type { ResponseMessage } from '$lib/types/message';
+	import type { PageData, ActionData } from './$types';
 
-	let { data } = $props();
+	interface Props {
+		data: PageData;
+		form?: ActionData;
+	}
+
+	let { data, form }: Props = $props();
 
 	// State Management
 	let titleInput = $state('Penelitian Dosen Prodi TI');
 	let descriptionContent = $state(data.researchData?.description || '');
 	let isSaving = $state(false);
+
+	// Message / Toast State
+	let showMessage = $state(false);
+	let messageConfig = $state<ResponseMessage>({
+		status: 'info',
+		title: '',
+		message: ''
+	});
+
+	function triggerMessage(status: ResponseMessage['status'], title: string, message: string) {
+		messageConfig = { status, title, message };
+		showMessage = true;
+	}
 </script>
+
+<svelte:head>
+	<title>Penelitian Dosen - Admin Portal</title>
+</svelte:head>
+
+<!-- Komponen Message Response -->
+{#if showMessage || form?.message}
+	<Message
+		status={showMessage ? messageConfig.status : 'error'}
+		title={showMessage ? messageConfig.title : 'Gagal'}
+		message={showMessage ? messageConfig.message : form?.message || ''}
+		dismissible={true}
+		timeout={4000}
+		onclose={() => (showMessage = false)}
+	/>
+{/if}
 
 <div class="mx-auto max-w-7xl space-y-8 p-6 lg:p-10">
 	<div class="border-b border-white/10 pb-6">
-		<span
-			class="text-scitech-mint mb-1 inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase"
-		>
-			<Sparkles class="text-scitech-mint h-4 w-4" /> Penelitian & Pengabdian
-		</span>
 		<h1 class="text-2xl font-extrabold tracking-tight text-text-main sm:text-3xl">
 			Penelitian Dosen Prodi TI
 		</h1>
@@ -37,9 +69,31 @@
 			action="?/save"
 			use:enhance={() => {
 				isSaving = true;
-				return async ({ update }) => {
-					await update();
+				showMessage = false;
+
+				return async ({ result, update }) => {
 					isSaving = false;
+
+					if (result.type === 'success') {
+						const resData = (result.data as ResponseMessage) ?? {
+							status: 'success',
+							title: 'Berhasil',
+							message: 'Data Penelitian Dosen berhasil disimpan.'
+						};
+						triggerMessage(resData.status, resData.title, resData.message);
+						await update({ reset: false });
+					} else if (result.type === 'failure') {
+						const resData = (result.data as ResponseMessage) ?? {
+							status: 'error',
+							title: 'Gagal',
+							message: (result.data?.message as string) || 'Gagal menyimpan data.'
+						};
+						triggerMessage(resData.status, resData.title, resData.message);
+						await update();
+					} else {
+						triggerMessage('error', 'Error', 'Terjadi kesalahan sistem yang tidak diketahui.');
+						await update();
+					}
 				};
 			}}
 			class="space-y-6"

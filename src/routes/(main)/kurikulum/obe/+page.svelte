@@ -1,4 +1,5 @@
 <script lang="ts">
+	import EmptyData from '../../_components/emptyData.svelte';
 	import type { PageData } from './$types';
 	import { BookOpen, Calendar, AlertCircle } from 'lucide-svelte';
 
@@ -21,7 +22,6 @@
 </script>
 
 <section class="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
-	<!-- Header Section -->
 	<div class="mb-8 border-b border-border-color/40 pb-6">
 		<div
 			class="bg-scitech-mint/10 text-scitech-mint mb-3 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold"
@@ -29,7 +29,7 @@
 			<BookOpen class="h-4 w-4" />
 			<span>Akademik & Kurikulum</span>
 		</div>
-		<h1 class="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+		<h1 class="text-3xl font-extrabold tracking-tight text-text-main sm:text-4xl">
 			Kurikulum Outcome-Based Education (OBE)
 		</h1>
 		{#if formattedDate}
@@ -50,20 +50,12 @@
 		</div>
 	{:else}
 		<!-- Empty State jika data kosong -->
-		<div
-			class="bg-scitech-slate/20 flex flex-col items-center justify-center rounded-2xl border border-border-color p-12 text-center backdrop-blur-md"
-		>
-			<div
-				class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-amber-500/10 text-amber-500"
-			>
-				<AlertCircle class="h-6 w-6" />
-			</div>
-			<h3 class="text-lg font-bold text-white">Informasi Belum Tersedia</h3>
-			<p class="mt-1 max-w-md text-xs text-text-muted">
-				Data Kurikulum OBE belum dipublikasikan atau masih dalam tahap penyusunan. Silakan cek
-				kembali di lain waktu.
-			</p>
-		</div>
+
+		<EmptyData
+			title="Informasi Belum Tersedia"
+			description="	Data Kurikulum OBE belum dipublikasikan atau masih dalam tahap penyusunan. Silakan cek
+				kembali di lain waktu."
+		/>
 	{/if}
 </section>
 

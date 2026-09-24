@@ -24,14 +24,22 @@ export async function StudentAchievementTableSeed() {
 	const sql = `
 CREATE TABLE IF NOT EXISTS ${tableStudentAchievement} (
     id VARCHAR(36) PRIMARY KEY, -- Primary key berupa UUID string
-    student_name VARCHAR(255) NOT NULL, -- Nama Mahasiswa (contoh: 'azri ahmad fahrozi')
+    student_name VARCHAR(255) NOT NULL, -- Nama Mahasiswa (contoh: 'Azri Ahmad Fahrozi')
     is_academic VARCHAR(10) NOT NULL DEFAULT 'y', -- Jenis prestasi Akademik (y/n)
-    batch_year VARCHAR(10) NOT NULL, -- Angkatan (contoh: '2020', '2021')
-    semester VARCHAR(100) NOT NULL, -- Semester (contoh: 'Semester Genap 2022/2023')
+    angkatan_id VARCHAR(36) NOT NULL, -- FK merujuk ke id tabel Angkatan
+    semester_id VARCHAR(36) NOT NULL, -- FK merujuk ke id tabel Semester
     image_url VARCHAR(255) NULL,
     achievement_name TEXT NOT NULL, -- Nama Prestasi yang diraih
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Waktu pembuatan data
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP -- Waktu update data
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    -- Foreign Key Constraints
+    CONSTRAINT fk_student_achievement_angkatan 
+        FOREIGN KEY (angkatan_id) REFERENCES ${tableAngkatan}(id) 
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_student_achievement_semester 
+        FOREIGN KEY (semester_id) REFERENCES ${tableSemester}(id) 
+        ON DELETE CASCADE ON UPDATE CASCADE
 );
   `;
 	await query(sql);

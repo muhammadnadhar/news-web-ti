@@ -3,17 +3,35 @@ import { getAchievementSemesters } from '$lib/repository/admin/article/kemahasis
 import type { LayoutServerLoad } from './$types';
 
 export const load: LayoutServerLoad = async () => {
-	let academicSemesters: { semester: string }[] = [];
-	let nonAcademicSemesters: { semester: string }[] = [];
-	let gpaSemesters: { semester: string }[] = [];
-
+	// let academicSemesters: { semester: string }[] = [];
+	// let nonAcademicSemesters: { semester: string }[] = [];
+	// let gpaSemesters: { semester: string }[] = [];
+	//
 	try {
-		// Fetch semua data semester unik secara paralel dari masing-masing tabel/kategori
-		[academicSemesters, nonAcademicSemesters, gpaSemesters] = await Promise.all([
+		const results = await Promise.allSettled([
 			getAchievementSemesters('y'),
 			getAchievementSemesters('n'),
 			getHighGpaSemesters()
 		]);
+
+		const academicSemesters = results[0].status === 'fulfilled' ? results[0].value : [];
+		const nonAcademicSemesters = results[1].status === 'fulfilled' ? results[1].value : [];
+		const gpaSemesters = results[2].status === 'fulfilled' ? results[2].value : [];
+
+		// Fetch semua data semester unik secara paralel dari masing-masing tabel/kategori
+		// [academicSemesters, nonAcademicSemesters, gpaSemesters] = await Promise.all([
+		// 	getAchievementSemesters('y'),
+		// 	getAchievementSemesters('n'),
+		// 	getHighGpaSemesters()
+		// ]);
+		return {
+			// navItems: navMenuItems as NavMenuItemType[]
+			semesters: {
+				academic: academicSemesters,
+				nonAcademic: nonAcademicSemesters,
+				gpa: gpaSemesters
+			}
+		};
 	} catch (error) {
 		console.error('Gagal mengambil data dropdown semester:', error);
 	}
@@ -40,12 +58,4 @@ export const load: LayoutServerLoad = async () => {
 	//           ipkTertinggi.subMenu = formatSubMenu(gpaSemesters, ipkTertinggi.href);
 	//       }
 	// }
-	return {
-		// navItems: navMenuItems as NavMenuItemType[]
-		semesters: {
-			academic: academicSemesters,
-			nonAcademic: nonAcademicSemesters,
-			gpa: gpaSemesters
-		}
-	};
 };

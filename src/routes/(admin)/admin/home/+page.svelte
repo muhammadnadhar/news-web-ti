@@ -1,31 +1,18 @@
 <script lang="ts">
 	import UserCard from '$lib/components/admin/userCard.svelte';
-	import {
-		AlertCircleIcon,
-		BookOpenIcon,
-		FileText,
-		LayoutDashboard,
-		PencilIcon,
-		PlusIcon,
-		UserPlus,
-		UsersIcon,
-		XCircleIcon
-	} from 'lucide-svelte';
+	import { AlertCircleIcon, LayoutDashboard, PencilIcon, PlusIcon, UserPlus } from 'lucide-svelte';
 	import type { PageData } from './$types';
 	import { goto } from '$app/navigation';
 	import { gotoEdit, mergeNewPath } from '$lib/utils';
 	import type { MessageStatus } from '$lib/components/admin/message.svelte';
 	import Message from '$lib/components/admin/message.svelte';
 	import { page } from '$app/state';
+	import type { ResponseMessage } from '$lib/types/message';
 
 	let { data }: { data: PageData } = $props();
 
 	let showMessage = $state(false);
-	let messageConfig = $state<{
-		status: MessageStatus;
-		title: string;
-		message: string;
-	}>({
+	let messageConfig = $state<ResponseMessage>({
 		status: 'info',
 		title: '',
 		message: ''
@@ -48,27 +35,81 @@
 	/>
 {/if}
 
+<!-- ----------- components ---------------- -->
+{#snippet emptyState(
+	title = 'Belum Ada Path URL Profile Dashboard',
+	description = 'Daftar path URL untuk navigasi dashboard belum dikonfigurasi. Silakan tambahkan path URL baru.',
+	actionText = 'Tambah Path URL Baru',
+	onAction = () => goto(mergeNewPath('profil-dashboard/add')),
+	IconComponent = LayoutDashboard
+)}
+	<div
+		class="flex w-full flex-col items-center justify-center border border-border-light bg-bg-secondary p-8 text-center shadow-[6px_6px_0px_0px_rgba(0,0,0,0.4)] transition-all hover:bg-bg-secondary-hover md:p-12"
+	>
+		<div
+			class="mb-4 flex h-16 w-16 items-center justify-center border border-border-light bg-bg-primary text-accent-cyan shadow-[3px_3px_0px_0px_rgba(0,0,0,0.3)]"
+		>
+			<IconComponent class="h-8 w-8" />
+		</div>
+
+		<h3 class="mb-1 text-lg font-bold text-text-main md:text-xl">
+			{title}
+		</h3>
+		<p class="mb-6 max-w-md text-sm text-text-muted">
+			{description}
+		</p>
+
+		{#if actionText && onAction}
+			<button
+				type="button"
+				onclick={onAction}
+				class="inline-flex items-center gap-2 border border-border-light bg-accent-primary px-5 py-2.5 text-sm font-bold text-text-dark shadow-[4px_4px_0px_0px_rgba(0,0,0,0.4)] transition-all hover:bg-accent-primary-hover active:scale-95"
+			>
+				<PlusIcon class="h-4 w-4" />
+				<span>{actionText}</span>
+			</button>
+		{/if}
+	</div>
+{/snippet}
+
+<!-- Snippet Reusable Tombol Aksi (3D Neobrutalist) -->
+{#snippet actionButton(
+	label = 'Tambah Peminatan',
+	onClick = () => goto(mergeNewPath('perminatan/add')),
+	IconComponent = PlusIcon
+)}
+	<button
+		type="button"
+		onclick={onClick}
+		class="inline-flex items-center justify-center gap-2 border border-border-color bg-bg-secondary px-4 py-2.5 text-sm font-bold text-text-main shadow-[4px_4px_0px_0px_rgba(0,0,0,0.4)] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-bg-secondary-hover hover:text-accent-primary hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,0.5)] active:scale-95"
+	>
+		{#if IconComponent}
+			<IconComponent class="h-4 w-4" />
+		{/if}
+		<span>{label}</span>
+	</button>
+{/snippet}
+
+<!-- ----------- components ---------------- -->
+
 <div class="container">
-	<h1 class="page-title">Manajemen Data Prodi Teknologi Informasi</h1>
+	<h1 class="text-2xl font-black tracking-tight text-text-main uppercase md:text-3xl">
+		Manajemen Data Prodi Teknologi Informasi
+	</h1>
 
 	<!-- section dashboard profile  -->
-	<section class="w-full space-y-6">
+	<section class="mt-2.5 w-full space-y-6">
 		<div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 			<div>
-				<h2 class="text-pure-white text-xl font-bold md:text-2xl">Path URL Profile Dashboard</h2>
+				<h2 class="text-pure-white text-xl font-bold md:text-2xl">Profile Dashboard</h2>
 				<p class="text-sm text-text-muted">
 					Kelola tautan dan rute halaman navigasi dashboard utama sistem.
 				</p>
 			</div>
 
-			<button
-				type="button"
-				onclick={() => goto(mergeNewPath('profil-dashboard/add'))}
-				class="inline-flex items-center justify-center gap-2 rounded-xl bg-bg-secondary px-4 py-2.5 text-sm font-semibold text-slate-950 shadow-lg shadow-amber-500/20 transition-all hover:scale-[1.02] hover:bg-bg-secondary-hover active:scale-[0.98]"
-			>
-				<PlusIcon class="h-4 w-4" />
-				<span>Tambah URL Path</span>
-			</button>
+			{@render actionButton('Tambah Image Dashboard', () =>
+				goto(mergeNewPath('profil-dashboard/add'))
+			)}
 		</div>
 
 		{#await data.listProfileDashboard}
@@ -94,30 +135,12 @@
 
 			{#if listProfileDashboard.length === 0}
 				<!-- Empty State -->
-				<div
-					class="flex w-full flex-col items-center justify-center rounded-2xl border border-dashed border-amber-500/30 bg-amber-500/5 p-8 text-center backdrop-blur-sm md:p-12"
-				>
-					<div
-						class="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-500 text-slate-950 shadow-lg shadow-amber-500/20"
-					>
-						<LayoutDashboard class="h-8 w-8" />
-					</div>
-					<h3 class="text-pure-white mb-1 text-lg font-bold md:text-xl">
-						Belum Ada Path URL Profile Dashboard
-					</h3>
-					<p class="mb-6 max-w-md text-sm text-text-muted">
-						Daftar path URL untuk navigasi dashboard belum dikonfigurasi. Silakan tambahkan path URL
-						baru.
-					</p>
-					<button
-						type="button"
-						onclick={() => goto(mergeNewPath('profil-dashboard/add'))}
-						class="inline-flex items-center gap-2 rounded-xl bg-amber-500 px-5 py-2.5 text-sm font-semibold text-slate-950 shadow-lg shadow-amber-500/20 transition-all hover:scale-[1.02] hover:bg-amber-400 active:scale-[0.98]"
-					>
-						<PlusIcon class="h-4 w-4" />
-						<span>Tambah Path URL Baru</span>
-					</button>
-				</div>
+				{@render emptyState(
+					'Belum Ad Path URL Profile Dashboard',
+					'Daftar path URL untuk navigasi dashboard belum di konfigurasi, silahkan tambah path URL baru',
+					'Tambah Foto Untuk Dashboard',
+					() => goto(mergeNewPath('profil-dashboard/add'))
+				)}
 			{:else}
 				<!-- Grid Card Profile Dashboard -->
 				<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -126,7 +149,7 @@
 							imageUrl={item.image_path}
 							id={item.id}
 							description={item.title}
-							editUrl={mergeNewPath(`edit/${item.id}`)}
+							editUrl={mergeNewPath(`profil-dashboard/edit/${item.id}`)}
 						/>
 					{/each}
 				</div>
@@ -145,25 +168,15 @@
 	</section>
 
 	<!-- section  tabel dosen -->
-	<section class="w-full space-y-6">
-		<!-- Header Section dengan Tombol Tambah di Kanan Atas -->
+	<section class="mt-2.5 w-full space-y-6">
 		<div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 			<div>
-				<h2 class="text-pure-white text-xl font-bold md:text-2xl">Daftar Dosen & Staf</h2>
+				<h2 class="text-pure-white text-xl font-bold md:text-2xl">Daftar Dosen atau Staff</h2>
 				<p class="text-sm text-text-muted">
-					Kelola jajaran dosen pengajar dan staf akademik program studi.
+					Kelola jajaran dosen pengajar primary yang tampil di halaman utama
 				</p>
 			</div>
-
-			<!-- Tombol Tambah Dosen (Selalu Tampil di Header) -->
-			<button
-				type="button"
-				onclick={() => goto(mergeNewPath('dosen/add'))}
-				class="inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500 px-4 py-2.5 text-sm font-semibold text-slate-950 shadow-lg shadow-amber-500/20 transition-all hover:scale-[1.02] hover:bg-amber-400 active:scale-[0.98]"
-			>
-				<UserPlus class="h-4 w-4" />
-				<span>Tambah Dosen & Staf</span>
-			</button>
+			{@render actionButton('Tambah Dosen Primary', () => goto(mergeNewPath('dosen/add')))}
 		</div>
 
 		<!-- Stream Handling dengan {#await} -->
@@ -183,30 +196,12 @@
 			</div>
 		{:then primaryDosenList}
 			{#if !primaryDosenList || primaryDosenList.length === 0}
-				<div
-					class="flex w-full flex-col items-center justify-center rounded-2xl border border-dashed border-amber-500/30 bg-amber-500/5 p-8 text-center backdrop-blur-sm md:p-12"
-				>
-					<div
-						class="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-500 text-slate-950 shadow-lg shadow-amber-500/20"
-					>
-						<UsersIcon class="h-8 w-8" />
-					</div>
-
-					<h3 class="text-pure-white mb-1 text-lg font-bold md:text-xl">
-						Belum Ada Data Dosen & Staf
-					</h3>
-					<p class="mb-6 max-w-md text-sm text-text-muted">
-						Data dosen dan staf belum ditemukan di sistem. Silakan tambahkan dosen atau staf baru.
-					</p>
-					<button
-						type="button"
-						onclick={() => goto('/')}
-						class="inline-flex items-center gap-2 rounded-xl bg-amber-500 px-5 py-2.5 text-sm font-semibold text-slate-950 shadow-lg shadow-amber-500/20 transition-all hover:scale-[1.02] hover:bg-amber-400 active:scale-[0.98]"
-					>
-						<UserPlus class="h-4 w-4" />
-						<span>Tambah Dosen & Staf Baru</span>
-					</button>
-				</div>
+				{@render emptyState(
+					'Belum ada Data DOsen & Staff',
+					'Data dosen dan staff belum sistem temukan , silahkan tambhakkan dosen dan staff baru',
+					'Tambahkan Dosen',
+					() => goto(mergeNewPath('dosen/add'))
+				)}
 			{:else}
 				<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
 					{#each primaryDosenList as dosen (dosen.id)}
@@ -234,7 +229,7 @@
 	</section>
 
 	<!-- seksi 2: tabel perminatan ti -->
-	<section class="w-full space-y-6">
+	<section class="mt-2.5 w-full space-y-6">
 		<div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 			<div>
 				<h2 class="text-pure-white text-xl font-bold md:text-2xl">Peminatan / Konsentrasi TI</h2>
@@ -243,14 +238,7 @@
 				</p>
 			</div>
 
-			<button
-				type="button"
-				onclick={() => goto(mergeNewPath('perminatan/add'))}
-				class="inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500 px-4 py-2.5 text-sm font-semibold text-slate-950 shadow-lg shadow-amber-500/20 transition-all hover:scale-[1.02] hover:bg-amber-400 active:scale-[0.98]"
-			>
-				<PlusIcon class="h-4 w-4" />
-				<span>Tambah Peminatan</span>
-			</button>
+			{@render actionButton('Tambah Peminatan', () => goto(mergeNewPath('perminatan/add')))}
 		</div>
 
 		{#await data.listPerminatan}
@@ -275,64 +263,49 @@
 			</div>
 		{:then listPerminatan}
 			{#if !listPerminatan || listPerminatan.length === 0}
-				<div
-					class="flex w-full flex-col items-center justify-center rounded-2xl border border-dashed border-amber-500/30 bg-amber-500/5 p-8 text-center backdrop-blur-sm md:p-12"
-				>
-					<div
-						class="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-500 text-slate-950 shadow-lg shadow-amber-500/20"
-					>
-						<BookOpenIcon class="h-8 w-8" />
-					</div>
-
-					<h3 class="text-pure-white mb-1 text-lg font-bold md:text-xl">
-						Belum Ada Data Peminatan TI
-					</h3>
-					<p class="mb-6 max-w-md text-sm text-text-muted">
-						Bidang peminatan belum ditambahkan ke sistem. Silakan buat bidang peminatan baru untuk
-						program studi Teknik Informatika.
-					</p>
-
-					<button
-						type="button"
-						onclick={() => goto(mergeNewPath('perminatan/add'))}
-						class="inline-flex items-center gap-2 rounded-xl bg-amber-500 px-5 py-2.5 text-sm font-semibold text-slate-950 shadow-lg shadow-amber-500/20 transition-all hover:scale-[1.02] hover:bg-amber-400 active:scale-[0.98]"
-					>
-						<PlusIcon class="h-4 w-4" />
-						<span>Tambah Peminatan Baru</span>
-					</button>
-				</div>
+				{@render emptyState(
+					'Belum ada Data Peminatan',
+					'Bidang peminatan belum ditambhakan ke sistem. Silahakan buat bidang peminatan baru',
+					'tambah peminatan baru',
+					() => goto(mergeNewPath('perminatan/add'))
+				)}
 			{:else}
-				<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+				<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
 					{#each listPerminatan as item (item.id)}
 						<div
-							class="group flex flex-col justify-between rounded-2xl border border-white/10 bg-bg-secondary/40 p-5 backdrop-blur-md transition-all hover:border-amber-500/40 hover:bg-bg-secondary/60"
+							class="group flex flex-col justify-between border border-border-color bg-bg-secondary p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,0.4)] transition-all duration-300 hover:-translate-x-1 hover:-translate-y-1 hover:border-accent-primary hover:bg-bg-secondary-hover hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,0.5)]"
 						>
 							<div>
 								<div class="mb-3 flex items-center justify-between">
 									<span
-										class="rounded-lg border border-amber-500/20 bg-amber-500/10 px-2.5 py-1 text-xs font-semibold text-amber-400"
+										class="inline-block border border-accent-primary/30 bg-accent-primary/10 px-2.5 py-1 text-xs font-semibold text-accent-primary uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]"
 									>
 										Peminatan TI
 									</span>
 								</div>
+
 								<h4
-									class="text-pure-white text-lg font-bold transition-colors group-hover:text-amber-400"
+									class="text-lg font-bold text-text-main transition-colors group-hover:text-accent-primary"
 								>
 									{item.title}
 								</h4>
+
 								<p class="mt-2 line-clamp-3 text-sm leading-relaxed text-text-muted">
 									{item.description}
 								</p>
 							</div>
 
-							<div class="mt-5 flex items-center justify-end gap-2 border-t border-white/5 pt-4">
+							<div
+								class="mt-5 flex items-center justify-end gap-2 border-t border-border-color pt-4"
+							>
 								<button
 									type="button"
 									onclick={() => goto(`${page.url.pathname}/perminatan/edit/${item.id}`)}
-									class="rounded-lg p-2 text-text-muted transition-colors hover:bg-white/10 hover:text-text-main"
-									title="Edit"
+									class="inline-flex items-center gap-1.5 border border-border-color bg-accent-primary px-3 py-1.5 text-xs font-bold text-text-dark shadow-[3px_3px_0px_0px_rgba(0,0,0,0.4)] transition-all hover:bg-accent-primary-hover active:scale-95"
+									title="Edit Peminatan"
 								>
-									<PencilIcon class="h-4 w-4" />
+									<PencilIcon class="h-3.5 w-3.5" />
+									<span>Ubah</span>
 								</button>
 							</div>
 						</div>
@@ -353,7 +326,7 @@
 	</section>
 
 	<!-- SEKSI 3: TABEL PROFIL PRODI -->
-	<section class="w-full space-y-6">
+	<section class="mt-2.5 w-full space-y-6">
 		<div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 			<div>
 				<h2 class="text-pure-white text-xl font-bold md:text-2xl">Profil & Pengaduan Prodi</h2>
@@ -362,14 +335,7 @@
 				</p>
 			</div>
 
-			<button
-				type="button"
-				onclick={() => goto(mergeNewPath('profil-prodi/add'))}
-				class="inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500 px-4 py-2.5 text-sm font-semibold text-slate-950 shadow-lg shadow-amber-500/20 transition-all hover:scale-[1.02] hover:bg-amber-400 active:scale-[0.98]"
-			>
-				<PlusIcon class="h-4 w-4" />
-				<span>Tambah Profil Baru</span>
-			</button>
+			{@render actionButton('Tambah Profil Lainya', () => goto(mergeNewPath('profil-prodi/add')))}
 		</div>
 
 		{#await data.listProfil}
@@ -395,31 +361,12 @@
 			</div>
 		{:then listProfil}
 			{#if !listProfil || listProfil.length === 0}
-				<div
-					class="flex w-full flex-col items-center justify-center rounded-2xl border border-dashed border-amber-500/30 bg-amber-500/5 p-8 text-center backdrop-blur-sm md:p-12"
-				>
-					<div
-						class="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-500 text-slate-950 shadow-lg shadow-amber-500/20"
-					>
-						<FileText class="h-8 w-8" />
-					</div>
-
-					<h3 class="text-pure-white mb-1 text-lg font-bold md:text-xl">
-						Belum Ada Data Profil & Pengaduan Prodi
-					</h3>
-					<p class="mb-6 max-w-md text-sm text-text-muted">
-						Data profil dan QR pengaduan belum ditemukan. Silakan tambahkan informasi profil prodi
-						baru.
-					</p>
-					<button
-						type="button"
-						onclick={() => goto(mergeNewPath('profil-study'))}
-						class="inline-flex items-center gap-2 rounded-xl bg-amber-500 px-5 py-2.5 text-sm font-semibold text-slate-950 shadow-lg shadow-amber-500/20 transition-all hover:scale-[1.02] hover:bg-amber-400 active:scale-[0.98]"
-					>
-						<PlusIcon class="h-4 w-4" />
-						<span>Tambah Profil & Pengaduan Baru</span>
-					</button>
-				</div>
+				{@render emptyState(
+					'Belum ada Data Profile & Pengaduan Prodi',
+					'Data profil belum ada  , silahkan tambbhakkan informasi profile baru , ini akan di tampilkan di halaman depan',
+					'Tambah Profile Baru',
+					() => goto(mergeNewPath('profil-dashboard'))
+				)}
 			{:else}
 				<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
 					{#each listProfil as profil (profil.id)}

@@ -14,13 +14,6 @@ export const actions: Actions = {
 		const eventDate = (formData.get('event_date') as string) || null;
 		const linkDrive = (formData.get('link_drive') as string) || null;
 
-		console.log('=== DATA FORMULIR ===');
-		console.log('Title:', title);
-		console.log('Image URL:', imageUrl);
-		console.log('Description:', description);
-		console.log('Event Date:', eventDate);
-		console.log('Link Drive:', linkDrive);
-
 		// Validasi input wajib: Judul
 		if (!title || title.trim() === '') {
 			return fail(400, {

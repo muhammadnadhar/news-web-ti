@@ -1,6 +1,5 @@
 import { error, fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import type { TableContentType } from '$lib/types/tableContent';
 import { writeFileSync, mkdirSync, existsSync } from 'fs';
 import { join } from 'path';
 import { getAllPedomanTa } from '$lib/repository/admin/article/akedemik/pedomanTa';
@@ -99,7 +98,7 @@ export const actions: Actions = {
 			return { success: true };
 		} catch (err) {
 			console.error('Error deleting pedoman KKP:', err);
-			return fail(500, { message: 'Gagal menghapus data Pedoman KKP.' });
+			return fail(500, errorResponse('Gagal menghapus data pedoman KKP', 'Gagal'));
 		}
 	}
 };

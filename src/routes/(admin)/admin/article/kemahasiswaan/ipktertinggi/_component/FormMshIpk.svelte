@@ -8,6 +8,8 @@
 	} from '$lib/cloudinary/client';
 	import Message, { type MessageStatus } from '$lib/components/admin/message.svelte';
 	import type { HighGpaStudentDTO } from '$lib/dto/admin/article/kemahasiswaan';
+	import type { AngkatanDTO, SemesterDTO } from '$lib/dto/admin/dataset';
+	import type { ResponseMessage } from '$lib/types/message';
 	import {
 		TrendingUp,
 		User,
@@ -18,7 +20,9 @@
 		Award,
 		Image as ImageIcon,
 		UploadCloudIcon,
-		X
+		X,
+		Trash2Icon,
+		LoaderCircle
 	} from 'lucide-svelte';
 	import { CldUploadWidget } from 'svelte-cloudinary';
 
@@ -40,8 +44,8 @@
 	}: {
 		form?: HighGpaStudentDTO | null;
 		initialData?: HighGpaStudentDTO | null;
-		angkatanList: OptionItem[];
-		semesterList: OptionItem[];
+		angkatanList: AngkatanDTO[];
+		semesterList: SemesterDTO[];
 		isEdit?: boolean;
 		action?: string;
 	} = $props();
@@ -49,6 +53,8 @@
 	// State Form
 	let isSubmitting = $state(false);
 	let showMessage = $state(false);
+	let photoPublicId = $state(''); // Simpan public_id dari Cloudinary
+	let isDeletingPhoto = $state(false);
 
 	// Default/prefilled value priority: form validation rerun > initialData > empty
 	let imgPreview = $state(form?.image_url ?? initialData?.image_url ?? '');
@@ -56,25 +62,51 @@
 	function handleUploadSuccess(result: any) {
 		if (result?.info?.secure_url) {
 			imgPreview = result.info.secure_url;
+			photoPublicId = result.info.public_id; // Dapatkan public_id
 		}
 	}
 
 	function handleUpload(result: any) {
 		if (result?.event === 'success') {
 			imgPreview = result.info.secure_url;
+			photoPublicId = result.info.public_id; // Dapatkan public_id
 		}
 	}
 
 	// Function untuk mengosongkan foto
-	function removePhoto() {
-		imgPreview = '';
+	// Fungsi untuk menghapus foto dari Cloudinary & mereset state
+	async function removeImage() {
+		if (!photoPublicId) {
+			imgPreview = '';
+			return;
+		}
+
+		isDeletingPhoto = true;
+
+		try {
+			const formData = new FormData();
+			formData.append('public_id', photoPublicId);
+
+			// Panggil named action '?/deletePhoto'
+			const response = await fetch('?/deletePhoto', {
+				method: 'POST',
+				body: formData
+			});
+
+			if (response.ok) {
+				imgPreview = '';
+				photoPublicId = '';
+			} else {
+				alert('Gagal menghapus gambar dari Cloudinary');
+			}
+		} catch (err) {
+			console.error('Error deleting photo:', err);
+		} finally {
+			isDeletingPhoto = false;
+		}
 	}
 
-	let messageConfig = $state<{
-		status: MessageStatus;
-		title: string;
-		message: string;
-	}>({
+	let messageConfig = $state<ResponseMessage>({
 		status: 'info',
 		title: '',
 		message: ''
@@ -163,7 +195,6 @@
 			{/if}
 
 			<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-				<!-- Nama Mahasiswa -->
 				<div class="space-y-2 md:col-span-2">
 					<label for="student_name" class="block text-sm font-semibold text-slate-700">
 						Nama Mahasiswa <span class="text-rose-500">*</span>
@@ -304,12 +335,16 @@
 								</p>
 								<button
 									type="button"
-									onclick={removePhoto}
-									disabled={isSubmitting}
-									class="mt-1 inline-flex w-fit items-center gap-1.5 rounded-lg border border-red-200 bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-600 transition-all hover:bg-red-100 disabled:opacity-50 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-400 dark:hover:bg-red-900/50"
+									onclick={removeImage}
+									disabled={isDeletingPhoto}
+									class="inline-flex items-center gap-1.5 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-xs font-medium text-red-400 transition-all hover:bg-red-500/20 active:scale-95 disabled:opacity-50"
 								>
-									<X class="h-3.5 w-3.5" />
-									<span>Hapus / Ganti Foto</span>
+									<Trash2Icon class="h-3.5 w-3.5" />
+									{#if isDeletingPhoto}
+										<LoaderCircle class="h-4 w-4 animate-spin" />
+									{:else}
+										<span>Hapus Foto</span>
+									{/if}
 								</button>
 							</div>
 						</div>

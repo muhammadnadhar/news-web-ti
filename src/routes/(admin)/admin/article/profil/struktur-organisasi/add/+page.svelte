@@ -16,7 +16,9 @@
 		FileText,
 		Sparkles,
 		UploadCloud,
-		BookDashedIcon
+		BookDashedIcon,
+		LoaderCircle,
+		X
 	} from 'lucide-svelte';
 	import FormEditor from '$lib/components/admin/formEditor.svelte';
 	import {
@@ -33,6 +35,9 @@
 	let editorRef = $state<any>(null);
 	let isSubmitting = $state(false);
 
+	let photoPublicId = $state(''); // Simpan public_id dari Cloudinary
+	let isDeletingPhoto = $state(false);
+
 	let showMessage = $state(false);
 	let messageConfig = $state<ResponseMessage>({
 		status: 'info',
@@ -48,11 +53,39 @@
 	function handleUploadSuccess(result: any) {
 		if (result?.info?.secure_url) {
 			imageUrl = result.info.secure_url;
+			photoPublicId = result.info.public_id; // Dapatkan public_id
 		}
 	}
+	// Fungsi untuk menghapus foto dari Cloudinary & mereset state
+	async function removePhoto() {
+		if (!photoPublicId) {
+			imageUrl = '';
+			return;
+		}
 
-	function removeImage() {
-		imageUrl = '';
+		isDeletingPhoto = true;
+
+		try {
+			const formData = new FormData();
+			formData.append('public_id', photoPublicId);
+
+			// Panggil named action '?/deletePhoto'
+			const response = await fetch('?/deletePhoto', {
+				method: 'POST',
+				body: formData
+			});
+
+			if (response.ok) {
+				imageUrl = '';
+				photoPublicId = '';
+			} else {
+				alert('Gagal menghapus gambar dari Cloudinary');
+			}
+		} catch (err) {
+			console.error('Error deleting photo:', err);
+		} finally {
+			isDeletingPhoto = false;
+		}
 	}
 </script>
 
@@ -92,6 +125,7 @@
 	>
 		<form
 			method="POST"
+			action="?/create"
 			use:enhance={() => {
 				isSubmitting = true;
 				showMessage = false;
@@ -182,12 +216,16 @@
 							</span>
 							<button
 								type="button"
-								onclick={removeImage}
-								disabled={isSubmitting}
+								onclick={removePhoto}
+								disabled={isDeletingPhoto}
 								class="inline-flex items-center gap-1.5 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-xs font-medium text-red-400 transition-all hover:bg-red-500/20 active:scale-95 disabled:opacity-50"
 							>
 								<Trash2 class="h-3.5 w-3.5" />
-								<span>Hapus Gambar</span>
+								{#if isDeletingPhoto}
+									<LoaderCircle class="h-4 w-4 animate-spin" />
+								{:else}
+									<X class="h-4 w-4" />
+								{/if}
 							</button>
 						</div>
 					</div>

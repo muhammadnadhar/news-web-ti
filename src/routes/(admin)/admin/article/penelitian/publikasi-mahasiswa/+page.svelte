@@ -37,7 +37,8 @@
 				},
 				{
 					colomn: 'Daftar Jurnal',
-					row: item.journal_list || '-'
+					row: item.journal_list || '-',
+					isHtml: true
 				}
 			]
 		}));

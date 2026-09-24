@@ -4,6 +4,7 @@ import {
 	getLecturerResearch,
 	saveOrUpdateLecturerResearch
 } from '$lib/repository/admin/article/penelitian/penelitianDosen';
+import type { ResponseMessage } from '$lib/types/message';
 
 export const load: PageServerLoad = async () => {
 	try {
@@ -23,15 +24,32 @@ export const actions: Actions = {
 		const description = formData.get('description') as string;
 
 		if (!description || description.trim() === '') {
-			return fail(400, { message: 'Isi Penelitian Dosen tidak boleh kosong.' });
+			const resData: ResponseMessage = {
+				status: 'error',
+				title: 'Gagal',
+				message: 'Isi Penelitian Dosen tidak boleh kosong.'
+			};
+			return fail(400, resData);
 		}
 
 		try {
 			await saveOrUpdateLecturerResearch(description);
-			return { success: true };
+
+			const resData: ResponseMessage = {
+				status: 'success',
+				title: 'Berhasil',
+				message: 'Data Penelitian Dosen berhasil disimpan.'
+			};
+			return resData;
 		} catch (err) {
 			console.error('Error saving lecturer research:', err);
-			return fail(500, { message: 'Gagal menyimpan data Penelitian Dosen.' });
+
+			const resData: ResponseMessage = {
+				status: 'error',
+				title: 'Gagal',
+				message: 'Gagal menyimpan data Penelitian Dosen.'
+			};
+			return fail(500, resData);
 		}
 	}
 };

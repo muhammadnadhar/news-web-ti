@@ -1,8 +1,13 @@
 <script lang="ts">
 	import FormMhsPrestasi from '../_component/formMhsPrestasi.svelte';
-	import type { ActionData } from './$types';
+	import type { ActionData, PageData } from './$types';
 
-	let { form }: { form: ActionData } = $props();
+	let { form, data }: { form: ActionData; data: PageData } = $props();
 </script>
 
-<FormMhsPrestasi {form} />
+<FormMhsPrestasi
+	angkatanList={data.angkatanList}
+	semesterList={data.semesterList}
+	action="?/create"
+	{form}
+/>

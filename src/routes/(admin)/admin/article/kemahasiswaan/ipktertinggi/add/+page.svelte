@@ -7,6 +7,7 @@
 
 <FormMshIpk
 	{form}
+	action="?/create"
 	angkatanList={data.angkatanList}
 	semesterList={data.semesterList}
 	isEdit={false}

@@ -5,8 +5,8 @@
 	import { removeLastPath } from '$lib/utils';
 	import type { ResponseMessage } from '$lib/types/message';
 	import { ArrowLeft, GraduationCap, User, BookOpen, Save, Loader2Icon } from 'lucide-svelte';
-	import type { StudentPublicationDTO } from '$lib/types/admin/article/penelitian';
 	import FormEditor from '$lib/components/admin/formEditor.svelte';
+	import type { StudentPublicationDTO } from '$lib/dto/admin/article/penelitian';
 
 	let {
 		form,
@@ -39,14 +39,6 @@
 	<!-- Header Navigation -->
 	<div class="flex items-center justify-between border-b border-white/10 pb-4">
 		<div class="flex items-center gap-3">
-			<button
-				type="button"
-				onclick={() => goto(removeLastPath())}
-				class="rounded-xl border border-white/10 p-2.5 text-text-muted transition-all hover:border-white/20 hover:bg-white/10 hover:text-white active:scale-95"
-				title="Kembali"
-			>
-				<ArrowLeft class="h-5 w-5" />
-			</button>
 			<div>
 				<div class="flex items-center gap-2">
 					<GraduationCap class="text-scitech-mint h-5 w-5" />
@@ -137,7 +129,7 @@
 					placeholder="Contoh: Aulia Sabri"
 					required
 					disabled={isSubmitting}
-					class="bg-scitech-navy focus:border-scitech-mint focus:ring-scitech-mint/20 w-full rounded-xl border border-white/10 px-4 py-3 text-xs text-text-main placeholder-text-muted transition-all focus:ring-2 focus:outline-none disabled:opacity-50"
+					class="focus:border-scitech-mint focus:ring-scitech-mint/20 w-full rounded-xl border border-border-color/20 bg-bg-primary-glare px-4 py-3 text-xs text-text-main placeholder-text-muted transition-all focus:ring-2 focus:outline-none disabled:opacity-50"
 				/>
 			</div>
 

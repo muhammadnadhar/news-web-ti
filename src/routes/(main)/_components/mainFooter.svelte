@@ -143,17 +143,5 @@
 		<p>
 			© Powered by <span class="font-semibold text-text-main">HIMA-TI</span>. All Rights Reserved.
 		</p>
-		<p class="flex flex-wrap items-center justify-center gap-1.5 pt-1">
-			<span>prodi-ti-website</span>
-			<a
-				href="https://github.com/muhammadnadhar/news-web-ti"
-				target="_blank"
-				rel="noopener noreferrer"
-				class="text-scitech-cyan inline-flex items-center gap-1 transition-colors hover:text-text-main hover:underline"
-			>
-				<GitBranchPlusIcon class="h-3.5 w-3.5" />
-				<!-- <span></span> -->
-			</a>
-		</p>
 	</div>
 </footer>

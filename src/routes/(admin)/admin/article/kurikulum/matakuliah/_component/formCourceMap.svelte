@@ -119,14 +119,12 @@
 </script>
 
 <div class="mx-auto max-w-4xl p-4 sm:p-6 lg:p-8">
-	<!-- Header -->
 	<header class="mb-6">
 		<h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
 			{isEditMode ? 'Edit Peta Mata Kuliah' : 'Tambah Peta Mata Kuliah Baru'}
 		</h1>
 	</header>
 
-	<!-- Notifikasi Pesan Feedback -->
 	{#if showMessage}
 		<div class="mb-6">
 			<Message
@@ -273,7 +271,7 @@
 				<button
 					type="submit"
 					disabled={isSubmitting}
-					class="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50"
+					class="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-text-main shadow-sm transition-all hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50"
 				>
 					{#if isSubmitting}
 						<span>Menyimpan...</span>

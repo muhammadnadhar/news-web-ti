@@ -11,6 +11,7 @@
 	import Message, { type MessageStatus } from '$lib/components/admin/message.svelte';
 	import type { ActivityDocumentationDTO } from '$lib/dto/admin/article/kerjasama';
 	import FormEditor from '$lib/components/admin/formEditor.svelte';
+	import type { ResponseMessage } from '$lib/types/message';
 
 	interface Props {
 		initialData?: Partial<ActivityDocumentationDTO> | null;
@@ -46,11 +47,7 @@
 		}
 	}
 
-	let messageConfig = $state<{
-		status: MessageStatus;
-		title: string;
-		message: string;
-	}>({
+	let messageConfig = $state<ResponseMessage>({
 		status: 'info',
 		title: '',
 		message: ''

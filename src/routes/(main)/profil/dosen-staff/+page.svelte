@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { User, GraduationCap, ChevronRight, Search } from 'lucide-svelte';
 	import type { LecturerStaffItemDTO } from '$lib/types/admin/article/profile';
+	import EmptyData from '../../_components/emptyData.svelte';
 
 	let { data } = $props();
 
@@ -110,7 +111,7 @@
 						</div>
 					</div>
 
-					<!-- 2. Area Konten Teks (Padding Berada di Sini) -->
+					<!-- Area Konten Teks (Padding Berada di Sini) -->
 					<div class="flex flex-1 flex-col justify-between space-y-4 p-5">
 						<div>
 							<h2
@@ -141,14 +142,15 @@
 			{/each}
 		</div>
 	{:else}
-		<div
-			class="flex flex-col items-center justify-center rounded-2xl border border-[var(--color-border-light)] bg-[var(--color-bg-secondary)] py-16 text-center"
-		>
-			<User class="mb-3 h-12 w-12 text-[var(--color-text-muted)] opacity-40" />
-			<h3 class="text-base font-semibold text-[var(--color-text-main)]">Data Tidak Ditemukan</h3>
-			<p class="mt-1 text-xs text-[var(--color-text-muted)]">
-				Coba cari dengan kata kunci nama atau NIDN yang berbeda.
-			</p>
-		</div>
+		<!-- <div -->
+		<!-- 	class="flex flex-col items-center justify-center rounded-2xl border border-[var(--color-border-light)] bg-[var(--color-bg-secondary)] py-16 text-center" -->
+		<!-- > -->
+		<!-- 	<User class="mb-3 h-12 w-12 text-[var(--color-text-muted)] opacity-40" /> -->
+		<!-- 	<h3 class="text-base font-semibold text-[var(--color-text-main)]">Data Tidak Ditemukan</h3> -->
+		<!-- 	<p class="mt-1 text-xs text-[var(--color-text-muted)]"> -->
+		<!-- 		Coba cari dengan kata kunci nama atau NIDN yang berbeda. -->
+		<!-- 	</p> -->
+		<!-- </div> -->
+		<EmptyData title="Tidak DI Temukan " description="Data masih belum tersedia" />
 	{/if}
 </section>

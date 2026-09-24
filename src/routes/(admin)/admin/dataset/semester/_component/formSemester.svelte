@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import Message, { type MessageStatus } from '$lib/components/admin/message.svelte';
+	import type { ResponseMessage } from '$lib/types/message';
 	import { ArrowLeft, BookOpen, Calendar, CheckCircle2, Loader2, Save } from 'lucide-svelte';
 
 	interface Props {
@@ -28,11 +29,7 @@
 	let isSubmitting = $state(false);
 	let showMessage = $state(false);
 
-	let messageConfig = $state<{
-		status: MessageStatus;
-		title: string;
-		message: string;
-	}>({
+	let messageConfig = $state<ResponseMessage>({
 		status: 'info',
 		title: '',
 		message: ''
@@ -233,7 +230,7 @@
 				<button
 					type="submit"
 					disabled={isSubmitting}
-					class="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-6 py-2.5 text-xs font-bold tracking-wider text-white uppercase shadow-sm transition-all hover:bg-slate-800 disabled:opacity-50"
+					class="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-6 py-2.5 text-xs font-bold tracking-wider text-text-main uppercase shadow-sm transition-all hover:bg-slate-800 disabled:opacity-50"
 				>
 					{#if isSubmitting}
 						<Loader2 class="h-4 w-4 animate-spin" />

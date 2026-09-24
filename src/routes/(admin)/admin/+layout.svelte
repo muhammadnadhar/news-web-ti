@@ -69,7 +69,7 @@
 
 				<!-- Profile Badge -->
 				<button
-					onclick={() => goto(mergeNewPath('profil'))}
+					onclick={() => goto('/admin/user/profil')}
 					class="flex items-center gap-3 border-l border-border-color pl-4 hover:cursor-pointer"
 				>
 					<div class="text-right">

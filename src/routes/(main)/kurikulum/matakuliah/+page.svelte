@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { classTopSpace } from '$lib/constants';
 	import type { CourseMapDTO } from '$lib/dto/admin/article/kurikulum';
+	import EmptyData from '../../_components/emptyData.svelte';
 	import type { PageData } from './$types';
-	import { Map, Calendar, Maximize2, X, AlertCircle } from 'lucide-svelte';
+	import { Map, Calendar, Maximize2, X, AlertCircle, FolderOpen } from 'lucide-svelte';
 
 	interface Props {
 		data: PageData;
@@ -23,7 +24,6 @@
 </script>
 
 <section class={`mx-auto ${classTopSpace} max-w-7xl px-4 py-12 sm:px-6 lg:px-8`}>
-	<!-- Header Section -->
 	<div class="mb-10 border-b border-border-color/40 pb-6 text-center sm:text-left">
 		<div
 			class="border-scitech-mint/30 bg-scitech-mint/10 text-scitech-mint mb-3 inline-flex items-center gap-2 border px-3 py-1 text-xs font-semibold shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]"
@@ -107,20 +107,11 @@
 			{/each}
 		</div>
 	{:else}
-		<!-- Empty State jika data kosong -->
-		<div
-			class="bg-scitech-slate/20 flex flex-col items-center justify-center border border-border-color p-12 text-center shadow-[6px_6px_0px_0px_rgba(0,0,0,0.4)] backdrop-blur-md"
-		>
-			<div
-				class="mb-4 flex h-12 w-12 items-center justify-center border border-amber-500/30 bg-amber-500/10 text-amber-500 shadow-[3px_3px_0px_0px_rgba(0,0,0,0.3)]"
-			>
-				<AlertCircle class="h-6 w-6" />
-			</div>
-			<h3 class="text-lg font-bold text-text-main">Belum Ada Peta Mata Kuliah</h3>
-			<p class="mt-1 max-w-md text-xs text-text-muted">
-				Data peta mata kuliah belum diunggah. Silakan cek kembali secara berkala.
-			</p>
-		</div>
+		<EmptyData
+			title="Belum Ada Dokumen Penelitian"
+			description="Dokumen hasil rekapitulasi riset dosen belum tersedia untuk saat ini."
+			icon={FolderOpen}
+		/>
 	{/if}
 </section>
 
