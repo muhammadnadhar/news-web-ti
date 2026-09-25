@@ -1,5 +1,6 @@
 import { getHighGpaSemesters } from '$lib/repository/admin/article/kemahasiswaan/ipkTertinggi';
 import { getAchievementSemesters } from '$lib/repository/admin/article/kemahasiswaan/mapres';
+import { AwardIcon } from 'lucide-svelte';
 import type { LayoutServerLoad } from './$types';
 
 export const load: LayoutServerLoad = async () => {
@@ -10,7 +11,7 @@ export const load: LayoutServerLoad = async () => {
 	try {
 		const results = await Promise.allSettled([
 			getAchievementSemesters('y'),
-			getAchievementSemesters('n'),
+			getAchievementSemesters("n"),
 			getHighGpaSemesters()
 		]);
 
@@ -24,6 +25,8 @@ export const load: LayoutServerLoad = async () => {
 		// 	getAchievementSemesters('n'),
 		// 	getHighGpaSemesters()
 		// ]);
+    console.table(await getAchievementSemesters("y"))
+    console.table(await getAchievementSemesters("n"))
 		return {
 			// navItems: navMenuItems as NavMenuItemType[]
 			semesters: {

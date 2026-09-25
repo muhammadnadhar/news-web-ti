@@ -93,13 +93,15 @@ npm run dev -- --open
 bun run db:seed:bun:table
 bun run db:seed:bun:data
 
-# pastikan install tsx , karena mengguakna tsx
+# alternatif node, pastikan install tsx , karena akan menggunakan tsx
 npm run db:seed:npm:table
 bun run db:seed:bun:data
 
 ```
 
 ### App Color
+
+> semua warna y ang di guankan di aplikasi ini cek di `src/layout.css` 
 
 ### Teknik
 

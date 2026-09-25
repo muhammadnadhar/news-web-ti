@@ -1,10 +1,4 @@
-commit 10  finish desian #7 and debuger 
-- update : module pratikum /admin di pisahkan ke component untuk edit dan add
-- update : update halaman admin/home untuk katagory desain Utama
-- update : halaman profil-prodi
-- update :  halaman /admin/komprehensif -> update halaman edit dan add , di pisahkan ke component 
-- update : table mappress untuk di /admin memiliki forengkey ke dataset semester dna angkatan
-- add  : handle untuk membatalin gambar yang telah di upload , pada sesi ( add image url dengan fecth ke url "deletePhoto")
-- update : update desian halaman /admin/penelitian/publikasi dosen dna desin halamna utamanaya
-
-
+commit 11  finish desian #8 and debuger
+- update : update navbar utama agar bisa menghandle sub element
+- update : desain dan cara menampilkan data pada kategori database Mahasiswa Prestasi , sekaligus selekstif desain prestasi akademik dan non akademik
+- add : excalidraw desain structure App

@@ -89,6 +89,70 @@ export async function getDistinctSemesters(): Promise<SemesterDTO[]> {
 }
 
 /**
+ * Mengambil data Mahasiswa Prestasi berdasarkan semester_id (ID dari SemesterDTO)
+ * Opsional: Dapat difilter juga berdasarkan jenis prestasi ('y' untuk Akademik, 'n' untuk Non-Akademik)
+ */
+export async function getStudentAchievementsBySemesterId(
+	semesterId: string,
+	isAcademic?: 'y' | 'n'
+): Promise<StudentAchievementDTO[]> {
+	let sql = `
+        SELECT 
+            sa.*,
+            a.year AS batch_year,
+            s.name AS semester_name,
+            s.academic_year AS academic_year
+        FROM ${tableStudentAchievement} sa
+        LEFT JOIN ${tableAngkatan} a ON sa.angkatan_id = a.id
+        LEFT JOIN ${tableSemester} s ON sa.semester_id = s.id
+        WHERE sa.semester_id = ?
+    `;
+
+	const params: any[] = [semesterId];
+
+	if (isAcademic) {
+		sql += ` AND sa.is_academic = ?`;
+		params.push(isAcademic);
+	}
+
+	sql += ` ORDER BY sa.created_at DESC`;
+
+	return (await query(sql, params)) as StudentAchievementDTO[];
+}
+
+/**
+ * Mengambil data Mahasiswa Prestasi berdasarkan Nama Semester (misal dari Query URL parameter)
+ * Sangat berguna jika URL navbar Anda menggunakan nama semester seperti ?semester=Semester%20Ganjil%202020/2030
+ */
+export async function getStudentAchievementsBySemesterName(
+	semesterName: string,
+	isAcademic?: 'y' | 'n'
+): Promise<StudentAchievementDTO[]> {
+	let sql = `
+        SELECT 
+            sa.*,
+            a.year AS batch_year,
+            s.name AS semester_name,
+            s.academic_year AS academic_year
+        FROM ${tableStudentAchievement} sa
+        LEFT JOIN ${tableAngkatan} a ON sa.angkatan_id = a.id
+        LEFT JOIN ${tableSemester} s ON sa.semester_id = s.id
+        WHERE LOWER(s.name) = LOWER(?)
+    `;
+
+	const params: any[] = [semesterName];
+
+	if (isAcademic) {
+		sql += ` AND sa.is_academic = ?`;
+		params.push(isAcademic);
+	}
+
+	sql += ` ORDER BY sa.created_at DESC`;
+
+	return (await query(sql, params)) as StudentAchievementDTO[];
+}
+
+/**
  * Membuat data Mahasiswa Prestasi baru
  */
 export async function createStudentAchievement(

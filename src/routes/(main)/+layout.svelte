@@ -13,6 +13,8 @@
 	import uinIcon from '$lib/assets/favicon.svg'; // Sesuaikan path
 	import GlobalSkeletonUser from '$lib/components/globalSkeletonUser.svelte';
 	import { navigating } from '$app/state';
+	import type { SemesterDTO } from '$lib/dto/admin/dataset';
+	import { classTopSpace } from '$lib/constants';
 	interface Props {
 		data: LayoutData;
 		children: Snippet;
@@ -64,15 +66,19 @@
 	// Helper function untuk memformat menu
 
 	const formatSubMenu = (
-		semesters: { semester: string }[] | undefined,
+		semesters: SemesterDTO[] | undefined,
 		basePath: string
 	): SubMenuItem[] => {
 		if (!semesters || !Array.isArray(semesters) || semesters.length === 0) return [];
 
+   // console.info("data semester currrrent  : ",semesters);
+
 		return semesters.map((item) => ({
-			id: item.semester?.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
-			label: item.semester,
-			href: `${basePath}?semester=${encodeURIComponent(item.semester)}`
+			id: item.id.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+			label: item.name,
+      // nantik halaman hanya mengambil dari search  params nya 
+      // semesterId : meentukan tahun pada semester tersebut 
+			href: `${basePath}?semester_id=${encodeURIComponent(item.id)}`
 		}));
 	};
 
@@ -84,16 +90,23 @@
 
 		const kemahasiswaanMenu = menu.find((m) => m.id === 'kemahasiswaan');
 
+
+// console.info("data academic ",data.semesters.academic)
+// console.info("data non academic ",data.semesters.nonAcademic)
+
 		if (kemahasiswaanMenu && kemahasiswaanMenu.subMenu) {
 			const prestasiAkademik = kemahasiswaanMenu.subMenu.find((c) => c.id === 'prestasi-akademik');
 			if (prestasiAkademik && data.semesters) {
+
 				prestasiAkademik.subMenu = formatSubMenu(data.semesters.academic, prestasiAkademik.href);
 			}
 
 			const prestasiNonAkademik = kemahasiswaanMenu.subMenu.find(
-				(c) => c.id === 'prestasi-non-akademik'
+				(c) => c.id === 'prestasi-non-akademik' // cek di data/navbar.ts
 			);
 			if (prestasiNonAkademik && data.semesters?.nonAcademic) {
+
+
 				prestasiNonAkademik.subMenu = formatSubMenu(
 					data.semesters.nonAcademic,
 					prestasiNonAkademik.href
@@ -101,7 +114,7 @@
 			}
 
 			const ipkTertinggi = kemahasiswaanMenu.subMenu.find(
-				(c) => c.id === 'mahasiswa-ipk-tertinggi'
+				(c) => c.id === 'mahasiswa-ipk-tertinggi'  // cek di data/navbar.ts
 			);
 			if (ipkTertinggi && data.semesters?.gpa) {
 				ipkTertinggi.subMenu = formatSubMenu(data.semesters.gpa, ipkTertinggi.href);
@@ -115,7 +128,7 @@
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
 
 <div
-	class="bg-scitech-navy selection:bg-scitech-mint flex min-h-screen flex-col justify-between text-text-main selection:text-text-dark"
+	class={`${classTopSpace} bg-scitech-navy selection:bg-scitech-mint flex min-h-screen flex-col justify-between text-text-main selection:text-text-dark`}
 >
 	<header
 		class="absolute top-0 right-0 left-0 z-30 flex w-full items-center justify-between px-6 pt-8 lg:px-12"
