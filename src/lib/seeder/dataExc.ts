@@ -3,6 +3,7 @@ import { initializeDatabase, pool } from '$lib/database/runtimeDb';
 import { dbName } from '$lib/database/runtimeDb';
 import { Argon2id } from 'oslo/password';
 import { defaultUserData } from './admin/userAdmin';
+import { randomUUID } from '$lib/crypto';
 
 try {
 	//
@@ -13,6 +14,18 @@ try {
 
 	// Users
 	// user default loh yah
+
+	await defaultUserData({
+		id: randomUUID(),
+		name: 'user',
+		username: 'user',
+		email: 'user@gmail.com',
+		role: 'Supervisor',
+		status: 'Active',
+		password: await new Argon2id().hash('user123'),
+		createdAt: Date.now().toString()
+	});
+
 	await defaultUserData({
 		id: 'only-one',
 		name: Author.name,
@@ -20,7 +33,7 @@ try {
 		role: 'Author',
 		status: 'Active',
 		email: Author.email,
-		password: await new Argon2id().hash( Author.password),
+		password: await new Argon2id().hash(Author.password),
 		createdAt: Date.now().toString()
 	});
 

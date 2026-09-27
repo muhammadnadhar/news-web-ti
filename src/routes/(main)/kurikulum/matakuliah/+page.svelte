@@ -39,7 +39,6 @@
 		</p>
 	</div>
 
-	<!-- Content Grid Section -->
 	{#if data.courseMaps && data.courseMaps.length > 0}
 		<div class="grid grid-cols-1 gap-8 md:grid-cols-2">
 			{#each data.courseMaps as item (item.id)}

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { Sparkles, Send } from 'lucide-svelte';
 	import FormEditor from '$lib/components/admin/formEditor.svelte';
 	import type { MessageStatus, ResponseMessage } from '$lib/types/message.js';
 	import Message from '$lib/components/admin/message.svelte';
@@ -31,25 +30,22 @@
 		messageConfig = { status, title, message };
 		showMessage = true;
 	}
-
 </script>
 
-
-	<!-- Alert / Toast Notification -->
-	{#if showMessage}
-		<Message
-			status={messageConfig.status}
-			title={messageConfig.title}
-			message={messageConfig.message}
-			dismissible={true}
-			timeout={4000}
-			onclose={() => (showMessage = false)}
-		/>
-	{/if}
+<!-- Alert / Toast Notification -->
+{#if showMessage}
+	<Message
+		status={messageConfig.status}
+		title={messageConfig.title}
+		message={messageConfig.message}
+		dismissible={true}
+		timeout={4000}
+		onclose={() => (showMessage = false)}
+	/>
+{/if}
 
 <div class="mx-auto max-w-7xl space-y-8 p-6 lg:p-10">
 	<div class="border-b border-white/10 pb-6">
-
 		<h1 class="text-2xl font-extrabold tracking-tight text-text-main sm:text-3xl">Kurikulum OBE</h1>
 	</div>
 
@@ -58,13 +54,11 @@
 		class="bg-scitech-slate/60 space-y-6 rounded-3xl border border-white/10 p-6 shadow-2xl backdrop-blur-xl sm:p-8"
 	>
 		<div class="border-b border-white/10 pb-4">
-			<h2 class="text-scitech-mint text-sm font-bold sm:text-base">
-				Form Ubah Data Kurikulum OBE
-			</h2>
+			<h2 class="text-scitech-mint text-sm font-bold sm:text-base">Form Ubah Data Kurikulum OBE</h2>
 		</div>
 
 		<form
-	bind:this={formElement}
+			bind:this={formElement}
 			method="POST"
 			use:enhance={() => {
 				isSubmitting = true;
@@ -84,19 +78,19 @@
 					await update({ reset: false });
 				};
 			}}
-
 			class="space-y-6"
 		>
 			<div class="space-y-2">
-			
-				
 				<!-- Component FormEditor -->
-				<FormEditor label={"isi description Kurikulum Obe"} bind:value={descriptionContent} onSave={handleParentSubmit} />
-				
+				<FormEditor
+					label={'isi description Kurikulum Obe'}
+					bind:value={descriptionContent}
+					onSave={handleParentSubmit}
+				/>
+
 				<!-- Hidden Input untuk dikirim via FormData -->
 				<input type="hidden" name="description" value={descriptionContent} />
 			</div>
-
 		</form>
 	</div>
 </div>

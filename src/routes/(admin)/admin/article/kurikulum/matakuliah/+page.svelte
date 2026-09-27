@@ -5,7 +5,7 @@
 	import { gotoEdit, mergeNewPath } from '$lib/utils.js';
 	import { goto, invalidateAll } from '$app/navigation';
 	import { page } from '$app/state';
-	import TableSkeleton from '$lib/components/tableSkeleton.svelte';
+	import TableSkeleton from '$lib/components/loading/tableSkeleton.svelte';
 	import Message, { type MessageStatus } from '$lib/components/admin/message.svelte';
 	import type { ResponseMessage } from '$lib/types/message';
 	import type { CourseMapDTO } from '$lib/dto/admin/article/kurikulum';

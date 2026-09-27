@@ -1,126 +1,149 @@
 <script lang="ts">
+	import { Calendar, Folder, ArrowRight, Newspaper, Loader2 } from 'lucide-svelte';
 	import type { PageData } from './$types';
-	import { User, Calendar, ArrowRight, ImagesIcon } from 'lucide-svelte';
-	import SidebarWidgetPriview from '$lib/components/admin/sidebarWidgetPriview.svelte';
-	import { CldImage } from 'svelte-cloudinary';
-	import { mergeNewPath } from '$lib/utils';
-	let data: PageData = $props();
+	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
+	import { classTopSpace } from '$lib/constants';
+	import BtnFloatPagination from '$lib/components/admin/btnFloatPagination.svelte';
 
-	// Tracker status loading gambar untuk skeleton effect
-	let loadedImages: Record<string, boolean> = {};
+	let { data }: { data: PageData } = $props();
 
-	function handleImageLoad(id: string) {
-		loadedImages[id] = true;
+	// Fungsi navigasi pagination via URL SearchParams
+	function goToPage(newPage: number) {
+		const searchParams = new URLSearchParams(page.url.search);
+		searchParams.set('page', newPage.toString());
+		goto(`?${searchParams.toString()}`);
+	}
+
+	// Helper format tanggal
+	function formatDate(dateString: Date | string) {
+		if (!dateString) return '-';
+		return new Date(dateString).toLocaleDateString('id-ID', {
+			day: 'numeric',
+			month: 'short',
+			year: 'numeric'
+		});
 	}
 </script>
 
-<div class="min-h-screen bg-bg-primary py-10 text-text-main transition-colors">
-	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-		<div class="grid grid-cols-1 items-start gap-8 lg:grid-cols-12">
-			<main class="space-y-8 lg:col-span-8">
-				{#each data.newsList as news (news.id)}
-					<article
-						class="border-color-border-light bg-color-bg-secondary overflow-hidden rounded-xl border shadow-sm transition-shadow hover:shadow-md"
-					>
-						<!-- Wrapper Image dengan Skeleton Loading -->
-						<div
-							class="relative h-80 w-full overflow-hidden bg-[var(--color-bg-primary-glare)] sm:h-96"
-						>
-							{#if !loadedImages[news.id]}
-								<div
-									class="absolute inset-0 animate-pulse bg-gradient-to-r from-[var(--color-bg-primary-glare)] via-[var(--color-bg-secondary-hover)] to-[var(--color-bg-primary-glare)]"
-								></div>
-							{/if}
+<div class={` ${classTopSpace} mx-auto max-w-7xl px-4 py-8 pb-32 sm:px-6`}>
+	<div class="mb-8 border-b border-border-color/10 pb-6">
+		<div class="flex items-center gap-3">
+			<div class="bg-scitech-mint/10 text-scitech-mint border-scitech-mint/30 border p-2.5">
+				<Newspaper class="h-6 w-6" />
+			</div>
+			<div>
+				<h1 class="text-2xl font-bold tracking-tight text-text-main sm:text-3xl">Daftar Berita</h1>
+				<p class="text-xs text-text-muted sm:text-sm">Informasi dan artikel terbaru dalam sistem</p>
+			</div>
+		</div>
+	</div>
 
-							<!-- <img -->
-							<!-- 	src={news.image_url || '/placeholder-news.jpg'} -->
-							<!-- 	alt={news.title} -->
-							<!-- 	on:load={() => handleImageLoad(news.id)} -->
-							<!-- 	class="h-full w-full object-cover transition-opacity duration-300 {loadedImages[ -->
-							<!-- 		news.id -->
-							<!-- 	] -->
-							<!-- 		? 'opacity-100' -->
-							<!-- 		: 'opacity-0'}" -->
-							<!-- /> -->
-							{#if news.image_url}
-								<CldImage
-									src={news.image_url}
-									alt={news.title}
-									width="600"
-									height="400"
-									crop="fill"
-									onload={() => handleImageLoad(news.id)}
-									class="h-full w-full object-cover transition-opacity duration-300 {loadedImages[
-										news.id
-									]
-										? 'opacity-100'
-										: 'opacity-0'}"
-								/>
+	<!-- Container Grid Berita (Streaming with {#await}) -->
+	{#await data.newsList}
+		<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+			{#each Array(4) as _}
+				<div class="bg-scitech-slate/40 flex flex-col border border-border-color/10 p-6">
+					<div class="mb-4 h-48 w-full animate-pulse bg-white/5"></div>
+					<div class="mb-2 h-4 w-1/3 animate-pulse bg-white/10"></div>
+					<div class="mb-3 h-6 w-3/4 animate-pulse bg-white/10"></div>
+					<div class="h-16 w-full animate-pulse bg-white/5"></div>
+				</div>
+			{/each}
+		</div>
+	{:then newsList}
+		{#if newsList.length === 0}
+			<!-- State Data Kosong -->
+			<div class="bg-scitech-slate/40 border border-border-color/10 p-12 text-center">
+				<Newspaper class="mx-auto mb-3 h-12 w-12 text-text-muted/50" />
+				<p class="font-mono text-sm text-text-muted">Belum ada berita yang diterbitkan.</p>
+			</div>
+		{:else}
+			<!-- Grid 2 Kolom Desktop & 1 Kolom Mobile -->
+			<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+				{#each newsList as item (item.id)}
+					<article
+						class="hover:border-scitech-mint/50 group flex flex-col justify-between border border-border-color bg-bg-secondary transition-colors"
+					>
+						<div>
+							{#if item.image_url}
+								<div
+									class="relative h-48 w-full overflow-hidden border-b border-border-color/10 bg-black/40"
+								>
+									<img
+										src={item.image_url}
+										alt={item.title}
+										class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+									/>
+								</div>
 							{:else}
 								<div
-									class="flex h-full w-full items-center justify-center bg-slate-800 text-slate-500"
+									class="bg-scitech-navy/60 flex h-36 w-full items-center justify-center border-b border-border-color/10 text-text-muted"
 								>
-									<ImagesIcon class="h-10 w-10 opacity-60" />
+									<Newspaper class="h-10 w-10 opacity-30" />
 								</div>
 							{/if}
-						</div>
 
-						<!-- Content Card Berita -->
-						<div class="space-y-4 p-6 sm:p-8">
-							<!-- Meta Info (Penulis & Tanggal) -->
-							<div
-								class="flex flex-wrap items-center gap-4 text-xs font-medium text-[var(--color-text-muted)]"
-							>
-								<div class="flex items-center gap-1.5">
-									<User class="h-4 w-4 text-[var(--color-accent-primary)]" />
-									<span>M. Fadhlan</span>
-								</div>
-								<div class="flex items-center gap-1.5">
-									<Calendar class="h-4 w-4 text-[var(--color-accent-primary)]" />
-									<span>
-										{new Date(news.published_at).toLocaleDateString('id-ID', {
-											day: 'numeric',
-											month: 'long',
-											year: 'numeric'
-										})}
+							<div class="space-y-3 p-6">
+								<div class="flex flex-wrap items-center gap-3 text-xs text-text-muted">
+									{#if item.category_name}
+										<span
+											class="bg-scitech-mint/10 text-scitech-mint border-scitech-mint/30 inline-flex items-center gap-1.5 border px-2.5 py-1 text-[11px] font-semibold tracking-wider uppercase"
+										>
+											<Folder class="h-3 w-3" />
+											{item.category_name}
+										</span>
+									{/if}
+
+									<span class="inline-flex items-center gap-1 font-mono">
+										<Calendar class="h-3.5 w-3.5 text-text-muted" />
+										{formatDate(item.published_at)}
 									</span>
 								</div>
-							</div>
 
-							<!-- Judul Berita -->
-							<h2
-								class="line-clamp-2 text-xl font-bold text-text-main transition-colors hover:text-[var(--color-accent-purple)] sm:text-2xl"
-							>
-								<a href={`/news/${news.id}`}>
-									{news.title}
-								</a>
-							</h2>
-
-							<!-- Ringkasan Teks Berita -->
-							<p
-								class="line-clamp-3 text-sm leading-relaxed text-[var(--color-text-muted)] sm:text-base"
-							>
-								{news.content ||
-									'Prodi Teknologi Informasi Fakultas Sains dan Teknologi kembali menyelenggarakan kegiatan akademik dan kemahasiswaan...'}
-							</p>
-
-							<!-- Tombol Read More -->
-							<div class="flex justify-end pt-2">
-								<a
-									href={`${mergeNewPath('edit')}/${news.id}`}
-									class="inline-flex items-center gap-2 rounded-lg bg-[var(--color-bg-secondary-hover)] px-5 py-2.5 text-xs font-semibold text-[var(--color-text-main)] shadow-sm transition-all hover:bg-[var(--color-accent-purple)] hover:text-white"
+								<!-- Judul Berita -->
+								<h2
+									class="group-hover:text-scitech-mint line-clamp-2 text-lg font-bold text-text-main transition-colors"
 								>
-									<span>Read More</span>
-									<ArrowRight class="h-3.5 w-3.5" />
-								</a>
+									{item.title}
+								</h2>
+
+								<!-- Ringkasan Konten -->
+								<p class="line-clamp-3 text-xs leading-relaxed text-text-muted sm:text-sm">
+									{item.content.replace(/<[^>]*>?/gm, '')}
+								</p>
 							</div>
+						</div>
+
+						<div class="border-t border-border-color/10 p-6 pt-4">
+							<a
+								href="/berita/{item.id}"
+								class="text-scitech-cyan hover:text-scitech-mint inline-flex items-center gap-2 text-xs font-bold transition-all"
+							>
+								<span>Baca Selengkapnya</span>
+								<ArrowRight class="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+							</a>
 						</div>
 					</article>
 				{/each}
-			</main>
+			</div>
+		{/if}
+	{:catch error}
+		<div class="border border-red-500/40 bg-red-500/10 p-6 text-center text-red-400">
+			<p class="text-sm font-semibold">Gagal memuat berita: {error.message}</p>
+		</div>
+	{/await}
+</div>
 
-			<!-- Sidebar Component -->
-			<SidebarWidgetPriview recentPosts={data.recentNews} categories={data.categories} />
+{#await data.pagination}
+	<div
+		class="bg-scitech-navy/90 fixed bottom-6 left-1/2 z-40 -translate-x-1/2 border border-border-color/20 px-6 py-3 backdrop-blur-md"
+	>
+		<div class="flex items-center gap-3 text-xs text-text-muted">
+			<Loader2 class="text-scitech-mint h-4 w-4 animate-spin" />
+			<span>Memuat navigasi...</span>
 		</div>
 	</div>
-</div>
+{:then pagination}
+	<BtnFloatPagination {pagination} onPageChange={goToPage} />
+{/await}

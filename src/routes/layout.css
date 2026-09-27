@@ -114,6 +114,37 @@ body {
 	color: var(--text-muted);
 }
 
+/* --- VIEW TRANSITION RIPPLE / WAVE EFFECT --- */
+::view-transition-old(root),
+::view-transition-new(root) {
+	animation: none;
+	mix-blend-mode: normal;
+}
+
+/* Layer tema baru berada di atas layer tema lama */
+::view-transition-new(root) {
+	z-index: 9999;
+	animation: waveExpand 600ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+::view-transition-old(root) {
+	z-index: 1;
+}
+
+
+/* Animasi lingkaran membesar dari koordinat tombol
+ * ini tidak ada animasi blue jadi lebih ringan*/
+
+@keyframes waveExpand {
+	from {
+		clip-path: circle(0px at var(--ripple-x, 50%) var(--ripple-y, 50%));
+	}
+	to {
+		clip-path: circle(var(--ripple-radius, 100vw) at var(--ripple-x, 50%) var(--ripple-y, 50%));
+	}
+}
+
+
 /* skeleton animation  */
 
 /* Custom Scrollbar */

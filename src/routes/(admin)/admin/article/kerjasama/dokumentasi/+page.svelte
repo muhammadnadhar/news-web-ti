@@ -2,13 +2,13 @@
 	import { Sparkles, X, Save, CameraIcon, AlertCircle } from 'lucide-svelte';
 	import TableContent from '$lib/components/admin/tableContent.svelte';
 	import type { TableContentType } from '$lib/types/tableContent';
-	import TableSkeleton from '$lib/components/tableSkeleton.svelte';
 	import { gotoEdit, mergeNewPath } from '$lib/utils';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import type { ResponseMessage } from '$lib/types/message.js';
 	import Message from '$lib/components/admin/message.svelte';
 	import type { ActivityDocumentationDTO } from '$lib/dto/admin/article/kerjasama.js';
+	import TableSkeleton from '$lib/components/loading/tableSkeleton.svelte';
 
 	let { data } = $props();
 
@@ -177,129 +177,3 @@
 		</div>
 	{/await}
 </div>
-
-<!-- Modal Form CRUD Dokumentasi Kegiatan -->
-<!-- {#if isModalOpen} -->
-<!-- 	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"> -->
-<!-- 		<div -->
-<!-- 			class="bg-scitech-navy max-h-[90vh] w-full max-w-xl space-y-6 overflow-y-auto rounded-3xl border border-white/15 p-6 shadow-2xl sm:p-8" -->
-<!-- 		> -->
-<!-- 			<div class="flex items-center justify-between border-b border-white/10 pb-4"> -->
-<!-- 				<h3 class="text-base font-bold text-text-main"> -->
-<!-- 					{isEditMode ? 'Edit Dokumentasi Kegiatan' : 'Tambah Dokumentasi Kegiatan'} -->
-<!-- 				</h3> -->
-<!-- 				<button type="button" onclick={closeModal} class="text-text-muted hover:text-text-main"> -->
-<!-- 					<X class="h-5 w-5" /> -->
-<!-- 				</button> -->
-<!-- 			</div> -->
-<!---->
-<!-- 			<form -->
-<!-- 				method="POST" -->
-<!-- 				action="?/save" -->
-<!-- 				use:enhance={() => { -->
-<!-- 					return async ({ result }) => { -->
-<!-- 						if (result.type === 'success') { -->
-<!-- 							closeModal(); -->
-<!-- 						} -->
-<!-- 					}; -->
-<!-- 				}} -->
-<!-- 				class="space-y-5" -->
-<!-- 			> -->
-<!-- 				<input type="hidden" name="id" value={selectedId} /> -->
-<!-- 				<input type="hidden" name="is_edit" value={isEditMode ? 'true' : 'false'} /> -->
-<!---->
-<!-- 				<!-- Nama / Judul Kegiatan --> -->
-<!-- 				<div> -->
-<!-- 					<label for="title" class="text-text-muted mb-1 block text-xs font-medium"> -->
-<!-- 						Nama / Judul Kegiatan<span class="text-rose-400">*</span> -->
-<!-- 					</label> -->
-<!-- 					<input -->
-<!-- 						id="title" -->
-<!-- 						name="title" -->
-<!-- 						type="text" -->
-<!-- 						required -->
-<!-- 						bind:value={titleInput} -->
-<!-- 						placeholder="Contoh: Inspirasi Dunia Untuk TI Indonesia" -->
-<!-- 						class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-white/15 px-4 py-2.5 text-xs text-text-main focus:outline-none" -->
-<!-- 					/> -->
-<!-- 				</div> -->
-<!---->
-<!-- 				<div> -->
-<!-- 					<label for="image_url" class="text-text-muted mb-1 block text-xs font-medium"> -->
-<!-- 						URL / Path Foto<span class="text-rose-400">*</span> -->
-<!-- 					</label> -->
-<!-- 					<input -->
-<!-- 						id="image_url" -->
-<!-- 						name="image_url" -->
-<!-- 						type="text" -->
-<!-- 						required -->
-<!-- 						bind:value={imageUrlInput} -->
-<!-- 						placeholder="Contoh: /images/documentation/seminar-nasional.jpg" -->
-<!-- 						class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-border-color/15 px-4 py-2.5 text-xs text-text-main focus:outline-none" -->
-<!-- 					/> -->
-<!-- 				</div> -->
-<!---->
-<!-- 				<!-- Preview Foto jika URL ada --> -->
-<!-- 				{#if imageUrlInput} -->
-<!-- 					<div class="space-y-1"> -->
-<!-- 						<span class="text-text-muted block text-xs font-medium">Preview Foto:</span> -->
-<!-- 						<div class="flex h-32 w-full items-center justify-center overflow-hidden rounded-xl bg-black/30 border border-white/10 p-2"> -->
-<!-- 							<img -->
-<!-- 								src={imageUrlInput} -->
-<!-- 								alt="Preview Dokumentasi" -->
-<!-- 								class="h-full w-full object-cover rounded-lg" -->
-<!-- 							/> -->
-<!-- 						</div> -->
-<!-- 					</div> -->
-<!-- 				{/if} -->
-<!---->
-<!-- 				<!-- Link GDrive / Deskripsi Singkat --> -->
-<!-- 				<div> -->
-<!-- 					<label for="description" class="text-text-muted mb-1 block text-xs font-medium"> -->
-<!-- 						Link GDrive / Youtube / Deskripsi -->
-<!-- 					</label> -->
-<!-- 					<input -->
-<!-- 						id="description" -->
-<!-- 						name="description" -->
-<!-- 						type="text" -->
-<!-- 						bind:value={descriptionInput} -->
-<!-- 						placeholder="Contoh: https://drive.google.com/drive/folders/..." -->
-<!-- 						class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-white/15 px-4 py-2.5 text-xs text-text-main focus:outline-none" -->
-<!-- 					/> -->
-<!-- 				</div> -->
-<!---->
-<!-- 				<!-- Tanggal Kegiatan (Opsional) --> -->
-<!-- 				<div> -->
-<!-- 					<label for="event_date" class="text-text-muted mb-1 block text-xs font-medium"> -->
-<!-- 						Tanggal Pelaksanaan (Opsional) -->
-<!-- 					</label> -->
-<!-- 					<input -->
-<!-- 						id="event_date" -->
-<!-- 						name="event_date" -->
-<!-- 						type="date" -->
-<!-- 						bind:value={eventDateInput} -->
-<!-- 						class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-white/15 px-4 py-2.5 text-xs text-text-main focus:outline-none" -->
-<!-- 					/> -->
-<!-- 				</div> -->
-<!---->
-<!-- 				<!-- Form Action Buttons --> -->
-<!-- 				<div class="flex justify-end gap-3 pt-4 border-t border-white/10"> -->
-<!-- 					<button -->
-<!-- 						type="button" -->
-<!-- 						onclick={closeModal} -->
-<!-- 						class="text-text-muted rounded-xl bg-white/5 px-4 py-2 text-xs font-semibold hover:bg-white/10" -->
-<!-- 					> -->
-<!-- 						Batal -->
-<!-- 					</button> -->
-<!-- 					<button -->
-<!-- 						type="submit" -->
-<!-- 						class="bg-scitech-mint text-scitech-navy hover:bg-scitech-mint-hover inline-flex items-center gap-2 rounded-xl px-5 py-2 text-xs font-bold transition-all" -->
-<!-- 					> -->
-<!-- 						<Save class="h-4 w-4" /> -->
-<!-- 						<span>Simpan</span> -->
-<!-- 					</button> -->
-<!-- 				</div> -->
-<!-- 			</form> -->
-<!-- 		</div> -->
-<!-- 	</div> -->
-<!-- {/if} -->

@@ -2,6 +2,7 @@
 	import { User, GraduationCap, ChevronRight, Search } from 'lucide-svelte';
 	import type { LecturerStaffItemDTO } from '$lib/types/admin/article/profile';
 	import EmptyData from '../../_components/emptyData.svelte';
+	import { classTopSpace } from '$lib/constants';
 
 	let { data } = $props();
 
@@ -24,10 +25,8 @@
 <svelte:head>
 	<title>Dosen & Staff</title>
 </svelte:head>
-
-<!-- Header Banner -->
 <section
-	class="relative overflow-hidden border-b border-[var(--color-border-light)] bg-[var(--color-bg-secondary)] py-12 lg:py-16"
+	class={`${classTopSpace} relative overflow-hidden border-b border-border-light bg-bg-secondary py-12 lg:py-16`}
 >
 	<div
 		class="pointer-events-none absolute -top-20 -left-20 h-80 w-80 rounded-full bg-[var(--color-accent-primary)]/10 blur-3xl"

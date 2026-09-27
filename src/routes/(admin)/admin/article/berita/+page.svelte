@@ -3,7 +3,7 @@
 	import TableContent from '$lib/components/admin/tableContent.svelte';
 	import type { TableContentType } from '$lib/types/tableContent';
 	import type { NewsItemDTO } from '$lib/dto/admin/article/berita';
-	import TableSkeleton from '$lib/components/tableSkeleton.svelte';
+	import TableSkeleton from '$lib/components/loading/tableSkeleton.svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { gotoEdit } from '$lib/utils';
@@ -73,7 +73,7 @@
 	}
 </script>
 
-<!-- Alert / Toast Notification -->
+<!-- alert / toast notification -->
 {#if showMessage}
 	<Message
 		status={messageConfig.status}

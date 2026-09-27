@@ -12,13 +12,16 @@
 		ShieldCheck,
 		ChevronLeft,
 		ChevronRight,
-		Users
+		Users,
+		AlertTriangle
 	} from 'lucide-svelte';
 	import type { PageData } from './$types';
 	import { gotoEdit, mergeNewPath } from '$lib/utils';
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import { page } from '$app/state';
 	import { Author } from '$lib/constants';
+	import Message from '$lib/components/admin/message.svelte';
+	import type { ResponseMessage } from '$lib/types/message';
 
 	let { data }: { data: PageData } = $props();
 
@@ -29,14 +32,12 @@
 	let sortColumn = $state<'name' | 'username' | 'role'>('name');
 	let sortDirection = $state<'asc' | 'desc'>('asc');
 
-	// Modal State
-	let isAddModalOpen = $state(false);
+	// Modal & Delete State
 	let selectedUserForDelete = $state<string | null>(null);
+	let isDeleting = $state(false);
 
-	// Form Fields State
-	let newName = $state('');
-	let newUsername = $state('');
-	let newRole = $state<'Administrator' | 'Dosen' | 'Operator' | 'Mahasiswa'>('Administrator');
+	// User yang dipilih untuk dihapus (Derived State)
+	let userToDelete = $derived(data.users.find((user) => user.id === selectedUserForDelete));
 
 	// Computed / Derived State untuk Filter & Sorting
 	let filteredUsers = $derived(
@@ -75,6 +76,49 @@
 		}
 	}
 
+	// Message / Toast Notification State
+	let showMessage = $state(false);
+	let messageConfig = $state<ResponseMessage>({
+		status: 'info',
+		title: '',
+		message: ''
+	});
+
+	function triggerMessage(status: ResponseMessage['status'], title: string, message: string) {
+		messageConfig = { status, title, message };
+		showMessage = true;
+	}
+
+	// Eksekusi Hapus User
+	async function confirmDelete() {
+		if (!selectedUserForDelete) return;
+
+		isDeleting = true;
+		const formData = new FormData();
+		formData.append('id', selectedUserForDelete);
+
+		try {
+			// Sesuaikan endpoint API hapus user Anda
+			const res = await fetch('?/deleteUser', {
+				method: 'POST',
+				body: formData
+			});
+
+			if (res.ok) {
+				triggerMessage('success', 'Berhasil', 'User berhasil dihapus dari sistem.');
+				await invalidateAll(); // Refresh data dari server
+			} else {
+				const errData = await res.json().catch(() => ({}));
+				triggerMessage('error', 'Gagal Hapus', errData.message || 'Gagal menghapus user.');
+			}
+		} catch (error) {
+			triggerMessage('error', 'Kesalahan Sistem', 'Terjadi kesalahan koneksi saat menghapus user.');
+		} finally {
+			isDeleting = false;
+			selectedUserForDelete = null;
+		}
+	}
+
 	function getRoleBadgeStyle(role: string) {
 		switch (role) {
 			case 'Administrator':
@@ -88,6 +132,18 @@
 		}
 	}
 </script>
+
+<!-- Alert / Toast Notification -->
+{#if showMessage}
+	<Message
+		status={messageConfig.status}
+		title={messageConfig.title}
+		message={messageConfig.message}
+		dismissible={true}
+		timeout={4000}
+		onclose={() => (showMessage = false)}
+	/>
+{/if}
 
 <div class="mx-auto max-w-7xl space-y-8 p-6 sm:p-10">
 	<div
@@ -159,7 +215,7 @@
 			</div>
 		</div>
 
-		<!-- data table section -->
+		<!-- Data Table Section -->
 		<div class="bg-scitech-navy/40 overflow-x-auto rounded-2xl border border-white/10 shadow-inner">
 			<table class="w-full border-collapse text-left">
 				<thead>
@@ -235,9 +291,8 @@
 								</td>
 
 								<!-- Column Action Menu -->
-								<!-- action tidak berlaku untuk Author  -->
-								{#if user.name !== Author.name && user.email !== Author.email}
-									<td class="p-4">
+								<td class="p-4">
+									{#if user.name !== Author.name && user.email !== Author.email}
 										<div class="flex items-center justify-center gap-2">
 											<button
 												title="Edit User"
@@ -255,8 +310,8 @@
 												<Trash2 class="h-3.5 w-3.5" />
 											</button>
 										</div>
-									</td>
-								{/if}
+									{/if}
+								</td>
 							</tr>
 						{/each}
 					{/if}
@@ -308,127 +363,60 @@
 	</div>
 </div>
 
-<!-- MODAL TAMBAH USER -->
-<!-- {#if isAddModalOpen} -->
-<!-- 	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"> -->
-<!-- 		<div -->
-<!-- 			class="bg-scitech-navy relative w-full max-w-md space-y-6 rounded-3xl border border-white/15 p-6 shadow-2xl sm:p-8" -->
-<!-- 		> -->
-<!-- 			<div class="flex items-center justify-between border-b border-white/10 pb-4"> -->
-<!-- 				<h3 class="flex items-center gap-2 text-base font-bold text-text-main"> -->
-<!-- 					<UserPlus class="text-scitech-mint h-4 w-4" /> Tambah User Baru -->
-<!-- 				</h3> -->
-<!-- 				<button -->
-<!-- 					onclick={() => (isAddModalOpen = false)} -->
-<!-- 					class="text-text-muted hover:text-text-main" -->
-<!-- 				> -->
-<!-- 					<X class="h-5 w-5" /> -->
-<!-- 				</button> -->
-<!-- 			</div> -->
-<!---->
-<!-- 			<form method="POST" action="?/addUser" class="space-y-4"> -->
-<!-- 				<div> -->
-<!-- 					<label class="mb-1 block text-xs font-medium text-text-muted" for="name" -->
-<!-- 						>Nama Lengkap</label -->
-<!-- 					> -->
-<!-- 					<input -->
-<!-- 						id="name" -->
-<!-- 						name="name" -->
-<!-- 						type="text" -->
-<!-- 						required -->
-<!-- 						bind:value={newName} -->
-<!-- 						placeholder="Masukkan nama lengkap..." -->
-<!-- 						class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-white/15 px-4 py-2.5 text-xs text-text-main focus:outline-none" -->
-<!-- 					/> -->
-<!-- 				</div> -->
-<!---->
-<!-- 				<div> -->
-<!-- 					<label class="mb-1 block text-xs font-medium text-text-muted" for="username" -->
-<!-- 						>Username</label -->
-<!-- 					> -->
-<!-- 					<input -->
-<!-- 						id="username" -->
-<!-- 						name="username" -->
-<!-- 						type="text" -->
-<!-- 						required -->
-<!-- 						bind:value={newUsername} -->
-<!-- 						placeholder="Masukkan username unik..." -->
-<!-- 						class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-white/15 px-4 py-2.5 text-xs text-text-main focus:outline-none" -->
-<!-- 					/> -->
-<!-- 				</div> -->
-<!---->
-<!-- 				<div> -->
-<!-- 					<label class="mb-1 block text-xs font-medium text-text-muted" for="role" -->
-<!-- 						>Hak Akses / Role</label -->
-<!-- 					> -->
-<!-- 					<select -->
-<!-- 						id="role" -->
-<!-- 						name="role" -->
-<!-- 						bind:value={newRole} -->
-<!-- 						class="bg-scitech-slate focus:border-scitech-mint w-full cursor-pointer rounded-xl border border-white/15 px-4 py-2.5 text-xs text-text-main focus:outline-none" -->
-<!-- 					> -->
-<!-- 						<option value="Administrator">Administrator</option> -->
-<!-- 						<option value="Dosen">Dosen</option> -->
-<!-- 						<option value="Operator">Operator</option> -->
-<!-- 						<option value="Mahasiswa">Mahasiswa</option> -->
-<!-- 					</select> -->
-<!-- 				</div> -->
-<!---->
-<!-- 				<div class="flex items-center justify-end gap-3 pt-4"> -->
-<!-- 					<button -->
-<!-- 						type="button" -->
-<!-- 						onclick={() => (isAddModalOpen = false)} -->
-<!-- 						class="rounded-xl bg-white/5 px-4 py-2 text-xs font-semibold text-text-muted transition-all hover:bg-white/10 hover:text-text-main" -->
-<!-- 					> -->
-<!-- 						Batal -->
-<!-- 					</button> -->
-<!-- 					<button -->
-<!-- 						type="submit" -->
-<!-- 						class="text-scitech-navy bg-scitech-mint hover:bg-scitech-mint-hover rounded-xl px-5 py-2 text-xs font-bold transition-all" -->
-<!-- 					> -->
-<!-- 						Simpan User -->
-<!-- 					</button> -->
-<!-- 				</div> -->
-<!-- 			</form> -->
-<!-- 		</div> -->
-<!-- 	</div> -->
-<!-- {/if} -->
-<!---->
-<!-- <!-- MODAL KONFIRMASI HAPUS --> -->
-<!-- {#if selectedUserForDelete} -->
-<!-- 	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"> -->
-<!-- 		<div -->
-<!-- 			class="bg-scitech-navy w-full max-w-sm space-y-5 rounded-3xl border border-white/15 p-6 text-center shadow-2xl" -->
-<!-- 		> -->
-<!-- 			<div -->
-<!-- 				class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl border border-red-500/20 bg-red-500/10 text-red-400" -->
-<!-- 			> -->
-<!-- 				<Trash2 class="h-6 w-6" /> -->
-<!-- 			</div> -->
-<!---->
-<!-- 			<div> -->
-<!-- 				<h3 class="text-sm font-bold text-text-main">Hapus Data User?</h3> -->
-<!-- 				<p class="mt-1 text-xs leading-relaxed text-text-muted"> -->
-<!-- 					Tindakan ini tidak dapat dibatalkan. User akan dihapus dari sistem secara permanen. -->
-<!-- 				</p> -->
-<!-- 			</div> -->
-<!---->
-<!-- 			<form method="POST" action="?/deleteUser" class="flex items-center justify-center gap-3"> -->
-<!-- 				<input type="hidden" name="id" value={selectedUserForDelete} /> -->
-<!-- 				<button -->
-<!-- 					type="button" -->
-<!-- 					onclick={() => (selectedUserForDelete = null)} -->
-<!-- 					class="rounded-xl bg-white/5 px-4 py-2 text-xs font-semibold text-text-muted transition-all hover:bg-white/10" -->
-<!-- 				> -->
-<!-- 					Batal -->
-<!-- 				</button> -->
-<!-- 				<button -->
-<!-- 					type="submit" -->
-<!-- 					class="rounded-xl bg-red-500 px-5 py-2 text-xs font-bold text-text-main transition-all hover:bg-red-600" -->
-<!-- 				> -->
-<!-- 					Ya, Hapus -->
-<!-- 				</button> -->
-<!-- 			</form> -->
-<!-- 		</div> -->
-<!-- 	</div> -->
-<!-- {/if} -->
+<!-- MODAL POPUP KONFIRMASI HAPUS               -->
+{#if selectedUserForDelete}
+	<div
+		class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm transition-all"
+	>
+		<div
+			class="bg-scitech-slate w-full max-w-md space-y-5 rounded-3xl border border-white/15 p-6 shadow-2xl"
+		>
+			<!-- Header Modal -->
+			<div class="flex items-center gap-3">
+				<div class="rounded-2xl border border-red-500/30 bg-red-500/10 p-3 text-red-400">
+					<AlertTriangle class="h-6 w-6" />
+				</div>
+				<div>
+					<h3 class="text-lg font-bold text-text-main">Konfirmasi Hapus User</h3>
+					<p class="text-xs text-text-muted">Tindakan ini tidak dapat dibatalkan</p>
+				</div>
+			</div>
+
+			<!-- Pesan Konfirmasi -->
+			<p class="text-xs leading-relaxed text-text-muted sm:text-sm">
+				Apakah Anda yakin ingin menghapus pengguna <span class="font-bold text-text-main"
+					>{userToDelete?.name || 'ini'}</span
+				>
+				{#if userToDelete?.username}
+					(<span class="text-scitech-mint font-mono">@{userToDelete.username}</span>)
+				{/if}? Data yang dihapus tidak dapat dikembalikan.
+			</p>
+
+			<!-- Action Buttons -->
+			<div class="flex items-center justify-end gap-3 pt-2">
+				<button
+					type="button"
+					onclick={() => (selectedUserForDelete = null)}
+					disabled={isDeleting}
+					class="bg-scitech-navy rounded-xl border border-white/10 px-4 py-2.5 text-xs font-semibold text-text-muted transition-all hover:bg-white/5 hover:text-text-main disabled:opacity-50"
+				>
+					Batal
+				</button>
+
+				<button
+					type="button"
+					onclick={confirmDelete}
+					disabled={isDeleting}
+					class="inline-flex items-center gap-2 rounded-xl border border-red-500/50 bg-red-500/80 px-4 py-2.5 text-xs font-bold text-text-main shadow-lg shadow-red-500/20 transition-all hover:bg-red-500 active:scale-95 disabled:opacity-50"
+				>
+					{#if isDeleting}
+						<span>Menghapus...</span>
+					{:else}
+						<Trash2 class="h-4 w-4" />
+						<span>Ya, Hapus</span>
+					{/if}
+				</button>
+			</div>
+		</div>
+	</div>
+{/if}

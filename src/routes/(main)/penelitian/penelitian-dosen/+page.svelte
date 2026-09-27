@@ -39,7 +39,6 @@
 		</h1>
 	</div>
 
-	<!-- DAFTAR PENELITIAN DOSEN -->
 	{#if data.researchData}
 		<article
 			class="border border-t-2 border-border-light border-t-accent-primary bg-bg-secondary shadow-sm transition-all duration-200"

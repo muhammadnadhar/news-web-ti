@@ -3,13 +3,13 @@
 	import { Sparkles, X, Save } from 'lucide-svelte';
 	import TableContent from '$lib/components/admin/tableContent.svelte';
 	import type { TableContentType } from '$lib/types/tableContent';
-	import type { HighGpaStudentDTO } from '$lib/types/admin/article/kemahasiswaan';
-	import TableSkeleton from '$lib/components/tableSkeleton.svelte';
+	import TableSkeleton from '$lib/components/loading/tableSkeleton.svelte';
 	import { gotoEdit, mergeNewPath } from '$lib/utils.js';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import type { ResponseMessage } from '$lib/types/message.js';
 	import Message from '$lib/components/admin/message.svelte';
+	import type { HighGpaStudentDTO } from '$lib/dto/admin/article/kemahasiswaan.js';
 
 	let { data } = $props();
 

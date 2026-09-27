@@ -1,7 +1,8 @@
 import { getHighGpaSemesters } from '$lib/repository/admin/article/kemahasiswaan/ipkTertinggi';
 import { getAchievementSemesters } from '$lib/repository/admin/article/kemahasiswaan/mapres';
-import { AwardIcon } from 'lucide-svelte';
 import type { LayoutServerLoad } from './$types';
+import { getRecentNews } from '$lib/repository/admin/article/berita';
+import { getAllNewsCategories } from '$lib/repository/admin/dataset/beritaKategory';
 
 export const load: LayoutServerLoad = async () => {
 	// let academicSemesters: { semester: string }[] = [];
@@ -11,13 +12,15 @@ export const load: LayoutServerLoad = async () => {
 	try {
 		const results = await Promise.allSettled([
 			getAchievementSemesters('y'),
-			getAchievementSemesters("n"),
-			getHighGpaSemesters()
+			getAchievementSemesters('n'),
+			getHighGpaSemesters(),
+
+			// untuk berita | Rencanaya data nya akan di cache , jaidnya lebih cepat
+			getRecentNews(5),
+			getAllNewsCategories()
 		]);
 
-		const academicSemesters = results[0].status === 'fulfilled' ? results[0].value : [];
-		const nonAcademicSemesters = results[1].status === 'fulfilled' ? results[1].value : [];
-		const gpaSemesters = results[2].status === 'fulfilled' ? results[2].value : [];
+	
 
 		// Fetch semua data semester unik secara paralel dari masing-masing tabel/kategori
 		// [academicSemesters, nonAcademicSemesters, gpaSemesters] = await Promise.all([
@@ -25,18 +28,26 @@ export const load: LayoutServerLoad = async () => {
 		// 	getAchievementSemesters('n'),
 		// 	getHighGpaSemesters()
 		// ]);
-    console.table(await getAchievementSemesters("y"))
-    console.table(await getAchievementSemesters("n"))
+
 		return {
 			// navItems: navMenuItems as NavMenuItemType[]
 			semesters: {
-				academic: academicSemesters,
-				nonAcademic: nonAcademicSemesters,
-				gpa: gpaSemesters
-			}
+				academic:  results[0].status === 'fulfilled' ? results[0].value : [],
+				nonAcademic: results[1].status === 'fulfilled' ? results[1].value : [],
+				gpa: results[2].status === 'fulfilled' ? results[2].value : [],
+			},
+
+			// data untuk berita
+			recentNews: results[3].status === "fulfilled"  ? results[3].value : [],
+			newsCategories: results[4].status === "fulfilled"  ? results[4].value :[],
 		};
 	} catch (error) {
 		console.error('Gagal mengambil data dropdown semester:', error);
+return {
+            semesters: { academic: [], nonAcademic: [], gpa: [] },
+            recentNews: [],
+            newsCategories: []
+        };
 	}
 
 	// const kemahasiswaanMenu = navMenuItems.find((m: NavMenuItemType) => m.id === 'kemahasiswaan');

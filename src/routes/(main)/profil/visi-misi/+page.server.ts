@@ -4,10 +4,9 @@ import { getVisiMisi } from '$lib/repository/admin/article/profile/visiMisi';
 
 export const load: PageServerLoad = async () => {
 	try {
-		const visiMisiData = await getVisiMisi();
 
 		return {
-			visiMisiData
+			visiMisiData : 		getVisiMisi(),
 		};
 	} catch (err) {
 		console.error('Error loading Visi Misi:', err);

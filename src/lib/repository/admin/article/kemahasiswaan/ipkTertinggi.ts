@@ -1,5 +1,6 @@
 import { query } from '$lib/database/svelteDb';
 import type { HighGpaStudentDTO } from '$lib/dto/admin/article/kemahasiswaan';
+import type { SemesterDTO } from '$lib/dto/admin/dataset';
 import { tableHighGpaStudent } from '$lib/seeder/admin/article/kemahasiswaan';
 import { tableAngkatan, tableSemester } from '$lib/seeder/admin/dataset';
 
@@ -30,18 +31,20 @@ h.image_url,
 /**
  * Mengambil daftar semester unik yang terdaftar pada data IPK Tertinggi
  */
-export async function getHighGpaSemesters(): Promise<
-	{ semester_id: string; semester_name: string }[]
-> {
+export async function getHighGpaSemesters(): Promise<SemesterDTO[]> {
 	const sql = `
-		SELECT DISTINCT 
-			s.id AS semester_id,
-			s.name AS semester_name
-		FROM ${tableHighGpaStudent} h
-		INNER JOIN ${tableSemester} s ON h.semester_id = s.id
-		ORDER BY s.created_at DESC
-	`;
-	return (await query(sql)) as { semester_id: string; semester_name: string }[];
+        SELECT DISTINCT 
+            s.id,
+            s.name,
+            s.academic_year,
+            s.is_active,
+            s.created_at,
+            s.updated_at
+        FROM ${tableHighGpaStudent} h
+        INNER JOIN ${tableSemester} s ON h.semester_id = s.id
+        ORDER BY s.created_at DESC
+    `;
+	return (await query(sql)) as SemesterDTO[];
 }
 
 /**
@@ -68,6 +71,60 @@ export async function getHighGpaStudentById(id: string): Promise<HighGpaStudentD
 	`;
 	const rows = (await query(sql, [id])) as HighGpaStudentDTO[];
 	return rows[0] || null;
+}
+
+/**
+ * Mengambil data Mahasiswa IPK Tertinggi berdasarkan semester_id
+ */
+export async function getHighGpaStudentsBySemesterId(
+	semesterId: string
+): Promise<HighGpaStudentDTO[]> {
+	const sql = `
+        SELECT 
+            h.id,
+            h.student_name,
+            h.gpa,
+            h.angkatan_id,
+            h.semester_id,
+            h.image_url,
+            h.created_at,
+            h.updated_at,
+            a.year AS batch_year,
+            s.name AS semester_name
+        FROM ${tableHighGpaStudent} h
+        LEFT JOIN ${tableAngkatan} a ON h.angkatan_id = a.id
+        LEFT JOIN ${tableSemester} s ON h.semester_id = s.id
+        WHERE h.semester_id = ?
+        ORDER BY h.gpa DESC, h.created_at DESC
+    `;
+	return (await query(sql, [semesterId])) as HighGpaStudentDTO[];
+}
+
+/**
+ * Mengambil data Mahasiswa IPK Tertinggi berdasarkan Nama Semester
+ */
+export async function getHighGpaStudentsBySemesterName(
+	semesterName: string
+): Promise<HighGpaStudentDTO[]> {
+	const sql = `
+        SELECT 
+            h.id,
+            h.student_name,
+            h.gpa,
+            h.angkatan_id,
+            h.semester_id,
+            h.image_url,
+            h.created_at,
+            h.updated_at,
+            a.year AS batch_year,
+            s.name AS semester_name
+        FROM ${tableHighGpaStudent} h
+        LEFT JOIN ${tableAngkatan} a ON h.angkatan_id = a.id
+        LEFT JOIN ${tableSemester} s ON h.semester_id = s.id
+        WHERE LOWER(s.name) = LOWER(?)
+        ORDER BY h.gpa DESC, h.created_at DESC
+    `;
+	return (await query(sql, [semesterName])) as HighGpaStudentDTO[];
 }
 
 /**

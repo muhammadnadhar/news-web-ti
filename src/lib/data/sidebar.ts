@@ -31,17 +31,17 @@ export const sidebarMenu: MenuCategory[] = [
 			},
 			{
 				title: 'Angkatan',
-				iconName: 'Users',
+				iconName: 'GraduationCap',
 				href: AdminUrl + '/dataset/angkatan'
 			},
 			{
 				title: 'Jabatan Prodi',
-				iconName: 'Users',
+				iconName: 'UserCog',
 				href: AdminUrl + '/dataset/jabatan-prodi'
 			},
 			{
 				title: 'Kategori Berita',
-				iconName: 'Users',
+				iconName: 'FolderTree',
 				href: AdminUrl + '/dataset/kategori-berita'
 			}
 		]

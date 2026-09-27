@@ -6,7 +6,6 @@
 </script>
 
 <div class="container">
-	<h1>Tambah Data Beasiswa</h1>
 
 	<!-- Cukup panggil komponen tanpa initialData -->
 	<FormBeasiswa {form} action="?/create" />

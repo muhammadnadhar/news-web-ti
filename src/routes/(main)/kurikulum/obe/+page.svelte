@@ -1,5 +1,6 @@
 <script lang="ts">
-	import EmptyData from '../../_components/emptyData.svelte';
+	import { classTopSpace } from '$lib/constants';
+import EmptyData from '../../_components/emptyData.svelte';
 	import type { PageData } from './$types';
 	import { BookOpen, Calendar, AlertCircle } from 'lucide-svelte';
 
@@ -21,7 +22,7 @@
 	);
 </script>
 
-<section class="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+<section class={ ` ${classTopSpace} mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8`}>
 	<div class="mb-8 border-b border-border-color/40 pb-6">
 		<div
 			class="bg-scitech-mint/10 text-scitech-mint mb-3 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold"

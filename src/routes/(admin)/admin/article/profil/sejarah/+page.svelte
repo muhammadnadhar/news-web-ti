@@ -2,16 +2,30 @@
 	import { enhance } from '$app/forms';
 	import { goto, invalidateAll } from '$app/navigation';
 	import { page } from '$app/state';
-	import { folder_cloudinary_admin_article_profil, getUploadConfig, getUploadOptions, upload_cloudinary_preset } from '$lib/cloudinary/client';
+	import {
+		folder_cloudinary_admin_article_profil,
+		getUploadConfig,
+		getUploadOptions,
+		upload_cloudinary_preset
+	} from '$lib/cloudinary/client';
 	import FormEditor from '$lib/components/admin/formEditor.svelte';
 	import Message from '$lib/components/admin/message.svelte';
 	import TableContent from '$lib/components/admin/tableContent.svelte';
-	import TableSkeleton from '$lib/components/tableSkeleton.svelte';
-	import type { HistoryLeadersDTO } from '$lib/types/admin/article/profile.js';
+	import TableSkeleton from '$lib/components/loading/tableSkeleton.svelte';
+	import type { HistoryLeadersDTO } from '$lib/dto/admin/article/profile.js';
 	import type { MessageStatus, ResponseMessage } from '$lib/types/message.js';
 	import type { TableContentType } from '$lib/types/tableContent.js';
 	import { gotoEdit, mergeNewPath, parsePhotoToUrl } from '$lib/utils.js';
-	import { UploadCloud, Plus, Edit, Trash2, Save, X, AlertTriangleIcon, UploadIcon } from 'lucide-svelte';
+	import {
+		UploadCloud,
+		Plus,
+		Edit,
+		Trash2,
+		Save,
+		X,
+		AlertTriangleIcon,
+		UploadIcon
+	} from 'lucide-svelte';
 	import { CldUploadButton } from 'svelte-cloudinary';
 
 	let { data } = $props();
@@ -27,11 +41,11 @@
 	function handleUploadSuccess(result: any) {
 		if (result?.info?.secure_url) {
 			imageUrl = result.info.secure_url;
-previewUrl = result.info.secure_url;
+			previewUrl = result.info.secure_url;
 		}
 	}
 
-		let isDeleteModalOpen = $state(false);
+	let isDeleteModalOpen = $state(false);
 	let isSubmitting = $state(false);
 	let selectedItem = $state<TableContentType | null>(null);
 
@@ -65,7 +79,6 @@ previewUrl = result.info.secure_url;
 		showMessage = true;
 	}
 
-
 	// Triggered saat tombol hapus di tabel diklik
 	function openDeleteModal(item: TableContentType) {
 		selectedItem = item;
@@ -86,53 +99,52 @@ previewUrl = result.info.secure_url;
 		isDeleteModalOpen = false;
 		selectedItem = null;
 	}
-export function mapHistoryLeadersToTableContent(items: HistoryLeadersDTO[]): TableContentType[] {
-    if (!Array.isArray(items)) return [];
+	export function mapHistoryLeadersToTableContent(items: HistoryLeadersDTO[]): TableContentType[] {
+		if (!Array.isArray(items)) return [];
 
-    return items.map((item) => {
-        // Ambil nama & foto dari hasil JOIN (flat/nested) dengan nilai aman (fallback)
-        const headName = item.head_name ?? item.head?.name ?? '-';
-        const headPhoto = parsePhotoToUrl(item.head_photo ?? item.head?.photo_url) || '';
+		return items.map((item) => {
+			// Ambil nama & foto dari hasil JOIN (flat/nested) dengan nilai aman (fallback)
+			const headName = item.head_name ?? item.head?.name ?? '-';
+			const headPhoto = parsePhotoToUrl(item.head_photo ?? item.head?.photo_url) || '';
 
-        const secretaryName = item.secretary_name ?? item.secretary?.name ?? '-';
-        const secretaryPhoto = parsePhotoToUrl(item.secretary_photo ?? item.secretary?.photo_url) || '';
+			const secretaryName = item.secretary_name ?? item.secretary?.name ?? '-';
+			const secretaryPhoto =
+				parsePhotoToUrl(item.secretary_photo ?? item.secretary?.photo_url) || '';
 
-        return {
-            id: item.id,
-            items: [
-                {
-                    colomn: 'Periode',
-                    row: item.period || '-',
-                    isHtml: false
-                },
-                {
-                    colomn: 'Foto Ketua',
-                    row: headPhoto,
-                    isImage: true,
-                    isHtml: false
-                },
-                {
-                    colomn: 'Nama Ketua',
-                    row: headName,
-                    isHtml: false
-                },
-                {
-                    colomn: 'Foto Sekretaris',
-                    row: secretaryPhoto,
-                    isImage: true,
-                    isHtml: false
-                },
-                {
-                    colomn: 'Nama Sekretaris',
-                    row: secretaryName,
-                    isHtml: false
-                }
-            ]
-        };
-    });
-}
-
-
+			return {
+				id: item.id,
+				items: [
+					{
+						colomn: 'Periode',
+						row: item.period || '-',
+						isHtml: false
+					},
+					{
+						colomn: 'Foto Ketua',
+						row: headPhoto,
+						isImage: true,
+						isHtml: false
+					},
+					{
+						colomn: 'Nama Ketua',
+						row: headName,
+						isHtml: false
+					},
+					{
+						colomn: 'Foto Sekretaris',
+						row: secretaryPhoto,
+						isImage: true,
+						isHtml: false
+					},
+					{
+						colomn: 'Nama Sekretaris',
+						row: secretaryName,
+						isHtml: false
+					}
+				]
+			};
+		});
+	}
 </script>
 
 {#if showMessage}
@@ -191,18 +203,19 @@ export function mapHistoryLeadersToTableContent(items: HistoryLeadersDTO[]): Tab
 					<div class="space-y-2">
 						<label for="image" class="text-xs font-medium text-text-main">Foto</label>
 						<div class="flex items-center gap-2">
-								<CldUploadButton
-						uploadPreset={upload_cloudinary_preset}
-						options={getUploadOptions(folder_cloudinary_admin_article_profil)}
-						config={getUploadConfig()}
-						onSuccess={handleUploadSuccess}
-						class="inline-flex items-center gap-2 rounded-xl bg-bg-primary-glare px-4 py-2 text-xs font-semibold text-slate-950 shadow-md shadow-amber-500/10 hover:bg-bg-primary-glare/30"
-					>
-						<UploadIcon class="h-4 w-4" />
-<span class={imageUrl ? 'text-emerald-400 font-semibold' : 'text-text-main'}>
-    {imageUrl ? 'Foto Terunggah' : 'Unggah Gambar'}
-</span>
-					</CldUploadButton>						</div>
+							<CldUploadButton
+								uploadPreset={upload_cloudinary_preset}
+								options={getUploadOptions(folder_cloudinary_admin_article_profil)}
+								config={getUploadConfig()}
+								onSuccess={handleUploadSuccess}
+								class="inline-flex items-center gap-2 rounded-xl bg-bg-primary-glare px-4 py-2 text-xs font-semibold text-slate-950 shadow-md shadow-amber-500/10 hover:bg-bg-primary-glare/30"
+							>
+								<UploadIcon class="h-4 w-4" />
+								<span class={imageUrl ? 'font-semibold text-emerald-400' : 'text-text-main'}>
+									{imageUrl ? 'Foto Terunggah' : 'Unggah Gambar'}
+								</span>
+							</CldUploadButton>
+						</div>
 					</div>
 				</div>
 
@@ -240,38 +253,37 @@ export function mapHistoryLeadersToTableContent(items: HistoryLeadersDTO[]): Tab
 
 		<!-- ================= bagian kanan: data sejarah pimpinan jurusan ================= -->
 
-    <div class="lg:col-span-6">
-		{#await data.historyLeaders}
-			<TableSkeleton showTitle={true} title="Memuat Data Leader..." columnsCount={2} />
-		{:then rawList}
-			<TableContent
-				title="Daftar Sejarah kepemimpinan"
-				addButtonLabel="Sejarah"
-				data={mapHistoryLeadersToTableContent(rawList)}
-				onAdd={() => goto(mergeNewPath('add'))}
-				onEdit={(data) => gotoEdit(data.id, page.url.pathname)}
-				deleteAction="?/delete"
-				onDeleteSuccess={(res) =>
-					triggerMessage(
-						res?.status ?? 'success',
-						res?.title ?? 'Berhasil',
-						res?.message ?? 'Data berhasil dihapus.'
-					)}
-				onDeleteError={(res) =>
-					triggerMessage(
-						res?.status ?? 'error',
-						res?.title ?? 'Gagal Menyimpan',
-						res?.message ?? 'Terjadi kesalahan saat menghapus data.'
-					)}
-			/>
-		{:catch error}
-			<div class="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-400">
-				Gagal memuat data kerjasama: {error.message}
-			</div>
-			[]
-		{/await}
-    </div>
-
+		<div class="lg:col-span-6">
+			{#await data.historyLeaders}
+				<TableSkeleton showTitle={true} title="Memuat Data Leader..." columnsCount={2} />
+			{:then rawList}
+				<TableContent
+					title="Daftar Sejarah kepemimpinan"
+					addButtonLabel="Sejarah"
+					data={mapHistoryLeadersToTableContent(rawList)}
+					onAdd={() => goto(mergeNewPath('add'))}
+					onEdit={(data) => gotoEdit(data.id, page.url.pathname)}
+					deleteAction="?/delete"
+					onDeleteSuccess={(res) =>
+						triggerMessage(
+							res?.status ?? 'success',
+							res?.title ?? 'Berhasil',
+							res?.message ?? 'Data berhasil dihapus.'
+						)}
+					onDeleteError={(res) =>
+						triggerMessage(
+							res?.status ?? 'error',
+							res?.title ?? 'Gagal Menyimpan',
+							res?.message ?? 'Terjadi kesalahan saat menghapus data.'
+						)}
+				/>
+			{:catch error}
+				<div class="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-400">
+					Gagal memuat data kerjasama: {error.message}
+				</div>
+				[]
+			{/await}
+		</div>
 	</div>
 </div>
 
@@ -380,4 +392,3 @@ export function mapHistoryLeadersToTableContent(items: HistoryLeadersDTO[]): Tab
 <!-- 	</div> -->
 <!-- {/if} -->
 <!---->
-

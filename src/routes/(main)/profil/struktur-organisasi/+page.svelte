@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { classTopSpace } from '$lib/constants';
 	import EmptyData from '../../_components/emptyData.svelte';
 	import type { PageData } from './$types';
 	import { Network, Calendar, Maximize2, X, AlertCircle, FileText } from 'lucide-svelte';
@@ -21,8 +22,7 @@
 	}
 </script>
 
-<div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-	<!-- HEADER HALAMAN -->
+<div class={`${classTopSpace} mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8`}>
 	<div class="mb-10 border-b border-border-color/40 pb-6 text-center sm:text-left">
 		<div
 			class="bg-scitech-mint/10 text-scitech-mint mb-3 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold"
@@ -53,7 +53,6 @@
 				<article
 					class="bg-scitech-slate/40 hover:border-scitech-mint/40 overflow-hidden rounded-2xl border border-border-color backdrop-blur-md transition-all duration-300"
 				>
-					<!-- Judul & Info Tanggal -->
 					<div class="bg-scitech-navy/60 border-b border-border-color/40 px-6 py-4 sm:px-8">
 						<h2 class="text-xl font-bold text-text-main sm:text-2xl">{item.title}</h2>
 						<div class="mt-1.5 flex items-center gap-1.5 text-xs text-text-muted">
@@ -75,7 +74,6 @@
 									loading="lazy"
 								/>
 
-								<!-- Overlay Button Perbesar Gambar -->
 								<div
 									class="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
 								>

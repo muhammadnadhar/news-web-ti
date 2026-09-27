@@ -33,7 +33,7 @@ News TI ( UIN Ar-Raniry )
 - `tsx` : typescrip yang akan di gunakan di
 - `bun` : runtime yang di gunakan di projek ini
 - `svelte-cloudinary` : koneksi ke cloudinary untuk menyimpan file gambar
-= `olso` : for password auth
+= `olso` : for password auth , menggunakan `Argon`
 <br>
 
 ### Start
@@ -42,7 +42,6 @@ News TI ( UIN Ar-Raniry )
 # recreate this project
 bun x sv@0.17.0 create --template minimal --types ts --add prettier eslint tailwindcss="plugins:typography,forms" sveltekit-adapter="adapter:auto" --install bun web-berita-ti
 ```
-
 Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
 
 ```sh
@@ -59,14 +58,17 @@ npm run dev -- --open
 
 > beberapa fitur yg di tambhakan
 
+- karena menggunkan `SSR (Server-Side Rendering)` dengan `Sveltekit` maka halaman akan cepat di render terlebih dahulu tampa perlu menunggu file `javascript` atau mengambil data dari `database` di render dahulu , karena ini berguna untuk perangkat yang rendah   
 - desain Dashboard lebih modern
 - data dari instagram bisa langsung singkrone
-- modal peringatan saat di hapus
+- modal peringatan saat di hapus data table 
+- 
 - id di engcripsi
 - admin : ada Flush Message yang menampilkan informasi yang di lakukan
 - admin : scroling sidebar nyangkut dengan sempurnah wkwk
 - admin : kalender bisa di tambhakan berdasarkan tahun ajar
 - admin : dataset baru utnuk berita yang bisa menambah kategory berita untuk di gunakan memilih berita
+- home : Fitu Berita yang di web sebelumnya berupa component berita yang selalu ada di setiap Layout yang selalu muncul di sebelah kiri , sekarang di ubah di namis  sebelah kiri yang hanya muncul di dektop  saat di click ke kiir , mobile dari bawah 
 
 ##### Admin panel
 

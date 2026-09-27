@@ -12,10 +12,10 @@
 
 <button
 	type="button"
-	onclick={() => Apptheme.toggle()}
+	onclick={(e) => Apptheme.toggle(e)}
 	title={$Apptheme === 'dark' ? 'Beralih ke Light Mode' : 'Beralih ke Dark Mode'}
 	aria-label={$Apptheme === 'dark' ? 'Beralih ke Light Mode' : 'Beralih ke Dark Mode'}
-	class="dark:bg-scitech-navy dark:text-scitech-cyan flex shrink-0 items-center justify-center gap-2 rounded-xl border border-black/10 bg-slate-100 p-2 text-slate-700 transition-all hover:bg-slate-200 active:scale-95 dark:border-white/10 dark:hover:bg-white/10 {onlyIcon
+	class="flex shrink-0 items-center justify-center gap-2 rounded-xl border  bg-text-main p-2 text-bg-primary transition-all hover:bg-text-muted active:scale-95 border-border-color  {onlyIcon
 		? ''
 		: 'sm:px-3 sm:py-2'}"
 >

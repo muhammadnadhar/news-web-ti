@@ -3,7 +3,7 @@
 	import { page } from '$app/state';
 	import Message from '$lib/components/admin/message.svelte';
 	import TableContent from '$lib/components/admin/tableContent.svelte';
-	import TableSkeleton from '$lib/components/tableSkeleton.svelte';
+	import TableSkeleton from '$lib/components/loading/tableSkeleton.svelte';
 	import type { LecturerStaffItemDTO } from '$lib/dto/admin/article/profile.js';
 	import type { MessageStatus, ResponseMessage } from '$lib/types/message.js';
 	import type { TableContentType } from '$lib/types/tableContent.js';
@@ -109,7 +109,7 @@
 
 <div class="space-y-6 p-6 lg:p-10">
 	<!-- header bar -->
-	<div class="border-scitech-slate/20 border-b pb-4">
+	<div class="border-scitech-slate/20 pb-4">
 		<h1 class="text-2xl font-bold tracking-tight text-text-main">Dosen & Staff</h1>
 	</div>
 

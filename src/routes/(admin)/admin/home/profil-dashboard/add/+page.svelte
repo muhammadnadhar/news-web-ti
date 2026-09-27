@@ -11,6 +11,7 @@
 		upload_cloudinary_preset
 	} from '$lib/cloudinary/client.js';
 	import type { MessageStatus, ResponseMessage } from '$lib/types/message.js';
+	import { goto } from '$app/navigation';
 
 	let { form } = $props();
 
@@ -174,7 +175,7 @@
 		<div class="flex items-center justify-end gap-3 border-t border-border-color pt-6">
 			<button
 				type="button"
-				onclick={() => history.back()}
+				onclick={() => goto('/admin/home')}
 				class="border border-border-color bg-bg-primary px-5 py-2.5 text-sm font-semibold text-text-main transition-all hover:bg-bg-secondary-hover active:scale-95"
 			>
 				Batal

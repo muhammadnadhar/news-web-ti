@@ -5,7 +5,7 @@
 	import type { TableContentType } from '$lib/types/tableContent';
 	import { gotoEdit, mergeNewPath } from '$lib/utils.js';
 	import { goto } from '$app/navigation';
-	import TableSkeleton from '$lib/components/tableSkeleton.svelte';
+	import TableSkeleton from '$lib/components/loading/tableSkeleton.svelte';
 	import { page } from '$app/state';
 	import type { ResponseMessage } from '$lib/types/message.js';
 	import Message from '$lib/components/admin/message.svelte';

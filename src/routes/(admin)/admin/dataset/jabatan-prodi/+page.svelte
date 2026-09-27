@@ -4,13 +4,13 @@
 	import type { PageData, ActionData } from './$types';
 	import TableContent from '$lib/components/admin/tableContent.svelte';
 	import Message from '$lib/components/admin/message.svelte';
-	import TableSkeleton from '$lib/components/tableSkeleton.svelte';
 	import type { MessageStatus, ResponseMessage } from '$lib/types/message';
-	import type { JabatanProdiDTO } from '$lib/types/admin/dataset';
 	import type { TableContentType } from '$lib/types/tableContent';
+	import TableSkeleton from '$lib/components/loading/tableSkeleton.svelte';
 	import { goto } from '$app/navigation';
 	import { gotoEdit, mergeNewPath } from '$lib/utils';
 	import { page } from '$app/state';
+	import type { JabatanProdiDTO } from '$lib/dto/admin/dataset';
 
 	interface Props {
 		data: PageData;

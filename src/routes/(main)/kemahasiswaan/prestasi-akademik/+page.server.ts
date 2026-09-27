@@ -10,8 +10,7 @@ export const load: PageServerLoad = async ({ url }) => {
   if (!semesterParam) {
             error(404, { message: 'daftar Semester akademik tidak ada ' });
   }
-	// Mengambil daftar semester unik yang memiliki data Prestasi Akademik ('y')
-	const academicSemesters = await getAchievementSemesters('y');
+	const academicSemesters = await getAchievementSemesters('y'); // data untuk Prestasi akademik 
 
 	// Tentukan semester yang aktif (Gunakan param URL, jika tidak ada gunakan semester terbaru)
 	const activeSemester = semesterParam || academicSemesters[0]?.name || '';
@@ -19,7 +18,6 @@ export const load: PageServerLoad = async ({ url }) => {
 	let achievements : StudentAchievementDTO[] = [];
 
 	if (activeSemester) {
-		// Cek apakah parameter berupa UUID (id) atau Nama Semester
 		const isUuid = /^[0-9a-fA-F-]{36}$/.test(activeSemester);
 
 		if (isUuid) {

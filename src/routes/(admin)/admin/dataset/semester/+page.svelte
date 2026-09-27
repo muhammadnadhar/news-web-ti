@@ -5,10 +5,10 @@
 	import type { TableContentType } from '$lib/types/tableContent';
 	import { goto } from '$app/navigation';
 	import { gotoEdit, mergeNewPath } from '$lib/utils';
-	import TableSkeleton from '$lib/components/tableSkeleton.svelte';
 	import { page } from '$app/state';
-	import type { SemesterDTO } from '$lib/types/admin/dataset.js';
+	import TableSkeleton from '$lib/components/loading/tableSkeleton.svelte';
 	import type { MessageStatus, ResponseMessage } from '$lib/types/message.js';
+	import type { SemesterDTO } from '$lib/dto/admin/dataset.js';
 
 	let { data } = $props();
 

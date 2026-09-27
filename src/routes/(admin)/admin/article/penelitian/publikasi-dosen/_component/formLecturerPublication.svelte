@@ -55,12 +55,12 @@
 </script>
 
 <div class="mx-auto max-w-3xl space-y-6">
-	<div class="flex items-center justify-between border-b border-white/10 pb-4">
+	<div class="flex items-center justify-between border-b border-border-color/10 pb-4">
 		<div class="flex items-center gap-3">
 			<button
 				type="button"
 				onclick={() => goto(removeLastPath())}
-				class="rounded-xl border border-white/10 p-2.5 text-text-muted transition-all hover:border-white/20 hover:bg-white/10 hover:text-text-main active:scale-95"
+				class="rounded-xl border border-border-color/10 p-2.5 text-text-muted transition-all hover:border-white/20 hover:bg-white/10 hover:text-text-main active:scale-95"
 				title="Kembali"
 			>
 				<ArrowLeft class="h-5 w-5" />
@@ -95,7 +95,7 @@
 
 	<!-- Glassmorphism Form Card -->
 	<div
-		class="bg-scitech-slate/50 rounded-2xl border border-white/10 p-6 shadow-2xl backdrop-blur-xl sm:p-8"
+		class="bg-scitech-slate/50 rounded-2xl border border-border-color/10 p-6 shadow-2xl backdrop-blur-xl sm:p-8"
 	>
 		<form
 			method="POST"
@@ -107,13 +107,9 @@
 					isSubmitting = false;
 
 					if (result.type === 'success') {
-						const resData = (result.data as ResponseMessage) ?? {
-							status: 'success',
-							title: 'Berhasil',
-							message: isEdit
-								? 'Data publikasi dosen berhasil diperbarui.'
-								: 'Data publikasi dosen berhasil disimpan.'
-						};
+					const resData = result.type === 'success' || result.type === 'failure' 
+				? (result.data as ResponseMessage | undefined) 
+				: undefined;
 						triggerMessage(resData.status, resData.title, resData.message);
 						await update({ reset: !isEdit });
 					} else if (result.type === 'failure') {
@@ -147,7 +143,7 @@
 					name="lecturer_id"
 					required
 					disabled={isSubmitting}
-					class="bg-scitech-navy focus:border-scitech-mint focus:ring-scitech-mint/20 w-full rounded-xl border border-white/10 px-4 py-3 text-xs text-text-main placeholder-text-muted transition-all focus:ring-2 focus:outline-none disabled:opacity-50"
+					class="bg-scitech-navy focus:border-scitech-mint focus:ring-scitech-mint/20 w-full rounded-xl border border-border-color/10 px-4 py-3 text-xs text-text-main placeholder-text-muted transition-all focus:ring-2 focus:outline-none disabled:opacity-50"
 				>
 					<option
 						value=""
@@ -186,7 +182,7 @@
 					value={form?.values?.sinta_link ?? initialData?.sinta_link ?? ''}
 					placeholder="Contoh: https://sinta.kemdikbud.go.id/authors/detail?id=XXXXXX"
 					disabled={isSubmitting}
-					class="bg-scitech-navy focus:border-scitech-mint focus:ring-scitech-mint/20 w-full rounded-xl border border-white/10 px-4 py-3 text-xs text-text-main placeholder-text-muted transition-all focus:ring-2 focus:outline-none disabled:opacity-50"
+					class="bg-scitech-navy focus:border-scitech-mint focus:ring-scitech-mint/20 w-full rounded-xl border border-border-color/10 px-4 py-3 text-xs text-text-main placeholder-text-muted transition-all focus:ring-2 focus:outline-none disabled:opacity-50"
 				/>
 			</div>
 
@@ -207,17 +203,17 @@
 					value={form?.values?.scholar_link ?? initialData?.scholar_link ?? ''}
 					placeholder="Contoh: https://scholar.google.com/citations?user=XXXXXX"
 					disabled={isSubmitting}
-					class="bg-scitech-navy focus:border-scitech-mint focus:ring-scitech-mint/20 w-full rounded-xl border border-white/10 px-4 py-3 text-xs text-text-main placeholder-text-muted transition-all focus:ring-2 focus:outline-none disabled:opacity-50"
+					class="bg-scitech-navy focus:border-scitech-mint focus:ring-scitech-mint/20 w-full rounded-xl border border-border-color/10 px-4 py-3 text-xs text-text-main placeholder-text-muted transition-all focus:ring-2 focus:outline-none disabled:opacity-50"
 				/>
 			</div>
 
 			<!-- Action Buttons -->
-			<div class="flex items-center justify-end gap-3 border-t border-white/10 pt-6">
+			<div class="flex items-center justify-end gap-3 border-t border-border-color/10 pt-6">
 				<button
 					type="button"
 					onclick={() => history.back()}
 					disabled={isSubmitting}
-					class="rounded-xl border border-white/10 bg-white/5 px-5 py-2.5 text-xs font-semibold text-text-muted transition-all hover:bg-white/10 hover:text-text-main active:scale-95 disabled:opacity-50"
+					class="rounded-xl border border-border-color/10 bg-white/5 px-5 py-2.5 text-xs font-semibold text-text-muted transition-all hover:bg-white/10 hover:text-text-main active:scale-95 disabled:opacity-50"
 				>
 					Batal
 				</button>

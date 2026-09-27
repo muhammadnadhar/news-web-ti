@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import UserCard from '$lib/components/admin/userCard.svelte';
-	import type { PrimaryDosenDTO } from '$lib/types/admin/home';
-	import type { PerminatanTIItemDTO } from '$lib/types/admin/home';
-	import type { ProfilProdiItemDTO } from '$lib/types/admin/home';
+	import type {
+		PerminatanTIItemDTO,
+		PrimaryDosenDTO,
+		ProfilProdiItemDTO
+	} from '$lib/dto/admin/home';
 	import { stripHtml } from '$lib/utils';
 	import {
 		AlertCircle,

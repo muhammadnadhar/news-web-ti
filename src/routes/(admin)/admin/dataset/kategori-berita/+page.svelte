@@ -3,7 +3,7 @@
 	import { page } from '$app/state';
 	import Message from '$lib/components/admin/message.svelte';
 	import TableContent from '$lib/components/admin/tableContent.svelte';
-	import TableSkeleton from '$lib/components/tableSkeleton.svelte';
+	import TableSkeleton from '$lib/components/loading/tableSkeleton.svelte';
 	import type { NewsCategoryDTO } from '$lib/dto/admin/dataset.js';
 	import type { ResponseMessage } from '$lib/types/message.js';
 	import type { TableContentType } from '$lib/types/tableContent.js';
@@ -18,8 +18,7 @@
 		goto(`${currentPath}/edit/${id}`);
 	}
 
-
-let showMessage = $state(false);
+	let showMessage = $state(false);
 	let messageConfig = $state<ResponseMessage>({
 		status: 'info',
 		title: '',
@@ -31,54 +30,51 @@ let showMessage = $state(false);
 		showMessage = true;
 	}
 
+	/**
+	 * Helper untuk mengubah array NewsCategoryDTO ke format TableContentType
+	 */
+	export function mapNewsCategoryToTableContent(items: NewsCategoryDTO[] = []): TableContentType[] {
+		if (!items || !Array.isArray(items)) {
+			return [];
+		}
 
-
-/**
- * Helper untuk mengubah array NewsCategoryDTO ke format TableContentType
- */
-export function mapNewsCategoryToTableContent(items: NewsCategoryDTO[] = []): TableContentType[] {
-	if (!items || !Array.isArray(items)) {
-		return [];
+		return items.map((item) => ({
+			id: item.id,
+			items: [
+				{
+					colomn: 'Nama Kategori',
+					row: item.name || '-',
+					isHtml: false
+				},
+				{
+					colomn: 'Slug',
+					row: item.slug || '-',
+					isHtml: false
+				}
+			]
+		}));
 	}
-
-	return items.map((item) => ({
-		id: item.id,
-		items: [
-			{
-				colomn: 'Nama Kategori',
-				row: item.name || '-',
-				isHtml: false
-			},
-			{
-				colomn: 'Slug',
-				row: item.slug || '-',
-				isHtml: false
-			}
-		]
-	}));
-}
-
-
 </script>
 
-	<!-- Alert / Toast Notification -->
-	{#if showMessage}
-		<Message
-			status={messageConfig.status}
-			title={messageConfig.title}
-			message={messageConfig.message}
-			dismissible={true}
-			timeout={4000}
-			onclose={() => (showMessage = false)}
-		/>
-	{/if}
-
+<!-- Alert / Toast Notification -->
+{#if showMessage}
+	<Message
+		status={messageConfig.status}
+		title={messageConfig.title}
+		message={messageConfig.message}
+		dismissible={true}
+		timeout={4000}
+		onclose={() => (showMessage = false)}
+	/>
+{/if}
 
 <div class="min-h-screen bg-bg-primary p-6 text-[var(--color-text-main)] transition-colors">
 	<!-- Header Page -->
 	<div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 		<div>
-			<h1 class="text-2xl font-bold tracking-tight text-[var(--color-text-main)]">Kategori Berita</h1>
+			<h1 class="text-2xl font-bold tracking-tight text-[var(--color-text-main)]">
+				Kategori Berita
+			</h1>
 			<p class="mt-1 text-sm text-text-muted">
 				Kelola daftar kategori untuk berita dan pengumuman prodi.
 			</p>

@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { fly, fade, slide } from 'svelte/transition';
 	import { backOut } from 'svelte/easing';
-	import { Menu, X, ChevronDown, Moon, Sun } from 'lucide-svelte';
+	import { Menu, X, ChevronDown } from 'lucide-svelte';
 	// import { navMenuItems } from '$lib/data/navbar'; // update mendapatkan data semester dari UI
 	import { type NavMenuItemType } from '$lib/types/navbar';
 
-	import NavbarSub from '$lib/components/navbar.sub.svelte';
 	import ThemeActionBtn from './themeActionBtn.svelte';
+	import NavbarSub from './navbarSub.svelte';
 
 	interface Props {
 		navMenuItems: NavMenuItemType[];
@@ -18,7 +18,7 @@
 	let scrollY = $state(0);
 
 	//  State turunan ($derived): true jika scrolled lebih dari 20px
-	let isScrolled = $derived(scrollY > 50);
+	// 	let isScrolled = $derived(scrollY > 50);
 
 	// State menu mobile & submenu
 	let isOpen = $state(false);
@@ -52,6 +52,12 @@
 			if (item.href) window.location.href = item.href;
 		}
 	}
+	// Handler saat mouse masuk (Hanya berlaku untuk desktop dengan kursor)
+	function handleMouseEnter(item: NavMenuItemType) {
+		if (window.matchMedia('(hover: hover)').matches) {
+			handleDesktopClick(item);
+		}
+	}
 
 	// Handle klik menu di mobile
 	function handleMobileClick(item: NavMenuItemType) {
@@ -71,9 +77,8 @@
 <!-- ==================== desktop navbar ==================== -->
 <div
 	bind:this={desktopNavRef}
-	class=" fixed top-auto right-6 z-50 hidden transition-all md:block {isScrolled
-		? ' scale-100 border-border-color/80  backdrop-blur-xl'
-		: ' scale-95 border-white/5 text-text-main '}"
+	class=" fixed top-auto right-6 z-50 hidden border-white/5 text-text-main
+		 backdrop-blur-xl transition-all md:block"
 >
 	<nav
 		class="bg-scitech-navy/80 flex items-center gap-3 rounded-2xl border border-white/10 p-2 shadow-2xl backdrop-blur-md"
@@ -81,6 +86,7 @@
 		{#each navMenuItems as item (item.id)}
 			<button
 				title={item.label}
+				onmouseenter={() => handleMouseEnter(item)}
 				onclick={() => handleDesktopClick(item)}
 				class="group relative flex items-center justify-center rounded-xl p-2.5 transition-all duration-200 {item.bgClass ??
 					''} {activeDesktopMenu?.id === item.id ? 'ring-scitech-mint scale-105 ring-2' : ''}"

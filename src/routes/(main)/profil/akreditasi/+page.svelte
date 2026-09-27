@@ -1,5 +1,6 @@
 <script lang="ts">
-	import EmptyData from '../../_components/emptyData.svelte';
+	import { classTopSpace } from '$lib/constants';
+import EmptyData from '../../_components/emptyData.svelte';
 	import type { PageData } from './$types';
 	import { Award, Calendar, Maximize2, X, AlertCircle } from 'lucide-svelte';
 
@@ -21,13 +22,11 @@
 	}
 </script>
 
-<div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-	<!-- HEADER HALAMAN -->
+<div class={ ` ${classTopSpace} mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8`}>
 	<div class="mb-10 border-b border-border-color/40 pb-6 text-center sm:text-left">
 		<div
 			class="bg-scitech-mint/10 text-scitech-mint mb-3 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold"
 		>
-			<Award class="h-4 w-4" />
 			<span>Jaminan Mutu</span>
 		</div>
 		<h1 class="text-3xl font-extrabold tracking-tight text-text-main sm:text-4xl">
@@ -38,7 +37,7 @@
 		</p>
 	</div>
 
-	<!-- DAFTAR AKREDITASI -->
+	<!-- daftar akreditasi -->
 	{#if data.accreditations && data.accreditations.length > 0}
 		<div class="space-y-12">
 			{#each data.accreditations as item, index (item.id)}

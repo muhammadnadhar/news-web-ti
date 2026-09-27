@@ -124,7 +124,7 @@
 	<!-- header action & title bar -->
 	{#if title || addButtonLabel}
 		<div
-			class="flex flex-col gap-3 border-b border-white/10 pb-4 sm:flex-row sm:items-center sm:justify-between"
+			class="flex flex-col gap-3 border-b border-black pb-4 sm:flex-row sm:items-center sm:justify-between dark:border-white/10"
 		>
 			{#if title}
 				<h2 class="text-scitech-mint text-sm font-bold tracking-wide">{title}</h2>
@@ -150,7 +150,7 @@
 			<span>Show</span>
 			<select
 				bind:value={entriesPerPage}
-				class="bg-scitech-navy focus:border-scitech-mint rounded-lg border border-white/10 px-2.5 py-1.5 text-text-main focus:outline-none"
+				class="focus:border-scitech-mint rounded-lg border border-white/10 bg-bg-secondary px-2.5 py-1.5 text-text-main focus:outline-none"
 			>
 				<option value={5}>5</option>
 				<option value={10}>10</option>
@@ -166,17 +166,19 @@
 				type="text"
 				bind:value={searchQuery}
 				placeholder="Search..."
-				class="bg-scitech-navy focus:border-scitech-mint w-full rounded-lg border border-white/10 py-1.5 pr-3 pl-9 text-xs text-text-main placeholder-text-muted transition-all focus:outline-none"
+				class="w-full rounded-lg border border-black/10 bg-bg-secondary py-1.5 pr-3 pl-9 text-xs text-text-main placeholder-text-muted transition-all focus:border-e-border-light focus:outline-none dark:border-white/10"
 			/>
 		</div>
 	</div>
 
-	<div class="bg-scitech-navy/60 overflow-x-auto rounded-xl border border-white/10">
+	<div
+		class="bg-scitech-navy/60 overflow-x-auto rounded-xl border border-black/10 dark:border-white/10"
+	>
 		<table class="w-full border-collapse text-left text-xs">
 			<!-- Table Header -->
 			<thead>
 				<tr
-					class="border-b border-white/10 bg-white/5 font-mono text-[11px] tracking-wider text-text-muted uppercase"
+					class="border-b border-white/10 bg-bg-primary/5 font-mono text-[11px] tracking-wider text-text-muted uppercase"
 				>
 					{#each columns as col}
 						<th class="p-3.5">
@@ -200,13 +202,13 @@
 					</tr>
 				{:else}
 					{#each paginatedData as rowData, i (rowData.id ?? i)}
-						<tr class="group transition-colors hover:bg-white/[0.03]">
+						<tr class="group transition-colors hover:bg-bg-secondary-hover">
 							{#each rowData.items as item}
 								<td class="p-3.5 align-middle">
 									{#if checkIsImage(item)}
 										<!-- Tampilan Gambar/Foto -->
 										<div
-											class="h-16 w-24 overflow-hidden rounded-lg border border-white/10 bg-black/40"
+											class="h-16 w-24 overflow-hidden rounded-lg border border-black bg-black/40 dark:border-white/10"
 										>
 											<img
 												src={String(item.row)}

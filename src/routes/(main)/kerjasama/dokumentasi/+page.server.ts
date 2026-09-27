@@ -1,4 +1,3 @@
-import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { getAllActivityDocumentations } from '$lib/repository/admin/article/kerjasama/documentasi';
 import { errorResponse } from '$lib/helper/message';

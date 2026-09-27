@@ -1,5 +1,6 @@
 <script lang="ts">
-	import type { NewsItemDTO } from '$lib/types/admin/article/berita';
+	import Spin from '$lib/components/loading/spin.svelte';
+	import type { NewsItemDTO } from '$lib/dto/admin/article/berita';
 	import { Calendar, ArrowRight, Sparkles, NewspaperIcon, AlertCircle } from 'lucide-svelte';
 
 	interface Props {
@@ -113,27 +114,8 @@
 	</div>
 
 	{#await recentNews}
-		<!-- Loading Skeleton State -->
-		<div
-			class="flex scrollbar-none gap-6 overflow-x-auto px-[calc(50%-150px)] py-12 sm:px-[calc(50%-180px)]"
-		>
-			{#each Array(3) as _}
-				<div
-					class="bg-scitech-slate/40 flex w-[300px] flex-none animate-pulse flex-col justify-between overflow-hidden rounded-2xl border border-border-color sm:w-90"
-				>
-					<div>
-						<div class="h-44 w-full bg-white/10 sm:h-48"></div>
-						<div class="space-y-3 p-5">
-							<div class="h-3 w-24 rounded-md bg-white/10"></div>
-							<div class="h-5 w-full rounded-md bg-white/10"></div>
-							<div class="h-4 w-4/5 rounded-md bg-white/10"></div>
-						</div>
-					</div>
-					<div class="p-5 pt-0">
-						<div class="h-4 w-28 rounded-md bg-white/10"></div>
-					</div>
-				</div>
-			{/each}
+		<div class="absolute inset-0 flex items-center justify-center bg-bg-secondary">
+			<Spin />
 		</div>
 	{:then newsList}
 		{#if newsList && newsList.length > 0}
@@ -148,22 +130,22 @@
 				onmousemove={handleMouseMove}
 				role="region"
 				aria-label="Carousel Berita"
-				class="flex cursor-grab touch-pan-x snap-x snap-mandatory scrollbar-none gap-4 overflow-x-auto
-                       px-[calc(50%-150px)] py-12 select-none active:cursor-grabbing sm:gap-8 sm:px-[calc(50%-180px)]"
+				class="flex cursor-grab touch-pan-x snap-x snap-mandatory scrollbar-none gap-6 overflow-x-auto
+           px-[calc(50%-42vw)] py-12 select-none active:cursor-grabbing md:gap-8 md:px-[calc(50%-24vw)] lg:px-[calc(50%-300px)]"
 			>
 				{#each newsList as news, index (news.id)}
 					{@const isActive = activeIndex === index}
 
 					<article
-						class="bg-scitech-slate/80 flex w-[300px] flex-none snap-center flex-col justify-between overflow-hidden rounded-2xl
-                               border backdrop-blur-md transition-all duration-500 ease-out sm:w-90
-                               {isActive
-							? 'border-scitech-mint/60 shadow-scitech-mint/10 z-20 scale-105 opacity-100 shadow-2xl'
-							: 'z-10 scale-95 border-border-color opacity-50 blur-[0.2px]'}"
+						class="bg-scitech-slate/80 flex w-[84vw] max-w-[800px] flex-none snap-center flex-col justify-between overflow-hidden rounded-2xl
+                   border backdrop-blur-md transition-all duration-500 ease-out md:w-[48vw]
+                   {isActive
+							? 'border-scitech-mint/60 shadow-scitech-mint/10 z-20 scale-100 opacity-100 shadow-2xl'
+							: 'z-10 scale-95 border-border-color opacity-50 blur-[0.3px]'}"
 					>
 						<div>
 							<!-- Gambar Berita & Badge Kategori -->
-							<div class="bg-scitech-navy relative h-44 w-full overflow-hidden sm:h-48">
+							<div class="bg-scitech-navy relative aspect-[16/9] w-full overflow-hidden">
 								{#if news.image_url}
 									<img
 										src={news.image_url}
@@ -190,31 +172,34 @@
 							</div>
 
 							<!-- Detail Konten -->
-							<div class="p-5">
-								<div class="mb-2 flex items-center gap-1.5 text-xs text-text-muted">
-									<Calendar class="text-scitech-cyan h-3.5 w-3.5" />
-									<span>{formatDate(news.published_at)}</span>
+							<div class="p-5 md:p-6">
+								<div class="mb-2.5 flex items-center gap-1.5 text-xs text-text-muted">
+									<Calendar class="text-scitech-cyan h-3.5 w-3.5 flex-shrink-0" />
+									<span class="truncate">{formatDate(news.published_at)}</span>
 								</div>
 
 								<h3
-									class="mb-2 line-clamp-2 text-sm leading-snug font-bold text-text-main sm:text-base {isActive
+									class="mb-2.5 line-clamp-2 text-base leading-snug font-bold break-words text-text-main md:text-lg {isActive
 										? 'text-text-main'
 										: 'text-text-main/80'}"
+									title={news.title}
 								>
 									{news.title}
 								</h3>
 
-								<p class="line-clamp-2 text-xs leading-relaxed text-text-muted">
+								<p
+									class="line-clamp-3 text-xs leading-relaxed break-words text-text-muted md:text-sm"
+								>
 									{stripHtml(news.content)}
 								</p>
 							</div>
 						</div>
 
 						<!-- Link Selengkapnya -->
-						<div class="px-5 pt-1 pb-5">
+						<div class="px-5 pb-5 md:px-6 md:pb-6">
 							<a
 								href="/berita/{news.id}"
-								class="text-scitech-mint hover:text-scitech-mint-hover group inline-flex items-center gap-2 text-xs font-bold transition-all"
+								class="text-scitech-mint hover:text-scitech-mint-hover group inline-flex items-center gap-2 text-xs font-bold transition-all md:text-sm"
 							>
 								<span>Baca Selengkapnya</span>
 								<ArrowRight

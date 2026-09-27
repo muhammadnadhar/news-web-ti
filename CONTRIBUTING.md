@@ -22,5 +22,5 @@ git checkout -b add-xxx-agent
 
 ```
 > Jika ada fitur baru yang di `add` tambhakna juga di `README.md` 
-
-Buka PR dengan deskripsi singkat
+4. Pull request 
+5. Tunngu DI `Cek` jika sesui maka akan di `Merge` ( di gabungkan )  

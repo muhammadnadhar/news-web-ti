@@ -53,8 +53,7 @@
 	}
 </script>
 
-<div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-	<!-- HEADER HALAMAN -->
+<div class={`mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8`}>
 	<div class="mb-10 border-b border-border-color/40 pb-6 text-center sm:text-left">
 		<div
 			class="border-scitech-mint/30 bg-scitech-mint/10 text-scitech-mint mb-3 inline-flex items-center gap-2 border px-3 py-1 text-xs font-semibold shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]"
@@ -102,7 +101,6 @@
 				<article
 					class="group bg-scitech-slate/40 hover:border-scitech-mint/60 relative flex flex-col justify-between border border-border-color shadow-[6px_6px_0px_0px_rgba(0,0,0,0.4)] backdrop-blur-md transition-all duration-300 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,0.5)]"
 				>
-					<!-- Foto Container -->
 					<div
 						class="bg-scitech-navy relative h-56 w-full overflow-hidden border-b border-border-color"
 					>
@@ -112,8 +110,6 @@
 							class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
 							loading="lazy"
 						/>
-
-						<!-- Overlay Zoom Button -->
 						<div
 							class="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
 						>
@@ -126,7 +122,6 @@
 							</button>
 						</div>
 
-						<!-- Badge Tanggal Pelaksanaan -->
 						{#if formattedDate}
 							<span
 								class="bg-scitech-navy/90 text-scitech-cyan absolute bottom-3 left-3 inline-flex items-center gap-1.5 border border-border-color px-2.5 py-1 text-[11px] font-semibold shadow-[3px_3px_0px_0px_rgba(0,0,0,0.4)] backdrop-blur-md"
@@ -137,7 +132,6 @@
 						{/if}
 					</div>
 
-					<!-- Content Text -->
 					<div class="flex flex-1 flex-col justify-between p-5">
 						<div class="space-y-2">
 							<h2 class="line-clamp-2 text-base font-bold text-text-main" title={item.title}>
@@ -171,21 +165,6 @@
 		</div>
 	{:else if searchQuery}
 		<!-- EMPTY STATE PENCARIAN -->
-		<div
-			class="bg-scitech-slate/20 flex flex-col items-center justify-center border border-border-color p-12 text-center shadow-[6px_6px_0px_0px_rgba(0,0,0,0.4)] backdrop-blur-md"
-		>
-			<div
-				class="mb-4 flex h-12 w-12 items-center justify-center border border-amber-500/30 bg-amber-500/10 text-amber-500 shadow-[3px_3px_0px_0px_rgba(0,0,0,0.3)]"
-			>
-				<Search class="h-6 w-6" />
-			</div>
-			<h3 class="text-lg font-bold text-text-main">Kegiatan Tidak Ditemukan</h3>
-			<p class="mt-1 max-w-md text-xs text-text-muted">
-				Tidak ada dokumentasi kegiatan yang cocok dengan kata kunci "<span class="text-text-main"
-					>{searchQuery}</span
-				>".
-			</p>
-		</div>
 		<EmptyData />
 	{:else}
 		<!-- EMPTY STATE KOSONG -->

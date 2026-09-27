@@ -1,8 +1,8 @@
 <script lang="ts">
 	import TableContent from '$lib/components/admin/tableContent.svelte';
 	import type { TableContentType } from '$lib/types/tableContent';
-	import TableSkeleton from '$lib/components/tableSkeleton.svelte';
 	import { goto } from '$app/navigation';
+	import TableSkeleton from '$lib/components/loading/tableSkeleton.svelte';
 	import { gotoEdit, mergeNewPath } from '$lib/utils.js';
 	import { page } from '$app/state';
 	import type { LecturerPublicationDTO } from '$lib/dto/admin/article/penelitian.js';

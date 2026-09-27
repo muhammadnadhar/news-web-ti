@@ -204,13 +204,13 @@
 				)}
 			{:else}
 				<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-					{#each primaryDosenList as dosen (dosen.id)}
+					{#each primaryDosenList as dosen, index (dosen.id ?? index)}
 						<UserCard
-							id={dosen.id}
+							id={dosen.id ?? index}
 							title={dosen.name}
 							subtitle={dosen.position}
 							imageUrl={dosen.photo_url || ''}
-							editUrl={`/dosen/edit/${dosen.id}`}
+							editUrl={`/dosen/edit/${dosen.id ?? index}`}
 						/>
 					{/each}
 				</div>
@@ -325,7 +325,7 @@
 		{/await}
 	</section>
 
-	<!-- SEKSI 3: TABEL PROFIL PRODI -->
+	<!-- seksi 3: tabel profil prodi -->
 	<section class="mt-2.5 w-full space-y-6">
 		<div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 			<div>
@@ -365,7 +365,7 @@
 					'Belum ada Data Profile & Pengaduan Prodi',
 					'Data profil belum ada  , silahkan tambbhakkan informasi profile baru , ini akan di tampilkan di halaman depan',
 					'Tambah Profile Baru',
-					() => goto(mergeNewPath('profil-dashboard'))
+					() => goto(mergeNewPath('profil-dashboard/add'))
 				)}
 			{:else}
 				<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">

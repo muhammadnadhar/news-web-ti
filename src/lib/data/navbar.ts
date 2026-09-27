@@ -29,7 +29,7 @@ export const navMenuItems: NavMenuItemType[] = [
 				label: 'Struktur Organisasi',
 				href: '/profil/struktur-organisasi'
 			},
-			{ id: 'dosen-staff', label: 'Dosen & Staf', href: '/profil/dosen-staf' },
+			{ id: 'dosen-staff', label: 'Dosen & Staf', href: '/profil/dosen-staff' },
 			{ id: 'akreditasi', label: 'Akreditasi', href: '/profil/akreditasi' },
 			{ id: 'kurikulum', label: 'Kurikulum', href: '/profil/kurikulum' }
 		]

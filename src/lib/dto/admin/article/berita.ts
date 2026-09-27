@@ -1,4 +1,3 @@
-// Interface DTO
 // Interface DTO Berita (Diperbarui)
 export interface NewsItemDTO {
 	id: string;

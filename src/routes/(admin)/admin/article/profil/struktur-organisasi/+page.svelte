@@ -3,8 +3,8 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import type { TableContentType } from '$lib/types/tableContent.js';
-	import TableSkeleton from '$lib/components/tableSkeleton.svelte';
 	import type { OrgStructureItemDTO } from '$lib/dto/admin/article/profile.js';
+	import TableSkeleton from '$lib/components/loading/tableSkeleton.svelte';
 
 	let { data } = $props();
 

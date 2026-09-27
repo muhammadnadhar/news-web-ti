@@ -26,7 +26,7 @@ export async function getAllNewsCategories(): Promise<NewsCategoryDTO[]> {
 }
 
 /**
- * 2. Mendapatkan kategori berita berdasarkan ID (Read One / Specific ID)
+ * Mendapatkan kategori berita berdasarkan ID (Read One / Specific ID)
  */
 export async function getNewsCategoryById(id: string): Promise<NewsCategoryDTO | null> {
 	const sql = `
@@ -44,8 +44,11 @@ export async function getNewsCategoryById(id: string): Promise<NewsCategoryDTO |
 	return rows.length > 0 ? rows[0] : null;
 }
 
+
+
+
 /**
- * 3. Menambah kategori berita baru (Create)
+ * Menambah kategori berita baru (Create)
  */
 export async function createNewsCategory(
 	id: string,
@@ -62,7 +65,7 @@ export async function createNewsCategory(
 }
 
 /**
- * 4. Memperbarui kategori berita secara dinamis (Update)
+ *  Memperbarui kategori berita secara dinamis (Update)
  */
 export async function updateNewsCategory(
 	id: string,

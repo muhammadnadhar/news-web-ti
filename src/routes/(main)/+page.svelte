@@ -7,6 +7,8 @@
 	import { BuildingIcon, ImageOffIcon, PlayIcon } from 'lucide-svelte';
 	import fstImg from '$lib/assets/fst.webp';
 	import type { ProfileDashboardDTO } from '$lib/dto/admin/home.js';
+	import { fade } from 'svelte/transition';
+	import Spin from '$lib/components/loading/spin.svelte';
 	let { data } = $props();
 
 	$inspect(data);
@@ -74,26 +76,6 @@
 
 <!-- Hero Section 100vh -->
 <section class="relative flex h-screen min-h-170 w-full flex-col justify-end">
-	<!-- <header class="relative z-20 flex w-full items-center justify-between px-6 pt-16 lg:px-12"> -->
-	<!-- 	<div class="flex items-center gap-3"> -->
-	<!-- 		<div -->
-	<!-- 			class="bg-scitech-navy-glare border-scitech-mint/30 flex h-12 w-12 items-center justify-center rounded-xl border p-2 shadow-lg" -->
-	<!-- 		> -->
-	<!-- 			<!-- <Atom class="text-scitech-mint h-7 w-7" /> --> -->
-	<!-- 			<img src={uinIcon} class="text-scitech-mint h-7 w-7" alt="UIN Logo" /> -->
-	<!-- 		</div> -->
-	<!-- 		<div> -->
-	<!-- 			<h1 class="text-scitech-mint text-xs font-bold tracking-widest uppercase sm:text-sm"> -->
-	<!-- 				Prodi Teknologi Informasi -->
-	<!-- 			</h1> -->
-	<!-- 			<p class="text-[11px] font-medium text-text-muted sm:text-xs"> -->
-	<!-- 				Fakultas Sains dan Teknologi UIN Ar-Raniry -->
-	<!-- 			</p> -->
-	<!-- 		</div> -->
-	<!-- 	</div> -->
-	<!---->
-	<!-- 	<Navbar onOpenDrawer={toggleDrawer} /> -->
-	<!-- </header> -->
 	<!---->
 	<!-- Gambar Utama -->
 	<div class="absolute inset-0 z-0 overflow-hidden">
@@ -107,32 +89,25 @@
 			<div class="absolute inset-0 z-0 overflow-hidden">
 				{#await data.profileImgDashboard}
 					<div class="absolute inset-0 flex items-center justify-center bg-bg-secondary">
-						<div
-							class="h-8 w-8 animate-spin rounded-full border-2 border-accent-purple border-t-transparent"
-						></div>
+						<Spin />
 					</div>
 				{:then}
 					{#if profileItems.length > 0}
 						<!-- render semua gambar di dom (tanpa bongkar-pasang node) -->
 						{#each profileItems as item, index (item.id || index)}
-							<img
-								src={item.image_path}
-								alt={item.title || 'Hero Background'}
-								class="animate-hero-zoom absolute inset-0 h-full w-full object-cover object-center filter transition-opacity duration-1000 ease-in-out dark:brightness-75 dark:contrast-110 {index ===
-								currentIndex
-									? 'z-10 opacity-100'
-									: 'z-0 opacity-0'}"
-							/>
+							{#key currentIndex}
+								<img
+									src={profileItems[currentIndex]?.image_path}
+									alt={profileItems[currentIndex]?.title || 'Hero Background'}
+									in:fade={{ duration: 1000 }}
+									out:fade={{ duration: 1000 }}
+									class="animate-hero-zoom absolute inset-0 h-full w-full transform-gpu object-cover object-center filter dark:brightness-90"
+								/>
+							{/key}
 						{/each}
-						<!-- {#if currentText} -->
-						<!--     <div -->
-						<!--         class="absolute bottom-8 left-8 z-20 max-w-lg rounded-2xl border border-border-color bg-bg-secondary/70 p-4 backdrop-blur-md shadow-lg transition-all duration-500" -->
-						<!--     > -->
-						<!--         <p class="text-sm font-semibold tracking-wide text-text-main sm:text-base"> -->
-						<!--             {currentText} -->
-						<!--         </p> -->
-						<!--     </div> -->
-						<!-- {/if} -->
+						<div
+							class="pointer-events-none absolute inset-0 z-15 bg-black/20 backdrop-brightness-90"
+						></div>
 					{:else}
 						<!-- Fallback Kosong -->
 						<div
@@ -263,68 +238,3 @@
 		</p>
 	</div>
 </section>
-
-<!---->
-<!-- <section class="bg-scitech-navy-glare border-scitech-slate rounded-3xl border p-8"> -->
-<!-- 	<div class="mb-6 flex items-center justify-between"> -->
-<!-- 		<h3 class="text-xl font-bold text-text-main">Berita & Pengumuman Terbaru</h3> -->
-<!-- 		<button -->
-<!-- 			on:click={() => (isLoading = !isLoading)} -->
-<!-- 			class="bg-scitech-slate hover:bg-scitech-slate-hover text-scitech-mint rounded-lg border border-white/10 px-3 py-1.5 font-mono text-xs" -->
-<!-- 		> -->
-<!-- 			Toggle Skeleton ({isLoading ? 'ON' : 'OFF'}) -->
-<!-- 		</button> -->
-<!-- 	</div> -->
-<!---->
-<!-- 	{#if isLoading} -->
-<!-- 		<SkeletonLoader count={8} /> -->
-<!-- 	{:else} -->
-<!-- 		<div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4"> -->
-<!-- 			{#each Array(8) as _, i} -->
-<!-- 				<div -->
-<!-- 					class="bg-scitech-slate border-scitech-slate-hover hover:border-scitech-mint/40 group rounded-2xl border p-4 transition-all" -->
-<!-- 				> -->
-<!-- 					<div -->
-<!-- 						class="bg-scitech-navy mb-4 flex h-32 w-full flex-col justify-between rounded-xl p-3" -->
-<!-- 					> -->
-<!-- 						<span -->
-<!-- 							class="bg-scitech-mint-dim text-scitech-mint border-scitech-mint/30 w-fit rounded border px-2 py-0.5 text-[10px] font-bold" -->
-<!-- 						> -->
-<!-- 							Akademik -->
-<!-- 						</span> -->
-<!-- 					</div> -->
-<!-- 					<h5 -->
-<!-- 						class="group-hover:text-scitech-mint text-xs font-bold text-text-main transition-colors" -->
-<!-- 					> -->
-<!-- 						Pengumuman Akademik #{i + 1} -->
-<!-- 					</h5> -->
-<!-- 					<span class="text-text-muted mt-1 inline-block text-[11px]">07 Sep 2026</span> -->
-<!-- 				</div> -->
-<!-- 			{/each} -->
-<!-- 		</div> -->
-<!-- 	{/if} -->
-<!-- </section> -->
-
-<!-- <MainFooter /> -->
-
-<!-- Drawer Navigation Menu -->
-<!-- 	{#if isDrawerOpen} -->
-<!-- 		<div -->
-<!-- 			class="bg-scitech-navy/95 fixed inset-0 z-50 flex flex-col justify-between p-8 backdrop-blur-2xl lg:p-16" -->
-<!-- 		> -->
-<!-- 			<div class="border-scitech-slate flex items-center justify-between border-b pb-6"> -->
-<!-- 				<span class="text-lg font-bold text-text-main">Menu Utama</span> -->
-<!-- 				<button -->
-<!-- 					on:click={toggleDrawer} -->
-<!-- 					class="bg-scitech-slate hover:bg-scitech-error rounded-xl p-2 transition-all" -->
-<!-- 				> -->
-<!-- 					<X class="h-6 w-6" /> -->
-<!-- 				</button> -->
-<!-- 			</div> -->
-<!-- 			<div class="text-center text-sm text-text-muted"> -->
-<!-- 				Navigasi lengkap dapat dikembangkan sesuai kebutuhan rute SvelteKit. -->
-<!-- 			</div> -->
-<!-- 			<div class="text-center text-xs text-text-muted">FST UIN Ar-Raniry Banda Aceh</div> -->
-<!-- 		</div> -->
-<!-- 	{/if} -->
-<!-- </div> -->

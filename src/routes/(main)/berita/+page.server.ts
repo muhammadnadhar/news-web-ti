@@ -1,27 +1,27 @@
-import { getAllNews } from '$lib/repository/admin/article/berita';
+import { getNewsBySlice, getTotalNewsCount } from '$lib/repository/admin/article/berita';
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async () => {
-	const newsList = await getAllNews();
+export const load: PageServerLoad = ({ url }) => {
+	// Ambil nomor halaman dari URL searchParam
+	const page = Math.max(1, Number(url.searchParams.get('page')) || 1);
+	// Tentukan limit per halaman
+	const limit = Math.max(1, Number(url.searchParams.get('limit')) || 5);
 
-	// Mengambil 5 berita terbaru untuk Widget Sidebar
-	const recentNews = newsList.slice(0, 5);
-
-	//  Kalkulasi jumlah berita per kategori secara dinamis
-	const categoryCounts: Record<string, number> = {};
-	newsList.forEach((item) => {
-		const cat = item.category || 'Tak Berkategori';
-		categoryCounts[cat] = (categoryCounts[cat] || 0) + 1;
-	});
-
-	const categories = Object.entries(categoryCounts).map(([name, count]) => ({
-		name,
-		count
-	}));
+	const from = (page - 1) * limit;
+	const to = from + limit;
 
 	return {
-		newsList,
-		recentNews,
-		categories
+		newsList: getNewsBySlice(from, to),
+		pagination: getTotalNewsCount().then((totalNews) => {
+			const totalPages = Math.ceil(totalNews / limit);
+			return {
+				currentPage: page,
+				limit,
+				totalNews,
+				totalPages,
+				hasNextPage: page < totalPages,
+				hasPrevPage: page > 1
+			};
+		})
 	};
 };

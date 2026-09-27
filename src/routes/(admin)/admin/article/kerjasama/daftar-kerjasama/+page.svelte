@@ -3,11 +3,11 @@
 	import type { TableContentType } from '$lib/types/tableContent';
 	import { gotoEdit, mergeNewPath } from '$lib/utils.js';
 	import { goto } from '$app/navigation';
-	import TableSkeleton from '$lib/components/tableSkeleton.svelte';
 	import { page } from '$app/state';
 	import Message from '$lib/components/admin/message.svelte';
 	import type { PartnershipDTO } from '$lib/dto/admin/article/kerjasama.js';
 	import type { ResponseMessage } from '$lib/types/message.js';
+	import TableSkeleton from '$lib/components/loading/tableSkeleton.svelte';
 
 	let { data } = $props();
 
