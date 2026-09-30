@@ -8,7 +8,6 @@
 	import type { MessageStatus, ResponseMessage } from '$lib/types/message.js';
 	import type { TableContentType } from '$lib/types/tableContent.js';
 	import { gotoEdit, mergeNewPath } from '$lib/utils.js';
-	import { Plus, Edit, Trash2 } from 'lucide-svelte';
 
 	let { data } = $props();
 
@@ -108,13 +107,12 @@
 {/if}
 
 <div class="space-y-6 p-6 lg:p-10">
-	<!-- header bar -->
 	<div class="border-scitech-slate/20 pb-4">
 		<h1 class="text-2xl font-bold tracking-tight text-text-main">Dosen & Staff</h1>
 	</div>
 
 	<div
-		class="border-scitech-slate/20 bg-scitech-navy-glare space-y-4 rounded-2xl border p-6 shadow-xl"
+		class="bg-scitech-navy-glare space-y-4  p-6 shadow-xl"
 	>
 		{#await data.lecturerStaffList}
 			<TableSkeleton showTitle={true} title="Memuat Data Kerjasama..." columnsCount={6} />

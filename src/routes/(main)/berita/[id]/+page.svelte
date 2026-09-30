@@ -1,15 +1,8 @@
 <script lang="ts">
-	import {
-		Calendar,
-		Folder,
-		ArrowLeft,
-		Share2,
-		Check,
-		Newspaper,
-		Clock,
-		Loader2
-	} from 'lucide-svelte';
+	import { Calendar, Folder, ArrowLeft, Share2, Check, Newspaper, Clock } from 'lucide-svelte';
 	import type { PageData } from './$types';
+	import Spin from '$lib/components/loading/spin.svelte';
+	import { classTopSpace } from '$lib/constants';
 
 	let { data }: { data: PageData } = $props();
 
@@ -46,25 +39,12 @@
 	}
 </script>
 
-<div class="mx-auto max-w-4xl px-4 py-8 pb-24 sm:px-6">
+<div class={` ${classTopSpace} mx-auto max-w-4xl px-4 py-8 pb-24 sm:px-6`}>
 	<!-- Container Berita dengan Streaming Data -->
 	{#await data.news}
-		<div class="bg-scitech-slate/40 space-y-6 border border-border-color/10 p-6 sm:p-10">
-			<div class="h-4 w-28 animate-pulse bg-white/10"></div>
-			<div class="h-10 w-3/4 animate-pulse bg-white/10"></div>
-			<div class="flex gap-4">
-				<div class="h-4 w-32 animate-pulse bg-white/5"></div>
-				<div class="h-4 w-24 animate-pulse bg-white/5"></div>
-			</div>
-			<div class="h-72 w-full animate-pulse bg-white/5"></div>
-			<div class="space-y-3 pt-4">
-				<div class="h-4 w-full animate-pulse bg-white/5"></div>
-				<div class="h-4 w-full animate-pulse bg-white/5"></div>
-				<div class="h-4 w-2/3 animate-pulse bg-white/5"></div>
-			</div>
-		</div>
+		<Spin />
 	{:then news}
-		<article class="bg-bg-secondary space-y-8 border border-border-color p-6 sm:p-10">
+		<article class="space-y-8 border border-border-color bg-bg-secondary p-6 sm:p-10">
 			<header class="space-y-4 border-b border-border-color/10 pb-6">
 				<div class="flex flex-wrap items-center justify-between gap-3">
 					{#if news.category_name}
@@ -155,7 +135,7 @@
 			</div>
 			<div>
 				<button
-        onclick={() => history.back()}
+					onclick={() => history.back()}
 					class="bg-scitech-navy inline-flex items-center gap-2 border border-border-color/15 px-4 py-2 text-xs font-bold text-text-main transition-colors hover:bg-white/10"
 				>
 					<ArrowLeft class="h-4 w-4" />

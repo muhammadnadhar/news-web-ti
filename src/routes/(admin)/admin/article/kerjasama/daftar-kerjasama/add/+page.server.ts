@@ -3,14 +3,16 @@ import type { Actions } from './$types';
 import { randomUUID } from '$lib/crypto';
 import { createPartnership } from '$lib/repository/admin/article/kerjasama/daftar';
 import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
-import { cloudinary } from '$lib/cloudinary/server';
+import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
 
 export const actions: Actions = {
-	default: async ({ request }) => {
+	create: async ({ request }) => {
 		const formData = await request.formData();
 
 		const institutionName = formData.get('institution_name')?.toString().trim();
 		const logoUrl = formData.get('logo_url')?.toString().trim() || null;
+
+		console.info(institutionName, logoUrl);
 
 		if (!institutionName) {
 			return fail(400, {
@@ -44,7 +46,7 @@ export const actions: Actions = {
 		}
 
 		try {
-			await cloudinary.uploader.destroy(publicId);
+			await deleteImageFromCloudinary(publicId);
 			return successResponse('Berhasil di batalkan', 'Succcess');
 		} catch (err) {
 			console.error('Error deleting photo:', err);

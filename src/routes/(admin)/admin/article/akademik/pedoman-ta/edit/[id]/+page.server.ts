@@ -7,6 +7,7 @@ import {
 	updatePedomanTa
 } from '$lib/repository/admin/article/akedemik/pedomanTa';
 import { cloudinary } from '$lib/cloudinary/server';
+import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
 
 // Fetch data awal berdasarkan ID
 export const load: PageServerLoad = async ({ params }) => {
@@ -68,7 +69,7 @@ export const actions: Actions = {
 		}
 
 		try {
-			await cloudinary.uploader.destroy(publicId);
+			await deleteImageFromCloudinary(publicId);
 			return successResponse('Berhasil di batalkan', 'Succcess');
 		} catch (err) {
 			console.error('Error deleting photo:', err);

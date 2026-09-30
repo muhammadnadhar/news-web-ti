@@ -37,7 +37,6 @@ export type UpdateSemesterInputDTO = {
 	is_active?: boolean;
 };
 
-
 // nantik akan di gunakna oleh table berita , forengkey ke sini
 export interface NewsCategoryDTO {
 	id: string;
@@ -62,6 +61,8 @@ export interface CreateNewsData {
 	category_id: string;
 	content: string;
 	image_url?: string | null;
+
+	image_public_id?: string | null;
 	published_at?: Date | string;
 }
 
@@ -70,7 +71,7 @@ export interface UpdateNewsData {
 	category_id?: string;
 	content?: string;
 	image_url?: string | null;
+
+	image_public_id?: string | null;
 	published_at?: Date | string;
 }
-
-

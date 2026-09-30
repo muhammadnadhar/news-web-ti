@@ -9,22 +9,23 @@ import { tableAngkatan, tableSemester } from '$lib/seeder/admin/dataset';
  */
 export async function getAllHighGpaStudents(): Promise<HighGpaStudentDTO[]> {
 	const sql = `
-		SELECT 
-			h.id,
-			h.student_name,
-			h.gpa,
-			h.angkatan_id,
-			h.semester_id,
-h.image_url,
-			h.created_at,
-			h.updated_at,
-			a.year AS batch_year,
-			s.name AS semester_name
-		FROM ${tableHighGpaStudent} h
-		LEFT JOIN ${tableAngkatan} a ON h.angkatan_id = a.id
-		LEFT JOIN ${tableSemester} s ON h.semester_id = s.id
-		ORDER BY h.gpa DESC, h.created_at DESC
-	`;
+        SELECT 
+            h.id,
+            h.student_name,
+            h.gpa,
+            h.angkatan_id,
+            h.semester_id,
+            h.image_url,
+            h.image_public_id,
+            h.created_at,
+            h.updated_at,
+            a.year AS batch_year,
+            s.name AS semester_name
+        FROM ${tableHighGpaStudent} h
+        LEFT JOIN ${tableAngkatan} a ON h.angkatan_id = a.id
+        LEFT JOIN ${tableSemester} s ON h.semester_id = s.id
+        ORDER BY h.gpa DESC, h.created_at DESC
+    `;
 	return (await query(sql)) as HighGpaStudentDTO[];
 }
 
@@ -52,23 +53,24 @@ export async function getHighGpaSemesters(): Promise<SemesterDTO[]> {
  */
 export async function getHighGpaStudentById(id: string): Promise<HighGpaStudentDTO | null> {
 	const sql = `
-		SELECT 
-			h.id,
-			h.student_name,
-			h.gpa,
-			h.angkatan_id,
-      h.image_url,
-			h.semester_id,
-			h.created_at,
-			h.updated_at,
-			a.year AS batch_year,
-			s.name AS semester_name
-		FROM ${tableHighGpaStudent} h
-		LEFT JOIN ${tableAngkatan} a ON h.angkatan_id = a.id
-		LEFT JOIN ${tableSemester} s ON h.semester_id = s.id
-		WHERE h.id = ? 
-		LIMIT 1
-	`;
+        SELECT 
+            h.id,
+            h.student_name,
+            h.gpa,
+            h.angkatan_id,
+            h.semester_id,
+            h.image_url,
+            h.image_public_id,
+            h.created_at,
+            h.updated_at,
+            a.year AS batch_year,
+            s.name AS semester_name
+        FROM ${tableHighGpaStudent} h
+        LEFT JOIN ${tableAngkatan} a ON h.angkatan_id = a.id
+        LEFT JOIN ${tableSemester} s ON h.semester_id = s.id
+        WHERE h.id = ? 
+        LIMIT 1
+    `;
 	const rows = (await query(sql, [id])) as HighGpaStudentDTO[];
 	return rows[0] || null;
 }
@@ -87,6 +89,7 @@ export async function getHighGpaStudentsBySemesterId(
             h.angkatan_id,
             h.semester_id,
             h.image_url,
+            h.image_public_id,
             h.created_at,
             h.updated_at,
             a.year AS batch_year,
@@ -114,6 +117,7 @@ export async function getHighGpaStudentsBySemesterName(
             h.angkatan_id,
             h.semester_id,
             h.image_url,
+            h.image_public_id,
             h.created_at,
             h.updated_at,
             a.year AS batch_year,
@@ -136,19 +140,21 @@ export async function createHighGpaStudent(
 	gpa: number,
 	angkatanId: string,
 	semesterId: string,
-	image_url: string
+	imageUrl?: string | null,
+	imagePublicId?: string | null
 ): Promise<boolean> {
 	const sql = `
-		INSERT INTO ${tableHighGpaStudent} (id, student_name, gpa, angkatan_id, semester_id, image_url) 
-		VALUES (?, ?, ?, ?, ?,? )
-	`;
+        INSERT INTO ${tableHighGpaStudent} (id, student_name, gpa, angkatan_id, semester_id, image_url, image_public_id) 
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    `;
 	const result = (await query(sql, [
 		id,
 		studentName,
 		gpa,
 		angkatanId,
 		semesterId,
-		image_url
+		imageUrl || null,
+		imagePublicId || null
 	])) as any;
 	return result.affectedRows > 0;
 }
@@ -162,25 +168,28 @@ export async function updateHighGpaStudent(
 	gpa: number,
 	angkatanId: string,
 	semesterId: string,
-	image_url?: string | null
+	imageUrl?: string | null,
+	imagePublicId?: string | null
 ): Promise<boolean> {
 	const sql = `
-		UPDATE ${tableHighGpaStudent} 
-		SET 
-			student_name = ?, 
-			gpa = ?, 
-			angkatan_id = ?, 
-			semester_id = ?, 
-      image_url = ?,
-			updated_at = NOW() 
-		WHERE id = ?
-	`;
+        UPDATE ${tableHighGpaStudent} 
+        SET 
+            student_name = ?, 
+            gpa = ?, 
+            angkatan_id = ?, 
+            semester_id = ?, 
+            image_url = ?, 
+            image_public_id = ?, 
+            updated_at = NOW() 
+        WHERE id = ?
+    `;
 	const result = (await query(sql, [
 		studentName,
 		gpa,
 		angkatanId,
 		semesterId,
-		image_url || null,
+		imageUrl || null,
+		imagePublicId || null,
 		id
 	])) as any;
 	return result.affectedRows > 0;

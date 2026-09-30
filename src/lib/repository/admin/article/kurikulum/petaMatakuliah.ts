@@ -20,15 +20,32 @@ export async function getCourseMapById(id: string): Promise<CourseMapDTO | null>
 }
 
 /**
+ * Mengambil hanya image_public_id dari Peta Mata Kuliah berdasarkan ID
+ *
+ * @param id - ID Peta Mata Kuliah
+ * @returns Promise<string | null> - Mengembalikan string image_public_id atau null jika tidak ditemukan
+ */
+export async function getPublicIdCourseMapById(id: string): Promise<string | null> {
+	const sql = `SELECT image_public_id FROM ${tableCourseMap} WHERE id = ? LIMIT 1`;
+	const rows = (await query(sql, [id])) as Array<{ image_public_id: string | null }>;
+
+	return rows[0]?.image_public_id ?? null;
+}
+
+/**
  * Membuat data Peta Mata Kuliah baru
  */
 export async function createCourseMap(
 	id: string,
 	title: string,
-	imageUrl: string
+	imageUrl: string | null,
+	imagePublicId: string | null = null
 ): Promise<boolean> {
-	const sql = `INSERT INTO ${tableCourseMap} (id, title, image_url) VALUES (?, ?, ?)`;
-	const result = (await query(sql, [id, title, imageUrl])) as any;
+	const sql = `
+        INSERT INTO ${tableCourseMap} (id, title, image_url, image_public_id) 
+        VALUES (?, ?, ?, ?)
+    `;
+	const result = (await query(sql, [id, title, imageUrl, imagePublicId])) as any;
 	return result.affectedRows > 0;
 }
 
@@ -38,7 +55,8 @@ export async function createCourseMap(
 export async function updateCourseMap(
 	id: string,
 	title: string,
-	imageUrl: string | null
+	imageUrl: string | null,
+	imagePublicId: string | null = null
 ): Promise<boolean> {
 	if (!id) {
 		throw new Error('ID Peta Mata Kuliah tidak ditemukan.');
@@ -48,11 +66,19 @@ export async function updateCourseMap(
 	let params: any[];
 
 	if (imageUrl) {
-		sql = `UPDATE ${tableCourseMap} SET title = ?, image_url = ?, updated_at = NOW() WHERE id = ?`;
-		params = [title, imageUrl, id];
+		sql = `
+            UPDATE ${tableCourseMap} 
+            SET title = ?, image_url = ?, image_public_id = ?, updated_at = NOW() 
+            WHERE id = ?
+        `;
+		params = [title, imageUrl, imagePublicId, id];
 	} else {
-		// Tetap update title, tetapi set image_url menjadi NULL
-		sql = `UPDATE ${tableCourseMap} SET title = ?, image_url = NULL, updated_at = NOW() WHERE id = ?`;
+		// Tetap update title, tetapi set image_url dan image_public_id menjadi NULL
+		sql = `
+            UPDATE ${tableCourseMap} 
+            SET title = ?, image_url = NULL, image_public_id = NULL, updated_at = NOW() 
+            WHERE id = ?
+        `;
 		params = [title, id];
 	}
 

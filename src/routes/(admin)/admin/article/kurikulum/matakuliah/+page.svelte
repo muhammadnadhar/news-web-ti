@@ -20,8 +20,6 @@
 
 	// State Komponen Message Popup
 
-	let isDeleteModalOpen = $state(false);
-	let isSubmitting = $state(false);
 	let selectedItem = $state<TableContentType | null>(null);
 	let messageState = $state<{
 		show: boolean;
@@ -84,15 +82,7 @@
 		};
 	}
 
-	// Dipanggil saat client menekan tombol "OK" pada modal Message Konfirmasi
-	function closeMessage() {
-		messageState.show = false;
-	}
 
-	function closeDeleteModal() {
-		isDeleteModalOpen = false;
-		selectedItem = null;
-	}
 </script>
 
 {#if showMessage}

@@ -3,15 +3,24 @@
 	import HomeSection from './_components/homeSection.svelte';
 	import { onMount } from 'svelte';
 
-	import GetStartedCard from './_components/get.started.svelte';
-	import { BuildingIcon, ImageOffIcon, PlayIcon } from 'lucide-svelte';
+	import GetStarted from './_components/getStarted.svelte';
+
+	import {
+		ArrowUpRight,
+		BookOpen,
+		BuildingIcon,
+		GraduationCap,
+		ImageOffIcon,
+		PauseIcon,
+		PlayIcon
+	} from 'lucide-svelte';
 	import fstImg from '$lib/assets/fst.webp';
 	import type { ProfileDashboardDTO } from '$lib/dto/admin/home.js';
 	import { fade } from 'svelte/transition';
 	import Spin from '$lib/components/loading/spin.svelte';
 	let { data } = $props();
 
-	$inspect(data);
+	import uinLogo from '$lib/assets/uin-icon.webp';
 
 	// const images = [fstImg, uinFrontImg];
 	// let captions = $state([
@@ -33,10 +42,16 @@
 	}
 
 	let currentItem = $derived(profileItems[currentIndex]);
-	let currentImage = $derived(currentItem?.image_path ?? '');
 
 	// sementara aja | manual
 	let videoUrl = 'https://drive.google.com/file/d/1T2lsUdBBipXG_MS2Npwcu1rVlDqNWjxn/view?t=0.019';
+
+	const LogoDesc = {
+		subHeading: 'UNIVERSITAS ISLAM NEGERI',
+		heading: 'AR-RANIRY BANDA ACEH',
+		description:
+			'Universitas Islam terbaik di Aceh, eksis sejak tahun 1963 bermula dari Institut Agama Islam Negeri, berubah status menjadi Universitas Islam Negeri dengan ragam pilihan program studi unggul dan terbaik. Pilihan tepat melanjutkan studi di UIN Ar-Raniry Banda Aceh.'
+	};
 
 	$effect(() => {
 		data.profileImgDashboard.then((items) => {
@@ -114,7 +129,7 @@
 							class="absolute inset-0 flex flex-col items-center justify-center bg-bg-secondary p-6 text-center"
 						>
 							<div
-								class="flex h-20 w-20 items-center justify-center rounded-3xl border border-border-color bg-bg-primary/50 text-text-muted shadow-inner"
+								class="flex h-20 w-20 items-center justify-center rounded-3xl border bg-bg-primary/50 text-text-muted shadow-inner"
 							>
 								<BuildingIcon class="h-10 w-10 opacity-50" />
 							</div>
@@ -138,10 +153,60 @@
 				{/await}
 			</div>
 			<!-- Bottom Left Card Get Started -->
-			<div class="relative z-20 mb-16 px-6 lg:px-12">
+			<div
+				class="absolute top-1/2 left-1/2 z-20 flex w-full -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center px-6 text-center lg:px-12"
+			>
 				{#if isTabActive}
-					<GetStartedCard {isPlaying} {currentText} onToggleAnimation={handleToggleAnimation} />
+					<GetStarted {currentText} />
 				{/if}
+			</div>
+			<!-- Floating Quick Access Bar -->
+			<div
+				class="absolute bottom-[8vh] left-2.5 z-40 flex w-[calc(100%-2rem)] max-w-2xl transform-gpu flex-col gap-2.5 rounded-2xl border border-border-color bg-transparent p-2.5 shadow-md backdrop-blur-md transition-all sm:w-fit sm:flex-row sm:items-center sm:gap-2 sm:p-2"
+			>
+				<a
+					href="#main"
+					class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent-primary px-5 py-2.5 text-sm font-semibold text-text-dark shadow-sm transition-all hover:bg-accent-primary-hover active:scale-95 sm:w-auto"
+				>
+					<span>Get Started</span>
+					<ArrowUpRight class="h-4 w-4 stroke-[2.5]" />
+				</a>
+
+				<div class="grid grid-cols-3 gap-2 sm:flex sm:items-center sm:gap-2">
+					<a
+						href="https://uinarraniry.siakadcloud.com/"
+						target="_blank"
+						rel="noopener noreferrer"
+						class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-border-color/60 bg-bg-secondary/50 px-3.5 py-2.5 text-xs font-medium text-text-main transition-all hover:border-border-color hover:bg-bg-secondary active:scale-95 sm:w-auto sm:px-4 sm:text-sm"
+					>
+						<BookOpen class="h-4 w-4 shrink-0 text-accent-cyan" />
+						<span class="truncate">Portal SIAKAD</span>
+					</a>
+
+					<!-- Daftar PMB -->
+					<a
+						href="/pmb"
+						class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-border-color/60 bg-bg-secondary/50 px-3.5 py-2.5 text-xs font-medium text-text-main transition-all hover:border-border-color hover:bg-bg-secondary active:scale-95 sm:w-auto sm:px-4 sm:text-sm"
+					>
+						<GraduationCap class="h-4 w-4 shrink-0 text-accent-purple" />
+						<span class="truncate">Daftar PMB</span>
+					</a>
+					<button
+						type="button"
+						onclick={handleToggleAnimation}
+						title={isPlaying ? 'Hentikan Animasi' : 'Jalankan Animasi'}
+						aria-label={isPlaying ? 'Hentikan Animasi' : 'Jalankan Animasi'}
+						class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-border-color/60 bg-bg-secondary/50 px-3.5 py-2.5 text-xs font-medium text-text-main transition-all hover:border-border-color hover:bg-bg-secondary active:scale-95 sm:w-auto sm:px-4 sm:text-sm"
+					>
+						{#if isPlaying}
+							<PauseIcon class="h-4 w-4 shrink-0 text-accent-yellow" />
+							<span class="truncate">Pause Slide</span>
+						{:else}
+							<PlayIcon class="h-4 w-4 shrink-0 text-accent-yellow" />
+							<span class="truncate">Play Slide</span>
+						{/if}
+					</button>
+				</div>
 			</div>
 		</section>
 
@@ -182,6 +247,47 @@
 				<!-- /> -->
 			</svg>
 		</div>
+	</div>
+</section>
+
+<!-- section untuk profil icon uin  -->
+<section class="relative w-full overflow-hidden px-4 py-16 sm:px-6 lg:px-8">
+	<!-- Ambient Glow Effect di Latar Belakang -->
+	<div
+		class="bg-scitech-mint/10 pointer-events-none absolute top-1/2 left-1/2 -z-10 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl"
+	></div>
+
+	<div class="mx-auto flex max-w-4xl flex-col items-center text-center">
+		<!-- Frame Icon / Logo di Tengah -->
+		<div
+			class="relative mb-6 flex h-32 w-32 items-center justify-center rounded-2xl border border-white/10 bg-bg-secondary p-4 shadow-2xl backdrop-blur-xl transition-transform duration-300 hover:scale-105"
+		>
+			<img
+				src={uinLogo}
+				alt={LogoDesc.heading}
+				class="h-full w-full object-contain drop-shadow-md"
+			/>
+			<div
+				class="from-scitech-mint/20 absolute -inset-0.5 -z-10 rounded-2xl bg-gradient-to-b to-transparent opacity-50"
+			></div>
+		</div>
+
+		<p class="text-scitech-mint mb-2 text-xs font-semibold tracking-[0.3em] uppercase sm:text-sm">
+			{LogoDesc.subHeading}
+		</p>
+		<h1 class="mb-6 text-2xl font-black tracking-tight text-text-main sm:text-3xl md:text-4xl">
+			{LogoDesc.heading}
+		</h1>
+		<div class="mb-6 flex items-center justify-center gap-2">
+			<span class="to-scitech-mint/40 h-0.5 w-12 rounded-full bg-gradient-to-r from-transparent"
+			></span>
+			<span class="bg-scitech-mint h-1.5 w-1.5 rounded-full"></span>
+			<span class="to-scitech-mint/40 h-0.5 w-12 rounded-full bg-gradient-to-l from-transparent"
+			></span>
+		</div>
+		<p class="max-w-2xl text-sm leading-relaxed text-text-muted sm:text-base">
+			{LogoDesc.description}
+		</p>
 	</div>
 </section>
 

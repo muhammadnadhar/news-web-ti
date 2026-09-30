@@ -4,6 +4,7 @@ import type { PageServerLoad } from './$types';
 import { getAllLecturerStaff } from '$lib/repository/admin/article/profile/dosen&staff';
 import { getJabatanProdiList } from '$lib/repository/admin/dataset/jabatanProdi';
 import { createDosenPrimary } from '$lib/repository/admin/home/dosenPrimary';
+import { successResponse, warningResponse } from '$lib/helper/message';
 
 export const load: PageServerLoad = async () => {
 	try {
@@ -34,10 +35,7 @@ export const actions: Actions = {
 
 		if (!lecturerStaffId || !position) {
 			return fail(400, {
-				message: {
-					type: 'error',
-					text: 'Harap pilih Dosen/Staff dan Jabatan Prodi.'
-				},
+				...warningResponse('Harap pilih Dose/Staff dan jabatan Prodi', 'Erorr'),
 				values: { lecturerStaffId, position }
 			});
 		}
@@ -63,7 +61,7 @@ export const actions: Actions = {
 		return {
 			message: {
 				type: 'success',
-				text: 'Berhasil menambahkan Dosen Primary baru!'
+				...successResponse('Berhasil menambahkan Dosen Primary baru!', 'Success')
 			}
 		};
 	}

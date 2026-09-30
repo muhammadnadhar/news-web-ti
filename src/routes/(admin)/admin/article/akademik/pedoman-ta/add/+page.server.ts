@@ -4,6 +4,7 @@ import { createPedomanTa } from '$lib/repository/admin/article/akedemik/pedomanT
 import { errorResponse, successResponse } from '$lib/helper/message';
 import { randomUUID } from '$lib/crypto';
 import { cloudinary } from '$lib/cloudinary/server';
+import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
 
 export const actions: Actions = {
 	create: async ({ request }) => {
@@ -11,6 +12,7 @@ export const actions: Actions = {
 
 		const title = formData.get('title') as string;
 		const imageUrl = (formData.get('image_url') as string) || null;
+		const imagePublicId = formData.get('image_public_id');
 		const description = (formData.get('description') as string) || null;
 
 		// Validasi input wajib
@@ -58,7 +60,7 @@ export const actions: Actions = {
 		}
 
 		try {
-			await cloudinary.uploader.destroy(publicId);
+			await deleteImageFromCloudinary(publicId);
 			return successResponse('Berhasil di batalkan', 'Succcess');
 		} catch (err) {
 			console.error('Error deleting photo:', err);

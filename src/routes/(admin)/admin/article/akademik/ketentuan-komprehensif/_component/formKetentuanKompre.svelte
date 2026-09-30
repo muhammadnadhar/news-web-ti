@@ -48,16 +48,13 @@
 		message: ''
 	});
 
-	let messageState = $state<ResponseMessage>({
-		type: 'succes',
-		title: '',
-		message: ''
-	});
+
 
 	// Handlers
 	function handleUploadSuccess(result: any) {
 		if (result?.info?.secure_url) {
 			imageUrl = result.info.secure_url;
+			photoPublicId = result.info.public_id; // 1. Ambil & simpan Public ID dari response Cloudinary
 		}
 		// Pulihkan scroll body yang terkunci oleh Cloudinary
 		if (typeof document !== 'undefined') {
@@ -79,7 +76,7 @@
 			formData.append('public_id', photoPublicId);
 
 			// Panggil named action '?/deletePhoto'
-			const response = await fetch('?/deletePhoto', {
+			const response = await fetch('?/deleteImage', {
 				method: 'POST',
 				body: formData
 			});
@@ -87,6 +84,7 @@
 			if (response.ok) {
 				imageUrl = '';
 				photoPublicId = '';
+        triggerMessage("success","Succes","Berhasil membatalkan image")
 			} else {
 				alert('Gagal menghapus gambar dari Cloudinary');
 			}
@@ -134,19 +132,13 @@
 							type?: 'success' | 'error';
 						};
 						showMessage = true;
-						messageState = {
-							type: msg.type || (result.type === 'success' ? 'success' : 'error'),
-							title: msg.title || (result.type === 'success' ? 'Berhasil' : 'Gagal'),
-							message: msg.message || ''
-						};
+            triggerMessage(msg.type , result.type=== "success" ? "Success" : "Error",msg.message)
+						
 					} else if (result.type === 'error') {
 						showMessage = true;
+            triggerMessage(msg.type || (result.type === "success" ? "success" : 
+            "error"),"Error","Terjadi kesalahan Pada server")
 
-						messageState = {
-							type: 'error',
-							title: 'Terjadi Kesalahan',
-							message: 'Gagal memperbarui data pada server.'
-						};
 					}
 
 					await update();
@@ -154,7 +146,6 @@
 			}}
 			class="space-y-6"
 		>
-			<!-- Field 1: Judul -->
 			<div class="space-y-2">
 				<label for="title" class="block text-sm font-bold text-text-main">
 					Judul / Ketentuan Rekrutmen <span class="text-status-error">*</span>
@@ -176,6 +167,7 @@
 					Poster / Foto Pendukung
 				</label>
 				<input type="hidden" name="image_url" value={imageUrl} />
+				<input type="hidden" name="public_id" value={photoPublicId} />
 
 				{#if imageUrl}
 					<div
@@ -221,7 +213,6 @@
 				{/if}
 			</div>
 
-			<!-- Field 3: Form Editor Deskripsi -->
 			<div class="space-y-2">
 				<input type="hidden" name="description" value={description} />
 				<FormEditor

@@ -13,7 +13,9 @@ export const actions: Actions = {
 			(formData.get('image_path') || formData.get('image_url')) as string
 		)?.trim();
 		// (Opsional) Menerima public_id terpisah jika dikirim dari frontend
-		const public_id = (formData.get('public_id') as string)?.trim();
+		const public_id = (formData.get('image_public_id') as string)?.trim();
+
+		console.info('id : ', public_id);
 
 		// Validasi Input Mandatory
 		if (!title || !image_path) {
@@ -31,7 +33,8 @@ export const actions: Actions = {
 			// Simpan Data ke Database
 			await addProfileDashboard({
 				title,
-				image_path
+				image_path,
+				image_public_id: public_id
 			});
 
 			return {

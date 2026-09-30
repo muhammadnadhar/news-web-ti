@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS ${tableAdminUser}(
 email VARCHAR(100) NOT NULL UNIQUE,
 avatar VARCHAR(100),
 image_url VARCHAR(255) DEFAULT NULL,
+  image_public_id VARCHAR(255) NULL, -- ID untuk Url Gambar
     password VARCHAR(255) NOT NULL,
 role VARCHAR(20) NOT NULL CHECK (role IN ('Administrator', 'Supervisor', 'Author')),
     status VARCHAR(15) NOT NULL CHECK (status IN ('Active', 'Inactive')),

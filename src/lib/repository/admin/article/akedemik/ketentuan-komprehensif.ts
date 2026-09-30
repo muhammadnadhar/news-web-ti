@@ -1,6 +1,7 @@
 import { query } from '$lib/database/svelteDb';
 import type { KetentuanKompreDTO } from '$lib/dto/admin/article/akademik';
 import { tableRecruitment } from '$lib/seeder/admin/article/akademik';
+
 /**
  * Mengambil seluruh data Rekrutmen
  */
@@ -25,10 +26,14 @@ export async function createRecruitment(
 	id: string,
 	title: string,
 	imageUrl: string | null,
-	description: string | null
+	description: string | null,
+	imagePublicId: string | null = null
 ): Promise<boolean> {
-	const sql = `INSERT INTO ${tableRecruitment} (id, title, image_url, description) VALUES (?, ?, ?, ?)`;
-	const result = (await query(sql, [id, title, imageUrl, description])) as any;
+	const sql = `
+        INSERT INTO ${tableRecruitment} (id, title, image_url, image_public_id, description) 
+        VALUES (?, ?, ?, ?, ?)
+    `;
+	const result = (await query(sql, [id, title, imageUrl, imagePublicId, description])) as any;
 	return result.affectedRows > 0;
 }
 
@@ -39,16 +44,25 @@ export async function updateRecruitment(
 	id: string,
 	title: string,
 	imageUrl: string | null,
-	description: string | null
+	description: string | null,
+	imagePublicId: string | null = null
 ): Promise<boolean> {
 	let sql: string;
 	let params: any[];
 
 	if (imageUrl !== null) {
-		sql = `UPDATE ${tableRecruitment} SET title = ?, image_url = ?, description = ?, updated_at = NOW() WHERE id = ?`;
-		params = [title, imageUrl, description, id];
+		sql = `
+            UPDATE ${tableRecruitment} 
+            SET title = ?, image_url = ?, image_public_id = ?, description = ?, updated_at = NOW() 
+            WHERE id = ?
+        `;
+		params = [title, imageUrl, imagePublicId, description, id];
 	} else {
-		sql = `UPDATE ${tableRecruitment} SET title = ?, description = ?, updated_at = NOW() WHERE id = ?`;
+		sql = `
+            UPDATE ${tableRecruitment} 
+            SET title = ?, description = ?, updated_at = NOW() 
+            WHERE id = ?
+        `;
 		params = [title, description, id];
 	}
 

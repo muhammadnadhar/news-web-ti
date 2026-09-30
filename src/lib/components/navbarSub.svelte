@@ -18,7 +18,7 @@
 
 {#if item}
 	<div
-		class="bg-scitech-slate hover:border-scitech-mint/30 w-full rounded-2xl border border-white/10 p-5 shadow-xl transition-all duration-300"
+		class="hover:border-scitech-mint/30 w-full rounded-2xl border border-border-color/10 bg-bg-secondary p-5 shadow-xl transition-all duration-300"
 	>
 		<div class="mb-4 flex items-center justify-between border-b border-white/10 pb-4">
 			<div class="flex items-center gap-3">
@@ -55,8 +55,8 @@
 									toggleNested(sub.id);
 								}}
 								class="group {activeNestedId === sub.id
-									? 'bg-scitech-navy/80 border-scitech-mint/40'
-									: 'bg-scitech-navy/60 border-white/5'} hover:bg-scitech-slate-hover hover:border-scitech-mint/40 flex w-full items-center justify-between rounded-xl border p-3 transition-all duration-200"
+									? 'border-scitech-mint/40 bg-accent-primary-dim/80 hover:bg-accent-primary-dim'
+									: 'border-white/5 bg-accent-primary-dim/60'} hover:bg-scitech-slate-hover hover:border-scitech-mint/40 flex w-full items-center justify-between rounded-xl border p-3 transition-all duration-200"
 							>
 								<span
 									class="group-hover:text-scitech-mint text-xs font-medium text-text-main transition-colors"

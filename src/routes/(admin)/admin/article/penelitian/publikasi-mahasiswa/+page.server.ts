@@ -1,7 +1,5 @@
 import { error, fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-
-import type { TableContentType } from '$lib/types/tableContent';
 import {
 	deleteStudentPublication,
 	getAllStudentPublications,

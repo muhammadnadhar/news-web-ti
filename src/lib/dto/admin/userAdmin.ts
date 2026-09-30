@@ -7,6 +7,7 @@ export interface UserAdminDTO {
 	username: string;
 	email: string;
 	image_url?: string | null;
+	image_public_id?: string | null;
 	password: string;
 	role: 'Author' | RoleUser;
 	status: 'Active' | 'Inactive';

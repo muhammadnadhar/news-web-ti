@@ -4,9 +4,11 @@ import {
 	deleteOrgStructure,
 	getAllOrgStructures,
 	createOrgStructure,
-	updateOrgStructure
+	updateOrgStructure,
+	getPublicIdOrgStructureById
 } from '$lib/repository/admin/article/profile/structure';
-import { errorResponse, successResponse } from '$lib/helper/message';
+import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
+import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
 export const load: PageServerLoad = async () => {
 	try {
 		// const orgStructures = await getAllOrgStructures();
@@ -53,20 +55,34 @@ export const actions: Actions = {
 
 	delete: async ({ request }) => {
 		const formData = await request.formData();
-		const id = formData.get('id') as string;
+		const id = formData.get('id')?.toString().trim();
 
 		if (!id) {
-			return fail(400, errorResponse('ID tidak valid.', 'Gagal'));
+			return fail(400, warningResponse('ID tidak valid.', 'Gagal'));
 		}
 
 		try {
+			//  Ambil image_public_id terlebih dahulu
+			const imagePublicId = await getPublicIdOrgStructureById(id);
+
+			//  Jika ada berkas gambar di Cloudinary, hapus terlebih dahulu
+			if (imagePublicId) {
+				await deleteImageFromCloudinary(imagePublicId);
+			}
+
 			await deleteOrgStructure(id);
-			return successResponse('Data Struktur Organisasi berhasil dihapus.', 'Berhasil');
-		} catch (err) {
+
+			return successResponse(
+				'Data Struktur Organisasi dan berkas gambar terkait berhasil dihapus.',
+				'Berhasil'
+			);
+		} catch (err: any) {
 			console.error('Error deleting organizational structure:', err);
 
-			// Error Response Sistem
-			return fail(500, errorResponse('Gagal menghapus data.', 'Kesalahan Sistem'));
+			return fail(
+				500,
+				errorResponse('Gagal menghapus data Struktur Organisasi.', 'Kesalahan Sistem')
+			);
 		}
 	}
 };

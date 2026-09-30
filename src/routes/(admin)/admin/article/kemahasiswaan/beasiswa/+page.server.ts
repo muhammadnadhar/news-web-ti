@@ -2,11 +2,13 @@ import { error, fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 
 import {
-	createScholarship,
 	deleteScholarship,
 	getAllScholarships,
-	updateScholarship
+	getScholarshipById,
+	getScholarshipPublicImageIdyId
 } from '$lib/repository/admin/article/kemahasiswaan/beasiswa';
+import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
+import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
 
 export const load: PageServerLoad = async () => {
 	try {
@@ -64,16 +66,41 @@ export const actions: Actions = {
 	//
 	delete: async ({ request }) => {
 		const formData = await request.formData();
-		const id = formData.get('id') as string;
+		const id = formData.get('id')?.toString().trim();
 
-		if (!id) return fail(400, { message: 'ID tidak valid.' });
+		if (!id) {
+			return fail(400, warningResponse('ID Beasiswa wajib disertakan.', 'Gagal'));
+		}
 
 		try {
+			const public_id = await getScholarshipPublicImageIdyId(id);
+
+			if (!public_id) {
+				return fail(
+					404,
+					warningResponse('Data Beasiswa tidak ditemukan atau sudah dihapus.', 'Gagal')
+				);
+			}
+
+			// Hapus gambar/poster beasiswa dari Cloudinary jika ada
+			if (public_id.image_public_id) {
+				await deleteImageFromCloudinary(public_id.image_public_id);
+			}
+
 			await deleteScholarship(id);
-			return { success: true };
-		} catch (err) {
+
+			return successResponse('Data Beasiswa dan poster terkait berhasil dihapus.', 'Berhasil');
+		} catch (err: any) {
 			console.error('Error deleting scholarship:', err);
-			return fail(500, { message: 'Gagal menghapus data Beasiswa.' });
+			return fail(
+				500,
+				errorResponse(
+					err?.message
+						? `Gagal menghapus data: ${err.message}`
+						: 'Terjadi kesalahan sistem saat menghapus data Beasiswa.',
+					'Kesalahan Sistem'
+				)
+			);
 		}
 	}
 };

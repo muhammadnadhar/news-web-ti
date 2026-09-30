@@ -1,10 +1,12 @@
 import { error, fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { errorResponse, successResponse } from '$lib/helper/message';
+import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
 import {
 	deleteCourseMap,
-	getAllCourseMap
+	getAllCourseMap,
+	getPublicIdCourseMapById
 } from '$lib/repository/admin/article/kurikulum/petaMatakuliah';
+import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
 
 export const load: PageServerLoad = async () => {
 	try {
@@ -83,24 +85,35 @@ export const actions: Actions = {
 
 	delete: async ({ request }) => {
 		const formData = await request.formData();
-		const id = formData.get('id') as string;
+		const id = formData.get('id')?.toString().trim();
 
 		if (!id) {
-			return fail(400, errorResponse('ID data tidak ditemukan.', 'Gagal Menghapus'));
+			return fail(400, warningResponse('ID data tidak ditemukan.', 'Gagal Menghapus'));
 		}
 
 		try {
+			const imagePublicId = await getPublicIdCourseMapById(id);
+
+			if (imagePublicId) {
+				await deleteImageFromCloudinary(imagePublicId);
+			}
+
 			await deleteCourseMap(id);
 
-			// Success Response
-			return successResponse('Data peta mata kuliah berhasil dihapus.', 'Berhasil');
+			return successResponse(
+				'Data peta mata kuliah dan berkas terkait berhasil dihapus.',
+				'Berhasil'
+			);
 		} catch (error: any) {
 			console.error('Error deleting course map:', error);
 
-			// Error Response Sistem
+			// Response Error Sistem
 			return fail(
 				500,
-				errorResponse(error.message || 'Terjadi kesalahan sistem', 'Gagal Hapus Data')
+				errorResponse(
+					error?.message || 'Terjadi kesalahan sistem saat menghapus peta mata kuliah.',
+					'Gagal Hapus Data'
+				)
 			);
 		}
 	}

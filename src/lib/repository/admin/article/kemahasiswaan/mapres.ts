@@ -28,9 +28,7 @@ export async function getAllStudentAchievements(): Promise<StudentAchievementDTO
 /**
  * Mengambil semester unik berdasarkan jenis prestasi (Akademik / Non-Akademik)
  */
-export async function getAchievementSemesters(
-	isAcademic: 'y' | 'n'
-): Promise<SemesterDTO[]> {
+export async function getAchievementSemesters(isAcademic: 'y' | 'n'): Promise<SemesterDTO[]> {
 	const sql = `
 		SELECT DISTINCT 
 			s.id,
@@ -50,9 +48,7 @@ export async function getAchievementSemesters(
 /**
  * Mengambil 1 data Mahasiswa Prestasi berdasarkan ID (Lengkap dengan JOIN)
  */
-export async function getStudentAchievementById(
-	id: string
-): Promise<StudentAchievementDTO | null> {
+export async function getStudentAchievementById(id: string): Promise<StudentAchievementDTO | null> {
 	const sql = `
 		SELECT 
 			sa.*,
@@ -121,6 +117,19 @@ export async function getStudentAchievementsBySemesterId(
 }
 
 /**
+ * Mengambil hanya image_public_id dari Prestasi Mahasiswa berdasarkan ID
+ *
+ * @param id - ID Prestasi Mahasiswa
+ * @returns Promise<string | null> - Mengembalikan string image_public_id atau null jika tidak ada/ditemukan
+ */
+export async function getPublicIdStudentAchievementsById(id: string): Promise<string | null> {
+	const sql = `SELECT image_public_id FROM ${tableStudentAchievement} WHERE id = ? LIMIT 1`;
+	const rows = (await query(sql, [id])) as Array<{ image_public_id: string | null }>;
+
+	return rows[0]?.image_public_id ?? null;
+}
+
+/**
  * Mengambil data Mahasiswa Prestasi berdasarkan Nama Semester (misal dari Query URL parameter)
  * Sangat berguna jika URL navbar Anda menggunakan nama semester seperti ?semester=Semester%20Ganjil%202020/2030
  */
@@ -162,19 +171,21 @@ export async function createStudentAchievement(
 	angkatanId: string,
 	semesterId: string,
 	achievementName: string,
-	imageUrl: string | null
+	imageUrl: string | null,
+	imagePublicId: string | null = null
 ): Promise<boolean> {
 	const sql = `
-		INSERT INTO ${tableStudentAchievement} (
-			id, 
-			student_name, 
-			is_academic, 
-			angkatan_id, 
-			semester_id, 
-			achievement_name, 
-			image_url
-		) VALUES (?, ?, ?, ?, ?, ?, ?)
-	`;
+        INSERT INTO ${tableStudentAchievement} (
+            id, 
+            student_name, 
+            is_academic, 
+            angkatan_id, 
+            semester_id, 
+            achievement_name, 
+            image_url,
+            image_public_id
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `;
 	const result = (await query(sql, [
 		id,
 		studentName,
@@ -182,7 +193,8 @@ export async function createStudentAchievement(
 		angkatanId,
 		semesterId,
 		achievementName,
-		imageUrl
+		imageUrl,
+		imagePublicId
 	])) as any;
 	return result.affectedRows > 0;
 }
@@ -197,20 +209,22 @@ export async function updateStudentAchievement(
 	angkatanId: string,
 	semesterId: string,
 	achievementName: string,
-	imageUrl: string | null
+	imageUrl: string | null,
+	imagePublicId: string | null = null
 ): Promise<boolean> {
 	const sql = `
-		UPDATE ${tableStudentAchievement} 
-		SET 
-			student_name = ?, 
-			is_academic = ?, 
-			angkatan_id = ?, 
-			semester_id = ?, 
-			achievement_name = ?, 
-			image_url = ?, 
-			updated_at = NOW() 
-		WHERE id = ?
-	`;
+        UPDATE ${tableStudentAchievement} 
+        SET 
+            student_name = ?, 
+            is_academic = ?, 
+            angkatan_id = ?, 
+            semester_id = ?, 
+            achievement_name = ?, 
+            image_url = ?, 
+            image_public_id = ?, 
+            updated_at = NOW() 
+        WHERE id = ?
+    `;
 	const result = (await query(sql, [
 		studentName,
 		isAcademic,
@@ -218,6 +232,7 @@ export async function updateStudentAchievement(
 		semesterId,
 		achievementName,
 		imageUrl,
+		imagePublicId,
 		id
 	])) as any;
 	return result.affectedRows > 0;

@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS ${tableScholarship} (
     student_name VARCHAR(255) NOT NULL, -- Nama mahasiswa penerima beasiswa
     scholarship_name VARCHAR(255) NOT NULL, -- Nama jenis/kategori beasiswa (contoh: 'Beasiswa Bidikmisi Tahun 2020')
     image_url VARCHAR(255) NULL, -- URL/Path foto yg datap beasiswa
+  image_public_id VARCHAR(255) NULL, -- ID untuk Url Gambar
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Waktu pembuatan data
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP -- Waktu update data
 );
@@ -29,6 +30,7 @@ CREATE TABLE IF NOT EXISTS ${tableStudentAchievement} (
     angkatan_id VARCHAR(36) NOT NULL, -- FK merujuk ke id tabel Angkatan
     semester_id VARCHAR(36) NOT NULL, -- FK merujuk ke id tabel Semester
     image_url VARCHAR(255) NULL,
+  image_public_id VARCHAR(255) NULL, -- ID untuk Url Gambar
     achievement_name TEXT NOT NULL, -- Nama Prestasi yang diraih
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -55,6 +57,7 @@ CREATE TABLE IF NOT EXISTS ${tableHighGpaStudent} (
 			angkatan_id VARCHAR(36) NOT NULL,
 			semester_id VARCHAR(36) NOT NULL,
     image_url VARCHAR(255)  NULL,
+  image_public_id VARCHAR(255) NULL, -- ID untuk Url Gambar
 			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 			FOREIGN KEY (angkatan_id) REFERENCES ${tableAngkatan}(id) ON DELETE CASCADE,

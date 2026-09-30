@@ -3,7 +3,7 @@
 	import { Sparkles, X, Upload, Save } from 'lucide-svelte';
 	import TableContent from '$lib/components/admin/tableContent.svelte';
 	import type { TableContentType } from '$lib/types/tableContent';
-	import TableSkeleton from '$lib/components/tableSkeleton.svelte';
+	import TableSkeleton from '$lib/components/loading/tableSkeleton.svelte';
 	import { gotoEdit, mergeNewPath } from '$lib/utils';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';

@@ -12,6 +12,7 @@
 <FormDocActivity
 	initialData={form?.values}
 	formError={form?.error}
+	action="?/create"
 	isEditMode={false}
 	submitLabel="Simpan Dokumentasi"
 />

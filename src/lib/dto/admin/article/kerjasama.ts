@@ -10,6 +10,7 @@ export interface ActivityDocumentationDTO {
 	id: string;
 	title: string;
 	image_url: string;
+	image_public_id?: string | null;
 	link_drive: string | null;
 	// opsional
 	description: string | null;

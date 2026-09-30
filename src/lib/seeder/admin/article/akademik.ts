@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS ${tablePedomanTa} (
     id VARCHAR(36) PRIMARY KEY, -- Primary key berupa UUID string
     title VARCHAR(255) NOT NULL, -- Judul Pedoman TA
     image_url VARCHAR(255) NULL, -- URL/Link foto sampul pedoman
+  image_public_id VARCHAR(255) NULL, -- ID untuk Url Gambar
     description TEXT NULL, -- Deskripsi lengkap atau ringkasan pedoman
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Waktu pembuatan data
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP -- Waktu update data
@@ -31,6 +32,8 @@ CREATE TABLE IF NOT EXISTS ${tablePedomanKkp} (
     id VARCHAR(36) PRIMARY KEY, -- Primary key berupa UUID string
     title VARCHAR(255) NOT NULL, -- Judul Pedoman KKP
     image_url VARCHAR(255) NULL, -- URL/Link foto sampul pedoman
+
+  image_public_id VARCHAR(255) NULL, -- ID untuk Url Gambar
     description LONGTEXT NULL, -- Deskripsi bertipe LONGTEXT untuk menyimpan format Rich Text / Tag HTML
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Waktu pembuatan data
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP -- Waktu update data
@@ -46,6 +49,8 @@ CREATE TABLE IF NOT EXISTS ${tableRecruitment} (
     id VARCHAR(36) PRIMARY KEY, -- Primary key berupa UUID string
     title VARCHAR(255) NOT NULL, -- Judul Rekrutmen / Ketentuan
     image_url VARCHAR(255) NULL, -- URL/Link foto pendukung
+
+  image_public_id VARCHAR(255) NULL, -- ID untuk Url Gambar
     description LONGTEXT NULL, -- Deskripsi bertipe LONGTEXT untuk menampung tag HTML
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Waktu pembuatan data
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP -- Waktu update data
@@ -61,6 +66,7 @@ CREATE TABLE IF NOT EXISTS ${tablePracticumModule} (
     id VARCHAR(36) PRIMARY KEY, -- Primary key berupa UUID string
     title VARCHAR(255) NOT NULL, -- Judul Modul Praktikum (contoh: 'Modul Praktikum Semester Ganjil')
     image_url VARCHAR(255) NULL, -- URL/Link foto pendukung
+  image_public_id VARCHAR(255) NULL, -- ID untuk Url Gambar
     description LONGTEXT NULL, -- Deskripsi bertipe LONGTEXT untuk menampung format tabel / tag HTML
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Waktu pembuatan data
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP -- Waktu update data
@@ -97,6 +103,7 @@ CREATE TABLE IF NOT EXISTS ${tableKalenderAkademikImage} (
     id VARCHAR(36) PRIMARY KEY,                             -- UUID String
     calendar_id VARCHAR(36) NOT NULL,                       -- Foreign Key ke tabel Kalender
     image_url VARCHAR(255) NULL,                                -- Path / URL Gambar
+  image_public_id VARCHAR(255) NULL, -- ID untuk Url Gambar
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,         -- (Opsional) Mengetahui waktu upload
     
     -- Relasi Foreign Key

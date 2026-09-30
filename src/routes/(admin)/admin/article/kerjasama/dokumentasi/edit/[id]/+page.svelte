@@ -13,5 +13,6 @@
 	initialData={form?.values ?? data.documentation}
 	formError={form?.error}
 	isEditMode={true}
+	action="?/update"
 	submitLabel="Perbarui Dokumentasi"
 />

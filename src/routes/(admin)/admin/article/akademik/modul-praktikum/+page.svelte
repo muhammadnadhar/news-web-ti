@@ -1,10 +1,9 @@
 <script lang="ts">
-	import { Sparkles, X, Upload, Save } from 'lucide-svelte';
 	import TableContent from '$lib/components/admin/tableContent.svelte';
 	import type { TableContentType } from '$lib/types/tableContent';
-	import TableSkeleton from '$lib/components/tableSkeleton.svelte';
 	import { gotoEdit, mergeNewPath } from '$lib/utils.js';
 	import { goto } from '$app/navigation';
+  import TableSkeleton from '$lib/components/loading/tableSkeleton.svelte';
 	import { page } from '$app/state';
 	import type { MessageStatus, ResponseMessage } from '$lib/types/message.js';
 	import type { PracticumModuleDTO } from '$lib/dto/admin/article/akademik.js';

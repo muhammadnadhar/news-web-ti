@@ -26,10 +26,14 @@ export async function createPracticumModule(
 	id: string,
 	title: string,
 	imageUrl: string | null,
-	description: string | null
+	description: string | null,
+	imagePublicId: string | null = null
 ): Promise<boolean> {
-	const sql = `INSERT INTO ${tablePracticumModule} (id, title, image_url, description) VALUES (?, ?, ?, ?)`;
-	const result = (await query(sql, [id, title, imageUrl, description])) as any;
+	const sql = `
+        INSERT INTO ${tablePracticumModule} (id, title, image_url, image_public_id, description) 
+        VALUES (?, ?, ?, ?, ?)
+    `;
+	const result = (await query(sql, [id, title, imageUrl, imagePublicId, description])) as any;
 	return result.affectedRows > 0;
 }
 
@@ -40,16 +44,25 @@ export async function updatePracticumModule(
 	id: string,
 	title: string,
 	imageUrl: string | null,
-	description: string | null
+	description: string | null,
+	imagePublicId: string | null = null
 ): Promise<boolean> {
 	let sql: string;
 	let params: any[];
 
 	if (imageUrl !== null) {
-		sql = `UPDATE ${tablePracticumModule} SET title = ?, image_url = ?, description = ?, updated_at = NOW() WHERE id = ?`;
-		params = [title, imageUrl, description, id];
+		sql = `
+            UPDATE ${tablePracticumModule} 
+            SET title = ?, image_url = ?, image_public_id = ?, description = ?, updated_at = NOW() 
+            WHERE id = ?
+        `;
+		params = [title, imageUrl, imagePublicId, description, id];
 	} else {
-		sql = `UPDATE ${tablePracticumModule} SET title = ?, description = ?, updated_at = NOW() WHERE id = ?`;
+		sql = `
+            UPDATE ${tablePracticumModule} 
+            SET title = ?, description = ?, updated_at = NOW() 
+            WHERE id = ?
+        `;
 		params = [title, description, id];
 	}
 

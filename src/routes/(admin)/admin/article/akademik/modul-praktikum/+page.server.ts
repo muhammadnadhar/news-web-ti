@@ -7,8 +7,12 @@ import {
 	getAllPracticumModule,
 	updatePracticumModule,
 	deletePracticumModule,
-	createPracticumModule
+	createPracticumModule,
+	getPracticumModuleById
 } from '$lib/repository/admin/article/akedemik/modulePratikum';
+import { errorResponse, successResponse } from '$lib/helper/message';
+import { cloudinary } from '$lib/cloudinary/server';
+import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
 
 export const load: PageServerLoad = async () => {
 	try {
@@ -89,14 +93,30 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const id = formData.get('id') as string;
 
-		if (!id) return fail(400, { message: 'ID tidak valid.' });
+		if (!id) {
+			return fail(400, errorResponse('ID Modul Praktikum tidak valid.', 'Gagal'));
+		}
 
 		try {
+			// Ambil data Modul Praktikum berdasarkan ID
+			const existingModule = await getPracticumModuleById(id);
+
+			if (!existingModule) {
+				return fail(404, errorResponse('Data Modul Praktikum tidak ditemukan.', 'Gagal'));
+			}
+
+			// Jika terdapat public_id gambar/file terkait, hapus dari Cloudinary
+			// Sesuaikan nama properti (misal: image_public_id, cover_public_id, atau file_public_id)
+			if (existingModule.image_public_id) {
+				await deleteImageFromCloudinary(existingModule.image_public_id);
+			}
+
 			await deletePracticumModule(id);
-			return { success: true };
+
+			return successResponse('Modul Praktikum dan berkas terkait berhasil dihapus.', 'Berhasil');
 		} catch (err) {
 			console.error('Error deleting practicum module:', err);
-			return fail(500, { message: 'Gagal menghapus data Modul Praktikum.' });
+			return fail(500, errorResponse('Gagal menghapus data Modul Praktikum.', 'Kesalahan Sistem'));
 		}
 	}
 };

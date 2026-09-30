@@ -5,6 +5,7 @@
 		data: PageData;
 	}
 	import EmptyData from '../../_components/emptyData.svelte';
+	import { classTopSpace } from '$lib/constants';
 
 	let { data }: Props = $props();
 
@@ -53,7 +54,7 @@
 	}
 </script>
 
-<div class={`mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8`}>
+<div class={` ${classTopSpace} mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8`}>
 	<div class="mb-10 border-b border-border-color/40 pb-6 text-center sm:text-left">
 		<div
 			class="border-scitech-mint/30 bg-scitech-mint/10 text-scitech-mint mb-3 inline-flex items-center gap-2 border px-3 py-1 text-xs font-semibold shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]"
@@ -79,7 +80,7 @@
 						type="text"
 						bind:value={searchQuery}
 						placeholder="Cari nama kegiatan..."
-						class="bg-scitech-slate/60 focus:border-scitech-mint focus:ring-scitech-mint w-full border border-border-color py-2.5 pr-4 pl-10 text-xs text-text-main placeholder-text-muted shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)] transition-all outline-none focus:ring-1"
+						class="bg-bg-secondary focus:border-border-color/15 focus:ring-scitech-mint w-full border border-border-color py-2.5 pr-4 pl-10 text-xs text-text-main placeholder-text-muted shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)] transition-all outline-none focus:ring-1"
 					/>
 				</div>
 			{/if}
@@ -140,7 +141,7 @@
 
 							{#if item.description}
 								<p class="line-clamp-3 text-xs leading-relaxed text-text-muted">
-									{item.description}
+									 {@html  item.description}
 								</p>
 							{/if}
 						</div>

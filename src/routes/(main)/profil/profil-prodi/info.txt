@@ -1,0 +1,4 @@
+
+
+di sini adalah spesifki data yang di tampilkan dari 
+admin/home/profil-prodi  -> jadi data dari sini spesifik id

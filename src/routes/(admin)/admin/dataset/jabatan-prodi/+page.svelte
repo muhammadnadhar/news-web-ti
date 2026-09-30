@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
 	import { Briefcase, Plus, Edit2, Trash2, X, Check, Loader2 } from 'lucide-svelte';
 	import type { PageData, ActionData } from './$types';
 	import TableContent from '$lib/components/admin/tableContent.svelte';
@@ -77,11 +76,23 @@
 	}
 </script>
 
+<!-- alert / toast notification -->
+{#if showMessage}
+	<Message
+		status={messageConfig.status}
+		title={messageConfig.title}
+		message={messageConfig.message}
+		dismissible={true}
+		timeout={4000}
+		onclose={() => (showMessage = false)}
+	/>
+{/if}
+
 <svelte:head>
 	<title>Kelola Jabatan Prodi - Admin Portal</title>
 </svelte:head>
 
-<div class="min-h-screen bg-[var(--color-bg-primary)] p-4 text-[var(--color-text-main)] md:p-8">
+<div class="min-h-screen bg-bg-primary p-4 text-text-main md:p-8">
 	<div class="mx-auto max-w-5xl space-y-6">
 		<!-- Header Section -->
 		<div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
@@ -96,9 +107,8 @@
 			</div>
 		</div>
 
-		<!-- Data Table Component -->
 		{#await data.positions}
-			<TableSkeleton showTitle={true} title="Memuat Data Kerjasama..." columnsCount={4} />
+			<TableSkeleton showTitle={true} title="Memuat Data Kerjasama..." columnsCount={2} />
 		{:then rawList}
 			<TableContent
 				title="Daftar Semester"

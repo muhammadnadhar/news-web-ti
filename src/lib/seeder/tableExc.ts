@@ -26,6 +26,7 @@ import {
 	AccreditationTableSeed,
 	HistoryContentTableSeed,
 	HistoryLeadersTableSeed,
+	FacilityTableSeed,
 	LecturerStaffTableSeed,
 	OrganizationalStructureTableSeed,
 	VisiMisiTableSeed
@@ -70,6 +71,7 @@ try {
 	await VisiMisiTableSeed();
 	await OrganizationalStructureTableSeed();
 	await AccreditationTableSeed();
+	await FacilityTableSeed();
 
 	// DATASET
 	await AngkatanTableSeed();

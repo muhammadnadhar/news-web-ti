@@ -7,35 +7,29 @@
 		getUploadOptions,
 		upload_cloudinary_preset
 	} from '$lib/cloudinary/client';
-	import type { NewsCategoryDTO } from '$lib/dto/admin/dataset';
 	import Message from '$lib/components/admin/message.svelte';
 	import type { ResponseMessage } from '$lib/types/message';
 	import FormEditor from '$lib/components/admin/formEditor.svelte';
 	import { LoaderCircle, Trash2 } from 'lucide-svelte';
-
-	export interface ArticleData {
-		id?: string;
-		title?: string;
-		category?: string; // ID kategori yang dipilih (misal: berita.category_id)
-		categories?: NewsCategoryDTO[];
-		content?: string;
-		imageUrl?: string;
-	}
+	import type { NewsItemDTO } from '$lib/dto/admin/article/berita';
+	import type { NewsFormValues } from '$lib/types/values/admin/article';
 
 	interface Props {
 		form?: any;
-		initialData?: ArticleData;
+		initialData?: NewsItemDTO;
+		valuesData?: NewsFormValues;
 		isEdit?: boolean;
 		actionUrl?: string;
 	}
 
-	let { form, initialData, isEdit = false, actionUrl }: Props = $props();
+	let { form, initialData, valuesData, isEdit = false, actionUrl }: Props = $props();
 
-	// Menggunakan $state agar variabel bisa di-bind (two-way binding)
-	let title = $state(form?.values?.title ?? initialData?.title ?? '');
-	let selectedCategory = $state(form?.values?.category ?? initialData?.category ?? '');
-	let content = $state(form?.values?.content ?? initialData?.content ?? '');
-	let imageUrl = $state(form?.values?.imageUrl ?? initialData?.imageUrl ?? '');
+	// Inisialisasi state dari valuesData -> initialData -> default ('')
+	let title = $state(valuesData?.title ?? initialData?.title ?? '');
+	let selectedCategory = $state(valuesData?.category ?? initialData?.category ?? '');
+	let content = $state(valuesData?.content ?? initialData?.content ?? '');
+	let imageUrl = $state(valuesData?.imageUrl ?? initialData?.image_url ?? '');
+	let image_public_id = $state(valuesData?.imageId ?? initialData?.image_public_id ?? '');
 	let isSubmitting = $state(false);
 
 	// Ambil daftar opsi kategori dari initialData
@@ -66,6 +60,13 @@
 	function handleUpload(result: any) {
 		if (result?.event === 'success') {
 			imageUrl = result.info.secure_url;
+			image_public_id = result.info.public_id; //  Ambil & simpan Public ID dari response Cloudinary
+		}
+
+		// Kembalikan fungsi scroll pada document body
+		if (typeof document !== 'undefined') {
+			document.body.style.overflow = 'auto';
+			// atau document.body.style.removeProperty('overflow');
 		}
 	}
 
@@ -134,7 +135,6 @@
 {/if}
 
 <div class="min-h-screen bg-bg-primary p-6 text-text-main">
-	<!-- Header Halaman -->
 	<h1 class="mb-6 text-2xl font-semibold text-text-main">
 		{isEdit ? 'Ubah Berita' : 'Tambah Berita'}
 	</h1>
@@ -210,6 +210,8 @@
 					</label>
 
 					<input type="hidden" id="imageUrl" name="imageUrl" value={imageUrl} />
+
+					<input type="hidden" name="image_public_id" value={image_public_id} />
 
 					{#if imageUrl}
 						<div
@@ -325,31 +327,40 @@
 				<!-- </div> -->
 			</div>
 
-			<!-- Tombol Submit Kirim -->
-			<div>
+			<div class="flex gap-3">
 				<button
-					type="submit"
+					type="button"
+					onclick={() => history.back()}
 					disabled={isSubmitting}
-					class="inline-flex items-center justify-center rounded-md bg-accent-primary p-3 text-text-dark shadow-sm transition-colors hover:bg-accent-primary-hover disabled:opacity-50"
+					class="rounded-xl border border-white/10 bg-white/5 px-5 py-2.5 text-xs font-semibold text-text-muted transition-all hover:bg-white/10 hover:text-white active:scale-95 disabled:opacity-50"
 				>
-					{#if isSubmitting}
-						<span class="text-sm font-medium">Memproses...</span>
-					{:else}
-						<svg
-							class="-mt-1 h-5 w-5 rotate-45 transform"
-							fill="none"
-							stroke="currentColor"
-							viewBox="0 0 24 24"
-						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-							/>
-						</svg>
-					{/if}
+					Batal
 				</button>
+				<div>
+					<button
+						type="submit"
+						disabled={isSubmitting}
+						class="inline-flex items-center justify-center rounded-md bg-accent-primary p-3 text-text-dark shadow-sm transition-colors hover:bg-accent-primary-hover disabled:opacity-50"
+					>
+						{#if isSubmitting}
+							<span class="text-sm font-medium">Memproses...</span>
+						{:else}
+							<svg
+								class="-mt-1 h-5 w-5 rotate-45 transform"
+								fill="none"
+								stroke="currentColor"
+								viewBox="0 0 24 24"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+								/>
+							</svg>
+						{/if}
+					</button>
+				</div>
 			</div>
 		</form>
 	</div>

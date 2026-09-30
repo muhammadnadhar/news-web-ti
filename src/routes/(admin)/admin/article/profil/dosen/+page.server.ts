@@ -4,9 +4,11 @@ import {
 	deleteLecturerStaff,
 	getAllLecturerStaff,
 	createLecturerStaff,
-	updateLecturerStaff
+	updateLecturerStaff,
+	getPhotoPublicIdLecturerStaffById
 } from '$lib/repository/admin/article/profile/dosen&staff';
 import { errorResponse, successResponse } from '$lib/helper/message';
+import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
 export const load: PageServerLoad = async () => {
 	try {
 		// const lecturerStaffList = await getAllLecturerStaff();
@@ -49,12 +51,18 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const id = formData.get('id') as string;
 
-		// 1. Validasi ID
 		if (!id) {
 			return fail(400, errorResponse('ID tidak valid.', 'Gagal'));
 		}
 
 		try {
+			// Ambil photo_public_id sebelum record dihapus dari DB
+			const photoPublicId = await getPhotoPublicIdLecturerStaffById(id);
+
+			if (photoPublicId) {
+				await deleteImageFromCloudinary(photoPublicId);
+			}
+
 			await deleteLecturerStaff(id);
 
 			// Success Response
@@ -62,7 +70,7 @@ export const actions: Actions = {
 		} catch (err) {
 			console.error('Error deleting lecturer/staff:', err);
 
-			// 3. Error Response Sistem
+			// Error Response Sistem
 			return fail(500, errorResponse('Gagal menghapus data.', 'Kesalahan Sistem'));
 		}
 	}

@@ -96,8 +96,9 @@
 			if (response.ok) {
 				imgPreview = '';
 				photoPublicId = '';
+				triggerMessage('success', 'Berhasil', 'Gambar berhasil dihapus dari Cloudinary.');
 			} else {
-				alert('Gagal menghapus gambar dari Cloudinary');
+				triggerMessage('error', 'Gagal', 'Gagal menghapus gambar dari Cloudinary.');
 			}
 		} catch (err) {
 			console.error('Error deleting photo:', err);
@@ -151,7 +152,7 @@
 	{/if}
 
 	<!-- Form Card -->
-	<div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm md:p-8">
+	<div class="rounded-xl border border-slate-200 bg-bg-secondary p-6 shadow-sm md:p-8">
 		<form
 			method="POST"
 			{action}
@@ -163,11 +164,11 @@
 				return async ({ result, update }) => {
 					isSubmitting = false;
 
-					if (result.type === 'success' && result.data?.success) {
+					if (result.type === 'success') {
 						triggerMessage(
 							'success',
-							(result.data.title as string) || 'Berhasil',
-							(result.data.message as string) || 'Data berhasil disimpan!'
+							(result.data?.title as string) || 'Berhasil',
+							(result.data?.message as string) || 'Data berhasil disimpan!'
 						);
 						if (!isEdit) {
 							imgPreview = '';
@@ -213,7 +214,7 @@
 							placeholder="Masukkan nama lengkap mahasiswa..."
 							required
 							disabled={isSubmitting}
-							class="block w-full rounded-lg border border-slate-300 bg-slate-50 py-2.5 pr-4 pl-10 text-sm text-slate-800 transition-all focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-500 disabled:opacity-50"
+							class="block w-full rounded-lg border border-slate-300 bg-slate-50 py-2.5 pr-4 pl-10 text-sm text-slate-800 transition-all focus:border-emerald-500 focus:bg-bg-secondary focus:ring-2 focus:ring-emerald-500 disabled:opacity-50"
 						/>
 					</div>
 				</div>
@@ -240,7 +241,7 @@
 							placeholder="Contoh: 3.95"
 							required
 							disabled={isSubmitting}
-							class="block w-full rounded-lg border border-slate-300 bg-slate-50 py-2.5 pr-4 pl-10 text-sm text-slate-800 transition-all focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-500 disabled:opacity-50"
+							class="block w-full rounded-lg border border-slate-300 bg-slate-50 py-2.5 pr-4 pl-10 text-sm text-slate-800 transition-all focus:border-emerald-500 focus:bg-bg-secondary focus:ring-2 focus:ring-emerald-500 disabled:opacity-50"
 						/>
 					</div>
 					<p class="text-xs text-slate-500">Maksimal nilai 4.00</p>
@@ -262,7 +263,7 @@
 							name="angkatan_id"
 							required
 							disabled={isSubmitting}
-							class="block w-full rounded-lg border border-slate-300 bg-slate-50 py-2.5 pr-4 pl-10 text-sm text-slate-800 transition-all focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-500 disabled:opacity-50"
+							class="block w-full rounded-lg border border-slate-300 bg-slate-50 py-2.5 pr-4 pl-10 text-sm text-slate-800 transition-all focus:border-emerald-500 focus:bg-bg-secondary focus:ring-2 focus:ring-emerald-500 disabled:opacity-50"
 						>
 							<option value="">-- Pilih Angkatan --</option>
 							{#each angkatanList as angkatan}
@@ -291,7 +292,7 @@
 							name="semester_id"
 							required
 							disabled={isSubmitting}
-							class="block w-full rounded-lg border border-slate-300 bg-slate-50 py-2.5 pr-4 pl-10 text-sm text-slate-800 transition-all focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-500 disabled:opacity-50"
+							class="block w-full rounded-lg border border-slate-300 bg-slate-50 py-2.5 pr-4 pl-10 text-sm text-slate-800 transition-all focus:border-emerald-500 focus:bg-bg-secondary focus:ring-2 focus:ring-emerald-500 disabled:opacity-50"
 						>
 							<option value="">-- Pilih Semester --</option>
 							{#each semesterList as semester}
@@ -365,7 +366,7 @@
 								class="group flex w-full flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-slate-50/50 p-6 text-center transition-all hover:border-emerald-500 hover:bg-emerald-50/30 disabled:opacity-50 dark:border-slate-700 dark:bg-slate-800/40 dark:hover:border-emerald-400 dark:hover:bg-slate-800"
 							>
 								<div
-									class="mb-2 rounded-full border border-slate-200 bg-white p-3 text-slate-600 shadow-sm transition-transform group-hover:scale-110 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+									class="mb-2 rounded-full border border-slate-200 bg-bg-secondary p-3 text-slate-600 shadow-sm transition-transform group-hover:scale-110 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
 								>
 									<UploadCloudIcon class="h-6 w-6 text-emerald-600" />
 								</div>
@@ -386,7 +387,7 @@
 						type="button"
 						onclick={() => history.back()}
 						disabled={isSubmitting}
-						class="rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 transition-all hover:bg-slate-50 focus:ring-2 focus:ring-slate-200 focus:outline-none disabled:opacity-50"
+						class="rounded-lg border border-slate-300 bg-bg-secondary px-5 py-2.5 text-sm font-medium text-slate-700 transition-all hover:bg-slate-50 focus:ring-2 focus:ring-slate-200 focus:outline-none disabled:opacity-50"
 					>
 						Batal
 					</button>

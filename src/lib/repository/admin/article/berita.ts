@@ -9,15 +9,16 @@ import { tableNewsCategory } from '$lib/seeder/admin/dataset';
  */
 export async function createNews(id: string, data: CreateNewsData): Promise<boolean> {
 	const sql = `
-		INSERT INTO ${tableNews} (id, title, category_id, content, image_url, published_at)
-		VALUES (?, ?, ?, ?, ?, ?)
-	`;
+        INSERT INTO ${tableNews} (id, title, category_id, content, image_url, image_public_id, published_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    `;
 	const params = [
 		id,
 		data.title,
 		data.category_id,
 		data.content,
 		data.image_url || null,
+		data.image_public_id || null,
 		data.published_at || new Date()
 	];
 
@@ -37,6 +38,7 @@ export async function getAllNews(): Promise<NewsItemDTO[]> {
             n.category_id,
             n.content,
             n.image_url,
+            n.image_public_id,
             n.published_at,
             n.created_at,
             n.updated_at,
@@ -54,14 +56,14 @@ export async function getAllNews(): Promise<NewsItemDTO[]> {
  */
 export async function getNewsById(id: string): Promise<NewsItemDTO | null> {
 	const sql = `
-		SELECT 
-			n.*,
-			c.name AS category_name
-		FROM ${tableNews} n
-		LEFT JOIN ${tableNewsCategory} c ON n.category_id = c.id
-		WHERE n.id = ? 
-		LIMIT 1
-	`;
+        SELECT 
+            n.*,
+            c.name AS category_name
+        FROM ${tableNews} n
+        LEFT JOIN ${tableNewsCategory} c ON n.category_id = c.id
+        WHERE n.id = ? 
+        LIMIT 1
+    `;
 	const rows = (await query(sql, [id])) as NewsItemDTO[];
 	return rows.length > 0 ? rows[0] : null;
 }
@@ -71,14 +73,14 @@ export async function getNewsById(id: string): Promise<NewsItemDTO | null> {
  */
 export async function getNewsByCategoryId(categoryId: string): Promise<NewsItemDTO[]> {
 	const sql = `
-		SELECT 
-			n.*,
-			c.name AS category_name
-		FROM ${tableNews} n
-		LEFT JOIN ${tableNewsCategory} c ON n.category_id = c.id
-		WHERE n.category_id = ? 
-		ORDER BY n.published_at DESC
-	`;
+        SELECT 
+            n.*,
+            c.name AS category_name
+        FROM ${tableNews} n
+        LEFT JOIN ${tableNewsCategory} c ON n.category_id = c.id
+        WHERE n.category_id = ? 
+        ORDER BY n.published_at DESC
+    `;
 	const rows = (await query(sql, [categoryId])) as NewsItemDTO[];
 	return rows;
 }
@@ -88,21 +90,22 @@ export async function getNewsByCategoryId(categoryId: string): Promise<NewsItemD
  */
 export async function getRecentNews(limit: number = 10): Promise<NewsItemDTO[]> {
 	const sql = `
-		SELECT 
-			n.id, 
-			n.title, 
-			n.category_id, 
-			n.content,
-			n.image_url,
-			n.published_at, 
-			n.created_at, 
-			n.updated_at,
-			c.name AS category_name
-		FROM ${tableNews} n
-		LEFT JOIN ${tableNewsCategory} c ON n.category_id = c.id
-		ORDER BY n.published_at DESC 
-		LIMIT ?
-	`;
+        SELECT 
+            n.id, 
+            n.title, 
+            n.category_id, 
+            n.content,
+            n.image_url,
+            n.image_public_id,
+            n.published_at, 
+            n.created_at, 
+            n.updated_at,
+            c.name AS category_name
+        FROM ${tableNews} n
+        LEFT JOIN ${tableNewsCategory} c ON n.category_id = c.id
+        ORDER BY n.published_at DESC 
+        LIMIT ?
+    `;
 	const rows = (await query(sql, [limit])) as NewsItemDTO[];
 	return rows;
 }
@@ -111,7 +114,7 @@ export async function getRecentNews(limit: number = 10): Promise<NewsItemDTO[]> 
  * Mendapatkan data detail kategori berita berdasarkan Slug (Read One by Slug)
  */
 export async function getNewsCategoryBySlug(slug: string): Promise<NewsCategoryDTO | null> {
-    const sql = `
+	const sql = `
         SELECT 
             id, 
             name, 
@@ -122,21 +125,22 @@ export async function getNewsCategoryBySlug(slug: string): Promise<NewsCategoryD
         WHERE slug = ? 
         LIMIT 1
     `;
-    const rows = (await query(sql, [slug])) as NewsCategoryDTO[];
-    return rows.length > 0 ? rows[0] : null;
+	const rows = (await query(sql, [slug])) as NewsCategoryDTO[];
+	return rows.length > 0 ? rows[0] : null;
 }
 
 /**
  * Mendapatkan semua daftar berita berdasarkan Slug Kategori (Read All by Category Slug)
  */
 export async function getNewsByCategorySlug(slug: string): Promise<NewsItemDTO[]> {
-    const sql = `
+	const sql = `
         SELECT 
             n.id,
             n.title,
             n.category_id,
             n.content,
             n.image_url,
+            n.image_public_id,
             n.published_at,
             n.created_at,
             n.updated_at,
@@ -146,8 +150,8 @@ export async function getNewsByCategorySlug(slug: string): Promise<NewsItemDTO[]
         WHERE c.slug = ?
         ORDER BY n.published_at DESC
     `;
-    const rows = (await query(sql, [slug])) as NewsItemDTO[];
-    return rows;
+	const rows = (await query(sql, [slug])) as NewsItemDTO[];
+	return rows;
 }
 
 /**
@@ -157,20 +161,21 @@ export async function getNewsByCategorySlug(slug: string): Promise<NewsItemDTO[]
  * @param to Indeks offset akhir
  */
 export async function getNewsByCategorySlugSlice(
-    slug: string,
-    from: number,
-    to: number
+	slug: string,
+	from: number,
+	to: number
 ): Promise<NewsItemDTO[]> {
-    const offset = Math.max(0, from);
-    const limit = Math.max(0, to - offset);
+	const offset = Math.max(0, from);
+	const limit = Math.max(0, to - offset);
 
-    const sql = `
+	const sql = `
         SELECT 
             n.id, 
             n.title, 
             n.category_id, 
             n.content,
             n.image_url,
+            n.image_public_id,
             n.published_at, 
             n.created_at, 
             n.updated_at,
@@ -182,8 +187,8 @@ export async function getNewsByCategorySlugSlice(
         LIMIT ? OFFSET ?
     `;
 
-    const rows = (await query(sql, [slug, limit, offset])) as NewsItemDTO[];
-    return rows;
+	const rows = (await query(sql, [slug, limit, offset])) as NewsItemDTO[];
+	return rows;
 }
 
 /**
@@ -191,14 +196,14 @@ export async function getNewsByCategorySlugSlice(
  * (Sangat berguna untuk menghitung total halaman / total_pages pada pagination halaman kategori)
  */
 export async function getTotalNewsCountByCategorySlug(slug: string): Promise<number> {
-    const sql = `
+	const sql = `
         SELECT COUNT(n.id) AS total 
         FROM ${tableNews} n
         INNER JOIN ${tableNewsCategory} c ON n.category_id = c.id
         WHERE c.slug = ?
     `;
-    const result = (await query(sql, [slug])) as any[];
-    return result[0]?.total || 0;
+	const result = (await query(sql, [slug])) as any[];
+	return result[0]?.total || 0;
 }
 
 /**
@@ -214,6 +219,7 @@ export async function updateNews(id: string, data: UpdateNewsData): Promise<bool
 		category_id: 'category_id',
 		content: 'content',
 		image_url: 'image_url',
+		image_public_id: 'image_public_id',
 		published_at: 'published_at'
 	};
 
@@ -240,7 +246,6 @@ export async function deleteNews(id: string): Promise<boolean> {
  * @param to Indeks akhir (exclusive, misal: 10 untuk mengambil data ke-0 sampai ke-9)
  */
 export async function getNewsBySlice(from: number, to: number): Promise<NewsItemDTO[]> {
-	// Memastikan offset tidak minus dan menghitung limit (jumlah baris yang diambil)
 	const offset = Math.max(0, from);
 	const limit = Math.max(0, to - offset);
 
@@ -251,6 +256,7 @@ export async function getNewsBySlice(from: number, to: number): Promise<NewsItem
             n.category_id, 
             n.content,
             n.image_url,
+            n.image_public_id,
             n.published_at, 
             n.created_at, 
             n.updated_at,

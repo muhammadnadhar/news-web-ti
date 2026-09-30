@@ -23,13 +23,7 @@
 		getUploadOptions,
 		upload_cloudinary_preset
 	} from '$lib/cloudinary/client';
-
-	interface GuidelineData {
-		id?: string;
-		title?: string;
-		image_url?: string | null;
-		description?: string | null;
-	}
+	import type { PedomanTaDTO } from '$lib/dto/admin/article/akademik';
 
 	let {
 		form,
@@ -38,12 +32,12 @@
 		action
 	}: {
 		form: any;
-		initialData?: GuidelineData | null;
+		initialData?: PedomanTaDTO | null;
 		action?: string;
 		isEdit?: boolean;
 	} = $props();
 
-	let photoPublicId = $state(''); // Simpan public_id dari Cloudinary
+	let photoPublicId = $state(initialData?.image_public_id ?? ''); // Simpan public_id dari Cloudinary
 	let isDeletingPhoto = $state(false);
 
 	let isSubmitting = $state(false);
@@ -123,14 +117,6 @@
 	<!-- Header Navigation -->
 	<div class="flex items-center justify-between border-b border-white/10 pb-4">
 		<div class="flex items-center gap-3">
-			<!-- <button -->
-			<!-- 	type="button" -->
-			<!-- 	onclick={() => goto(removeLastPath())} -->
-			<!-- 	class="rounded-xl border border-white/10 p-2.5 text-text-muted transition-all hover:border-white/20 hover:bg-white/10 hover:text-text-main active:scale-95" -->
-			<!-- 	title="Kembali" -->
-			<!-- > -->
-			<!-- 	<ArrowLeft class="h-5 w-5" /> -->
-			<!-- </button> -->
 			<div>
 				<div class="flex items-center gap-2">
 					<BookOpen class="text-scitech-mint h-5 w-5" />
@@ -201,7 +187,6 @@
 			}}
 			class="space-y-6"
 		>
-			<!-- Field 1: Judul Pedoman TA (Required) -->
 			<div class="space-y-2">
 				<label for="title" class="flex items-center gap-2 text-xs font-semibold text-text-main">
 					<FileText class="text-scitech-cyan h-4 w-4" />
@@ -217,7 +202,7 @@
 					placeholder="Contoh: Pedoman Penulisan Tugas Akhir 2026"
 					required
 					disabled={isSubmitting}
-					class="bg-scitech-navy focus:border-scitech-mint focus:ring-scitech-mint/20 w-full rounded-xl border border-white/10 px-4 py-3 text-xs text-text-main placeholder-text-muted transition-all focus:ring-2 focus:outline-none disabled:opacity-50"
+					class="focus:ring-scitech-mint/20 w-full rounded-xl border border-border-color/10 bg-bg-primary px-4 py-3 text-xs text-text-main placeholder-text-muted transition-all focus:border-border-color focus:ring-2 focus:outline-none disabled:opacity-50"
 				/>
 			</div>
 
@@ -229,6 +214,7 @@
 				</label>
 
 				<input type="hidden" name="image_url" value={imageUrl} />
+				<input type="hidden" name="image_public_id" value={photoPublicId ?? ''} />
 
 				{#if imageUrl}
 					<div
@@ -311,7 +297,10 @@
 			<div class="flex items-center justify-end gap-3 border-t border-white/10 pt-6">
 				<button
 					type="button"
-					onclick={() => goto(removeLastPath())}
+					onclick={() => {
+						removeImage();
+						history.back();
+					}}
 					disabled={isSubmitting}
 					class="rounded-xl border border-white/10 bg-white/5 px-5 py-2.5 text-xs font-semibold text-text-muted transition-all hover:bg-white/10 hover:text-text-main active:scale-95 disabled:opacity-50"
 				>

@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { goto } from '$app/navigation';
 	import Message from '$lib/components/admin/message.svelte';
-	import { removeLastPath } from '$lib/utils';
 	import type { ResponseMessage } from '$lib/types/message';
 	import { ArrowLeft, GraduationCap, User, BookOpen, Save, Loader2Icon } from 'lucide-svelte';
 	import FormEditor from '$lib/components/admin/formEditor.svelte';
@@ -69,7 +67,7 @@
 
 	<!-- Glassmorphism Form Card -->
 	<div
-		class="bg-scitech-slate/50 rounded-2xl border border-white/10 p-6 shadow-2xl backdrop-blur-xl sm:p-8"
+		class="rounded-2xl border border-white/10 bg-bg-secondary/50 p-6 shadow-2xl backdrop-blur-xl sm:p-8"
 	>
 		<form
 			method="POST"

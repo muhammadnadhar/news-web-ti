@@ -6,12 +6,12 @@ import { tableAdminUser } from '$lib/seeder/admin/userAdmin';
 export type UpdateUserData = Partial<Omit<UserAdminDTO, 'id' | 'createdAt'>>;
 
 /**
- *  TAMBAH USER ADMIN BARU
+ * TAMBAH USER ADMIN BARU
  */
 export async function createUserAdmin(userData: Omit<UserAdminDTO, 'createdAt'>): Promise<boolean> {
 	const sql = `
-        INSERT INTO ${tableAdminUser} (id, name, username, email, password, role, status, image_url)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO ${tableAdminUser} (id, name, username, email, password, role, status, image_url, image_public_id)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
 	const params = [
@@ -22,7 +22,8 @@ export async function createUserAdmin(userData: Omit<UserAdminDTO, 'createdAt'>)
 		userData.password,
 		userData.role,
 		userData.status,
-		userData.image_url ?? null // ✅ Ditambahkan ke insert statement
+		userData.image_url ?? null,
+		userData.image_public_id ?? null
 	];
 
 	await query(sql, params);
@@ -43,7 +44,7 @@ export async function checkUserExists(username: string, email: string) {
 }
 
 /**
- * 3. CARI USER BERDASARKAN USERNAME / EMAIL (Untuk Auth/Login)
+ * CARI USER BERDASARKAN USERNAME / EMAIL (Untuk Auth/Login)
  */
 export async function findUserByUsernameOrEmail(identifier: string): Promise<UserAdminDTO | null> {
 	const sql = `
@@ -53,6 +54,7 @@ export async function findUserByUsernameOrEmail(identifier: string): Promise<Use
             username,
             email,
             image_url,
+            image_public_id,
             password,
             role,
             status,
@@ -76,7 +78,8 @@ export async function findUserByUsernameOrEmail(identifier: string): Promise<Use
 			name: row.name,
 			username: row.username,
 			email: row.email,
-			image_url: row.image_url ?? null, // ✅ Mapping image_url
+			image_url: row.image_url ?? null,
+			image_public_id: row.image_public_id ?? null,
 			password: row.password,
 			role: row.role,
 			status: row.status,
@@ -89,7 +92,7 @@ export async function findUserByUsernameOrEmail(identifier: string): Promise<Use
 }
 
 /**
- * 4. AMBIL USER BERDASARKAN ID
+ * AMBIL USER BERDASARKAN ID
  */
 export async function getUserById(id: string): Promise<UserAdminDTO | null> {
 	const sql = `
@@ -99,6 +102,7 @@ export async function getUserById(id: string): Promise<UserAdminDTO | null> {
             username, 
             email, 
             image_url,
+            image_public_id,
             password,
             role, 
             status, 
@@ -119,7 +123,8 @@ export async function getUserById(id: string): Promise<UserAdminDTO | null> {
 		name: row.name,
 		username: row.username,
 		email: row.email,
-		image_url: row.image_url ?? null, // ✅ Diubah dari avatar ke image_url
+		image_url: row.image_url ?? null,
+		image_public_id: row.image_public_id ?? null,
 		password: row.password,
 		role: row.role,
 		status: row.status,
@@ -128,7 +133,7 @@ export async function getUserById(id: string): Promise<UserAdminDTO | null> {
 }
 
 /**
- * 5. UPDATE USER (Dinamis)
+ *  UPDATE USER (Dinamis)
  */
 export async function updateUser(id: string, data: UpdateUserData): Promise<boolean> {
 	const fields = Object.keys(data);
@@ -141,7 +146,8 @@ export async function updateUser(id: string, data: UpdateUserData): Promise<bool
 		email: 'email',
 		role: 'role',
 		status: 'status',
-		image_url: 'image_url', // ✅ Menyiapkan mapping image_url
+		image_url: 'image_url',
+		image_public_id: 'image_public_id',
 		password: 'password'
 	};
 
@@ -184,7 +190,7 @@ export async function getUsersAdmin(
 
 	// Query untuk mengambil data halaman saat ini
 	const itemsSql = `
-        SELECT id, name, username, email, image_url, role, status, created_at as createdAt 
+        SELECT id, name, username, email, image_url, image_public_id, role, status, created_at as createdAt 
         FROM ${tableAdminUser}
         ${whereClause} 
         ORDER BY created_at DESC 
@@ -206,7 +212,7 @@ export async function getUsersAdmin(
 }
 
 /**
- * 8. CEK USERNAME TAKEN
+ * CEK USERNAME TAKEN
  */
 export async function isUsernameTaken(username: string, excludeId?: string): Promise<boolean> {
 	let sql = `SELECT COUNT(*) as count FROM ${tableAdminUser} WHERE username = ?`;

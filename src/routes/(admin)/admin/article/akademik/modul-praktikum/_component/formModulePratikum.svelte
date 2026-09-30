@@ -11,19 +11,10 @@
 	} from '$lib/cloudinary/client';
 	import { UploadCloud, Save, Plus, ImageIcon, X, Trash2, LoaderCircleIcon } from 'lucide-svelte';
 	import type { ResponseMessage } from '$lib/types/message';
-
-	// DTO Modul Praktikum
-	export interface ModulPraktikumDTO {
-		id?: string;
-		title: string;
-		image_url?: string | null;
-		description?: string | null;
-		created_at?: Date | string;
-		updated_at?: Date | string;
-	}
+	import type { PracticumModuleDTO } from '$lib/dto/admin/article/akademik';
 
 	interface Props {
-		initialData?: Partial<ModulPraktikumDTO> | null;
+		initialData?: Partial<PracticumModuleDTO> | null;
 		formError?: string | null;
 		isEditMode?: boolean;
 		submitLabel?: string;
@@ -44,6 +35,7 @@
 	let title = $state(initialData?.title ?? '');
 	let imageUrl = $state(initialData?.image_url ?? '');
 	let description = $state(initialData?.description ?? '');
+	let photoPublicId = $state(initialData?.image_public_id ?? ''); // Simpan public_id dari Cloudinary
 
 	let isSubmitting = $state(false);
 	let showMessage = $state(false);
@@ -54,7 +46,6 @@
 		message: ''
 	});
 
-	let photoPublicId = $state(''); // Simpan public_id dari Cloudinary
 	let isDeletingPhoto = $state(false);
 
 	function triggerMessage(status: MessageStatus, titleStr: string, messageStr: string) {
@@ -122,7 +113,6 @@
 		</p>
 	</header>
 
-	<!-- Feedback Messages -->
 	{#if showMessage}
 		<div class="mb-6">
 			<Message

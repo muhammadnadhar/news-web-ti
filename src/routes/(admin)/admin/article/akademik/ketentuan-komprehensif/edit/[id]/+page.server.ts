@@ -4,8 +4,8 @@ import {
 	getRecruitmentById,
 	updateRecruitment
 } from '$lib/repository/admin/article/akedemik/ketentuan-komprehensif';
-import { errorResponse, successResponse } from '$lib/helper/message';
-import { cloudinary } from '$lib/cloudinary/server';
+import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
+import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
 
 // Load: Mengambil data rekrutmen spesifik berdasarkan ID dari URL Params
 export const load: PageServerLoad = async ({ params }) => {
@@ -34,7 +34,6 @@ export const load: PageServerLoad = async ({ params }) => {
 
 // Actions: Menangani Update & Delete Data Form
 export const actions: Actions = {
-	// Action Default: Memperbarui Data Rekrutmen
 	update: async ({ request, params }) => {
 		const { id } = params;
 
@@ -47,15 +46,10 @@ export const actions: Actions = {
 		const imageUrl = (formData.get('image_url') as string)?.trim() || null;
 		const description = (formData.get('description') as string)?.trim() || null;
 
-		// Validasi Input Wajib
 		if (!title) {
 			return fail(400, {
 				values: { title, imageUrl, description },
-				message: {
-					type: 'error',
-					title: 'Validasi Gagal',
-					message: 'Judul / Ketentuan Rekrutmen wajib diisi.'
-				}
+        ...warningResponse("Judul / Ketentuan Rekrutmen wajib di isi","Warning")
 			});
 		}
 
@@ -71,24 +65,16 @@ export const actions: Actions = {
 
 			return {
 				values: { title, imageUrl, description },
-				message: {
-					type: 'success',
-					title: 'Berhasil',
-					message: 'Data Rekrutmen berhasil diperbarui!'
-				}
-			};
+			...successResponse("Data rekrutmen berhasil di perbaharui"),
+  			};
 		} catch (err: any) {
 			return fail(500, {
 				values: { title, imageUrl, description },
-				message: {
-					type: 'error',
-					title: 'Terjadi Kesalahan',
-					message: err?.message || 'Gagal memperbarui data pada server.'
-				}
+		...errorResponse("Gagal memperbarui data pada server","Terjadi Kesalahn")
 			});
 		}
 	},
-	deletePhoto: async ({ request }) => {
+	deleteImage: async ({ request }) => {
 		const formData = await request.formData();
 		const publicId = formData.get('public_id')?.toString();
 
@@ -97,7 +83,7 @@ export const actions: Actions = {
 		}
 
 		try {
-			await cloudinary.uploader.destroy(publicId);
+			await deleteImageFromCloudinary(publicId);
 			return successResponse('Berhasil di batalkan', 'Succcess');
 		} catch (err) {
 			console.error('Error deleting photo:', err);

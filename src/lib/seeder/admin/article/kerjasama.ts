@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS ${tableActivityDocumentation} (
     id VARCHAR(36) PRIMARY KEY, -- Primary key berupa UUID string
     title VARCHAR(255) NOT NULL, -- Judul Kegiatan / Nama Dokumentasi
     image_url VARCHAR(255) NULL, -- URL/Path foto atau media dokumentasi kegiatan
+  image_public_id VARCHAR(255) NULL, -- ID untuk Url Gambar
     link_drive TEXT NULL,
     description TEXT NULL, -- Deskripsi singkat kegiatan (opsional, teks polos)
     event_date DATE NULL, -- Tanggal pelaksanan kegiatan (opsional)

@@ -31,7 +31,8 @@ export const navMenuItems: NavMenuItemType[] = [
 			},
 			{ id: 'dosen-staff', label: 'Dosen & Staf', href: '/profil/dosen-staff' },
 			{ id: 'akreditasi', label: 'Akreditasi', href: '/profil/akreditasi' },
-			{ id: 'kurikulum', label: 'Kurikulum', href: '/profil/kurikulum' }
+			{ id: 'kurikulum', label: 'Kurikulum', href: '/profil/kurikulum' },
+			{ id: 'fasilitas', label: "Fasilitas", href: '/profil/fasilitas' }
 		]
 	},
 	{

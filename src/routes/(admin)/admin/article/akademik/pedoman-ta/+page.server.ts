@@ -3,7 +3,15 @@ import type { Actions, PageServerLoad } from './$types';
 
 import { writeFileSync, mkdirSync, existsSync } from 'fs';
 import { join } from 'path';
-import { createPedomanTa, deletePedomanTa, getAllPedomanTa, updatePedomanTa } from '$lib/repository/admin/article/akedemik/pedomanTa';
+import {
+	createPedomanTa,
+	deletePedomanTa,
+	getAllPedomanTa,
+	getPedomanTaById,
+	updatePedomanTa
+} from '$lib/repository/admin/article/akedemik/pedomanTa';
+import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
+import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
 
 export const load: PageServerLoad = async () => {
 	try {
@@ -65,14 +73,32 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const id = formData.get('id') as string;
 
-		if (!id) return fail(400, { message: 'ID tidak valid.' });
+		if (!id) {
+			return fail(400, warningResponse('ID Pedoman TA tidak valid.', 'Gagal'));
+		}
 
 		try {
+			// Ambil data Pedoman TA berdasarkan ID
+			const existingData = await getPedomanTaById(id);
+			console.info('Data yang di dapat : ', existingData);
+
+			if (!existingData) {
+				return fail(404, warningResponse('Data Pedoman TA tidak ditemukan.', 'Gagal'));
+			}
+
+			if (existingData.image_public_id) {
+				// Catatan natinya loh ya : Jika berkas pedoman berupa PDF/Dokumen (bukan gambar),
+				// tambahkan parameter kedua 'raw': await deleteImageFromCloudinary(existingData.image_public_id, 'raw');
+				await deleteImageFromCloudinary(existingData.image_public_id);
+				console.info('di hapus : ', existingData.image_public_id);
+			}
+
 			await deletePedomanTa(id);
-			return { success: true };
+
+			return successResponse('Data Pedoman TA dan berkas terkait berhasil dihapus.', 'Berhasil');
 		} catch (err) {
 			console.error('Error deleting pedoman TA:', err);
-			return fail(500, { message: 'Gagal menghapus data Pedoman TA.' });
+			return fail(500, errorResponse('Gagal menghapus data Pedoman TA.', 'Kesalahan Sistem'));
 		}
 	}
 };

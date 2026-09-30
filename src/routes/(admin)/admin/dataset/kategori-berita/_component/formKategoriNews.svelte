@@ -58,7 +58,7 @@
 			<!-- <button -->
 			<!-- 	type="button" -->
 			<!-- 	onclick={() => history.back()} -->
-			<!-- 	class="rounded-xl border border-white/10 p-2.5 text-text-muted transition-all hover:border-white/20 hover:bg-white/10 hover:text-text-main active:scale-95" -->
+			<!-- 	class="rounded-xl border border-white/10 p-2.5 text-text-muted transition-all hover:border-white/20 hover:bg-bg-secondary/10 hover:text-text-main active:scale-95" -->
 			<!-- 	title="Kembali" -->
 			<!-- > -->
 			<!-- 	<ArrowLeft class="h-5 w-5" /> -->
@@ -149,7 +149,7 @@
 						placeholder="Contoh: Pengumuman, Seminar, Prestasi"
 						required
 						disabled={isSubmitting}
-						class="w-full rounded-xl border border-white/10 bg-scitech-navy px-4 py-3 text-xs text-text-main placeholder-text-muted transition-all focus:border-scitech-mint focus:outline-none focus:ring-2 focus:ring-scitech-mint/20 disabled:opacity-50"
+						class="w-full rounded-xl border border-white/10 bg-bg-secondary px-4 py-3 text-xs text-text-main placeholder-text-muted transition-all focus:border-scitech-mint focus:outline-none focus:ring-2 focus:ring-scitech-mint/20 disabled:opacity-50"
 					/>
 				</div>
 
@@ -173,7 +173,7 @@
 						oninput={handleSlugInput}
 						placeholder="contoh: pengumuman-seminar"
 						disabled={isSubmitting}
-						class="w-full rounded-xl border border-white/10 bg-scitech-navy px-4 py-3 text-xs text-text-main placeholder-text-muted transition-all focus:border-scitech-mint focus:outline-none focus:ring-2 focus:ring-scitech-mint/20 disabled:opacity-50"
+						class="w-full rounded-xl border border-white/10 bg-bg-secondary px-4 py-3 text-xs text-text-main placeholder-text-muted transition-all focus:border-scitech-mint focus:outline-none focus:ring-2 focus:ring-scitech-mint/20 disabled:opacity-50"
 					/>
 				</div>
 
@@ -189,7 +189,7 @@
 					type="button"
 					onclick={() => history.back() }
 					disabled={isSubmitting}
-					class="rounded-xl border border-white/10 bg-white/5 px-5 py-2.5 text-xs font-semibold text-text-muted transition-all hover:bg-white/10 hover:text-text-main active:scale-95 disabled:opacity-50"
+					class="rounded-xl border border-white/10 bg-bg-secondary/5 px-5 py-2.5 text-xs font-semibold text-text-muted transition-all hover:bg-white/10 hover:text-text-main active:scale-95 disabled:opacity-50"
 				>
 					Batal
 				</button>

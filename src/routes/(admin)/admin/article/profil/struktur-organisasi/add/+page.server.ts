@@ -1,9 +1,9 @@
-import { fail, redirect } from '@sveltejs/kit';
+import { fail } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { createOrgStructure } from '$lib/repository/admin/article/profile/structure';
 import { randomUUID } from '$lib/crypto';
 import { errorResponse, successResponse } from '$lib/helper/message';
-import { cloudinary } from '$lib/cloudinary/server';
+import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
 
 export const actions: Actions = {
 	create: async ({ request }) => {
@@ -59,7 +59,7 @@ export const actions: Actions = {
 		}
 
 		try {
-			await cloudinary.uploader.destroy(publicId);
+			await deleteImageFromCloudinary(publicId);
 			return successResponse('Berhasil di batalkan', 'Succcess');
 		} catch (err) {
 			console.error('Error deleting photo:', err);

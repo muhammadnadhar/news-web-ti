@@ -1,8 +1,10 @@
 import { error, fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 import { getNewsById, updateNews } from '$lib/repository/admin/article/berita';
-import { warningResponse, successResponse } from '$lib/helper/message';
+import { warningResponse, successResponse, errorResponse } from '$lib/helper/message';
 import { getAllNewsCategories } from '$lib/repository/admin/dataset/beritaKategory';
+import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
+import type { NewsFormValues } from '$lib/types/values/admin/article';
 // Import method berita & helper response Anda
 // import { getNewsById, updateNews } from '$lib/server/news';
 // import { warningResponse, successResponse } from '$lib/utils/response';
@@ -46,39 +48,54 @@ export const actions: Actions = {
 		const newsId = params.id;
 		const formData = await request.formData();
 
-		const title = formData.get('title')?.toString().trim() || '';
-		const category = formData.get('category')?.toString().trim() || '';
-		const content = formData.get('content')?.toString().trim() || '';
-		const imageUrl = formData.get('imageUrl')?.toString().trim() || null;
+		//  Ekstraksi data & susun langsung ke objek values bertipe NewsFormValues
+		const values: NewsFormValues = {
+			title: formData.get('title')?.toString().trim() || '',
+			category: formData.get('category')?.toString().trim() || '',
+			content: formData.get('content')?.toString().trim() || '',
+			imageUrl: formData.get('imageUrl')?.toString().trim() || null,
+			imageId: formData.get('image_public_id')?.toString().trim() || null
+		};
 
-		// Validasi input wajib
-		if (!title || !category || !content) {
+		console.info('data update : ', values);
+
+		// 2. Validasi input wajib
+		if (!values.title || !values.category || !values.content) {
 			return fail(400, {
 				...warningResponse('Harap isi semua kolom yang wajib (*).', 'warning'),
-				values: { title, category, content, imageUrl }
+				values
+			});
+		}
+
+		// 3. Pengecekan panjang title untuk VARCHAR(255)
+		if (values.title.length > 255) {
+			return fail(400, {
+				...warningResponse('Judul terlalu panjang, maksimal 255 karakter.', 'warning'),
+				values
 			});
 		}
 
 		try {
 			// Memanggil method updateNews secara dinamis
 			const isUpdated = await updateNews(newsId, {
-				title,
-				category_id: category,
-				content,
-				image_url: imageUrl
+				title: values.title,
+				category_id: values.category,
+				content: values.content,
+				image_url: values.imageUrl,
+				image_public_id: values.imageId
 			});
 
 			if (!isUpdated) {
 				return fail(500, {
 					...warningResponse('Gagal memperbarui data berita.', 'warning'),
-					values: { title, category, content, imageUrl }
+					values
 				});
 			}
 		} catch (err) {
 			console.error('Error updating news:', err);
 			return fail(500, {
 				...warningResponse('Terjadi kesalahan server saat memperbarui berita.', 'warning'),
-				values: { title, category, content, imageUrl }
+				values
 			});
 		}
 
@@ -88,5 +105,23 @@ export const actions: Actions = {
 		return {
 			...successResponse('Berhasil memperbarui Berita', 'Success')
 		};
+	},
+
+	// untuk edit dia akan memanggil fungsi delete Photo saat tombol batal di click
+	deletePhoto: async ({ request }) => {
+		const formData = await request.formData();
+		const publicId = formData.get('public_id')?.toString();
+
+		if (!publicId) {
+			return fail(400, { ...errorResponse('Public Id tidak di temukan', 'Error') });
+		}
+
+		try {
+			await deleteImageFromCloudinary(publicId);
+			return successResponse('Berhasil di batalkan', 'Succcess');
+		} catch (err) {
+			console.error('Error deleting photo:', err);
+			return fail(500, errorResponse('Gagal menghapus foto ', 'Gagal'));
+		}
 	}
 };

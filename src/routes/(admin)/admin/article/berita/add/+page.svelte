@@ -8,6 +8,7 @@
 <FormNews
 	{form}
 	initialData={{ categories: data.categories }}
+	valuesData={form?.values}
 	isEdit={false}
 	actionUrl="?/create"
 />

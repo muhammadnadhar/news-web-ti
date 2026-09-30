@@ -2,8 +2,6 @@ import { query } from '$lib/database/svelteDb';
 import type { AngkatanDTO } from '$lib/dto/admin/dataset';
 import { tableAngkatan } from '$lib/seeder/admin/dataset';
 
-
-
 /**
  *  tambah angkatan (create)
  */
@@ -35,7 +33,7 @@ export async function getAngkatanByYear(year: number): Promise<AngkatanDTO | nul
 }
 
 /**
- * 3. UPDATE ANGKATAN (Update)
+ *. UPDATE ANGKATAN (Update)
  */
 export async function updateAngkatan(id: string, year: number): Promise<boolean> {
 	const sql = `UPDATE ${tableAngkatan} SET year = ? WHERE id = ?`;
@@ -44,7 +42,7 @@ export async function updateAngkatan(id: string, year: number): Promise<boolean>
 }
 
 /**
- * 4. HAPUS ANGKATAN (Delete)
+ * HAPUS ANGKATAN (Delete)
  */
 export async function deleteAngkatan(id: string): Promise<boolean> {
 	const sql = `DELETE FROM ${tableAngkatan} WHERE id = ?`;

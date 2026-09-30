@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte';
 	import Navbar from '$lib/components/navbar.svelte';
 	import MainFooter from './_components/mainFooter.svelte';
-	import { AlertCircle, X } from 'lucide-svelte';
+	import { AlertCircle, RefreshCwIcon, X } from 'lucide-svelte';
 	import type { Snippet } from 'svelte';
 	import { Apptheme } from '$lib/global/theme';
 	import type { LayoutData } from '../$types';
@@ -11,11 +11,11 @@
 	import { navMenuItems } from '$lib/data/navbar';
 
 	import uinIcon from '$lib/assets/uin-icon.webp'; // Sesuaikan path
-	import GlobalSkeletonUser from '$lib/components/globalSkeletonUser.svelte';
 	import { navigating } from '$app/state';
 	import type { SemesterDTO } from '$lib/dto/admin/dataset';
 	import NewsQuickDrawer from '$lib/components/newsQuickDrawer.svelte';
 	import { invalidateAll } from '$app/navigation';
+	import Spin from '$lib/components/loading/spin.svelte';
 	interface Props {
 		data: LayoutData;
 		children: Snippet;
@@ -124,17 +124,15 @@
 	>
 		<a href="/" class="flex items-center gap-3">
 			<div
-				class="bg-scitech-navy-glare border-scitech-mint/30 flex h-12 w-12 items-center justify-center rounded-xl border p-2 shadow-lg"
+				class=" flex h-16.5 w-16.5 items-center justify-center rounded-xl border-4 border-border-color/30 p-2 shadow-lg"
 			>
-				<img src={uinIcon} class=" h-7 w-7" alt="UIN Logo" />
+				<img src={uinIcon} class=" h-[90%] w-[90%]" alt="UIN Logo" />
 			</div>
 			<div>
-				<h1 class="text-scitech-mint text-xs font-bold tracking-widest uppercase sm:text-sm">
+				<h1 class=" text-sm font-bold tracking-widest uppercase sm:text-xl">
 					Prodi Teknologi Informasi
 				</h1>
-				<p class="text-[11px] font-medium text-text-muted sm:text-xs">
-					Fakultas Sains dan Teknologi UIN Ar-Raniry
-				</p>
+				<p class="text-[12px] font-medium sm:text-xs">Fakultas Sains dan Teknologi UIN Ar-Raniry</p>
 			</div>
 		</a>
 
@@ -143,7 +141,7 @@
 	</header>
 
 	{#if showLoading}
-		<GlobalSkeletonUser />
+		<Spin />
 	{/if}
 
 	<!-- content render (sveltekit slot) -->
@@ -205,7 +203,7 @@
 						onclick={() => invalidateAll()}
 						class="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-status-error/40 bg-status-error/20 px-3 py-1.5 text-xs font-semibold text-status-error transition hover:bg-status-error/30 active:scale-95"
 					>
-						<RefreshCw class="h-3.5 w-3.5" />
+						<RefreshCwIcon class="h-3.5 w-3.5" />
 						<span>Coba Lagi</span>
 					</button>
 				</div>

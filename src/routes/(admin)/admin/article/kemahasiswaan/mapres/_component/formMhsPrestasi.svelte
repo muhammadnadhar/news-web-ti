@@ -106,8 +106,9 @@
 			if (response.ok) {
 				photoUrl = '';
 				photoPublicId = '';
+				triggerMessage('success', 'Berhasil', 'Gambar berhasil dihapus dari .');
 			} else {
-				alert('Gagal menghapus gambar dari Cloudinary');
+				triggerMessage('error', 'Gagal', 'Gagal menghapus gambar dari Cloudinary.');
 			}
 		} catch (err) {
 			console.error('Error deleting photo:', err);

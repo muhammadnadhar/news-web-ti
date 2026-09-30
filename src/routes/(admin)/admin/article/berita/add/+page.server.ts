@@ -5,7 +5,8 @@ import { createNews } from '$lib/repository/admin/article/berita';
 import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
 import { getAllNewsCategories } from '$lib/repository/admin/dataset/beritaKategory';
 import type { PageServerLoad } from '../$types';
-import { cloudinary } from '$lib/cloudinary/server';
+import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
+import type { NewsFormValues } from '$lib/types/values/admin/article';
 
 export const load: PageServerLoad = async () => {
 	// Ambil semua daftar kategori berita dari database
@@ -20,51 +21,60 @@ export const actions: Actions = {
 	create: async ({ request }) => {
 		const formData = await request.formData();
 
-		const title = formData.get('title')?.toString().trim() || '';
-		const category = formData.get('category')?.toString().trim() || '';
-		const content = formData.get('content')?.toString().trim() || '';
-		const imageUrl = formData.get('imageUrl')?.toString().trim() || null;
+		// Ekstraksi data & susun langsung ke tipe NewsFormValues
+		const values: NewsFormValues = {
+			title: formData.get('title')?.toString().trim() || '',
+			category: formData.get('category')?.toString().trim() || '',
+			content: formData.get('content')?.toString().trim() || '',
+			imageUrl: formData.get('imageUrl')?.toString().trim() || null,
+			imageId: formData.get('image_public_id')?.toString().trim() || null
+		};
 
-		console.info('data  : ', title, category, content, imageUrl);
+		console.info('data  : ', values);
 
-		if (!title || !category || !content) {
+		// 2. Pengecekan kolom wajib diisi
+		if (!values.title || !values.category || !values.content) {
 			return fail(400, {
 				...warningResponse('Harap isi semua kolom yang wajib (*).', 'warning'),
-				values: { title, category, content, imageUrl }
+				values
 			});
 		}
-		console.info('data masuk : ', title);
+
+		// 3. Pengecekan panjang title untuk VARCHAR(255)
+		if (values.title.length > 255) {
+			return fail(400, {
+				...warningResponse('Judul terlalu panjang, maksimal 255 karakter.', 'warning'),
+				values
+			});
+		}
 
 		const newsId = randomUUID();
 
 		try {
-			// Memanggil method createNews sesuai struktur CreateNewsData
+			// Memanggil method createNews
 			const isCreated = await createNews(newsId, {
-				title,
-				category_id: category, // Disesuaikan dengan parameter SQL: category_id
-				content,
-				image_url: imageUrl,
+				title: values.title,
+				category_id: values.category,
+				content: values.content,
+				image_url: values.imageUrl,
+				image_public_id: values.imageId,
 				published_at: new Date()
 			});
 
 			if (!isCreated) {
 				return fail(500, {
 					...warningResponse('Gagal menyimpan berita.', 'warning'),
-					values: { title, category, content, imageUrl }
+					values
 				});
 			}
 		} catch (err) {
 			console.error('Error creating news:', err);
 			return fail(500, {
 				...warningResponse('Terjadi kesalahan server saat menyimpan berita.', 'warning'),
-				values: { title, category, content, imageUrl }
+				values
 			});
 		}
 
-		// Jika ingin redirect ke halaman daftar berita setelah berhasil:
-		// throw redirect(303, '/admin/berita');
-
-		// Jika ingin tetap di halaman dan menampilkan notifikasi sukses:
 		return {
 			...successResponse('Berhasil membuat Berita', 'Success')
 		};
@@ -77,7 +87,7 @@ export const actions: Actions = {
 			return fail(400, { ...errorResponse('Public Id tidak di temukan', 'Error') });
 		}
 		try {
-			await cloudinary.uploader.destroy(publicId);
+			await deleteImageFromCloudinary(publicId);
 			return successResponse('Berhasil di batalkan', 'Succcess');
 		} catch (err) {
 			console.error('Error deleting photo:', err);

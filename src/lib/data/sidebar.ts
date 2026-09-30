@@ -60,79 +60,149 @@ export const sidebarMenu: MenuCategory[] = [
 		category: 'article',
 		items: [
 			// {
-			// 	title: 'Home article ',
-			// 	iconName: 'Home',
-			// 	href: AdminUrl + '/article'
+			//     title: 'Home article ',
+			//     iconName: 'Home',
+			//     href: AdminUrl + '/article'
 			// },
 			{
 				title: 'Profil',
 				iconName: 'BadgeIdentity',
 				children: [
-					{ title: 'Visi & Misi', href: AdminUrl + '/article/profil/visi-misi' },
-					{ title: 'Sejarah Singkat', href: AdminUrl + '/article/profil/sejarah' },
-					{ title: 'Struktur Organisasi', href: AdminUrl + '/article/profil/struktur-organisasi' },
-					{ title: 'Dosen & Staf', href: AdminUrl + '/article/profil/dosen' },
-					{ title: 'Akreditasi', href: AdminUrl + '/article/profil/akreditasi' },
-					{ title: 'Fasilitas Lab', href: AdminUrl + '/article/profil/fasilitas' }
+					{
+						title: 'Visi & Misi',
+						iconName: 'Target',
+						href: AdminUrl + '/article/profil/visi-misi'
+					},
+					{
+						title: 'Sejarah Singkat',
+						iconName: 'History',
+						href: AdminUrl + '/article/profil/sejarah'
+					},
+					{
+						title: 'Struktur Organisasi',
+						iconName: 'Network',
+						href: AdminUrl + '/article/profil/struktur-organisasi'
+					},
+					{
+						title: 'Dosen & Staf',
+						iconName: 'UserCheck',
+						href: AdminUrl + '/article/profil/dosen'
+					},
+					{ title: 'Akreditasi', iconName: 'Award', href: AdminUrl + '/article/profil/akreditasi' },
+					{
+						title: 'Fasilitas Lab',
+						iconName: 'FlaskConical',
+						href: AdminUrl + '/article/profil/fasilitas'
+					}
 				]
 			},
 			{
 				title: 'Akademik',
 				iconName: 'GraduationCap',
 				children: [
-					{ title: 'Kalender Akademik', href: AdminUrl + '/article/akademik/kalender' },
-					{ title: 'Pedoman Tugas Akhir', href: AdminUrl + '/article/akademik/pedoman-ta' },
-					{ title: 'Pedoman KKP', href: AdminUrl + '/article/akademik/pedoman-kkp' },
+					{
+						title: 'Kalender Akademik',
+						iconName: 'Calendar',
+						href: AdminUrl + '/article/akademik/kalender'
+					},
+					{
+						title: 'Pedoman Tugas Akhir',
+						iconName: 'FileText',
+						href: AdminUrl + '/article/akademik/pedoman-ta'
+					},
+					{
+						title: 'Pedoman KKP',
+						iconName: 'Briefcase',
+						href: AdminUrl + '/article/akademik/pedoman-kkp'
+					},
 					{
 						title: 'Ketentuan Komprehensif',
+						iconName: 'ClipboardList',
 						href: AdminUrl + '/article/akademik/ketentuan-komprehensif'
 					},
-					{ title: 'Modul Praktikum', href: AdminUrl + '/article/akademik/modul-praktikum' }
+					{
+						title: 'Modul Praktikum',
+						iconName: 'BookMarked',
+						href: AdminUrl + '/article/akademik/modul-praktikum'
+					}
 				]
 			},
 			{
 				title: 'Kurikulum',
 				iconName: 'BookOpen',
 				children: [
-					{ title: 'Kurikulum OBE', href: AdminUrl + '/article/kurikulum/obe' },
-					{ title: 'Daftar Mata Kuliah', href: AdminUrl + '/article/kurikulum/matakuliah' }
+					{ title: 'Kurikulum OBE', iconName: 'Layers', href: AdminUrl + '/article/kurikulum/obe' },
+					{
+						title: 'Daftar Mata Kuliah',
+						iconName: 'ListOrdered',
+						href: AdminUrl + '/article/kurikulum/matakuliah'
+					}
 				]
 			},
 			{
 				title: 'Kemahasiswaan',
 				iconName: 'Users',
 				children: [
-					{ title: 'IPK Tertinggi', href: AdminUrl + '/article/kemahasiswaan/ipktertinggi' },
-					{ title: 'Beasiswa', href: AdminUrl + '/article/kemahasiswaan/beasiswa' },
-					{ title: 'Mahasiswa prestasi', href: AdminUrl + '/article/kemahasiswaan/mapres' }
+					{
+						title: 'IPK Tertinggi',
+						iconName: 'Trophy',
+						href: AdminUrl + '/article/kemahasiswaan/ipktertinggi'
+					},
+					{
+						title: 'Beasiswa',
+						iconName: 'Award',
+						href: AdminUrl + '/article/kemahasiswaan/beasiswa'
+					},
+					{
+						title: 'Mahasiswa prestasi',
+						iconName: 'Medal',
+						href: AdminUrl + '/article/kemahasiswaan/mapres'
+					}
 				]
 			},
 			{
 				title: 'Penelitian',
 				iconName: 'Microscope',
 				children: [
-					{ title: 'Penelitian Dosen', href: AdminUrl + '/article/penelitian/penelitian-dosen' },
+					{
+						title: 'Penelitian Dosen',
+						iconName: 'Search',
+						href: AdminUrl + '/article/penelitian/penelitian-dosen'
+					},
 					{
 						title: 'Publikasi Mahasiswa',
+						iconName: 'FileUp',
 						href: AdminUrl + '/article/penelitian/publikasi-mahasiswa'
 					},
-					{ title: 'Publikasi Dosen', href: AdminUrl + '/article/penelitian/publikasi-dosen' }
+					{
+						title: 'Publikasi Dosen',
+						iconName: 'FileCheck2',
+						href: AdminUrl + '/article/penelitian/publikasi-dosen'
+					}
 				]
 			},
 			{
 				title: 'Kerjasama',
 				iconName: 'Handshake',
 				children: [
-					{ title: 'Mitra Industri', href: AdminUrl + '/article/kerjasama/daftar-kerjasama' },
-					{ title: 'Documentasi Kegiatan', href: AdminUrl + '/article/kerjasama/dokumentasi' }
+					{
+						title: 'Mitra Industri',
+						iconName: 'Building2',
+						href: AdminUrl + '/article/kerjasama/daftar-kerjasama'
+					},
+					{
+						title: 'Documentasi Kegiatan',
+						iconName: 'Camera',
+						href: AdminUrl + '/article/kerjasama/dokumentasi'
+					}
 				]
 			},
 			{
 				title: 'Berita',
 				iconName: 'Newspaper',
 				children: [
-					{ title: 'berita', href: AdminUrl + '/article/berita' }
-					// 	{ title: 'Agenda Kegiatan', href: AdminUrl + '/article/berita/agenda' }
+					{ title: 'berita', iconName: 'Newspaper', href: AdminUrl + '/article/berita' }
+					// { title: 'Agenda Kegiatan', iconName: 'CalendarDays', href: AdminUrl + '/article/berita/agenda' }
 				]
 			}
 		]

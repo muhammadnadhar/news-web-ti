@@ -5,8 +5,10 @@ import {
 	createActivityDocumentation,
 	deleteActivityDocumentation,
 	getAllActivityDocumentations,
+	getPublicIdActivityDocumentationById,
 	updateActivityDocumentation
 } from '$lib/repository/admin/article/kerjasama/documentasi';
+import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
 
 export const load: PageServerLoad = async () => {
 	try {
@@ -88,26 +90,37 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const id = formData.get('id')?.toString().trim();
 
-		//Validasi ID wajib ada
 		if (!id) {
-			return fail(400, warningResponse('ID dokumentasi wajib disertakan.', 'Gagal'));
+			return fail(400, warningResponse('ID Dokumentasi Kegiatan wajib disertakan.', 'Gagal'));
 		}
 
 		try {
-			const isSuccess = await deleteActivityDocumentation(id);
+			//  Ambil image_public_id menggunakan helper ringan
+			const imagePublicId = await getPublicIdActivityDocumentationById(id);
 
-			//  Validasi status keberhasilan hapus dari database
-			if (!isSuccess) {
-				return fail(400, errorResponse('Gagal menghapus data atau data tidak ditemukan.', 'Gagal'));
+			//  Jika ada berkas gambar di Cloudinary, hapus terlebih dahulu
+			if (imagePublicId) {
+				await deleteImageFromCloudinary(imagePublicId);
 			}
 
-			//  Success Response Hapus
-			return successResponse('Dokumentasi kegiatan berhasil dihapus.', 'Berhasil');
+			const isSuccess = await deleteActivityDocumentation(id);
+
+			if (!isSuccess) {
+				return fail(
+					404,
+					warningResponse('Data Dokumentasi Kegiatan tidak ditemukan atau sudah dihapus.', 'Gagal')
+				);
+			}
+
+			return successResponse('Dokumentasi Kegiatan berhasil dihapus.', 'Berhasil');
 		} catch (err: any) {
-			console.error('Error saat menghapus dokumentasi:', err);
+			console.error('Error deleting activity documentation:', err);
 			return fail(
 				500,
-				errorResponse('Terjadi kesalahan sistem saat menghapus data.', 'Kesalahan Sistem')
+				errorResponse(
+					'Terjadi kesalahan sistem saat menghapus Dokumentasi Kegiatan.',
+					'Kesalahan Sistem'
+				)
 			);
 		}
 	}

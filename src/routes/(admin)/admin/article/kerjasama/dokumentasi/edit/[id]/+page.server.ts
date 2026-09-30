@@ -4,6 +4,8 @@ import {
 	getActivityDocumentationById,
 	updateActivityDocumentation
 } from '$lib/repository/admin/article/kerjasama/documentasi';
+import { errorResponse, successResponse } from '$lib/helper/message';
+import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
 // Sesuaikan import path repository Anda
 
 /**
@@ -31,7 +33,7 @@ export const load: PageServerLoad = async ({ params }) => {
  * Memproses pembaruan data dokumentasi kegiatan
  */
 export const actions: Actions = {
-	default: async ({ request, params }) => {
+	update: async ({ request, params }) => {
 		const { id } = params;
 		const formData = await request.formData();
 
@@ -104,6 +106,22 @@ export const actions: Actions = {
 				message: 'Terjadi kesalahan sistem saat memperbarui data dokumentasi.',
 				values
 			});
+		}
+	},
+	deletePhoto: async ({ request }) => {
+		const formData = await request.formData();
+		const publicId = formData.get('public_id')?.toString();
+
+		if (!publicId) {
+			return fail(400, { ...errorResponse('Public Id tidak di temukan', 'Error') });
+		}
+
+		try {
+			await deleteImageFromCloudinary(publicId);
+			return successResponse('Berhasil di batalkan', 'Succcess');
+		} catch (err) {
+			console.error('Error deleting photo:', err);
+			return fail(500, errorResponse('Gagal menghapus foto ', 'Gagal'));
 		}
 	}
 };

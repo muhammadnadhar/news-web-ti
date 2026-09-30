@@ -2,7 +2,6 @@ import { query } from '$lib/database/svelteDb';
 import type { AccreditationItemDTO, CreateAccreditationData } from '$lib/dto/admin/article/profile';
 import { tableAccreditation } from '$lib/seeder/admin/article/profile';
 
-
 /**
  * Mengambil semua data akreditasi (Read All)
  */
@@ -11,8 +10,9 @@ export async function getAllAccreditations(): Promise<AccreditationItemDTO[]> {
 	const rows = (await query(sql)) as AccreditationItemDTO[];
 	return rows;
 }
+
 /**
- *mendapatkan data akreditasi (read singleton)
+ * Mendapatkan data akreditasi (read singleton)
  * Mengambil baris pertama dari tabel akreditasi
  */
 export async function getAccreditation(): Promise<AccreditationItemDTO | null> {
@@ -23,28 +23,45 @@ export async function getAccreditation(): Promise<AccreditationItemDTO | null> {
 }
 
 /**
- * TAMBAH / UPDATE DATA AKREDITASI (Upsert)
+ * Mengambil hanya image_public_id dari data Akreditasi berdasarkan ID
+ *
+ * @param id - ID Akreditasi
+ * @returns Promise<string | null> - Mengembalikan string image_public_id atau null jika tidak ditemukan
  */
-export async function upsertAccreditation(id: string, data: CreateAccreditationData): Promise<boolean> {
+export async function getPublicIdAccreditationById(id: string): Promise<string | null> {
+	const sql = `SELECT image_public_id FROM ${tableAccreditation} WHERE id = ? LIMIT 1`;
+	const rows = (await query(sql, [id])) as Array<{ image_public_id: string | null }>;
+
+	return rows[0]?.image_public_id ?? null;
+}
+
+/**
+ * Tambah / update data akreditasi (upsert)
+ */
+export async function upsertAccreditation(
+	id: string,
+	data: CreateAccreditationData
+): Promise<boolean> {
 	const sql = `
-		INSERT INTO ${tableAccreditation} (id, image_url, description)
-		VALUES (?, ?, ?)
-		ON DUPLICATE KEY UPDATE
-			image_url = VALUES(image_url),
-			description = VALUES(description),
-			updated_at = CURRENT_TIMESTAMP
-	`;
-	const params = [id, data.image_url || null, data.description];
+        INSERT INTO ${tableAccreditation} (id, image_url, image_public_id, description)
+        VALUES (?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE
+            image_url = VALUES(image_url),
+            image_public_id = VALUES(image_public_id),
+            description = VALUES(description),
+            updated_at = CURRENT_TIMESTAMP
+    `;
+	const params = [id, data.image_url || null, data.image_public_id || null, data.description];
 
 	const result = (await query(sql, params)) as any;
 	return result.affectedRows > 0;
 }
 
 /**
- * 3. HAPUS FOTO SERTIFIKAT AKREDITASI
+ * Hapus foto sertifikat akreditasi
  */
 export async function deleteAccreditationImage(id: string): Promise<boolean> {
-	const sql = `UPDATE ${tableAccreditation} SET image_url = NULL WHERE id = ?`;
+	const sql = `UPDATE ${tableAccreditation} SET image_url = NULL, image_public_id = NULL, updated_at = NOW() WHERE id = ?`;
 	const result = (await query(sql, [id])) as any;
 	return result.affectedRows > 0;
 }

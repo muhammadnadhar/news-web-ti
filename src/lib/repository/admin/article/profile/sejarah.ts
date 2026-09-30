@@ -25,17 +25,36 @@ export async function upsertHistoryContent(
 	data: CreateHistoryContentData
 ): Promise<boolean> {
 	const sql = `
-		INSERT INTO ${tableSejarahContent} (id, title, image_url, description)
-		VALUES (?, ?, ?, ?)
-		ON DUPLICATE KEY UPDATE
-			title = VALUES(title),
-			image_url = VALUES(image_url),
-			description = VALUES(description),
-			updated_at = CURRENT_TIMESTAMP
-	`;
-	const params = [id, data.title, data.image_url || null, data.description || null];
+        INSERT INTO ${tableSejarahContent} (id, title, image_url, image_public_id, description)
+        VALUES (?, ?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE
+            title = VALUES(title),
+            image_url = VALUES(image_url),
+            image_public_id = VALUES(image_public_id),
+            description = VALUES(description),
+            updated_at = CURRENT_TIMESTAMP
+    `;
+	const params = [
+		id,
+		data.title,
+		data.image_url || null,
+		data.image_public_id || null,
+		data.description || null
+	];
 	const result = (await query(sql, params)) as any;
 	return result.affectedRows > 0;
+}
+/**
+ * Mengambil hanya image_public_id dari Konten Sejarah berdasarkan ID
+ *
+ * @param id - ID Konten Sejarah
+ * @returns Promise<string | null> - Mengembalikan string image_public_id atau null jika tidak ditemukan
+ */
+export async function getPublicIdHistoryContentById(id: string): Promise<string | null> {
+	const sql = `SELECT image_public_id FROM ${tableSejarahContent} WHERE id = ? LIMIT 1`;
+	const rows = (await query(sql, [id])) as Array<{ image_public_id: string | null }>;
+
+	return rows[0]?.image_public_id ?? null;
 }
 
 /**
@@ -65,8 +84,10 @@ export async function getAllHistoryLeaders(): Promise<HistoryLeadersDTO[]> {
             hl.updated_at,
             h.name AS head_name,
             h.photo_url AS head_photo,
+            h.photo_public_id AS head_photo_public_id,
             s.name AS secretary_name,
-            s.photo_url AS secretary_photo
+            s.photo_url AS secretary_photo,
+            s.photo_public_id AS secretary_photo_public_id
         FROM ${tableSejarahLeaders} hl
         LEFT JOIN ${tableLecturerStaff} h ON hl.head_id = h.id
         LEFT JOIN ${tableLecturerStaff} s ON hl.secretary_id = s.id
@@ -87,8 +108,10 @@ export async function getHistoryLeaderById(id: string): Promise<HistoryLeadersDT
             hl.updated_at,
             h.name AS head_name,
             h.photo_url AS head_photo,
+            h.photo_public_id AS head_photo_public_id,
             s.name AS secretary_name,
-            s.photo_url AS secretary_photo
+            s.photo_url AS secretary_photo,
+            s.photo_public_id AS secretary_photo_public_id
         FROM ${tableSejarahLeaders} hl
         LEFT JOIN ${tableLecturerStaff} h ON hl.head_id = h.id
         LEFT JOIN ${tableLecturerStaff} s ON hl.secretary_id = s.id
@@ -108,8 +131,10 @@ export async function addHistoryLeader(
 		| 'updated_at'
 		| 'head_name'
 		| 'head_photo'
+		| 'head_photo_public_id'
 		| 'secretary_name'
 		| 'secretary_photo'
+		| 'secretary_photo_public_id'
 		| 'head'
 		| 'secretary'
 	>
@@ -139,8 +164,10 @@ export async function updateHistoryLeader(
 			| 'updated_at'
 			| 'head_name'
 			| 'head_photo'
+			| 'head_photo_public_id'
 			| 'secretary_name'
 			| 'secretary_photo'
+			| 'secretary_photo_public_id'
 			| 'head'
 			| 'secretary'
 		>

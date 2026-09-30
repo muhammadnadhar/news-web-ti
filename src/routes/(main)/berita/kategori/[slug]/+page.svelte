@@ -1,17 +1,11 @@
 <script lang="ts">
-	import {
-		Calendar,
-		Folder,
-		ArrowRight,
-		Newspaper,
-		Loader2,
-		ArrowLeft
-	} from 'lucide-svelte';
+	import { Calendar, Folder, ArrowRight, Newspaper, Loader2, ArrowLeft } from 'lucide-svelte';
 	import type { PageData } from './$types';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import BtnFloatPagination from '$lib/components/admin/btnFloatPagination.svelte';
 	import { classTopSpace } from '$lib/constants';
+	import SpinLoading from '$lib/components/loading/spin.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -33,34 +27,35 @@
 	}
 </script>
 
-<div class={ `${classTopSpace} mx-auto max-w-7xl px-4 py-8 pb-32 sm:px-6`}>
-	<div class="mb-8 border-b border-border-color/10 pb-6">
+<div class={`${classTopSpace} mx-auto max-w-7xl px-4 py-8 pb-32 sm:px-6`}>
+	<div class="mb-8 border-border-color/10 pb-6">
 		<a
 			href="/berita"
-			class="bg-bg-secondary hover:bg-bg-secondary-hover text-text-muted hover:text-text-main border-border-color mb-6 border inline-flex items-center gap-2 px-4 py-2 text-xs font-bold transition-colors"
+			class="mb-6 inline-flex items-center gap-2 border border-border-color bg-bg-secondary px-4 py-2 text-xs font-bold text-text-muted transition-colors hover:bg-bg-secondary-hover hover:text-text-main"
 		>
 			<ArrowLeft class="h-4 w-4" />
 			<span>Semua Berita</span>
 		</a>
 
 		{#await data.category}
-			<div class="flex items-center gap-3 pt-2">
-				<div class="h-12 w-12 animate-pulse bg-white/10"></div>
-				<div class="space-y-2">
-					<div class="h-4 w-28 animate-pulse bg-white/5"></div>
-					<div class="h-8 w-48 animate-pulse bg-white/10"></div>
-				</div>
-			</div>
+			<!-- <div class="flex items-center gap-3 pt-2"> -->
+			<!-- 	<div class="h-12 w-12 animate-pulse bg-white/10"></div> -->
+			<!-- 	<div class="space-y-2"> -->
+			<!-- 		<div class="h-4 w-28 animate-pulse bg-white/5"></div> -->
+			<!-- 		<div class="h-8 w-48 animate-pulse bg-white/10"></div> -->
+			<!-- 	</div> -->
+			<!-- </div> -->
+			<SpinLoading />
 		{:then category}
 			<div class="flex items-center gap-3 pt-2">
-				<div class="bg-scitech-mint/10 text-scitech-mint border border-scitech-mint/30 p-3">
+				<div class="bg-scitech-mint/10 text-scitech-mint border-scitech-mint/30 border p-3">
 					<Folder class="h-6 w-6" />
 				</div>
 				<div>
-					<span class="font-mono text-[11px] uppercase tracking-wider text-scitech-mint">
+					<span class="text-scitech-mint font-mono text-[11px] tracking-wider uppercase">
 						Kategori Berita
 					</span>
-					<h1 class="text-text-main text-2xl font-extrabold tracking-tight sm:text-3xl">
+					<h1 class="text-2xl font-extrabold tracking-tight text-text-main sm:text-3xl">
 						{category.name}
 					</h1>
 				</div>
@@ -72,20 +67,11 @@
 
 	<!-- container grid berita (data streaming dengan {#await}) -->
 	{#await data.newsList}
-		<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-			{#each Array(4) as _}
-				<div class="bg-scitech-slate/40 border-border-color/10 flex flex-col border p-6">
-					<div class="mb-4 h-48 w-full animate-pulse bg-white/5"></div>
-					<div class="mb-2 h-4 w-1/3 animate-pulse bg-white/10"></div>
-					<div class="mb-3 h-6 w-3/4 animate-pulse bg-white/10"></div>
-					<div class="h-16 w-full animate-pulse bg-white/5"></div>
-				</div>
-			{/each}
-		</div>
+		<SpinLoading />
 	{:then newsList}
 		{#if newsList.length === 0}
-			<div class="bg-bg-secondary border-border-color border p-12 text-center">
-				<Newspaper class="text-text-muted/50 mx-auto mb-3 h-12 w-12" />
+			<div class="border border-border-color bg-bg-secondary p-12 text-center">
+				<Newspaper class="mx-auto mb-3 h-12 w-12 text-text-muted/50" />
 				<p class="font-mono text-sm text-text-muted">
 					Belum ada berita yang diterbitkan pada kategori ini.
 				</p>
@@ -94,11 +80,13 @@
 			<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
 				{#each newsList as item (item.id)}
 					<article
-						class="bg-scitech-slate/70 hover:border-scitech-mint/50 border-border-color/10 group flex flex-col justify-between border transition-colors"
+						class="bg-scitech-slate/70 hover:border-scitech-mint/50 group flex flex-col justify-between border border-border-color/10 transition-colors"
 					>
 						<div>
 							{#if item.image_url}
-								<div class="border-border-color/10 relative h-48 w-full overflow-hidden border-b bg-black/40">
+								<div
+									class="relative h-48 w-full overflow-hidden border-b border-border-color/10 bg-black/40"
+								>
 									<img
 										src={item.image_url}
 										alt={item.title}
@@ -107,7 +95,7 @@
 								</div>
 							{:else}
 								<div
-									class="bg-scitech-navy/60 border-border-color/10 text-text-muted flex h-36 w-full items-center justify-center border-b"
+									class="bg-scitech-navy/60 flex h-36 w-full items-center justify-center border-b border-border-color/10 text-text-muted"
 								>
 									<Newspaper class="h-10 w-10 opacity-30" />
 								</div>
@@ -117,33 +105,33 @@
 								<div class="flex flex-wrap items-center gap-3 text-xs text-text-muted">
 									{#if item.category_name}
 										<span
-											class="bg-scitech-mint/10 text-scitech-mint border-scitech-mint/30 border inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider"
+											class="bg-scitech-mint/10 text-scitech-mint border-scitech-mint/30 inline-flex items-center gap-1.5 border px-2.5 py-1 text-[11px] font-semibold tracking-wider uppercase"
 										>
 											<Folder class="h-3 w-3" />
 											{item.category_name}
 										</span>
 									{/if}
 
-									<span class="font-mono inline-flex items-center gap-1">
-										<Calendar class="text-text-muted h-3.5 w-3.5" />
+									<span class="inline-flex items-center gap-1 font-mono">
+										<Calendar class="h-3.5 w-3.5 text-text-muted" />
 										{formatDate(item.published_at)}
 									</span>
 								</div>
 
 								<!-- Judul Berita -->
 								<h2
-									class="group-hover:text-scitech-mint text-text-main line-clamp-2 text-lg font-bold transition-colors"
+									class="group-hover:text-scitech-mint line-clamp-2 text-lg font-bold text-text-main transition-colors"
 								>
 									{item.title}
 								</h2>
 
-								<p class="text-text-muted line-clamp-3 text-xs leading-relaxed sm:text-sm">
+								<p class="line-clamp-3 text-xs leading-relaxed text-text-muted sm:text-sm">
 									{item.content.replace(/<[^>]*>?/gm, '')}
 								</p>
 							</div>
 						</div>
 
-						<div class="border-border-color/10 border-t p-6 pt-4">
+						<div class="border-t border-border-color/10 p-6 pt-4">
 							<a
 								href="/berita/{item.id}"
 								class="text-scitech-cyan hover:text-scitech-mint inline-flex items-center gap-2 text-xs font-bold transition-all"
@@ -157,7 +145,7 @@
 			</div>
 		{/if}
 	{:catch error}
-		<div class="border-red-500/40 bg-red-500/10 border p-6 text-center text-red-400">
+		<div class="border border-red-500/40 bg-red-500/10 p-6 text-center text-red-400">
 			<p class="text-sm font-semibold">Gagal memuat berita: {error.message}</p>
 		</div>
 	{/await}
@@ -166,7 +154,7 @@
 <!-- floating navigation (pagination mengambang) -->
 {#await data.pagination}
 	<div
-		class="bg-scitech-navy/90 border-border-color/20 fixed bottom-6 left-1/2 z-40 -translate-x-1/2 border px-6 py-3 backdrop-blur-md"
+		class="bg-scitech-navy/90 fixed bottom-6 left-1/2 z-40 -translate-x-1/2 border border-border-color/20 px-6 py-3 backdrop-blur-md"
 	>
 		<div class="flex items-center gap-3 text-xs text-text-muted">
 			<Loader2 class="text-scitech-mint h-4 w-4 animate-spin" />
@@ -174,7 +162,5 @@
 		</div>
 	</div>
 {:then pagination}
-	
-  <BtnFloatPagination {pagination} onPageChange={goToPage} />
-
-  {/await}
+	<BtnFloatPagination {pagination} onPageChange={goToPage} />
+{/await}

@@ -6,9 +6,11 @@ import {
 	getAllRecruitment,
 	createRecruitment,
 	updateRecruitment,
-	deleteRecruitment
+	deleteRecruitment,
+	getRecruitmentById
 } from '$lib/repository/admin/article/akedemik/ketentuan-komprehensif';
 import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
+import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
 
 export const load: PageServerLoad = async () => {
 	try {
@@ -91,15 +93,35 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const id = formData.get('id') as string;
 
-		if (!id) return fail(400, warningResponse('ID tidak valid'));
+		if (!id) {
+			return fail(400, warningResponse('ID rekrutmen tidak valid', 'Gagal'));
+		}
 
 		try {
+			//  Ambil data rekrutmen berdasarkan ID terlebih dahulu
+			const existingRecruitment = await getRecruitmentById(id);
+
+			if (!existingRecruitment) {
+				return fail(
+					404,
+					warningResponse('Data rekrutmen tidak ditemukan atau sudah dihapus', 'Gagal')
+				);
+			}
+
+			//  Jika terdapat gambar/poster/banner terkait, hapus aset dari Cloudinary
+			// Sesuaikan nama field di DTO/tabel Anda (misal: image_public_id, poster_public_id, atau banner_public_id)
+			if (existingRecruitment.image_public_id) {
+				await deleteImageFromCloudinary(existingRecruitment.image_public_id);
+			}
+
+			// Hapus data dari database
 			await deleteRecruitment(id);
-			// return { success: true };
-			return successResponse('Berhasil mengahapus data Rekrutmen', 'success Response');
+
+			// Kembalikan response sukses
+			return successResponse('Berhasil menghapus data Rekrutmen dan berkas terkait', 'Berhasil');
 		} catch (err) {
 			console.error('Error deleting recruitment:', err);
-			return fail(500, errorResponse('Gagal menghapus data Rekrutmen', 'Gagal'));
+			return fail(500, errorResponse('Gagal menghapus data Rekrutmen', 'Kesalahan Sistem'));
 		}
 	}
 };

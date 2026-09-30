@@ -2,7 +2,7 @@
 	import { classTopSpace } from '$lib/constants';
 	import EmptyData from '../../_components/emptyData.svelte';
 	import type { PageData } from './$types';
-	import { Briefcase, Calendar, Maximize2, X, AlertCircle, FileCheck } from 'lucide-svelte';
+	import { Briefcase, Calendar, Maximize2, X, FileCheck } from 'lucide-svelte';
 
 	interface Props {
 		data: PageData;

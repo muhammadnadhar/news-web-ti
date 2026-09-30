@@ -16,6 +16,29 @@ export async function createDosenPrimary(
 }
 
 /**
+ * Mendapatkan detail 1 Dosen Primary berdasarkan ID slot
+ */
+export async function getPrimaryDosenById(id: string): Promise<PrimaryDosenDTO | null> {
+	const sql = `
+        SELECT 
+            dp.id AS primary_id,
+            dp.lecturer_staff_id,
+            dp.position,
+            ls.name,
+            ls.nidn,
+            ls.expertise,
+            ls.photo_url,
+            ls.pddikti_url
+        FROM ${tableDosenPrimary} dp
+        INNER JOIN ${tableLecturerStaff} ls ON dp.lecturer_staff_id = ls.id
+        WHERE dp.id = ?
+        LIMIT 1
+    `;
+
+	const rows = (await query(sql, [id])) as PrimaryDosenDTO[];
+	return rows.length > 0 ? rows[0] : null;
+}
+/**
  * mendapatkan 3 dosen primary lengkap dengan detail dari tabel main (join)
  */
 export async function getPrimaryDosenList(): Promise<PrimaryDosenDTO[]> {
@@ -58,4 +81,16 @@ export async function updatePrimaryDosenSlot(
 
 	const result = (await query(sql, params)) as any;
 	return result.affectedRows > 0;
+}
+
+/**
+ * hapus dosen primary berdasarkan id
+ */
+export async function deleteDosenPrimary(id: string): Promise<boolean> {
+	const sql = `
+        DELETE FROM ${tableDosenPrimary}
+        WHERE id = ?
+    `;
+	const result = (await query(sql, [id])) as any;
+	return result?.affectedRows > 0;
 }

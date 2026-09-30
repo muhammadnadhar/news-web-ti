@@ -4,6 +4,7 @@ import { createRecruitment } from '$lib/repository/admin/article/akedemik/ketent
 import { errorResponse, successResponse } from '$lib/helper/message';
 import { randomUUID } from '$lib/crypto';
 import { cloudinary } from '$lib/cloudinary/server';
+import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
 
 export const actions: Actions = {
 	create: async ({ request }) => {
@@ -12,6 +13,9 @@ export const actions: Actions = {
 		const title = formData.get('title') as string;
 		const imageUrl = (formData.get('image_url') as string) || null;
 		const description = (formData.get('description') as string) || null;
+		const public_id = (formData.get('public_id') as string) || null;
+
+    console.info("id yg di dapat  :",public_id);
 
 		// Validasi input wajib
 		if (!title || title.trim() === '') {
@@ -26,7 +30,7 @@ export const actions: Actions = {
 		const id = randomUUID();
 
 		try {
-			const success = await createRecruitment(id, title, imageUrl, description);
+			const success = await createRecruitment(id, title, imageUrl, description,public_id);
 
 			if (!success) {
 				return fail(500, {
@@ -45,7 +49,7 @@ export const actions: Actions = {
 		// throw redirect(303, '/admin/akademik/rekrutmen-asisten');
 		return successResponse('Data Rekrutmen Asisten berhasil ditambahkan!');
 	},
-	deletePhoto: async ({ request }) => {
+	deleteImage: async ({ request }) => {
 		const formData = await request.formData();
 		const publicId = formData.get('public_id')?.toString();
 
@@ -54,7 +58,7 @@ export const actions: Actions = {
 		}
 
 		try {
-			await cloudinary.uploader.destroy(publicId);
+			await deleteImageFromCloudinary(publicId);
 			return successResponse('Berhasil di batalkan', 'Succcess');
 		} catch (err) {
 			console.error('Error deleting photo:', err);

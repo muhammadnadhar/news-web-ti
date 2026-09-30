@@ -8,14 +8,16 @@
 		User,
 		Award,
 		Image as ImageIcon,
-		X,
-		CheckCircle2,
-		AlertCircle,
 		Loader2,
-		ArrowLeft,
-		Save
+		Save,
+		Trash2
 	} from 'lucide-svelte';
-	import { folder_cloudinary_admin_article_kemahasiswaan, getUploadConfig, getUploadOptions, upload_cloudinary_preset } from '$lib/cloudinary/client';
+	import {
+		folder_cloudinary_admin_article_kemahasiswaan,
+		getUploadConfig,
+		getUploadOptions,
+		upload_cloudinary_preset
+	} from '$lib/cloudinary/client';
 	import { type MessageStatus, type ResponseMessage } from '$lib/types/message';
 	import Message from '$lib/components/admin/message.svelte';
 
@@ -31,11 +33,15 @@
 	// Mode Edit terdeteksi jika initialData memiliki ID
 	let isEdit = $derived(!!initialData?.id);
 	let isSubmitting = $state(false);
+	let isDeletingImage = $state(false);
 
 	// State Alert / Message
 	let showMessage = $state(false);
-	// State Image URL Cloudinary
+
+	// State Image URL & Public ID Cloudinary
 	let imageUrl = $state(form?.values?.image_url ?? initialData?.image_url ?? '');
+	let imagePublicId = $state(form?.values?.public_id ?? initialData?.image_public_id ?? '');
+
 	let messageConfig = $state<ResponseMessage>({
 		status: 'info',
 		title: '',
@@ -45,13 +51,47 @@
 	function triggerMessage(status: MessageStatus, title: string, message: string) {
 		messageConfig = { status, title, message };
 		showMessage = true;
-	}	function removeImage() {
-		imageUrl = '';
+	}
+
+	async function removeImage() {
+		if (!imagePublicId) {
+			imageUrl = '';
+			return;
+		}
+
+		isDeletingImage = true;
+		const formData = new FormData();
+		formData.append('public_id', imagePublicId);
+
+		try {
+			const response = await fetch('?/deletePhoto', {
+				method: 'POST',
+				body: formData
+			});
+
+			if (response.ok) {
+				imageUrl = '';
+				imagePublicId = '';
+				triggerMessage('success', 'Berhasil', 'Foto dokumentasi berhasil dihapus.');
+			} else {
+				triggerMessage('error', 'Gagal', 'Gagal menghapus foto dari Cloudinary.');
+			}
+		} catch (err) {
+			console.error('Error deleting photo:', err);
+			triggerMessage('error', 'Kesalahan', 'Terjadi kesalahan saat menghapus foto.');
+		} finally {
+			isDeletingImage = false;
+		}
 	}
 
 	function handleUploadSuccess(result: any) {
-		if (result?.info?.secure_url) {
+		if (result?.event === 'success' && result?.info) {
 			imageUrl = result.info.secure_url;
+			imagePublicId = result.info.public_id;
+
+			if (typeof document !== 'undefined') {
+				document.body.style.overflow = 'auto';
+			}
 		}
 	}
 
@@ -63,6 +103,20 @@
 		}
 	}
 </script>
+
+<!-- alert / toast notification -->
+{#if showMessage}
+	<div class="transition-all duration-300">
+		<Message
+			status={messageConfig.status}
+			title={messageConfig.title}
+			message={messageConfig.message}
+			dismissible={true}
+			timeout={5000}
+			onclose={() => (showMessage = false)}
+		/>
+	</div>
+{/if}
 
 <div class="mx-auto max-w-4xl p-4 sm:p-6 lg:p-8">
 	<div class="mb-6 flex items-center justify-between">
@@ -77,86 +131,71 @@
 					{isEdit ? 'Edit Data Penerima Beasiswa' : 'Tambah Penerima Beasiswa'}
 				</h1>
 				<p class="text-xs text-text-muted sm:text-sm">
-					Isi formulir di bawah ini untuk mengelola data dan dokumentasi mahasiswa penerima beasiswa.
+					Isi formulir di bawah ini untuk mengelola data dan dokumentasi mahasiswa penerima
+					beasiswa.
 				</p>
 			</div>
 		</div>
 	</div>
 
-	<!-- alert / toast notification -->
-{#if showMessage}
-	<div class="transition-all duration-300">
-		<Message
-			status={messageConfig.status}
-			title={messageConfig.title}
-			message={messageConfig.message}
-			dismissible={true}
-			timeout={5000}
-			onclose={() => (showMessage = false)}
-		/>
-	</div>
-{/if}
-
-	<!-- FORM UTAMA -->
 	<form
 		method="POST"
 		{action}
-use:enhance={() => {
-		isSubmitting = true;
-		showMessage = false;
+		use:enhance={() => {
+			isSubmitting = true;
+			showMessage = false;
 
-		return async ({ result, update }) => {
-			isSubmitting = false;
+			return async ({ result, update }) => {
+				isSubmitting = false;
 
-			// Akses data response dari server action
-			const resData = result.type === 'success' || result.type === 'failure' 
-				? (result.data as ResponseMessage | undefined) 
-				: undefined;
+				// Akses data response dari server action
+				const resData =
+					result.type === 'success' || result.type === 'failure'
+						? (result.data as ResponseMessage | undefined)
+						: undefined;
 
-			if (result.type === 'success' && resData?.status === 'success') {
-				triggerMessage(
-					'success',
-					resData.title || 'Berhasil',
-					resData.message || 'Data beasiswa berhasil disimpan.'
-				);
+				if (result.type === 'success' || resData?.status === 'success') {
+					triggerMessage(
+						'success',
+						resData?.title || 'Berhasil',
+						resData?.message || 'Data beasiswa berhasil disimpan.'
+					);
 
-				if (!isEdit) {
-					imageUrl = '';
+					if (!isEdit) {
+						imageUrl = '';
+						imagePublicId = '';
+					}
+					await update({ reset: !isEdit });
+				} else if (resData?.status === 'error' || result.type === 'failure') {
+					triggerMessage(
+						'error',
+						resData?.title || 'Gagal Menyimpan',
+						resData?.message || 'Terjadi kesalahan saat memproses data.'
+					);
+					await update();
+				} else {
+					triggerMessage('error', 'Error', 'Terjadi kesalahan sistem saat memproses data.');
+					await update();
 				}
-				await update({ reset: !isEdit });
-
-			} else if (resData?.status === "error" || result.type === 'failure') {
-				triggerMessage(
-					'error',
-					resData?.title || 'Gagal Menyimpan',
-					resData?.message || 'Terjadi kesalahan saat memproses data.'
-				);
-				await update();
-
-			} else {
-				triggerMessage(
-					'error',
-					'Error',
-					'Terjadi kesalahan sistem saat memproses data.'
-				);
-				await update();
-			}
-		};
-	}}		class="space-y-6 rounded-2xl border border-border-light bg-bg-secondary p-6 shadow-sm sm:p-8"
+			};
+		}}
+		class="space-y-6 rounded-2xl border border-border-light bg-bg-secondary p-6 shadow-sm sm:p-8"
 	>
-		<!-- Input Hidden ID (Saat Edit) -->
 		{#if isEdit}
 			<input type="hidden" name="id" value={initialData?.id} />
 		{/if}
 
 		<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-			<!-- 1. Nama Mahasiswa -->
+			<!-- Nama Mahasiswa -->
 			<div class="space-y-2">
-				<label for="student_name" class="block text-xs font-bold uppercase tracking-wider text-text-main">
+				<label
+					for="student_name"
+					class="block text-xs font-bold tracking-wider text-text-main uppercase"
+				>
 					Nama Mahasiswa <span class="text-status-error">*</span>
 				</label>
 				<div class="relative">
-					<User class="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
+					<User class="absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-text-muted" />
 					<input
 						type="text"
 						id="student_name"
@@ -165,18 +204,21 @@ use:enhance={() => {
 						placeholder="Masukkan nama lengkap mahasiswa..."
 						required
 						disabled={isSubmitting}
-						class="w-full rounded-xl border border-border-light bg-bg-primary py-2.5 pl-10 pr-4 text-xs text-text-main shadow-xs transition placeholder:text-text-muted focus:border-accent-primary focus:outline-none focus:ring-1 focus:ring-accent-primary disabled:opacity-50"
+						class="w-full rounded-xl border border-border-light bg-bg-primary py-2.5 pr-4 pl-10 text-xs text-text-main shadow-xs transition placeholder:text-text-muted focus:border-accent-primary focus:ring-1 focus:ring-accent-primary focus:outline-none disabled:opacity-50"
 					/>
 				</div>
 			</div>
 
 			<!-- Nama Beasiswa / Kategori -->
 			<div class="space-y-2">
-				<label for="scholarship_name" class="block text-xs font-bold uppercase tracking-wider text-text-main">
+				<label
+					for="scholarship_name"
+					class="block text-xs font-bold tracking-wider text-text-main uppercase"
+				>
 					Nama Beasiswa / Kategori <span class="text-status-error">*</span>
 				</label>
 				<div class="relative">
-					<Award class="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
+					<Award class="absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-text-muted" />
 					<input
 						type="text"
 						id="scholarship_name"
@@ -185,18 +227,22 @@ use:enhance={() => {
 						placeholder="Contoh: Beasiswa Unggulan 2026"
 						required
 						disabled={isSubmitting}
-						class="w-full rounded-xl border border-border-light bg-bg-primary py-2.5 pl-10 pr-4 text-xs text-text-main shadow-xs transition placeholder:text-text-muted focus:border-accent-primary focus:outline-none focus:ring-1 focus:ring-accent-primary disabled:opacity-50"
+						class="w-full rounded-xl border border-border-light bg-bg-primary py-2.5 pr-4 pl-10 text-xs text-text-main shadow-xs transition placeholder:text-text-muted focus:border-accent-primary focus:ring-1 focus:ring-accent-primary focus:outline-none disabled:opacity-50"
 					/>
 				</div>
 			</div>
 		</div>
 
-		<!-- 3. Field Upload Foto Media Dokumentasi Cloudinary -->
+		<!-- Field Upload Foto Media Dokumentasi Cloudinary -->
 		<div class="space-y-2 pt-2">
-			<label for="image_upload" class="block text-xs font-bold uppercase tracking-wider text-text-main">
+			<label
+				for="image_upload"
+				class="block text-xs font-bold tracking-wider text-text-main uppercase"
+			>
 				Foto / Media Utama Dokumentasi <span class="text-status-error">*</span>
 			</label>
 			<input type="hidden" name="image_url" value={imageUrl} required />
+			<input type="hidden" name="public_id" value={imagePublicId} />
 
 			{#if imageUrl}
 				<div
@@ -210,10 +256,16 @@ use:enhance={() => {
 					<button
 						type="button"
 						onclick={removeImage}
-						disabled={isSubmitting}
+						disabled={isDeletingImage || isSubmitting}
 						class="mt-2 inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-status-error/30 bg-status-error/10 px-3 py-2 text-xs font-semibold text-status-error transition hover:bg-status-error/20 active:scale-95 disabled:opacity-50"
 					>
-						✕ Hapus & Ganti Gambar
+						{#if isDeletingImage}
+							<Loader2 class="h-4 w-4 animate-spin" />
+							<span>Menghapus Gambar...</span>
+						{:else}
+							<Trash2 class="h-4 w-4" />
+							<span>Hapus & Ganti Gambar</span>
+						{/if}
 					</button>
 				</div>
 			{:else}
@@ -235,9 +287,7 @@ use:enhance={() => {
 						>
 							<ImageIcon class="h-6 w-6" />
 						</div>
-						<span class="text-sm font-semibold text-accent-purple">
-							Unggah Foto Dokumentasi
-						</span>
+						<span class="text-sm font-semibold text-accent-purple"> Unggah Foto Dokumentasi </span>
 						<span class="mt-1 text-xs text-text-muted">Format gambar (PNG, JPG, WebP)</span>
 					</button>
 				</CldUploadWidget>

@@ -1,10 +1,24 @@
-commit 12  finish desian #9 and debuger app
-- add & update : update global/theme , untuk menyesuikan toogle element dan  menambah animasi wave glass yang animasi akan mengubah warna seperti menyapu 
-- add : menambhakan Card di Home yang menampilkan daftar brita dan kategory berita 
-- update : bagaimaan data di tampilkan pada mahasiswa dengan IPK tertinggi
-- fix : data loaded di component berita
-- update : sekarang berita bisa ada spesifik  views ke ID , dan kategori 
-- add : menambhakna btn float pagination halaman , yang kebanyakan akan di gunkan di berita 
-- delete : mengahpus component Sidebar Widget dari /lib/componens/admin/SidebarWidger , karena component ini tidak di perlukan karena sudah ada component utama untuk menampilkan berita terbaru
-- update : update dashboard bagiaman profile utama di tampilka  pada bagian image 
-- update : memindahkan componens componens yang kategorinya loading ke folder /lib/compones/loading/..
+commit 13  finish desain #10 and debuger app and update image save in database
+- update : update compoennt navbar agar saat di hover terbuka , dan menambhakan navbar icon data pada childres[]
+- add : file ARCHITECTURE.md ( Sun Sep 27 02:48:09 PM WIB 2026 ) 
+- update  : uopdate desian  navbar sekarang ada warna pada sub componentnya
+- add & update : menambah sub sidebar component , pada bagian admin jika user mengubah ke menu yang kecil , maka dia bisa menampilkna menu yang mengambang
+- add & update : menambah halaman edit untuk /admin/kerjasama/daftar-kerjasama , dan memindahkan nya ke component agar di guakan di halamn add dan edit
+- add : menambhakan profile baru yaitu fasilitas
+- update : update desian halaman utama , get statrted di keluarkan dari component da langsung di halaman uatam , sedangkn text di desian lagi dan di center kan di tengah halaman
+- upadate : update seeder / dto / repository method untuk memanagement public id ( null) ke database
+- update : setiap action yang menyimpan gambar akan memintak data baru lalu menghapus id gambar ke server cloudinary juga
+- update : di halaamn admin/home/dosen utnuk dosen primary memisahkan ke component dan menghandle add dan edit
+- fix : fix ketidak akuraran di pedoman kuliah kerja praktek yg sbelumnya memanggil pedoman dari tugas aakhir
+- add : update add dan edit pada halaman profil prodi di admin/home/profileProdi
+- update : penyesuina tata letak di /admin/home  dan / 
+- update : nah di halaman /admin/home/profilProdi sekarang bsia menambhakan data secara dinamis dan menyesuikan data desan , sehingga data yang perlu di tampilkan di halaman depan bisa banyak
+- add : menambhakna method baru untuk mengembalikan values data prives jika ada suatu kesalahan ke client
+- fix : perbaiki cara menyimpan dan menampilkan data di pedoman KKP
+
+
+
+
+
+
+

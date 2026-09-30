@@ -22,6 +22,8 @@
 	let previewUrl = $state<string | null>(data?.accreditation?.image_url ?? null);
 	let isSubmitting = $state(false);
 
+	$inspect('data yg di dapat : ', data.accreditation);
+
 	// State tambahan untuk menyimpan Public ID Cloudinary & status hapus
 	let publicId = $state<string | null>(null);
 	let isDeleting = $state(false);
@@ -71,7 +73,7 @@
 
 <div class="space-y-8 p-6 lg:p-10">
 	<!-- PAGE HEADER -->
-	<div class="border-scitech-slate/20 flex items-center justify-between border-b pb-4">
+	<div class="border-scitech-slate/20 flex items-center justify-between pb-4">
 		<div>
 			<h1 class="text-2xl font-bold tracking-tight text-text-main">Akreditasi</h1>
 			<p class="text-xs text-slate-400 sm:text-sm">
@@ -99,7 +101,7 @@
 				isSubmitting = false;
 				if (result.type === 'success') {
 					triggerMessage('success', 'Berhasil', 'Data akreditasi berhasil diperbarui!');
-				} else if (result.type === 'failure') {
+				} else if (result.type === 'error') {
 					triggerMessage('error', 'Gagal', 'Terjadi kesalahan saat menyimpan data.');
 				}
 				await update();
@@ -109,6 +111,7 @@
 	>
 		<!-- Hidden input untuk menyimpan URL gambar dari Cloudinary -->
 		<input type="hidden" name="image_url" value={imageUrl ?? ''} />
+		<input type="hidden" name="image_public_id" value={publicId ?? ''} />
 
 		<div class="border-scitech-slate/20 bg-scitech-navy-glare rounded-2xl border p-6 shadow-xl">
 			<h2 class="text-scitech-mint mb-6 text-sm font-semibold">Form Ubah Data Akreditasi</h2>

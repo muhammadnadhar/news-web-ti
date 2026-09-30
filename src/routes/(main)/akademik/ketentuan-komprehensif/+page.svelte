@@ -2,7 +2,7 @@
 	import { classTopSpace } from '$lib/constants';
 	import EmptyData from '../../_components/emptyData.svelte';
 	import type { PageData } from './$types';
-	import { UserPlus, Calendar, Maximize2, X, AlertCircle, FileText } from 'lucide-svelte';
+	import { UserPlus, Calendar, Maximize2, X, FileText } from 'lucide-svelte';
 
 	interface Props {
 		data: PageData;
@@ -22,8 +22,7 @@
 	}
 </script>
 
-<div class={`${classTopSpace}mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8`}>
-	<!-- HEADER HALAMAN -->
+<div class={`${classTopSpace} mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8`}>
 	<div class="mb-10 border-b border-border-color/40 pb-6 text-center sm:text-left">
 		<div
 			class="bg-scitech-mint/10 text-scitech-mint mb-3 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold"
@@ -169,7 +168,6 @@
 				</button>
 			</div>
 
-			<!-- Gambar Poster -->
 			<div
 				class="bg-scitech-navy/80 flex max-h-[80vh] items-center justify-center overflow-auto p-4"
 			>

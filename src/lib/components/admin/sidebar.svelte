@@ -10,6 +10,26 @@
 		ChevronRight,
 		Menu,
 		X,
+		Target,
+		History,
+		Network,
+		UserCheck,
+		Award,
+		FlaskConical,
+		Calendar,
+		FileText,
+		Briefcase,
+		ClipboardList,
+		BookMarked,
+		Layers,
+		ListOrdered,
+		Trophy,
+		Medal,
+		Search,
+		FileUp,
+		FileCheck2,
+		Building2,
+		Camera,
 		ChevronLeft
 	} from 'lucide-svelte';
 
@@ -24,17 +44,39 @@
 		Users,
 		Home,
 		BadgeIdentity: BadgeInfo,
-		Newspaper
+		Newspaper,
+		Target,
+		History,
+		Network,
+		UserCheck,
+		Award,
+		FlaskConical,
+		Calendar,
+		FileText,
+		Briefcase,
+		ClipboardList,
+		BookMarked,
+		Layers,
+		ListOrdered,
+		Trophy,
+		Medal,
+		Search,
+		FileUp,
+		FileCheck2,
+		Building2,
+		Camera
 	};
 	import { page } from '$app/stores'; // Import store page dari SvelteKit
 	import uinIcon from '$lib/assets/uin-icon.webp';
 	import ThemeActionBtn from '../themeActionBtn.svelte';
+	import type { SubMenuItem } from '$lib/types/navbar';
 
 	let currentPath = $derived($page.url.pathname);
 
 	let isMobileOpen = $state(false);
 	let isCollapsed = $state(false);
 	let activePath = $state('/dashboard'); // Halaman aktif saat ini
+	let activeHoveredSubMenu = $state<string | null>(null); // State untuk mengontrol floating menu saat collapsed
 
 	function toggleMobile() {
 		isMobileOpen = !isMobileOpen;
@@ -142,6 +184,7 @@
 									<div class="relative mt-1 ml-5 space-y-1 border-l-2 border-border-color pl-3">
 										{#each item.children as sub}
 											{@const isSubActive = currentPath === sub.href}
+											{@const SubIconComponent = iconMap[sub.iconName ?? 'Home']}
 
 											<button
 												type="button"
@@ -150,11 +193,12 @@
 													goto(sub.href);
 												}}
 												class="relative flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-xs font-medium transition-all duration-200
-		before:absolute before:top-1/2 before:-left-3.5 before:h-px before:w-2.5 before:bg-white/20 before:content-['']
+		before:absolute before:top-1/2 before:-left-3.5 before:h-px before:w-2.5 before:content-['']
 		{isSubActive
 													? 'bg-scitech-mint/10 border-scitech-mint/30 text-scitech-mint border font-bold shadow-sm'
 													: 'text-text-muted hover:bg-white/5 hover:text-text-main'}"
 											>
+												<SubIconComponent class="h-5 w-5 text-text-main" />
 												<span>{sub.title}</span>
 											</button>
 										{/each}
@@ -162,37 +206,65 @@
 								</details>
 							{:else}
 								<!-- Tampilan saat Collapsed (Icon Only) -->
-								<button
-									title={item.title}
-									class="hover:bg-scitech-slate flex w-full items-center justify-center rounded-xl p-3 text-text-muted hover:text-text-muted"
-								>
-									<IconComponent class="text-scitech-cyan h-5 w-5" />
-								</button>
+								{#if item.href}
+									<button
+										title={item.title}
+										class="hover:bg-scitech-slate flex w-full items-center justify-center rounded-xl p-3 text-text-muted hover:text-text-muted"
+									>
+										<IconComponent class="h-5 w-5 text-text-main" />
+									</button>
+
+									<!-- nanh di mode menu icon only ini , dia bisa punya sub sidebar compoennt -->
+									{#if activeHoveredSubMenu === item.title}
+										<div
+											class="absolute top-0 left-full z-50 ml-2 w-56 rounded-2xl border border-border-color/30 bg-bg-secondary p-2 shadow-2xl backdrop-blur-xl"
+										>
+											<div class="border-b border-border-color/20 px-3 py-2">
+												<span class="text-scitech-mint text-xs font-bold">{item.title}</span>
+											</div>
+										</div>
+									{/if}
+								{:else}
+									<!-- rendel sub elemen nya di sini , untuk menjadikan sidebar baru  penganti jika di kecilkan  -->
+									{#each item.children as sub}
+										{@const SubIconComponent = iconMap[sub.iconName ?? 'Home']}
+										<button
+											title={sub.title}
+											onclick={() => goto(sub.href)}
+											class="flex w-full items-center justify-center rounded-xl p-3 text-text-muted hover:bg-bg-secondary-hover hover:text-text-muted"
+										>
+											<SubIconComponent class="h-5 w-5 text-text-main" />
+										</button>
+									{/each}
+								{/if}
 							{/if}
 
-							<!-- menu single (link biasa) -->
+							<!-- menu single (link biasa)  ini yg di atas sub menu dair childrens -->
 						{:else}
-							{@const isActive = activePath === item.href}
-							<a
-								href={item.href || '#'}
-								onclick={() => {
-									if (item.href) activePath = item.href;
-									isMobileOpen = false;
-								}}
-								title={item.title}
-								class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-semibold transition-all duration-200
-                       {isActive
-									? 'bg-scitech-mint/15 text-scitech-mint border-scitech-mint/40 shadow-scitech-mint/5 border shadow-lg'
-									: 'hover:bg-scitech-slate/80 text-text-muted hover:text-text-main'}"
-							>
-								<IconComponent
-									class="h-4 w-4 shrink-0 {isActive ? 'text-scitech-mint' : 'text-scitech-cyan'}"
-								/>
+							{#if item.href}
+								{@const isActive = activePath === item.href}
 
-								{#if !isCollapsed}
-									<span>{item.title}</span>
-								{/if}
-							</a>
+								<a
+									href={item.href || '#'}
+									onclick={() => {
+										if (item.href) activePath = item.href;
+										isMobileOpen = false;
+									}}
+									title={item.title}
+									class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-semibold transition-all duration-200
+{isActive
+										? 'text-scitech-mint border-scitech-mint/40 shadow-scitech-mint/5 border bg-bg-secondary/15 shadow-lg'
+										: 'text-text-muted hover:bg-bg-secondary-hover hover:text-text-main'}"
+								>
+									<IconComponent
+										class="h-4 w-4 shrink-0 {isActive ? 'text-scitech-mint' : 'text-scitech-cyan'}"
+									/>
+
+									{#if !isCollapsed}
+										<span>{item.title}</span>
+									{/if}
+								</a>
+							{/if}
 						{/if}
 					{/each}
 				</div>

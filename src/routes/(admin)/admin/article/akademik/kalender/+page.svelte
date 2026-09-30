@@ -3,6 +3,7 @@
 	import FormKalenderItem from './_component/formKalenderItem.svelte';
 	import { goto } from '$app/navigation';
 	import { mergeNewPath } from '$lib/utils.js';
+	import Spin from '$lib/components/loading/spin.svelte';
 
 	let { data } = $props();
 
@@ -35,7 +36,6 @@
 			</h1>
 		</div>
 
-		<!-- Tombol Pindah ke Halaman Tambah Kalender -->
 		<button
 			type="button"
 			onclick={() => goto(mergeNewPath('add'))}
@@ -49,12 +49,7 @@
 	<!-- looping form (dengan penanganan promise {#await}) -->
 	<div class="space-y-8">
 		{#await calendarList}
-			<div
-				class="bg-scitech-slate/20 flex flex-col items-center justify-center gap-3 rounded-2xl border border-white/10 p-12 text-center"
-			>
-				<Loader2 class="text-scitech-mint h-8 w-8 animate-spin" />
-				<p class="text-xs text-text-muted">Memuat daftar kalender akademik...</p>
-			</div>
+		<Spin/>
 		{:then rawdata}
 			<!-- normalisasi: ubah single object / array / null menjadi bentuk array yang konsisten -->
 			{@const calendarList = Array.isArray(rawdata) ? rawdata : rawdata ? [rawdata] : []}

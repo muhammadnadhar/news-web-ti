@@ -13,6 +13,8 @@ export async function ProfileDashboardTableSeed() {
             id VARCHAR(36) PRIMARY KEY, -- Primary Key UUID String
             title VARCHAR(150) NOT NULL, -- Judul text yang muncul setiap gambar
             image_path VARCHAR(255) NOT NULL, -- Path URL ke file img yg di simpan
+  image_public_id VARCHAR(255) NULL, -- ID untuk Url Gambar
+
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         );
@@ -58,14 +60,17 @@ CREATE TABLE IF NOT EXISTS ${tablePerminatanTI} (
 
 // table untk menyimpan barqoute dan description
 // nantik profile profile yang bsia di tambhakan tambhakna di sini
+// display_instruction : ini akan membuat cara tampilanya DInamis
 export async function ProfilProdiTableSeed() {
 	const sql = `
 CREATE TABLE IF NOT EXISTS ${tableProfilProdi} (
     id VARCHAR(36) PRIMARY KEY, -- Primary Key UUID String
     title VARCHAR(255) NOT NULL, -- Judul Halaman Profil (e.g. 'Profil Program Studi Teknologi Informasi')
-    description TEXT NOT NULL, -- Isi deskripsi/profil prodi
-    image_url VARCHAR(255) NULL, -- Path/URL foto/QR pengaduan yang diunggah
+    description TEXT NOT NULL, -- Isi deskripsi/profil prodi / sepetrinya cukup jadi gak pakai LONGTEXT
+  -- Menyimpan array dari daftar gambar [{ url, public_id, caption }]
+    images_json JSON NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+display_instruction VARCHAR(50) DEFAULT 'FLEX_CENTER' NOT NULL, -- Instruksi layout/tampilan
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
   `;

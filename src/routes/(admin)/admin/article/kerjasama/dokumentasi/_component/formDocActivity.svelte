@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { CldUploadWidget } from 'svelte-cloudinary';
-	import { ImageIcon, Save, Plus } from 'lucide-svelte';
+	import { ImageIcon, Save, Plus, Loader2, Trash2 } from 'lucide-svelte';
 	import {
 		folder_cloudinary_admin_article_kerjasama,
 		getUploadConfig,
@@ -19,6 +19,7 @@
 		isEditMode?: boolean;
 		submitLabel?: string;
 		onCancel?: () => void;
+		action: string;
 	}
 
 	let {
@@ -26,22 +27,23 @@
 		formError = null,
 		isEditMode = false,
 		submitLabel,
+		action,
 		onCancel
 	}: Props = $props();
 
 	// State lokal
-
 	let description = $state(initialData?.description ?? '');
 	let imageUrl = $state(initialData?.image_url || '');
+	let imagePublicId = $state(initialData?.image_public_id || '');
 	let isSubmitting = $state(false);
+	let isDeletingImage = $state(false);
 	let showMessage = $state(false);
 
 	let formElement = $state<HTMLFormElement | null>(null);
 
 	function handleParentSubmit(editorData: string) {
-		description = editorData; // Sinkronisasi ulang (opsional karena sudah bind:value)
+		description = editorData;
 
-		// Trigger pengiriman form parent ke SvelteKit Form Action
 		if (formElement) {
 			formElement.requestSubmit();
 		}
@@ -68,6 +70,7 @@
 	function handleUploadSuccess(result: any) {
 		if (result?.info?.secure_url) {
 			imageUrl = result.info.secure_url;
+			imagePublicId = result.info.public_id || '';
 		}
 	}
 
@@ -75,12 +78,40 @@
 		if (initialData) {
 			description = initialData.description || '';
 			imageUrl = initialData.image_url || '';
+			imagePublicId = initialData.image_public_id || '';
 		}
 	});
 
-	// Hapus foto
-	function removeImage() {
-		imageUrl = '';
+	// Hapus foto dari Cloudinary via Server Action
+	async function removeImage() {
+		if (!imagePublicId) {
+			imageUrl = '';
+			return;
+		}
+
+		isDeletingImage = true;
+		const formData = new FormData();
+		formData.append('public_id', imagePublicId);
+
+		try {
+			const response = await fetch('?/deletePhoto', {
+				method: 'POST',
+				body: formData
+			});
+
+			if (response.ok) {
+				imageUrl = '';
+				imagePublicId = '';
+				triggerMessage('success', 'Berhasil', 'Foto dokumentasi berhasil dihapus.');
+			} else {
+				triggerMessage('error', 'Gagal', 'Gagal menghapus foto dari server.');
+			}
+		} catch (err) {
+			console.error('Error deleting photo:', err);
+			triggerMessage('error', 'Kesalahan', 'Terjadi kesalahan saat menghapus foto.');
+		} finally {
+			isDeletingImage = false;
+		}
 	}
 </script>
 
@@ -119,6 +150,7 @@
 	<div class="rounded-xl border border-border-light bg-bg-secondary shadow-sm">
 		<form
 			method="POST"
+			{action}
 			bind:this={formElement}
 			use:enhance={() => {
 				isSubmitting = true;
@@ -127,7 +159,6 @@
 				return async ({ result, update }) => {
 					isSubmitting = false;
 
-					// 1. Jika form berhasil dieksekusi oleh SvelteKit
 					if (result.type === 'success') {
 						triggerMessage(
 							'success',
@@ -137,26 +168,21 @@
 
 						if (!isEditMode) {
 							imageUrl = '';
+							imagePublicId = '';
 							await update({ reset: true });
 						} else {
 							await update({ reset: false });
 						}
-					}
-					// Jika server melakukan redirect setelah sukses
-					else if (result.type === 'redirect') {
+					} else if (result.type === 'redirect') {
 						await update();
-					}
-					//Jika validation/action failure dari fail() SvelteKit
-					else if (result.type === 'failure' && result.data) {
+					} else if (result.type === 'failure' && result.data) {
 						triggerMessage(
 							'error',
 							(result.data.title as string) || 'Gagal Menyimpan',
 							(result.data.message as string) || 'Terjadi kesalahan pada input data.'
 						);
 						await update();
-					}
-					// 4. Jika ada unhandled error dari server (500)
-					else {
+					} else {
 						triggerMessage('error', 'Error', 'Terjadi kesalahan sistem saat memproses data.');
 						await update();
 					}
@@ -194,7 +220,7 @@
 				/>
 			</div>
 
-			<!-- field: link google drive (baru) -->
+			<!-- Field: Link Google Drive -->
 			<div class="space-y-2">
 				<label for="link_drive" class="block text-sm font-medium text-text-main">
 					Tautan Google Drive / Folder Dokumentasi
@@ -215,6 +241,7 @@
 					Foto / Media Utama Dokumentasi <span class="text-status-error">*</span>
 				</label>
 				<input type="hidden" name="image_url" value={imageUrl} required />
+				<input type="hidden" name="public_id" value={imagePublicId} />
 
 				{#if imageUrl}
 					<div
@@ -228,9 +255,16 @@
 						<button
 							type="button"
 							onclick={removeImage}
-							class="mt-2 inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-status-error/30 bg-status-error/10 px-3 py-2 text-xs font-semibold text-status-error transition hover:bg-status-error/20"
+							disabled={isDeletingImage || isSubmitting}
+							class="mt-2 inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-status-error/30 bg-status-error/10 px-3 py-2 text-xs font-semibold text-status-error transition hover:bg-status-error/20 disabled:opacity-50"
 						>
-							✕ Hapus & Ganti Gambar
+							{#if isDeletingImage}
+								<Loader2 class="h-4 w-4 animate-spin" />
+								<span>Menghapus Gambar...</span>
+							{:else}
+								<Trash2 class="h-4 w-4" />
+								<span>Hapus & Ganti Gambar</span>
+							{/if}
 						</button>
 					</div>
 				{:else}
@@ -244,7 +278,8 @@
 						<button
 							type="button"
 							onclick={() => open()}
-							class="flex w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-border-light bg-bg-primary px-6 py-8 text-center transition hover:bg-bg-primary-glare"
+							disabled={isSubmitting}
+							class="flex w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-border-light bg-bg-primary px-6 py-8 text-center transition hover:bg-bg-primary-glare disabled:opacity-50"
 						>
 							<div
 								class="mb-2 rounded-full border border-border-light bg-bg-secondary p-3 text-accent-purple"
@@ -260,7 +295,6 @@
 				{/if}
 			</div>
 
-			<!-- Field: Deskripsi Singkat Kegiatan -->
 			<div class="space-y-2">
 				<input type="hidden" value={description} name="description" />
 
@@ -270,23 +304,13 @@
 					label={'Isi Deskripsi Kegiatan'}
 					showSaveButton={false}
 				/>
-
-				<!-- <textarea -->
-				<!-- 	id="description" -->
-				<!-- 	name="description" -->
-				<!-- 	rows="4" -->
-				<!-- 	placeholder="Tuliskan deskripsi ringkas mengenai pelaksanaan kegiatan ini..." -->
-				<!-- 	defaultValue={initialData?.description || ''} -->
-				<!-- 	class="w-full rounded-lg border border-border-light bg-bg-primary px-4 py-2.5 text-sm text-text-main transition duration-150 placeholder:text-text-muted focus:border-accent-purple focus:outline-none" -->
-				<!-- ></textarea> -->
 			</div>
 
-			<!-- Form Actions -->
 			<div class="flex items-center justify-end gap-3 border-t border-border-light pt-6">
 				<button
 					type="button"
 					onclick={onCancel ?? (() => history.back())}
-					disabled={isSubmitting}
+					disabled={isSubmitting || isDeletingImage}
 					class="rounded-lg border border-border-light bg-bg-primary px-5 py-2.5 text-sm font-medium text-text-main transition hover:bg-bg-secondary-hover disabled:opacity-50"
 				>
 					Batal
@@ -294,7 +318,7 @@
 
 				<button
 					type="submit"
-					disabled={isSubmitting}
+					disabled={isSubmitting || isDeletingImage}
 					class="inline-flex items-center justify-center gap-1.5 rounded-lg bg-accent-primary px-5 py-2.5 text-sm font-semibold text-text-dark transition hover:bg-accent-primary-hover disabled:opacity-50"
 				>
 					{#if isSubmitting}

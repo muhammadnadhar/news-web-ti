@@ -5,4 +5,10 @@
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 </script>
 
-<FormNews {form} initialData={data.berita} isEdit={true} actionUrl="?/update" />
+<FormNews
+	{form}
+	valuesData={form?.values}
+	initialData={data.berita}
+	isEdit={true}
+	actionUrl="?/update"
+/>

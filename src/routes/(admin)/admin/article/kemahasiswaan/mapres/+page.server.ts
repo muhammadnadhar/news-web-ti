@@ -4,9 +4,11 @@ import {
 	createStudentAchievement,
 	deleteStudentAchievement,
 	getAllStudentAchievements,
+	getPublicIdStudentAchievementsById,
 	updateStudentAchievement
 } from '$lib/repository/admin/article/kemahasiswaan/mapres';
-import { errorResponse } from '$lib/helper/message';
+import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
+import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
 
 export const load: PageServerLoad = async () => {
 	try {
@@ -97,16 +99,39 @@ export const actions: Actions = {
 
 	delete: async ({ request }) => {
 		const formData = await request.formData();
-		const id = formData.get('id') as string;
+		const id = formData.get('id')?.toString().trim();
 
-		if (!id) return fail(400, { message: 'ID tidak valid.' });
+		if (!id) {
+			return fail(400, warningResponse('ID Prestasi Mahasiswa wajib disertakan.', 'Gagal'));
+		}
 
 		try {
-			await deleteStudentAchievement(id);
-			return { success: true };
-		} catch (err) {
+			//  Ambil image_public_id menggunakan method ringan
+			const imagePublicId = await getPublicIdStudentAchievementsById(id);
+
+			if (imagePublicId) {
+				await deleteImageFromCloudinary(imagePublicId);
+			}
+
+			const isSuccess = await deleteStudentAchievement(id);
+
+			if (!isSuccess) {
+				return fail(
+					404,
+					warningResponse('Data prestasi tidak ditemukan atau sudah dihapus.', 'Gagal')
+				);
+			}
+
+			return successResponse('Data Prestasi Mahasiswa berhasil dihapus.', 'Berhasil');
+		} catch (err: any) {
 			console.error('Error deleting student achievement:', err);
-			return fail(500, { message: 'Gagal menghapus data Mahasiswa Prestasi.' });
+			return fail(
+				500,
+				errorResponse(
+					'Terjadi kesalahan sistem saat menghapus data Prestasi Mahasiswa.',
+					'Kesalahan Sistem'
+				)
+			);
 		}
 	}
 };

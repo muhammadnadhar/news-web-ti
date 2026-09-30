@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { PencilIcon, ExternalLinkIcon } from 'lucide-svelte';
+	import { classShadowDown } from '$lib/constants';
+	import { PencilIcon, ExternalLinkIcon, TrashIcon } from 'lucide-svelte';
 
 	interface Props {
 		imageUrl: string; // Wajib (tidak boleh null)
@@ -8,6 +9,7 @@
 		subtitle?: string | null;
 		description?: string | null;
 		editUrl?: string | null;
+		onDelete?: () => void;
 	}
 
 	let {
@@ -16,14 +18,17 @@
 		title = null,
 		subtitle = null,
 		description = null,
-		editUrl = null
+		editUrl = null,
+		onDelete
 	}: Props = $props();
 </script>
 
 <div
-	class="group relative flex flex-col border border-border-color bg-bg-secondary transition-all duration-300 shadow-[6px_6px_0px_0px_rgba(0,0,0,0.4)] hover:-translate-x-1 hover:-translate-y-1 hover:border-accent-primary hover:bg-bg-secondary-hover hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,0.5)]"
+	class={`group relative flex w-full flex-col border border-border-color bg-bg-secondary ${classShadowDown} hover:-translate-x-1 hover:-translate-y-1 hover:border-accent-primary hover:bg-bg-secondary-hover`}
 >
-	<div class="relative aspect-video w-full overflow-hidden border-b border-border-color bg-bg-primary-glare">
+	<div
+		class="relative aspect-video w-full overflow-hidden border-b border-border-color bg-bg-primary-glare"
+	>
 		<img
 			src={imageUrl}
 			alt={title ?? 'Card Image'}
@@ -31,7 +36,7 @@
 			class="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
 		/>
 		<div
-			class="absolute inset-0 bg-gradient  from-bg-primary/60 via-transparent to-transparent"
+			class="bg-gradient absolute inset-0 from-bg-primary/60 via-transparent to-transparent"
 		></div>
 
 		<a
@@ -71,8 +76,8 @@
 				{/if}
 			</div>
 
-			{#if editUrl}
-				<div class="pt-2">
+			<div class="flex gap-2 pt-2">
+				{#if editUrl}
 					<a
 						href={editUrl}
 						class="inline-flex w-full items-center justify-center gap-2 border border-border-color bg-accent-primary px-4 py-2.5 text-sm font-bold text-text-dark shadow-[3px_3px_0px_0px_rgba(0,0,0,0.4)] transition-all hover:bg-accent-primary-hover active:scale-95"
@@ -80,8 +85,19 @@
 						<PencilIcon class="h-4 w-4" />
 						<span>Ubah Data</span>
 					</a>
-				</div>
-			{/if}
+				{/if}
+
+				{#if onDelete}
+					<button
+						type="button"
+						onclick={onDelete}
+						class="inline-flex w-full items-center justify-center gap-2 border border-border-color bg-status-error px-4 py-2.5 text-sm font-bold text-white shadow-[3px_3px_0px_0px_rgba(0,0,0,0.4)] transition-all hover:bg-status-error/30 active:scale-95"
+					>
+						<TrashIcon class="h-4 w-4" />
+						<span>Hapus Data</span>
+					</button>
+				{/if}
+			</div>
 		</div>
 	{/if}
 </div>

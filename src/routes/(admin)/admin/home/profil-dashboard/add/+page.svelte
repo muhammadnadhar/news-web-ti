@@ -17,14 +17,23 @@
 
 	// State untuk URL/Path gambar hasil unggahan Cloudinary
 	let imagePath = $state(form?.image_path || '');
+	let image_public_id = $state('');
 	let isSubmitting = $state(false);
 
 	// Callback ketika unggahan ke Cloudinary berhasil
 	function handleUploadSuccess(result: any) {
-		if (result?.info?.secure_url) {
+		if (result?.event === 'success') {
 			imagePath = result.info.secure_url;
+			image_public_id = result.info.public_id; // 1. Ambil & simpan Public ID dari response Cloudinary
+		}
+
+		// Kembalikan fungsi scroll pada document body
+		if (typeof document !== 'undefined') {
+			document.body.style.overflow = 'auto';
+			// atau document.body.style.removeProperty('overflow');
 		}
 	}
+	$inspect(image_public_id);
 
 	function handleRemoveImage() {
 		imagePath = '';
@@ -105,6 +114,7 @@
 		class="space-y-6 border border-border-color bg-bg-secondary p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,0.4)] md:p-8"
 	>
 		<input type="hidden" name="image_path" value={imagePath} />
+		<input type="hidden" name="image_public_id" value={image_public_id} />
 
 		<div class="space-y-2">
 			<label for="title" class="block text-sm font-bold text-text-main">

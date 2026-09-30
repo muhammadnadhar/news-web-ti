@@ -2,12 +2,15 @@
 	import UserCard from '$lib/components/admin/userCard.svelte';
 	import { AlertCircleIcon, LayoutDashboard, PencilIcon, PlusIcon, UserPlus } from 'lucide-svelte';
 	import type { PageData } from './$types';
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import { gotoEdit, mergeNewPath } from '$lib/utils';
 	import type { MessageStatus } from '$lib/components/admin/message.svelte';
 	import Message from '$lib/components/admin/message.svelte';
 	import { page } from '$app/state';
 	import type { ResponseMessage } from '$lib/types/message';
+	import SpinLoading from '$lib/components/loading/spin.svelte';
+	import { deserialize } from '$app/forms';
+	import TablelProfilProdi from './_component/tablelProfilProdi.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -21,6 +24,156 @@
 	function triggerMessage(status: MessageStatus, title: string, message: string) {
 		messageConfig = { status, title, message };
 		showMessage = true;
+	}
+
+	function handleDeleteprofileProdi(id: string) {
+		return () => {
+			const isConfirmed = confirm('Apakah Anda yakin ingin menghapus data ini?');
+			if (!isConfirmed) return;
+
+			(async () => {
+				try {
+					const formData = new FormData();
+					formData.append('id', id);
+
+					const response = await fetch('?/deleteProfileDashboard', {
+						method: 'POST',
+						body: formData
+					});
+
+					const result = deserialize(await response.text());
+
+					if (result.type === 'success') {
+						triggerMessage(
+							'success',
+							'Berhasil',
+							(result.data as { message?: string })?.message || 'Data berhasil dihapus'
+						);
+						await invalidateAll();
+					} else {
+						triggerMessage(
+							'error',
+							'Gagal',
+							(result.data as { message?: string })?.message || 'Gagal menghapus data'
+						);
+					}
+				} catch (error) {
+					console.error('Error deleting profile:', error);
+					triggerMessage('error', 'Kesalahan', 'Terjadi kesalahan pada jaringan/server');
+				}
+			})();
+		};
+	}
+
+	function handleDeleteDosenPrimary(id: string): void {
+		const isConfirmed = confirm('Apakah Anda yakin ingin menghapus dosen ini?');
+		if (!isConfirmed) return;
+
+		(async () => {
+			try {
+				const formData = new FormData();
+				formData.append('id', id);
+
+				const response = await fetch('?/deleteDosenPrimary', {
+					method: 'POST',
+					body: formData
+				});
+
+				const result = deserialize(await response.text());
+
+				if (result.type === 'success') {
+					triggerMessage(
+						'success',
+						'Berhasil',
+						(result.data as { message?: string })?.message || 'Dosen berhasil dihapus'
+					);
+					await invalidateAll();
+				} else {
+					triggerMessage(
+						'error',
+						'Gagal',
+						(result.data as { message?: string })?.message || 'Gagal menghapus dosen'
+					);
+				}
+			} catch (error) {
+				console.error('Error deleting dosen primary:', error);
+				triggerMessage('error', 'Kesalahan', 'Terjadi kesalahan pada jaringan/server');
+			}
+		})();
+	}
+
+	function handleDeletePerminatanTI(id: string): void {
+		const isConfirmed = confirm('Apakah Anda yakin ingin menghapus data perminatan ini?');
+		if (!isConfirmed) return;
+
+		(async () => {
+			try {
+				const formData = new FormData();
+				formData.append('id', id);
+
+				const response = await fetch('?/deletePerminatanTI', {
+					method: 'POST',
+					body: formData
+				});
+
+				const result = deserialize(await response.text());
+
+				if (result.type === 'success') {
+					triggerMessage(
+						'success',
+						'Berhasil',
+						(result.data as { message?: string })?.message || 'Perminatan TI berhasil dihapus'
+					);
+					await invalidateAll();
+				} else {
+					triggerMessage(
+						'error',
+						'Gagal',
+						(result.data as { message?: string })?.message || 'Gagal menghapus perminatan TI'
+					);
+				}
+			} catch (error) {
+				console.error('Error deleting perminatan TI:', error);
+				triggerMessage('error', 'Kesalahan', 'Terjadi kesalahan pada jaringan/server');
+			}
+		})();
+	}
+
+	function handleDeleteProfileProdiItem(id: string): void {
+		const isConfirmed = confirm('Apakah Anda yakin ingin menghapus item profil prodi ini?');
+		if (!isConfirmed) return;
+
+		(async () => {
+			try {
+				const formData = new FormData();
+				formData.append('id', id);
+
+				const response = await fetch('?/deleteProfileProdiItem', {
+					method: 'POST',
+					body: formData
+				});
+
+				const result = deserialize(await response.text());
+
+				if (result.type === 'success') {
+					triggerMessage(
+						'success',
+						'Berhasil',
+						(result.data as { message?: string })?.message || 'Item profil prodi berhasil dihapus'
+					);
+					await invalidateAll();
+				} else {
+					triggerMessage(
+						'error',
+						'Gagal',
+						(result.data as { message?: string })?.message || 'Gagal menghapus item profil prodi'
+					);
+				}
+			} catch (error) {
+				console.error('Error deleting profile prodi item:', error);
+				triggerMessage('error', 'Kesalahan', 'Terjadi kesalahan pada jaringan/server');
+			}
+		})();
 	}
 </script>
 
@@ -98,7 +251,7 @@
 	</h1>
 
 	<!-- section dashboard profile  -->
-	<section class="mt-2.5 w-full space-y-6">
+	<section class="mt-5 w-full space-y-6">
 		<div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 			<div>
 				<h2 class="text-pure-white text-xl font-bold md:text-2xl">Profile Dashboard</h2>
@@ -113,20 +266,7 @@
 		</div>
 
 		{#await data.listProfileDashboard}
-			<!-- Loading State -->
-			<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-				{#each Array.from({ length: 3 }) as _}
-					<div
-						class="flex animate-pulse flex-col justify-between rounded-2xl border border-white/5 bg-bg-secondary/30 p-5"
-					>
-						<div class="space-y-3">
-							<div class="h-5 w-20 rounded-md bg-white/10"></div>
-							<div class="h-6 w-3/4 rounded-md bg-white/10"></div>
-							<div class="h-32 w-full rounded-lg bg-white/5"></div>
-						</div>
-					</div>
-				{/each}
-			</div>
+			<SpinLoading />
 		{:then res}
 			<!-- 
 	           Normalisasi data 'res' menjadi Array agar aman dibaca oleh .length dan {#each}
@@ -134,7 +274,6 @@
 			{@const listProfileDashboard = Array.isArray(res) ? res : res ? [res] : []}
 
 			{#if listProfileDashboard.length === 0}
-				<!-- Empty State -->
 				{@render emptyState(
 					'Belum Ad Path URL Profile Dashboard',
 					'Daftar path URL untuk navigasi dashboard belum di konfigurasi, silahkan tambah path URL baru',
@@ -150,6 +289,7 @@
 							id={item.id}
 							description={item.title}
 							editUrl={mergeNewPath(`profil-dashboard/edit/${item.id}`)}
+							onDelete={handleDeleteprofileProdi(item.id)}
 						/>
 					{/each}
 				</div>
@@ -168,7 +308,7 @@
 	</section>
 
 	<!-- section  tabel dosen -->
-	<section class="mt-2.5 w-full space-y-6">
+	<section class="mt-5 w-full space-y-6">
 		<div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 			<div>
 				<h2 class="text-pure-white text-xl font-bold md:text-2xl">Daftar Dosen atau Staff</h2>
@@ -181,19 +321,7 @@
 
 		<!-- Stream Handling dengan {#await} -->
 		{#await data.primaryDosenList}
-			<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-				{#each Array(3) as _}
-					<div
-						class="flex animate-pulse items-center gap-4 rounded-2xl border border-white/5 bg-bg-secondary/30 p-4"
-					>
-						<div class="h-16 w-16 shrink-0 rounded-xl bg-white/10"></div>
-						<div class="flex-1 space-y-2">
-							<div class="h-4 w-3/4 rounded-md bg-white/10"></div>
-							<div class="h-3 w-1/2 rounded-md bg-white/5"></div>
-						</div>
-					</div>
-				{/each}
-			</div>
+			<SpinLoading />
 		{:then primaryDosenList}
 			{#if !primaryDosenList || primaryDosenList.length === 0}
 				{@render emptyState(
@@ -204,13 +332,14 @@
 				)}
 			{:else}
 				<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-					{#each primaryDosenList as dosen, index (dosen.id ?? index)}
+					{#each primaryDosenList as dosen, index (dosen.primary_id ?? index)}
 						<UserCard
-							id={dosen.id ?? index}
+							id={dosen.primary_id ?? index}
 							title={dosen.name}
 							subtitle={dosen.position}
 							imageUrl={dosen.photo_url || ''}
-							editUrl={`/dosen/edit/${dosen.id ?? index}`}
+							editUrl={mergeNewPath(`/dosen/edit/${dosen.primary_id ?? index}`)}
+							onDelete={() => handleDeleteDosenPrimary(dosen.primary_id || dosen.lecturer_staff_id)}
 						/>
 					{/each}
 				</div>
@@ -229,7 +358,7 @@
 	</section>
 
 	<!-- seksi 2: tabel perminatan ti -->
-	<section class="mt-2.5 w-full space-y-6">
+	<section class="mt-5 w-full space-y-6">
 		<div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 			<div>
 				<h2 class="text-pure-white text-xl font-bold md:text-2xl">Peminatan / Konsentrasi TI</h2>
@@ -242,25 +371,7 @@
 		</div>
 
 		{#await data.listPerminatan}
-			<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-				{#each Array(3) as _}
-					<div
-						class="flex animate-pulse flex-col justify-between rounded-2xl border border-white/5 bg-bg-secondary/30 p-5"
-					>
-						<div class="space-y-3">
-							<div class="h-5 w-24 rounded-lg bg-white/10"></div>
-							<div class="h-6 w-3/4 rounded-md bg-white/10"></div>
-							<div class="space-y-2 pt-2">
-								<div class="h-3 w-full rounded bg-white/5"></div>
-								<div class="h-3 w-5/6 rounded bg-white/5"></div>
-							</div>
-						</div>
-						<div class="mt-5 flex justify-end border-t border-white/5 pt-4">
-							<div class="h-8 w-8 rounded-lg bg-white/5"></div>
-						</div>
-					</div>
-				{/each}
-			</div>
+			<SpinLoading />
 		{:then listPerminatan}
 			{#if !listPerminatan || listPerminatan.length === 0}
 				{@render emptyState(
@@ -270,7 +381,13 @@
 					() => goto(mergeNewPath('perminatan/add'))
 				)}
 			{:else}
-				<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+				<div
+					class="grid w-full gap-4 {listPerminatan.length === 1
+						? 'grid-cols-1'
+						: listPerminatan.length === 2
+							? 'grid-cols-1 sm:grid-cols-2'
+							: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'}"
+				>
 					{#each listPerminatan as item (item.id)}
 						<div
 							class="group flex flex-col justify-between border border-border-color bg-bg-secondary p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,0.4)] transition-all duration-300 hover:-translate-x-1 hover:-translate-y-1 hover:border-accent-primary hover:bg-bg-secondary-hover hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,0.5)]"
@@ -307,6 +424,16 @@
 									<PencilIcon class="h-3.5 w-3.5" />
 									<span>Ubah</span>
 								</button>
+
+								<button
+									type="button"
+									onclick={() => handleDeletePerminatanTI(item.id)}
+									class="inline-flex items-center gap-1.5 border border-border-color bg-status-error px-3 py-1.5 text-xs font-bold text-text-dark shadow-[3px_3px_0px_0px_rgba(0,0,0,0.4)] transition-all hover:bg-status-error/30 active:scale-95"
+									title="Edit Peminatan"
+								>
+									<PencilIcon class="h-3.5 w-3.5" />
+									<span>Delete</span>
+								</button>
 							</div>
 						</div>
 					{/each}
@@ -326,12 +453,12 @@
 	</section>
 
 	<!-- seksi 3: tabel profil prodi -->
-	<section class="mt-2.5 w-full space-y-6">
+	<section class="mt-5 w-full space-y-6">
 		<div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 			<div>
 				<h2 class="text-pure-white text-xl font-bold md:text-2xl">Profil & Pengaduan Prodi</h2>
 				<p class="text-sm text-text-muted">
-					Kelola informasi profil program studi dan gambar/QR barcode pengaduan.
+					Kelola informasi profil program studi Lainya bisa di masukin di sini.
 				</p>
 			</div>
 
@@ -339,46 +466,21 @@
 		</div>
 
 		{#await data.listProfil}
-			<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-				{#each Array(3) as _}
-					<div
-						class="flex animate-pulse flex-col justify-between overflow-hidden rounded-2xl border border-white/5 bg-bg-secondary/30 p-5"
-					>
-						<div class="space-y-4">
-							<!-- Image/QR Skeleton Placeholder -->
-							<div class="h-44 w-full rounded-xl bg-white/10"></div>
-							<div class="h-6 w-3/4 rounded-md bg-white/10"></div>
-							<div class="space-y-2">
-								<div class="h-3 w-full rounded bg-white/5"></div>
-								<div class="h-3 w-4/5 rounded bg-white/5"></div>
-							</div>
-						</div>
-						<div class="mt-5 flex justify-end border-t border-white/5 pt-4">
-							<div class="h-8 w-8 rounded-lg bg-white/5"></div>
-						</div>
-					</div>
-				{/each}
-			</div>
+			<SpinLoading />
 		{:then listProfil}
 			{#if !listProfil || listProfil.length === 0}
 				{@render emptyState(
 					'Belum ada Data Profile & Pengaduan Prodi',
 					'Data profil belum ada  , silahkan tambbhakkan informasi profile baru , ini akan di tampilkan di halaman depan',
 					'Tambah Profile Baru',
-					() => goto(mergeNewPath('profil-dashboard/add'))
+					() => goto(mergeNewPath('profil-prodi/add'))
 				)}
 			{:else}
-				<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-					{#each listProfil as profil (profil.id)}
-						<UserCard
-							id={profil.id}
-							title={profil.title}
-							description={profil.description}
-							imageUrl={profil.image_url || ''}
-							editUrl={`${page.url.pathname}/profil-prodi/edit/${profil.id}`}
-						/>
-					{/each}
-				</div>
+				<TablelProfilProdi
+					{listProfil}
+					pageUrlPathname={page.url.pathname}
+					onDelete={handleDeleteProfileProdiItem}
+				/>
 			{/if}
 		{:catch error}
 			<div

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { classTopSpace } from '$lib/constants';
+	import { classShadowDown, classTopSpace } from '$lib/constants';
 	import EmptyData from '../../_components/emptyData.svelte';
 	import type { PageData } from './$types';
 	import { BookOpen, Calendar, Maximize2, X, AlertCircle, FileText } from 'lucide-svelte';
@@ -51,7 +51,7 @@
 					: '-'}
 
 				<article
-					class="bg-scitech-slate/40 hover:border-scitech-mint/40 flex flex-col justify-between overflow-hidden rounded-2xl border border-border-color backdrop-blur-md transition-all duration-300 hover:shadow-lg"
+					class={`bg-scitech-slate/40 hover:border-scitech-mint/40 flex flex-col justify-between overflow-hidden rounded-2xl border border-border-color  backdrop-blur-md ${classShadowDown} `}
 				>
 					<div class="p-6 sm:p-8">
 						<!-- Sampul Pedoman (Jika Ada) -->
@@ -81,10 +81,8 @@
 							</div>
 						{/if}
 
-						<!-- Title -->
 						<h2 class="line-clamp-2 text-xl font-bold text-text-main">{item.title}</h2>
 
-						<!-- Date Badge -->
 						<div class="mt-2 mb-4 flex items-center gap-1.5 text-xs text-text-muted">
 							<Calendar class="text-scitech-cyan h-3.5 w-3.5" />
 							<span>Pembaruan: {formattedDate}</span>
@@ -94,7 +92,7 @@
 						{#if item.description}
 							<div class="mt-4 border-t border-border-color/30 pt-4">
 								<p class="line-clamp-6 text-sm leading-relaxed whitespace-pre-line text-slate-300">
-									{item.description}
+									{@html item.description}
 								</p>
 							</div>
 						{/if}

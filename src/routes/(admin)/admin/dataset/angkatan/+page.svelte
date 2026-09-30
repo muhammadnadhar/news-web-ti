@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { Users, Plus, Search, ArrowUpDown, Edit3, Trash2, Sparkles, X } from 'lucide-svelte';
-
 	import TableContent from '$lib/components/admin/tableContent.svelte';
 	import type { TableContentType } from '$lib/types/tableContent';
 	import { gotoEdit, mergeNewPath } from '$lib/utils.js';
@@ -16,11 +14,6 @@
 
 	// State Management
 	let searchQuery = $state('');
-	let isModalOpen = $state(false);
-	let isEditMode = $state(false);
-	let selectedId = $state('');
-	let yearInput = $state('');
-
 	/**
 	 * Mengubah list AngkatanDTO menjadi format TableContentType
 	 */
@@ -69,28 +62,6 @@
 			item.items.some((col) => String(col.row).toLowerCase().includes(searchQuery.toLowerCase()))
 		)
 	);
-
-	// Modal Controls
-	function openAddModal() {
-		isEditMode = false;
-		selectedId = '';
-		yearInput = '';
-		isModalOpen = true;
-	}
-
-	function openEditModal(item: TableContentType) {
-		isEditMode = true;
-		selectedId = item.id;
-		const nameCol = item.items.find((col) => col.colomn === 'Nama');
-		yearInput = nameCol ? String(nameCol.row) : '';
-		isModalOpen = true;
-	}
-
-	function closeModal() {
-		isModalOpen = false;
-		yearInput = '';
-		selectedId = '';
-	}
 </script>
 
 <div class="mx-auto max-w-7xl space-y-8">
@@ -103,7 +74,7 @@
 		<h1 class="text-2xl font-extrabold tracking-tight text-text-main sm:text-3xl">Angkatan</h1>
 	</div>
 
-	<!-- Alert / Toast Notification -->
+	<!-- alert / toast notification -->
 	{#if showMessage}
 		<Message
 			status={messageConfig.status}

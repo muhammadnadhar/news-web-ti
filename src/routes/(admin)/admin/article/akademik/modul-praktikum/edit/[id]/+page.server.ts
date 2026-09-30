@@ -4,7 +4,8 @@ import {
 	getPracticumModuleById,
 	updatePracticumModule
 } from '$lib/repository/admin/article/akedemik/modulePratikum';
-import { warningResponse } from '$lib/helper/message';
+import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
+import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const id = params.id;
@@ -77,6 +78,23 @@ export const actions: Actions = {
 				title: 'Kesalahan Sistem',
 				message: err?.message || 'Terjadi kesalahan sistem saat memproses modul praktikum.'
 			});
+		}
+	},
+	// untuk edit dia akan memanggil fungsi delete Photo saat tombol batal di click
+	deletePhoto: async ({ request }) => {
+		const formData = await request.formData();
+		const publicId = formData.get('public_id')?.toString();
+
+		if (!publicId) {
+			return fail(400, { ...errorResponse('Public Id tidak di temukan', 'Error') });
+		}
+
+		try {
+			await deleteImageFromCloudinary(publicId);
+			return successResponse('Berhasil di batalkan', 'Succcess');
+		} catch (err) {
+			console.error('Error deleting photo:', err);
+			return fail(500, errorResponse('Gagal menghapus foto ', 'Gagal'));
 		}
 	}
 };

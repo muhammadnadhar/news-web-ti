@@ -20,12 +20,12 @@
 		: 'sm:px-3 sm:py-2'}"
 >
 	{#if $Apptheme === 'dark'}
-		<Sun class="h-4 w-4 shrink-0 text-amber-400 transition-transform hover:rotate-45" />
+		<Sun class="h-4 w-4 shrink-0 text-accent-yellow transition-transform hover:rotate-45" />
 		{#if !onlyIcon}
 			<span class="hidden font-mono text-xs whitespace-nowrap md:inline">Light Mode</span>
 		{/if}
 	{:else}
-		<Moon class="h-4 w-4 shrink-0 text-indigo-600 transition-transform hover:-rotate-12" />
+		<Moon class="h-4 w-4 shrink-0 text-accent-blue transition-transform hover:-rotate-12" />
 		{#if !onlyIcon}
 			<span class="hidden font-mono text-xs whitespace-nowrap md:inline">Dark Mode</span>
 		{/if}

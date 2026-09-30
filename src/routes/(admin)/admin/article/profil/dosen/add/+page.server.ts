@@ -1,5 +1,6 @@
 import { cloudinary } from '$lib/cloudinary/server';
 import { randomUUID } from '$lib/crypto';
+import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
 import { errorResponse, successResponse } from '$lib/helper/message';
 import { createLecturerStaff } from '$lib/repository/admin/article/profile/dosen&staff';
 import { fail, redirect, type Actions } from '@sveltejs/kit';
@@ -35,7 +36,8 @@ export const actions: Actions = {
 				expertise,
 				pddikti_url: pddiktiUrl,
 				photo_url: photoUrl,
-				role: category
+				role: category,
+				photo_public_id: publicId
 			});
 		} catch (err: any) {
 			console.error('Error creating lecturer/staff:', err);
@@ -76,7 +78,7 @@ export const actions: Actions = {
 		}
 
 		try {
-			const result = await cloudinary.uploader.destroy(publicId);
+			const result = await deleteImageFromCloudinary(publicId);
 			return {
 				deleteSuccess: true,
 				result

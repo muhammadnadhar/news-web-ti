@@ -1,6 +1,7 @@
 export interface SubMenuItem {
 	title: string;
 	href: string;
+	iconName?: string;
 }
 
 export interface MenuItem {

@@ -3,6 +3,7 @@ import type { Actions } from './$types';
 import { createScholarship } from '$lib/repository/admin/article/kemahasiswaan/beasiswa';
 import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
 import { randomUUID } from '$lib/crypto';
+import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
 
 export const actions: Actions = {
 	create: async ({ request }) => {
@@ -41,5 +42,22 @@ export const actions: Actions = {
 		// Redirect ke halaman daftar Beasiswa Kemahasiswaan
 		// throw redirect(303, '/admin/kemahasiswaan/beasiswa');
 		return successResponse('Berhasil menyimpan data mahasiswa Baru', 'Success');
+	},
+	// untuk edit dia akan memanggil fungsi delete Photo saat tombol batal di click
+	deletePhoto: async ({ request }) => {
+		const formData = await request.formData();
+		const publicId = formData.get('public_id')?.toString();
+
+		if (!publicId) {
+			return fail(400, { ...errorResponse('Public Id tidak di temukan', 'Error') });
+		}
+
+		try {
+			await deleteImageFromCloudinary(publicId);
+			return successResponse('Berhasil di batalkan', 'Succcess');
+		} catch (err) {
+			console.error('Error deleting photo:', err);
+			return fail(500, errorResponse('Gagal menghapus foto ', 'Gagal'));
+		}
 	}
 };

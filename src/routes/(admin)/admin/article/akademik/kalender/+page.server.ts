@@ -5,10 +5,12 @@ import {
 	addCalendarImages,
 	deleteAcademicCalendarById,
 	getActiveAcademicCalendarWithImages,
+	getCalendarImagePublicIdsByCalendarId,
 	saveAcademicCalendar,
 	syncRetainedCalendarImages
 } from '$lib/repository/admin/article/akedemik/kalender';
-import { errorResponse, successResponse } from '$lib/helper/message';
+import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
+import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
 
 export const load: PageServerLoad = async () => {
 	try {
@@ -86,7 +88,6 @@ export const actions: Actions = {
 			if (newImageRecords.length > 0) {
 				await addCalendarImages(newImageRecords);
 			}
-
 			return successResponse('Data Kalender Akademik berhasil diperbarui!');
 		} catch (err: any) {
 			console.error('Error updating Academic Calendar:', err);
@@ -98,15 +99,42 @@ export const actions: Actions = {
 		const id = formData.get('id') as string;
 
 		if (!id) {
-			return fail(400, errorResponse('ID Kalender tidak ditemukan.'));
+			return fail(400, warningResponse('ID Kalender Akademik tidak ditemukan.', 'Gagal'));
 		}
 
 		try {
-			await deleteAcademicCalendarById(id);
-			return successResponse('Kalender Akademik berhasil dihapus!');
+			//  Ambil semua image_public_id yang terikat dengan calendar_id ini
+			const publicIds = await getCalendarImagePublicIdsByCalendarId(id);
+
+			// Jika ada gambar di Cloudinary, hapus semuanya secara paralel (Promise.all)
+			if (publicIds.length > 0) {
+				await Promise.all(publicIds.map((publicId) => deleteImageFromCloudinary(publicId)));
+			}
+
+			//  Hapus data dari database (otomatis menghapus di tabel anak & induk)
+			const isDeleted = await deleteAcademicCalendarById(id);
+
+			if (!isDeleted) {
+				return fail(
+					404,
+					warningResponse('Data Kalender Akademik tidak ditemukan atau sudah dihapus.', 'Gagal')
+				);
+			}
+			return successResponse(
+				`Kalender Akademik beserta ${publicIds.length} gambar terkait berhasil dihapus!`,
+				'Berhasil'
+			);
 		} catch (err: any) {
 			console.error('Error deleting Academic Calendar:', err);
-			return fail(500, errorResponse(`Gagal menghapus data: ${err.message}`));
+			return fail(
+				500,
+				errorResponse(
+					err?.message
+						? `Gagal menghapus data: ${err.message}`
+						: 'Terjadi kesalahan sistem saat menghapus Kalender Akademik.',
+					'Kesalahan Sistem'
+				)
+			);
 		}
 	}
 };

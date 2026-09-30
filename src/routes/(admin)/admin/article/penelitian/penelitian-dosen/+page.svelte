@@ -49,16 +49,16 @@
 {/if}
 
 <div class="mx-auto max-w-7xl space-y-8 p-6 lg:p-10">
-	<div class="border-b border-white/10 pb-6">
+	<div class="border-b border-border-color/10 pb-6">
 		<h1 class="text-2xl font-extrabold tracking-tight text-text-main sm:text-3xl">
 			Penelitian Dosen Prodi TI
 		</h1>
 	</div>
 
 	<div
-		class="bg-scitech-slate/60 space-y-6 rounded-3xl border border-white/10 p-6 shadow-2xl backdrop-blur-xl sm:p-8"
+		class="bg-scitech-slate/60 space-y-6 rounded-3xl border border-border-color/10 p-6 shadow-2xl backdrop-blur-xl sm:p-8"
 	>
-		<div class="border-b border-white/10 pb-4">
+		<div class="border-b border-border-color/10 pb-4">
 			<h2 class="text-scitech-mint text-sm font-bold sm:text-base">
 				Form Ubah Data Penelitian Dosen Prodi TI
 			</h2>
@@ -107,7 +107,7 @@
 					type="text"
 					bind:value={titleInput}
 					readonly
-					class="bg-scitech-navy/50 w-full cursor-not-allowed rounded-xl border border-white/10 px-4 py-2.5 text-xs text-text-muted focus:outline-none"
+					class="bg-scitech-navy/50 w-full cursor-not-allowed rounded-xl border border-border-color/10 px-4 py-2.5 text-xs text-text-muted focus:outline-none"
 				/>
 			</div>
 
@@ -116,7 +116,6 @@
 					Isi Deskripsi / Rekapitulasi<span class="text-rose-400">*</span>
 				</label>
 
-				<!-- Component FormEditor -->
 				<FormEditor
 					showSaveButton={false}
 					title={'Penelitian Dosen'}

@@ -54,13 +54,27 @@
 	}
 </script>
 
+	<!-- Alert / Toast Notification -->
+	{#if showMessage || form?.message}
+		<Message
+			status={showMessage ? messageConfig.status : 'error'}
+			title={showMessage ? messageConfig.title : 'Gagal'}
+			message={showMessage ? messageConfig.message : form?.message || ''}
+			dismissible={true}
+			timeout={4000}
+			onclose={() => (showMessage = false)}
+		/>
+	{/if}
+
+
+
 <div class="mx-auto max-w-3xl space-y-6">
 	<div class="flex items-center justify-between border-b border-border-color/10 pb-4">
 		<div class="flex items-center gap-3">
 			<button
 				type="button"
 				onclick={() => goto(removeLastPath())}
-				class="rounded-xl border border-border-color/10 p-2.5 text-text-muted transition-all hover:border-white/20 hover:bg-white/10 hover:text-text-main active:scale-95"
+				class="rounded-xl border border-border-color/10 p-2.5 text-text-muted transition-all hover:border-border-color/20 hover:bg-white/10 hover:text-text-main active:scale-95"
 				title="Kembali"
 			>
 				<ArrowLeft class="h-5 w-5" />
@@ -80,19 +94,6 @@
 			</div>
 		</div>
 	</div>
-
-	<!-- Alert / Toast Notification -->
-	{#if showMessage || form?.message}
-		<Message
-			status={showMessage ? messageConfig.status : 'error'}
-			title={showMessage ? messageConfig.title : 'Gagal'}
-			message={showMessage ? messageConfig.message : form?.message || ''}
-			dismissible={true}
-			timeout={4000}
-			onclose={() => (showMessage = false)}
-		/>
-	{/if}
-
 	<!-- Glassmorphism Form Card -->
 	<div
 		class="bg-scitech-slate/50 rounded-2xl border border-border-color/10 p-6 shadow-2xl backdrop-blur-xl sm:p-8"

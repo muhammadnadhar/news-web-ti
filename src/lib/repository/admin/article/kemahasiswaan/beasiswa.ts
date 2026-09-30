@@ -2,7 +2,6 @@ import { query } from '$lib/database/svelteDb';
 import type { ScholarshipDTO } from '$lib/dto/admin/article/kemahasiswaan';
 import { tableScholarship } from '$lib/seeder/admin/article/kemahasiswaan';
 
-
 /**
  * Mengambil seluruh data Beasiswa
  */
@@ -21,16 +20,38 @@ export async function getScholarshipById(id: string): Promise<ScholarshipDTO | n
 }
 
 /**
+ * Mengambil hanya image_public_id dari data Beasiswa berdasarkan ID
+ * Query ini jauh lebih ringan karena tidak melakukan SELECT *
+ */
+export async function getScholarshipPublicImageIdyId(
+	id: string
+): Promise<{ image_public_id: string | null } | null> {
+	const sql = `SELECT image_public_id FROM ${tableScholarship} WHERE id = ? LIMIT 1`;
+	const rows = (await query(sql, [id])) as Array<{ image_public_id: string | null }>;
+	return rows[0] || null;
+}
+
+/**
  * Membuat data Beasiswa baru
  */
 export async function createScholarship(
 	id: string,
 	studentName: string,
 	scholarshipName: string,
-image_url : string,
+	imageUrl: string | null,
+	imagePublicId: string | null = null
 ): Promise<boolean> {
-	const sql = `INSERT INTO ${tableScholarship} (id, student_name, image_url , scholarship_name) VALUES (?, ?, ? , ?)`;
-	const result = (await query(sql, [id, studentName, scholarshipName ,image_url])) as any;
+	const sql = `
+        INSERT INTO ${tableScholarship} (id, student_name, scholarship_name, image_url, image_public_id) 
+        VALUES (?, ?, ?, ?, ?)
+    `;
+	const result = (await query(sql, [
+		id,
+		studentName,
+		scholarshipName,
+		imageUrl,
+		imagePublicId
+	])) as any;
 	return result.affectedRows > 0;
 }
 
@@ -41,10 +62,21 @@ export async function updateScholarship(
 	id: string,
 	studentName: string,
 	scholarshipName: string,
-  image_url : string,
+	imageUrl: string | null,
+	imagePublicId: string | null = null
 ): Promise<boolean> {
-	const sql = `UPDATE ${tableScholarship} SET student_name = ?, scholarship_name = ?, image_url = ?  updated_at = NOW() WHERE id = ?`;
-	const result = (await query(sql, [studentName, scholarshipName, image_url,id])) as any;
+	const sql = `
+        UPDATE ${tableScholarship} 
+        SET student_name = ?, scholarship_name = ?, image_url = ?, image_public_id = ?, updated_at = NOW() 
+        WHERE id = ?
+    `;
+	const result = (await query(sql, [
+		studentName,
+		scholarshipName,
+		imageUrl,
+		imagePublicId,
+		id
+	])) as any;
 	return result.affectedRows > 0;
 }
 

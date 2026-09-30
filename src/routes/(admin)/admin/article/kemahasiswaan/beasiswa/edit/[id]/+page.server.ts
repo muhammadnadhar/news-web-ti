@@ -4,6 +4,8 @@ import {
 	getScholarshipById,
 	updateScholarship
 } from '$lib/repository/admin/article/kemahasiswaan/beasiswa';
+import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
+import { errorResponse, successResponse } from '$lib/helper/message';
 
 /**
  * 1. LOAD FUNCTION
@@ -28,7 +30,7 @@ export const load: PageServerLoad = async ({ params }) => {
 };
 
 /**
- * 2. FORM ACTIONS
+ * FORM ACTIONS
  * Menerima submission form edit dan memanggil updateScholarship
  */
 export const actions: Actions = {
@@ -84,6 +86,23 @@ export const actions: Actions = {
 				message: 'Terjadi kesalahan pada server saat memperbarui data.',
 				values
 			});
+		}
+	},
+	// untuk edit dia akan memanggil fungsi delete Photo saat tombol batal di click
+	deletePhoto: async ({ request }) => {
+		const formData = await request.formData();
+		const publicId = formData.get('public_id')?.toString();
+
+		if (!publicId) {
+			return fail(400, { ...errorResponse('Public Id tidak di temukan', 'Error') });
+		}
+
+		try {
+			await deleteImageFromCloudinary(publicId);
+			return successResponse('Berhasil di batalkan', 'Succcess');
+		} catch (err) {
+			console.error('Error deleting photo:', err);
+			return fail(500, errorResponse('Gagal menghapus foto ', 'Gagal'));
 		}
 	}
 } satisfies Actions;

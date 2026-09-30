@@ -16,6 +16,7 @@
 	import type { MessageStatus, ResponseMessage } from '$lib/types/message.js';
 	import type { TableContentType } from '$lib/types/tableContent.js';
 	import { gotoEdit, mergeNewPath, parsePhotoToUrl } from '$lib/utils.js';
+	import type { SubmitFunction } from '@sveltejs/kit';
 	import {
 		UploadCloud,
 		Plus,
@@ -24,17 +25,19 @@
 		Save,
 		X,
 		AlertTriangleIcon,
-		UploadIcon
+		UploadIcon,
+		Loader2
 	} from 'lucide-svelte';
 	import { CldUploadButton } from 'svelte-cloudinary';
 
-	let { data } = $props();
+	let { data, form } = $props();
 
 	// State Form Kiri (Konten Sejarah)
 	let contentId = $state(data.historyContent?.id ?? crypto.randomUUID());
-	let title = $state(data.historyContent?.title ?? 'Sejarah');
-	let description = $state(data.historyContent?.description ?? '');
+	let title = $state(data.historyContent?.title ?? form?.values?.title ?? 'Sejarah');
+	let description = $state(data.historyContent?.description ?? form?.values?.description ?? '');
 	let imageUrl = $state(data.historyContent?.image_url ?? null);
+	let imagePublicId = $state(data.historyContent?.image_public_id ?? null);
 	let selectedFile = $state<File | null>(null);
 	let previewUrl = $state<string | null>(data.historyContent?.image_url ?? null);
 
@@ -42,6 +45,7 @@
 		if (result?.info?.secure_url) {
 			imageUrl = result.info.secure_url;
 			previewUrl = result.info.secure_url;
+			imagePublicId = result.info.public_id; // Assign public_id dari Cloudinary widget
 		}
 	}
 
@@ -145,6 +149,37 @@
 			};
 		});
 	}
+
+	const handleSubmit: SubmitFunction = () => {
+		isSubmitting = true;
+
+		return async ({ result, update }) => {
+			isSubmitting = false;
+
+			if (result.type === 'success') {
+				const data = result.data as { message?: string; title?: string } | undefined;
+				triggerMessage(
+					'success',
+					data?.title || 'Berhasil',
+					data?.message || 'Sejarah berhasil disimpan'
+				);
+				await update();
+			} else if (result.type === 'failure') {
+				const data = result.data as { message?: string; title?: string } | undefined;
+				triggerMessage(
+					'error',
+					data?.title || 'Gagal',
+					data?.message || 'Gagal menyimpan data sejarah'
+				);
+			} else if (result.type === 'error') {
+				triggerMessage(
+					'error',
+					'Kesalahan',
+					result.error?.message || 'Terjadi kesalahan pada server'
+				);
+			}
+		};
+	};
 </script>
 
 {#if showMessage}
@@ -161,12 +196,11 @@
 {/if}
 
 <div class="space-y-6 p-6 lg:p-10">
-	<!-- HEADER TITLE -->
 	<div class="border-scitech-slate/20 pb-4">
 		<h1 class="text-2xl font-bold tracking-tight text-text-main">Sejarah</h1>
 	</div>
 
-	<!-- GRID 2 KOLOM (KIRI: KONTEN SEJARAH, KANAN: PIMPINAN JURUSAN) -->
+	<!-- grid 2 kolom (kiri: konten sejarah, kanan: pimpinan jurusan) -->
 	<div class="grid grid-cols-1 items-start gap-8 lg:grid-cols-12">
 		<!-- ================= bagian kiri: form ubah data sejarah ================= -->
 		<div
@@ -178,11 +212,12 @@
 				method="POST"
 				action="?/saveContent"
 				enctype="multipart/form-data"
-				use:enhance
+				use:enhance={handleSubmit}
 				class="space-y-6"
 			>
 				<input type="hidden" name="id" value={contentId} />
 				<input type="hidden" name="existing_image_url" value={imageUrl ?? ''} />
+				<input type="hidden" name="image_public_id" value={imagePublicId ?? ''} />
 
 				<!-- judul & foto row -->
 				<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -204,6 +239,7 @@
 						<label for="image" class="text-xs font-medium text-text-main">Foto</label>
 						<div class="flex items-center gap-2">
 							<CldUploadButton
+								type="button"
 								uploadPreset={upload_cloudinary_preset}
 								options={getUploadOptions(folder_cloudinary_admin_article_profil)}
 								config={getUploadConfig()}
@@ -243,10 +279,16 @@
 
 				<button
 					type="submit"
-					class="bg-scitech-mint text-scitech-navy hover:bg-scitech-mint-hover inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition-all active:scale-95"
+					disabled={isSubmitting}
+					class="bg-scitech-mint text-scitech-navy hover:bg-scitech-mint-hover inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition-all active:scale-95 disabled:opacity-50"
 				>
-					<Save class="h-4 w-4" />
-					<span>Simpan Sejarah</span>
+					{#if isSubmitting}
+						<Loader2 class="h-4 w-4 animate-spin" />
+						<span>Menyimpan...</span>
+					{:else}
+						<Save class="h-4 w-4" />
+						<span>Simpan Sejarah</span>
+					{/if}
 				</button>
 			</form>
 		</div>
@@ -286,109 +328,3 @@
 		</div>
 	</div>
 </div>
-
-<!-- Modal Konfirmasi Hapus -->
-<!-- {#if isDeleteModalOpen} -->
-<!-- 	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"> -->
-<!-- 		<div -->
-<!-- 			class="bg-scitech-navy w-full max-w-md space-y-6 rounded-3xl border border-white/15 p-6 shadow-2xl sm:p-8" -->
-<!-- 		> -->
-<!-- 			<!-- Header Modal --> -->
-<!-- 			<div class="flex items-center justify-between pb-4"> -->
-<!-- 				<div class="flex items-center gap-2 font-bold text-red-400"> -->
-<!-- 					<AlertTriangleIcon class="h-5 w-5" /> -->
-<!-- 					<h3 class="text-sm">Konfirmasi Hapus Data</h3> -->
-<!-- 				</div> -->
-<!-- 				<button -->
-<!-- 					type="button" -->
-<!-- 					onclick={closeDeleteModal} -->
-<!-- 					disabled={isSubmitting} -->
-<!-- 					class="text-text-muted transition-colors hover:text-white" -->
-<!-- 				> -->
-<!-- 					<X class="h-5 w-5" /> -->
-<!-- 				</button> -->
-<!-- 			</div> -->
-<!---->
-<!-- 			<!-- Form Hapus Server Action --> -->
-<!-- 			<form -->
-<!-- 				method="POST" -->
-<!-- 				action="?/delete" -->
-<!-- 				use:enhance={() => { -->
-<!-- 					isSubmitting = true; -->
-<!-- 					return async ({ result }) => { -->
-<!-- 						isSubmitting = false; -->
-<!---->
-<!-- 						if (result.type === 'success') { -->
-<!-- 							closeDeleteModal(); -->
-<!-- 							await invalidateAll(); -->
-<!-- 							messageState = { -->
-<!-- 								show: true, -->
-<!-- 								type: 'success', -->
-<!-- 								title: 'Berhasil', -->
-<!-- 								message: (result.data?.message as string) || 'Data berhasil dihapus!' -->
-<!-- 							}; -->
-<!-- 						} else if (result.type === 'failure') { -->
-<!-- 							closeDeleteModal(); -->
-<!-- 							messageState = { -->
-<!-- 								show: true, -->
-<!-- 								type: 'error', -->
-<!-- 								title: 'Gagal', -->
-<!-- 								message: (result.data?.message as string) || 'Gagal menghapus data.' -->
-<!-- 							}; -->
-<!-- 						} else { -->
-<!-- 							closeDeleteModal(); -->
-<!-- 							messageState = { -->
-<!-- 								show: true, -->
-<!-- 								type: 'error', -->
-<!-- 								title: 'Error', -->
-<!-- 								message: 'Terjadi kesalahan sistem.' -->
-<!-- 							}; -->
-<!-- 						} -->
-<!-- 					}; -->
-<!-- 				}} -->
-<!-- 				class="space-y-6" -->
-<!-- 			> -->
-<!-- 				<input type="hidden" name="id" value={selectedItem?.id ?? ''} /> -->
-<!---->
-<!-- 				<div class="space-y-2"> -->
-<!-- 					<p class="text-xs leading-relaxed text-text-muted"> -->
-<!-- 						Apakah Anda yakin ingin menghapus data -->
-<!-- 						{#if itemTitle} -->
-<!-- 							<span class="font-bold text-white">"{itemTitle}"</span> -->
-<!-- 						{/if}? -->
-<!-- 					</p> -->
-<!-- 					<p class="text-[11px] text-red-400/80 italic"> -->
-<!-- 						*Tindakan ini tidak dapat dibatalkan dan data akan dihapus permanen dari sistem. -->
-<!-- 					</p> -->
-<!-- 				</div> -->
-<!---->
-<!-- 				<!-- Form Action Buttons --> -->
-<!-- 				<div class="flex justify-end gap-3 border-t border-white/10 pt-4"> -->
-<!-- 					<button -->
-<!-- 						type="button" -->
-<!-- 						onclick={closeDeleteModal} -->
-<!-- 						disabled={isSubmitting} -->
-<!-- 						class="rounded-xl bg-white/5 px-4 py-2 text-xs font-semibold text-text-muted transition-all hover:bg-white/10 disabled:opacity-50" -->
-<!-- 					> -->
-<!-- 						Batal -->
-<!-- 					</button> -->
-<!---->
-<!-- 					<button -->
-<!-- 						type="submit" -->
-<!-- 						disabled={isSubmitting} -->
-<!-- 						class="inline-flex items-center gap-2 rounded-xl border border-red-500/40 bg-red-500/20 px-5 py-2 text-xs font-bold text-red-300 transition-all hover:bg-red-500/30 active:scale-95 disabled:opacity-50" -->
-<!-- 					> -->
-<!-- 						{#if isSubmitting} -->
-<!-- 							<Loader2 class="h-4 w-4 animate-spin" /> -->
-<!-- 							<span>Menghapus...</span> -->
-<!-- 						{:else} -->
-<!-- 							<Trash2 class="h-4 w-4" /> -->
-<!-- 							<span>Hapus Data</span> -->
-<!-- 						{/if} -->
-<!-- 					</button> -->
-<!-- 				</div> -->
-<!-- 			</form> -->
-<!-- 		</div> -->
-<!-- 	</div> -->
-<!-- {/if} -->
-<!---->

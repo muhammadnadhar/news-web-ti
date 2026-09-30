@@ -20,6 +20,18 @@ export async function getActivityDocumentationById(
 	const rows = (await query(sql, [id])) as ActivityDocumentationDTO[];
 	return rows[0] || null;
 }
+/**
+ * Mengambil hanya image_public_id dari Dokumentasi Kegiatan berdasarkan ID
+ *
+ * @param id - ID Dokumentasi Kegiatan
+ * @returns Promise<string | null> - Mengembalikan string image_public_id atau null jika tidak ada/ditemukan
+ */
+export async function getPublicIdActivityDocumentationById(id: string): Promise<string | null> {
+	const sql = `SELECT image_public_id FROM ${tableActivityDocumentation} WHERE id = ? LIMIT 1`;
+	const rows = (await query(sql, [id])) as Array<{ image_public_id: string | null }>;
+
+	return rows[0]?.image_public_id ?? null;
+}
 
 /**
  * Membuat data Dokumentasi Kegiatan baru
@@ -27,19 +39,25 @@ export async function getActivityDocumentationById(
 export async function createActivityDocumentation(
 	id: string,
 	title: string,
-	imageUrl: string,
+	imageUrl: string | null,
 	description: string | null,
 	eventDate: string | null,
-	link_drive: string | null
+	linkDrive: string | null,
+	imagePublicId: string | null = null
 ): Promise<boolean> {
-	const sql = `INSERT INTO ${tableActivityDocumentation} (id, title, image_url, description, event_date , link_drive ) VALUES (?, ?, ?, ?, ? , ?)`;
+	const sql = `
+        INSERT INTO ${tableActivityDocumentation} (
+            id, title, image_url, image_public_id, description, event_date, link_drive
+        ) VALUES (?, ?, ?, ?, ?, ?, ?)
+    `;
 	const result = (await query(sql, [
 		id,
 		title,
 		imageUrl,
+		imagePublicId,
 		description || null,
 		eventDate || null,
-		link_drive
+		linkDrive || null
 	])) as any;
 	return result.affectedRows > 0;
 }
@@ -50,18 +68,31 @@ export async function createActivityDocumentation(
 export async function updateActivityDocumentation(
 	id: string,
 	title: string,
-	imageUrl: string,
+	imageUrl: string | null,
 	description: string | null,
 	eventDate: string | null,
-	link_drive: string | null
+	linkDrive: string | null,
+	imagePublicId: string | null = null
 ): Promise<boolean> {
-	const sql = `UPDATE ${tableActivityDocumentation} SET title = ?, image_url = ?, description = ?, event_date = ?, link_drive = ? , updated_at = NOW() WHERE id = ?`;
+	const sql = `
+        UPDATE ${tableActivityDocumentation} 
+        SET 
+            title = ?, 
+            image_url = ?, 
+            image_public_id = ?, 
+            description = ?, 
+            event_date = ?, 
+            link_drive = ?, 
+            updated_at = NOW() 
+        WHERE id = ?
+    `;
 	const result = (await query(sql, [
 		title,
 		imageUrl,
+		imagePublicId,
 		description || null,
 		eventDate || null,
-		link_drive,
+		linkDrive || null,
 		id
 	])) as any;
 	return result.affectedRows > 0;

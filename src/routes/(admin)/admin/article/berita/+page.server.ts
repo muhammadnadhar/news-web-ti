@@ -1,7 +1,8 @@
 import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
 import { error, fail } from '@sveltejs/kit';
-import { deleteNews, getAllNews } from '$lib/repository/admin/article/berita';
-import type { PageServerLoad ,Actions } from './$types';
+import { deleteNews, getAllNews, getNewsById } from '$lib/repository/admin/article/berita';
+import type { PageServerLoad, Actions } from './$types';
+import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
 
 export const load: PageServerLoad = async () => {
 	// Mengambil semua daftar berita dari database
@@ -20,11 +21,25 @@ export const actions: Actions = {
 		if (!id) {
 			return fail(400, warningResponse('ID dokumentasi wajib disertakan.', 'Gagal'));
 		}
-
 		try {
+			// Ambil image_public_id sebelum data dihapus dari DB
+			const newsMedia = await getNewsById(id);
+
+			if (!newsMedia) {
+				return fail(
+					404,
+					warningResponse('Data dokumentasi tidak ditemukan atau sudah dihapus.', 'Gagal')
+				);
+			}
+
+			//  Hapus gambar dari Cloudinary jika public_id tersedia
+			if (newsMedia.image_public_id) {
+				await deleteImageFromCloudinary(newsMedia.image_public_id);
+			}
+
 			const isSuccess = await deleteNews(id);
 
-			//  Validasi status keberhasilan hapus dari database
+			// Validasi status keberhasilan hapus dari database
 			if (!isSuccess) {
 				return fail(400, errorResponse('Gagal menghapus data atau data tidak ditemukan.', 'Gagal'));
 			}

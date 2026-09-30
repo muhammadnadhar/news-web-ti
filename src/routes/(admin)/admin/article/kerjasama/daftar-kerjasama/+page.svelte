@@ -72,7 +72,7 @@
 		<!-- > -->
 		<!-- 	<Sparkles class="text-scitech-mint h-4 w-4" /> Kerjasama -->
 		<!-- </span> -->
-		<h1 class="text-2xl font-extrabold tracking-tight text-white sm:text-3xl">Daftar Kerjasama</h1>
+		<h1 class="text-2xl font-extrabold tracking-tight text-text-main sm:text-3xl">Daftar Kerjasama</h1>
 	</div>
 
 	<!-- Component TableContent -->

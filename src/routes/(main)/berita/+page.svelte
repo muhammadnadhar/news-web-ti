@@ -5,6 +5,7 @@
 	import { page } from '$app/state';
 	import { classTopSpace } from '$lib/constants';
 	import BtnFloatPagination from '$lib/components/admin/btnFloatPagination.svelte';
+	import Spin from '$lib/components/loading/spin.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -41,16 +42,7 @@
 
 	<!-- Container Grid Berita (Streaming with {#await}) -->
 	{#await data.newsList}
-		<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-			{#each Array(4) as _}
-				<div class="bg-scitech-slate/40 flex flex-col border border-border-color/10 p-6">
-					<div class="mb-4 h-48 w-full animate-pulse bg-white/5"></div>
-					<div class="mb-2 h-4 w-1/3 animate-pulse bg-white/10"></div>
-					<div class="mb-3 h-6 w-3/4 animate-pulse bg-white/10"></div>
-					<div class="h-16 w-full animate-pulse bg-white/5"></div>
-				</div>
-			{/each}
-		</div>
+		<Spin />
 	{:then newsList}
 		{#if newsList.length === 0}
 			<!-- State Data Kosong -->

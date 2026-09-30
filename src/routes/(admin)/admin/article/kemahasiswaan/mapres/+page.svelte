@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
-	import { Sparkles, X, Save } from 'lucide-svelte';
+
 	import TableContent from '$lib/components/admin/tableContent.svelte';
 	import type { TableContentType } from '$lib/types/tableContent';
 	import TableSkeleton from '$lib/components/loading/tableSkeleton.svelte';
@@ -8,6 +7,8 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import type { StudentAchievementDTO } from '$lib/dto/admin/article/kemahasiswaan.js';
+	import Message from '$lib/components/admin/message.svelte';
+	import type { MessageStatus, ResponseMessage } from '$lib/types/message.js';
 
 	let { data } = $props();
 
@@ -20,6 +21,13 @@
 	let batchYearInput = $state('');
 	let semesterInput = $state('');
 	let achievementNameInput = $state('');
+
+	let messageConfig = $state<ResponseMessage>({
+		status: 'info',
+		title: '',
+		message: ''
+	});
+	let showMessage = $state(false);
 
 	// Sync local state dengan data server
 	/**
@@ -56,6 +64,11 @@
 				}
 			]
 		}));
+	}
+
+	function triggerMessage(status: MessageStatus, title: string, message: string) {
+		messageConfig = { status, title, message };
+		showMessage = true;
 	}
 
 	// Modal Handlers
@@ -108,6 +121,19 @@
 	}
 </script>
 
+{#if showMessage}
+	<div class="mb-6">
+		<Message
+			status={messageConfig.status}
+			title={messageConfig.title}
+			message={messageConfig.message}
+			dismissible={true}
+			timeout={5000}
+			onclose={() => (showMessage = false)}
+		/>
+	</div>
+{/if}
+
 <div class="mx-auto max-w-7xl space-y-8 p-6 lg:p-10">
 	<!-- Header -->
 	<div class="border-b border-white/10 pb-6">
@@ -132,7 +158,19 @@
 			data={mapStudentAchievementToTableContent(rawList)}
 			onAdd={() => goto(mergeNewPath('add'))}
 			onEdit={(data) => gotoEdit(data.id, page.url.pathname)}
-			onDelete={(data) => console.info('dlete dengan modal')}
+			deleteAction="?/delete"
+		onDeleteSuccess={(res) =>
+			triggerMessage(
+				res?.status ?? 'success',
+				res?.title ?? 'Berhasil',
+				res?.message ?? 'Data angkatan berhasil dihapus.'
+			)}
+		onDeleteError={(res) =>
+			triggerMessage(
+				res?.status ?? 'error',
+				res?.title ?? 'Gagal',
+				res?.message ?? 'Gagal menghapus data angkatan.'
+			)}
 		/>
 	{:catch error}
 		<div class="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-400">
@@ -140,135 +178,3 @@
 		</div>
 	{/await}
 </div>
-
-<!-- Modal Form CRUD Mahasiswa Prestasi -->
-<!-- {#if isModalOpen} -->
-<!-- 	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"> -->
-<!-- 		<div -->
-<!-- 			class="bg-scitech-navy max-h-[90vh] w-full max-w-xl space-y-6 overflow-y-auto rounded-3xl border border-white/15 p-6 shadow-2xl sm:p-8" -->
-<!-- 		> -->
-<!-- 			<div class="flex items-center justify-between border-b border-white/10 pb-4"> -->
-<!-- 				<h3 class="text-base font-bold text-text-main"> -->
-<!-- 					{isEditMode ? 'Edit Data Mahasiswa Prestasi' : 'Tambah Data Mahasiswa Prestasi'} -->
-<!-- 				</h3> -->
-<!-- 				<button type="button" onclick={closeModal} class="text-text-muted hover:text-text-main"> -->
-<!-- 					<X class="h-5 w-5" /> -->
-<!-- 				</button> -->
-<!-- 			</div> -->
-<!---->
-<!-- 			<form -->
-<!-- 				method="POST" -->
-<!-- 				action="?/save" -->
-<!-- 				use:enhance={() => { -->
-<!-- 					return async ({ result }) => { -->
-<!-- 						if (result.type === 'success') { -->
-<!-- 							closeModal(); -->
-<!-- 						} -->
-<!-- 					}; -->
-<!-- 				}} -->
-<!-- 				class="space-y-5" -->
-<!-- 			> -->
-<!-- 				<input type="hidden" name="id" value={selectedId} /> -->
-<!-- 				<input type="hidden" name="is_edit" value={isEditMode ? 'true' : 'false'} /> -->
-<!---->
-<!-- 				<div> -->
-<!-- 					<label for="student_name" class="text-text-muted mb-1 block text-xs font-medium"> -->
-<!-- 						Nama Mahasiswa<span class="text-rose-400">*</span> -->
-<!-- 					</label> -->
-<!-- 					<input -->
-<!-- 						id="student_name" -->
-<!-- 						name="student_name" -->
-<!-- 						type="text" -->
-<!-- 						required -->
-<!-- 						bind:value={studentNameInput} -->
-<!-- 						placeholder="Contoh: Azri Ahmad Fahrozi" -->
-<!-- 						class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-white/15 px-4 py-2.5 text-xs text-text-main focus:outline-none" -->
-<!-- 					/> -->
-<!-- 				</div> -->
-<!---->
-<!-- 				<!-- Jenis Prestasi (Akademik / Non-Akademik) --> -->
-<!-- 				<div> -->
-<!-- 					<label for="is_academic" class="text-text-muted mb-1 block text-xs font-medium"> -->
-<!-- 						Kategori Prestasi<span class="text-rose-400">*</span> -->
-<!-- 					</label> -->
-<!-- 					<select -->
-<!-- 						id="is_academic" -->
-<!-- 						name="is_academic" -->
-<!-- 						bind:value={isAcademicInput} -->
-<!-- 						class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-white/15 px-4 py-2.5 text-xs text-text-main focus:outline-none" -->
-<!-- 					> -->
-<!-- 						<option value="y">Akademik</option> -->
-<!-- 						<option value="n">Non-Akademik</option> -->
-<!-- 					</select> -->
-<!-- 				</div> -->
-<!---->
-<!-- 				<!-- Angkatan & Semester --> -->
-<!-- 				<div class="grid grid-cols-1 gap-4 sm:grid-cols-2"> -->
-<!-- 					<div> -->
-<!-- 						<label for="batch_year" class="text-text-muted mb-1 block text-xs font-medium"> -->
-<!-- 							Angkatan<span class="text-rose-400">*</span> -->
-<!-- 						</label> -->
-<!-- 						<input -->
-<!-- 							id="batch_year" -->
-<!-- 							name="batch_year" -->
-<!-- 							type="text" -->
-<!-- 							required -->
-<!-- 							bind:value={batchYearInput} -->
-<!-- 							placeholder="Contoh: 2020" -->
-<!-- 							class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-white/15 px-4 py-2.5 text-xs text-text-main focus:outline-none" -->
-<!-- 						/> -->
-<!-- 					</div> -->
-<!---->
-<!-- 					<div> -->
-<!-- 						<label for="semester" class="text-text-muted mb-1 block text-xs font-medium"> -->
-<!-- 							Semester<span class="text-rose-400">*</span> -->
-<!-- 						</label> -->
-<!-- 						<input -->
-<!-- 							id="semester" -->
-<!-- 							name="semester" -->
-<!-- 							type="text" -->
-<!-- 							required -->
-<!-- 							bind:value={semesterInput} -->
-<!-- 							placeholder="Contoh: Semester Genap 2022/2023" -->
-<!-- 							class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-white/15 px-4 py-2.5 text-xs text-text-main focus:outline-none" -->
-<!-- 						/> -->
-<!-- 					</div> -->
-<!-- 				</div> -->
-<!---->
-<!-- 				<!-- Deskripsi / Nama Prestasi --> -->
-<!-- 				<div> -->
-<!-- 					<label for="achievement_name" class="text-text-muted mb-1 block text-xs font-medium"> -->
-<!-- 						Prestasi Yang Diraih<span class="text-rose-400">*</span> -->
-<!-- 					</label> -->
-<!-- 					<textarea -->
-<!-- 						id="achievement_name" -->
-<!-- 						name="achievement_name" -->
-<!-- 						rows="4" -->
-<!-- 						required -->
-<!-- 						bind:value={achievementNameInput} -->
-<!-- 						placeholder="Contoh: Juara 1 Lomba Software Development National Level 2023" -->
-<!-- 						class="bg-scitech-slate focus:border-scitech-mint w-full rounded-xl border border-white/15 p-3 text-xs text-text-main focus:outline-none resize-none" -->
-<!-- 					></textarea> -->
-<!-- 				</div> -->
-<!---->
-<!-- 				<!-- Form Action Buttons --> -->
-<!-- 				<div class="flex justify-end gap-3 pt-4 border-t border-white/10"> -->
-<!-- 					<button -->
-<!-- 						type="button" -->
-<!-- 						onclick={closeModal} -->
-<!-- 						class="text-text-muted rounded-xl bg-white/5 px-4 py-2 text-xs font-semibold hover:bg-white/10" -->
-<!-- 					> -->
-<!-- 						Batal -->
-<!-- 					</button> -->
-<!-- 					<button -->
-<!-- 						type="submit" -->
-<!-- 						class="bg-scitech-mint text-scitech-navy hover:bg-scitech-mint-hover inline-flex items-center gap-2 rounded-xl px-5 py-2 text-xs font-bold transition-all" -->
-<!-- 					> -->
-<!-- 						<Save class="h-4 w-4" /> -->
-<!-- 						<span>Simpan</span> -->
-<!-- 					</button> -->
-<!-- 				</div> -->
-<!-- 			</form> -->
-<!-- 		</div> -->
-<!-- 	</div> -->
-<!-- {/if} -->

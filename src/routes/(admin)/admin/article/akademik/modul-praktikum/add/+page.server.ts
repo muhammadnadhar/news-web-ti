@@ -2,7 +2,8 @@ import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { createPracticumModule } from '$lib/repository/admin/article/akedemik/modulePratikum';
 import { errorResponse, successResponse } from '$lib/helper/message';
-import { cloudinary } from '$lib/cloudinary/server';
+import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
+import { randomUUID } from '$lib/crypto';
 
 export const actions: Actions = {
 	create: async ({ request }) => {
@@ -20,9 +21,7 @@ export const actions: Actions = {
 				values: { title, imageUrl, description }
 			});
 		}
-
-		// Generate UUID unik untuk Primary Key
-		const id = crypto.randomUUID();
+		const id = randomUUID();
 
 		try {
 			const success = await createPracticumModule(id, title, imageUrl, description);
@@ -30,7 +29,7 @@ export const actions: Actions = {
 			if (!success) {
 				return fail(500, {
 					success: false,
-					message: 'Gagal menyimpan data Modul Praktikum ke database.',
+          ...errorResponse("Gagal menyimpan data module Praktikum "),
 					values: { title, imageUrl, description }
 				});
 			}
@@ -43,7 +42,7 @@ export const actions: Actions = {
 
 		// Redirect ke halaman daftar Modul Praktikum
 		// throw redirect(303, '/admin/akademik/modul-praktikum');
-		return successResponse('berhasil membuat module Praktikum');
+		return successResponse('berhasil membuat module Praktikum',"Success");
 	},
 
 	deletePhoto: async ({ request }) => {
@@ -55,7 +54,7 @@ export const actions: Actions = {
 		}
 
 		try {
-			await cloudinary.uploader.destroy(publicId);
+			await deleteImageFromCloudinary(publicId);
 			return successResponse('Berhasil di batalkan', 'Succcess');
 		} catch (err) {
 			console.error('Error deleting photo:', err);

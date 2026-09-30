@@ -4,8 +4,7 @@
 	// import { navigating } from '$app/stores'; // depecrate
 	import { navigating } from '$app/state';
 	import { goto } from '$app/navigation';
-	import CardSkeleton from '$lib/components/cardSkeleton.svelte';
-	import { mergeNewPath } from '$lib/utils';
+	import Spin from '$lib/components/loading/spin.svelte';
 
 	let { children } = $props();
 
@@ -92,7 +91,7 @@
 
 		<!-- jika masih navigasi  -->
 		{#if showLoading}
-			<CardSkeleton />
+			<Spin />
 		{/if}
 		<!-- Page Content Slot -->
 		<main class="flex-1 p-4 sm:p-8">

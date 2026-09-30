@@ -6,9 +6,11 @@ import {
 	upsertHistoryContent,
 	getAllHistoryLeaders,
 	createHistoryLeader,
-	updateHistoryLeader
+	updateHistoryLeader,
+	getPublicIdHistoryContentById
 } from '$lib/repository/admin/article/profile/sejarah';
 import { errorResponse, successResponse } from '$lib/helper/message';
+import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
 
 export const load: PageServerLoad = async () => {
 	try {
@@ -35,18 +37,34 @@ export const actions: Actions = {
 		const id = (formData.get('id') as string) || crypto.randomUUID();
 		const title = (formData.get('title') as string) || 'Sejarah';
 		const description = formData.get('description') as string;
-		const imageFile = formData.get('image') as File | null;
 
-		let imageUrl = (formData.get('existing_image_url') as string) || null;
-
-		if (imageFile && imageFile.size > 0) {
-			// Simpan file baru di sini jika ada...
-		}
+		const imageUrl = (formData.get('existing_image_url') as string) || null;
+		const imagePublicId = (formData.get('image_public_id') as string) || null;
 
 		try {
-			await upsertHistoryContent(id, { title, image_url: imageUrl, description });
+			// Ambil image_public_id lama berdasarkan ID dari database
+			const oldImagePublicId = await getPublicIdHistoryContentById(id);
+
+			//  Jika ada gambar lama DAN gambar tersebut diganti dengan gambar/public_id baru, hapus aset lama dari Cloudinary
+			if (oldImagePublicId && oldImagePublicId !== imagePublicId) {
+				await deleteImageFromCloudinary(oldImagePublicId);
+			}
+
+			//  Simpan / perbarui data Konten Sejarah di database
+			await upsertHistoryContent(id, {
+				title,
+				image_url: imageUrl,
+				image_public_id: imagePublicId,
+				description
+			});
+
 			return {
 				...successResponse('Konten Sejarah berhasil diperbarui.', 'Berhasil'),
+				values: {
+					description,
+					title: title,
+					image_url: imageUrl
+				},
 				formType: 'content'
 			};
 		} catch (err) {

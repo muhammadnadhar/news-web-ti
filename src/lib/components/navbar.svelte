@@ -2,7 +2,6 @@
 	import { fly, fade, slide } from 'svelte/transition';
 	import { backOut } from 'svelte/easing';
 	import { Menu, X, ChevronDown } from 'lucide-svelte';
-	// import { navMenuItems } from '$lib/data/navbar'; // update mendapatkan data semester dari UI
 	import { type NavMenuItemType } from '$lib/types/navbar';
 
 	import ThemeActionBtn from './themeActionBtn.svelte';
@@ -14,19 +13,12 @@
 
 	let { navMenuItems = [] }: Props = $props();
 
-	//  State Svelte 5 untuk menangkap posisi scroll Y
 	let scrollY = $state(0);
-
-	//  State turunan ($derived): true jika scrolled lebih dari 20px
-	// 	let isScrolled = $derived(scrollY > 50);
-
-	// State menu mobile & submenu
 	let isOpen = $state(false);
 	let activeDesktopMenu = $state<NavMenuItemType | null>(null);
 	let activeMobileMenuId = $state<string | null>(null);
 	let desktopNavRef = $state<HTMLElement | null>(null);
 
-	// Toggle drawer floating mobile
 	function toggleMenu() {
 		isOpen = !isOpen;
 		if (!isOpen) {
@@ -34,38 +26,39 @@
 		}
 	}
 
-	// Handler Click Outside untuk Desktop (Svelte 5)
 	function handleWindowClick(event: MouseEvent) {
 		if (activeDesktopMenu && desktopNavRef && !desktopNavRef.contains(event.target as Node)) {
 			activeDesktopMenu = null;
 		}
 	}
 
-	// Handle klik menu di desktop
 	function handleDesktopClick(item: NavMenuItemType) {
 		if (item.subMenu && item.subMenu.length > 0) {
-			// Buka/tutup dropdown
 			activeDesktopMenu = activeDesktopMenu?.id === item.id ? null : item;
 		} else {
-			// Jika tidak punya submenu, langsung pindah halaman
 			activeDesktopMenu = null;
 			if (item.href) window.location.href = item.href;
 		}
 	}
-	// Handler saat mouse masuk (Hanya berlaku untuk desktop dengan kursor)
+
+	// Handler Hover Mouse saat masuk
 	function handleMouseEnter(item: NavMenuItemType) {
-		if (window.matchMedia('(hover: hover)').matches) {
-			handleDesktopClick(item);
+		if (window.matchMedia('(hover: hover)').matches && item.subMenu && item.subMenu.length > 0) {
+			activeDesktopMenu = item;
 		}
 	}
 
-	// Handle klik menu di mobile
+	// Handler Hover Mouse saat keluar
+	function handleMouseLeave() {
+		if (window.matchMedia('(hover: hover)').matches) {
+			activeDesktopMenu = null;
+		}
+	}
+
 	function handleMobileClick(item: NavMenuItemType) {
 		if (item.subMenu && item.subMenu.length > 0) {
-			// Buka/tutup accordion
 			activeMobileMenuId = activeMobileMenuId === item.id ? null : item.id;
 		} else {
-			// Jika tidak punya submenu, tutup menu mobile dan pindah halaman
 			isOpen = false;
 			activeMobileMenuId = null;
 			if (item.href) window.location.href = item.href;
@@ -74,57 +67,50 @@
 </script>
 
 <svelte:window bind:scrollY onclick={handleWindowClick} />
+
 <!-- ==================== desktop navbar ==================== -->
-<div
-	bind:this={desktopNavRef}
-	class=" fixed top-auto right-6 z-50 hidden border-white/5 text-text-main
-		 backdrop-blur-xl transition-all md:block"
->
+<div bind:this={desktopNavRef} class="fixed top-6 right-6 z-50 hidden text-text-main md:block">
 	<nav
 		class="bg-scitech-navy/80 flex items-center gap-3 rounded-2xl border border-white/10 p-2 shadow-2xl backdrop-blur-md"
 	>
 		{#each navMenuItems as item (item.id)}
-			<button
-				title={item.label}
+			<!-- Pembungkus Tombol & Submenu dengan event hover -->
+			<div
+				class="relative"
 				onmouseenter={() => handleMouseEnter(item)}
-				onclick={() => handleDesktopClick(item)}
-				class="group relative flex items-center justify-center rounded-xl p-2.5 transition-all duration-200 {item.bgClass ??
-					''} {activeDesktopMenu?.id === item.id ? 'ring-scitech-mint scale-105 ring-2' : ''}"
+				onmouseleave={handleMouseLeave}
 			>
-				<item.icon class="h-5 w-5 transition-transform group-hover:scale-110" />
+				<button
+					title={item.label}
+					onclick={() => handleDesktopClick(item)}
+					class="group relative flex items-center justify-center rounded-xl p-2.5 transition-all duration-200 {item.bgClass ??
+						''} {activeDesktopMenu?.id === item.id ? 'ring-scitech-mint scale-105 ring-2' : ''}"
+				>
+					<item.icon class="h-5 w-5 transition-transform group-hover:scale-110" />
 
-				{#if item.badge}
-					<span
-						class="bg-scitech-error border-scitech-navy absolute -top-1 -right-1 flex h-4 w-4 animate-pulse items-center justify-center rounded-full border-2 text-[10px] font-bold text-text-main"
+					{#if item.badge}
+						<span
+							class="border-scitech-navy bg-scitech-error absolute -top-1 -right-1 flex h-4 w-4 animate-pulse items-center justify-center rounded-full border-2 text-[10px] font-bold text-text-main"
+						>
+							{item.badge}
+						</span>
+					{/if}
+				</button>
+
+				<!-- Submenu Dropdown Desktop (Rendernya presisi di bawah ikon item masing-masing) -->
+				{#if activeDesktopMenu?.id === item.id && item.subMenu && item.subMenu.length > 0}
+					<div
+						transition:fly={{ y: -10, duration: 200 }}
+						class="absolute top-auto left-0 z-50 w-96 -translate-x-1/2 transform pt-2"
 					>
-						{item.badge}
-					</span>
+						<NavbarSub item={activeDesktopMenu} />
+					</div>
 				{/if}
-			</button>
+			</div>
 		{/each}
 
-		<!-- action button: theme toggle switcher -->
 		<ThemeActionBtn />
 	</nav>
-
-	<!-- Overlay Penutup Dropdown Desktop saat diklik di luar -->
-	{#if activeDesktopMenu}
-		<button
-			onclick={() => (activeDesktopMenu = null)}
-			class="fixed inset-0 z-40 h-full w-full cursor-default border-none bg-transparent"
-			aria-label="Close Dropdown"
-			tabindex="-1"
-		></button>
-
-		<!-- Submenu Dropdown Card Floating Desktop -->
-		<div
-			transition:fly={{ y: -10, duration: 200 }}
-			class="absolute top-full right-0 z-50 mt-3 w-96"
-		>
-			<!-- <NavbarSub item={activeDesktopMenu} /> -->
-			<NavbarSub item={activeDesktopMenu} />
-		</div>
-	{/if}
 </div>
 
 <!-- ==================== mobile floating menu ==================== -->
@@ -150,7 +136,6 @@
 					out:fly={{ y: 15, duration: 150, delay: (navMenuItems.length - 1 - index) * 30 }}
 					class="flex flex-col overflow-hidden rounded-xl"
 				>
-					<!-- Tombol Menu Utama -->
 					<button
 						onclick={() => handleMobileClick(item)}
 						class="flex items-center justify-between gap-3 p-3 transition-all duration-150 active:scale-98 {item.bgClass ??
@@ -180,7 +165,6 @@
 						</div>
 					</button>
 
-					<!-- Tampilan Submenu Mobile (Accordion dengan NavbarSub) -->
 					{#if activeMobileMenuId === item.id}
 						<div transition:slide={{ duration: 200 }} class="pt-2">
 							<NavbarSub {item} />
@@ -192,11 +176,10 @@
 		</div>
 	{/if}
 
-	<!-- tombol utama hamburger / fab (mengambang kanan bawah) -->
 	<button
 		onclick={toggleMenu}
 		aria-label="Toggle Navigation Menu"
-		class="bg-scitech-mint text-scitech-navy shadow-scitech-mint/20 border-scitech-navy fixed right-6 bottom-6 z-50 flex h-14 w-14 items-center justify-center rounded-full border-2 shadow-lg transition-all duration-300 hover:scale-105 active:scale-95"
+		class="border-scitech-navy bg-scitech-mint text-scitech-navy shadow-scitech-mint/20 fixed right-6 bottom-6 z-50 flex h-14 w-14 items-center justify-center rounded-full border-2 shadow-lg transition-all duration-300 hover:scale-105 active:scale-95"
 	>
 		{#if isOpen}
 			<X class="h-6 w-6 rotate-90 transition-transform" />

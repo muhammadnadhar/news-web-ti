@@ -29,7 +29,7 @@ export async function getCalendarImages(calendarId: string): Promise<CalendarIma
 }
 
 /**
- *Mendapatkan seluruh data Kalender Akademik yang aktif
+ * Mendapatkan seluruh data Kalender Akademik yang aktif
  */
 export async function getActiveAcademicCalendars(): Promise<AcademicCalendarDTO[]> {
 	const sql = `
@@ -41,6 +41,7 @@ export async function getActiveAcademicCalendars(): Promise<AcademicCalendarDTO[
 	const rows = (await query(sql)) as AcademicCalendarDTO[];
 	return rows || [];
 }
+
 /**
  * Mendapatkan seluruh data Kalender Akademik (Aktif & Non-Aktif)
  */
@@ -55,7 +56,7 @@ export async function getAllAcademicCalendars(): Promise<AcademicCalendarDTO[]> 
 }
 
 /**
- *Mendapatkan seluruh gambar berdasarkan array calendar_id sekaligus (Batch Fetching)
+ * Mendapatkan seluruh gambar berdasarkan array calendar_id sekaligus (Batch Fetching)
  */
 export async function getCalendarImagesByCalendarIds(
 	calendarIds: string[]
@@ -65,7 +66,7 @@ export async function getCalendarImagesByCalendarIds(
 	// Membuat placeholder (?, ?, ?) sesuai jumlah ID
 	const placeholders = calendarIds.map(() => '?').join(',');
 	const sql = `
-        SELECT id, calendar_id, image_url 
+        SELECT id, calendar_id, image_url, image_public_id 
         FROM ${tableKalenderAkademikImage} 
         WHERE calendar_id IN (${placeholders})
     `;
@@ -80,7 +81,7 @@ export async function getCalendarImagesByCalendarIds(
 export async function getActiveAcademicCalendarWithImages(): Promise<
 	AcademicCalendarWithImagesDTO[]
 > {
-	//Ambil seluruh kalender
+	// Ambil seluruh kalender
 	const calendars = await getAllAcademicCalendars();
 	if (!calendars || calendars.length === 0) return [];
 
@@ -113,6 +114,22 @@ export async function getActiveAcademicCalendarWithImage(): Promise<
 }
 
 /**
+ * Mengambil daftar image_public_id milik Kalender Akademik tertentu
+ * Query ini sangat ringan karena hanya memilih 1 kolom index
+ */
+export async function getCalendarImagePublicIdsByCalendarId(calendarId: string): Promise<string[]> {
+	const sql = `
+        SELECT image_public_id 
+        FROM ${tableKalenderAkademikImage} 
+        WHERE calendar_id = ? AND image_public_id IS NOT NULL
+    `;
+	const rows = (await query(sql, [calendarId])) as any[];
+
+	// Mengembalikan array string public_id (misal: ["kalender/img1", "kalender/img2"])
+	return rows.map((row) => row.image_public_id).filter(Boolean);
+}
+
+/**
  * Menyimpan/Memperbarui Data Utama Kalender Akademik berdasarkan ID spesifik
  */
 export async function saveAcademicCalendar(
@@ -121,15 +138,12 @@ export async function saveAcademicCalendar(
 	description: string,
 	is_active?: boolean
 ): Promise<string> {
-	// Tentukan nilai default `is_active` jika tidak dikirim (undefined)
 	const activeStatus = is_active ?? true;
 
-	// Cek apakah data dengan ID ini sudah ada di database
 	const checkSql = `SELECT id FROM ${tableKalenderAkademik} WHERE id = ? LIMIT 1`;
 	const existing = (await query(checkSql, [id])) as AcademicCalendarDTO[];
 
 	if (existing.length > 0) {
-		// UPDATE jika ID sudah ada
 		const sql = `
             UPDATE ${tableKalenderAkademik} 
             SET title = ?, description = ?, is_active = ?, updated_at = NOW() 
@@ -138,7 +152,6 @@ export async function saveAcademicCalendar(
 		await query(sql, [title, description, activeStatus, id]);
 		return id;
 	} else {
-		// INSERT jika ID baru / belum ada
 		const targetId = id || crypto.randomUUID();
 		const sql = `
             INSERT INTO ${tableKalenderAkademik} (id, title, description, is_active) 
@@ -157,24 +170,19 @@ export async function syncRetainedCalendarImages(
 	retainedImageIds: string[]
 ): Promise<boolean> {
 	if (retainedImageIds.length === 0) {
-		// Jika tidak ada gambar yang dipertahankan, hapus semua gambar milik kalender ini
 		const sql = `DELETE FROM ${tableKalenderAkademikImage} WHERE calendar_id = ?`;
 		await query(sql, [calendarId]);
 		return true;
 	}
 
-	// Hapus gambar yang ID-nya tidak ada dalam list retainedImageIds
 	const placeholders = retainedImageIds.map(() => '?').join(', ');
 	const sql = `DELETE FROM ${tableKalenderAkademikImage} WHERE calendar_id = ? AND id NOT IN (${placeholders})`;
 	await query(sql, [calendarId, ...retainedImageIds]);
 	return true;
 }
+
 /**
  * Membuat Data Utama Kalender Akademik Baru
- * @param id UUID string unik untuk ID kalender
- * @param title Judul kalender akademik
- * @param description Deskripsi HTML/Teks dari FormEditor
- * @returns ID kalender yang berhasil dibuat
  */
 export async function createAcademicCalendar(
 	id: string,
@@ -182,22 +190,23 @@ export async function createAcademicCalendar(
 	description: string
 ): Promise<string> {
 	const targetId = id || crypto.randomUUID();
-	// di awal is aktif selalu true , akan di ubah di bagia utama
 	const sql = `INSERT INTO ${tableKalenderAkademik} (id, title, description, is_active) VALUES (?, ?, ?, TRUE)`;
 
 	await query(sql, [targetId, title, description]);
 	return targetId;
 }
+
 /**
  * Menambahkan satu gambar baru ke dalam Kalender
  */
 export async function addCalendarImage(
 	imageId: string,
 	calendarId: string,
-	imageUrl: string
+	imageUrl: string,
+	imagePublicId?: string | null
 ): Promise<boolean> {
-	const sql = `INSERT INTO ${tableKalenderAkademikImage} (id, calendar_id, image_url) VALUES (?, ?, ?)`;
-	const result = (await query(sql, [imageId, calendarId, imageUrl])) as any;
+	const sql = `INSERT INTO ${tableKalenderAkademikImage} (id, calendar_id, image_url, image_public_id) VALUES (?, ?, ?, ?)`;
+	const result = (await query(sql, [imageId, calendarId, imageUrl, imagePublicId || null])) as any;
 	return result.affectedRows > 0;
 }
 
@@ -205,14 +214,19 @@ export async function addCalendarImage(
  * Menambahkan banyak gambar sekaligus (Bulk Insert)
  */
 export async function addCalendarImages(
-	images: { id: string; calendarId: string; imageUrl: string }[]
+	images: { id: string; calendarId: string; imageUrl: string; imagePublicId?: string | null }[]
 ): Promise<boolean> {
 	if (images.length === 0) return true;
 
-	const valuesSql = images.map(() => '(?, ?, ?)').join(', ');
-	const params = images.flatMap((img) => [img.id, img.calendarId, img.imageUrl]);
+	const valuesSql = images.map(() => '(?, ?, ?, ?)').join(', ');
+	const params = images.flatMap((img) => [
+		img.id,
+		img.calendarId,
+		img.imageUrl,
+		img.imagePublicId || null
+	]);
 
-	const sql = `INSERT INTO ${tableKalenderAkademikImage} (id, calendar_id, image_url) VALUES ${valuesSql}`;
+	const sql = `INSERT INTO ${tableKalenderAkademikImage} (id, calendar_id, image_url, image_public_id) VALUES ${valuesSql}`;
 	const result = (await query(sql, params)) as any;
 	return result.affectedRows > 0;
 }
@@ -221,10 +235,8 @@ export async function addCalendarImages(
  * Menghapus data Kalender Akademik beserta seluruh relasi gambarnya
  */
 export async function deleteAcademicCalendarById(calendarId: string): Promise<boolean> {
-	// 1. Hapus semua gambar terkait terlebih dahulu (memanfaatkan fungsi yang sudah ada)
 	await deleteAllCalendarImages(calendarId);
 
-	// 2. Hapus data utama kalender
 	const sql = `DELETE FROM ${tableKalenderAkademik} WHERE id = ?`;
 	const result = (await query(sql, [calendarId])) as any;
 

@@ -2,7 +2,8 @@ export interface ScholarshipDTO {
 	id: string;
 	student_name: string;
 	scholarship_name: string;
-  image_url : string;
+	image_url: string;
+	image_public_id?: string | null;
 	created_at?: Date;
 	updated_at?: Date;
 }
@@ -15,6 +16,7 @@ export interface StudentAchievementDTO {
 	semester_id: string; // Foreign Key ke tabel Semester (id)
 	achievement_name: string;
 	image_url: string | null;
+	image_public_id?: string | null;
 	created_at?: Date;
 	updated_at?: Date;
 
@@ -30,7 +32,8 @@ export interface HighGpaStudentDTO {
 	gpa?: number;
 	achievement_name?: string;
 	is_academic?: string;
-  image_url : string; 
+	image_url: string;
+	image_public_id?: string | null;
 
 	// Foreign Key Relations
 	angkatan_id: string;

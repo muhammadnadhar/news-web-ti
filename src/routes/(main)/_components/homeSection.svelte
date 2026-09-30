@@ -1,11 +1,14 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import UserCard from '$lib/components/admin/userCard.svelte';
+	import Spin from '$lib/components/loading/spin.svelte';
+	import { classShadowDown } from '$lib/constants';
 	import type {
 		PerminatanTIItemDTO,
 		PrimaryDosenDTO,
 		ProfilProdiItemDTO
 	} from '$lib/dto/admin/home';
+	import { getContainerLayoutClass, getItemLayoutClass } from '$lib/mapper/home';
 	import { stripHtml } from '$lib/utils';
 	import {
 		AlertCircle,
@@ -15,8 +18,7 @@
 		BookOpenIcon,
 		BuildingIcon,
 		ExternalLinkIcon,
-		GraduationCapIcon,
-		IdCardIcon,
+		Images,
 		Inbox,
 		Layers,
 		UserIcon,
@@ -36,11 +38,12 @@
 
 	// untuk sementara ini
 	const headerColors = [
-		'bg-emerald-500/20 border-emerald-500/50',
-		'bg-purple-500/20 border-purple-500/50',
-		'bg-cyan-500/20 border-cyan-500/50',
-		'bg-amber-500/20 border-amber-500/50',
-		'bg-rose-500/20 border-rose-500/50'
+		'bg-accent-primary/20 border-accent-primary/50', // Mint / Hijau Utama
+		'bg-accent-purple/20 border-accent-purple/50', // Ungu Kuantum
+		'bg-accent-cyan/20 border-accent-cyan/50', // Cyan Tech
+		'bg-accent-yellow/20 border-accent-yellow/50', // Kuning Amber
+		'bg-status-error/20 border-status-error/50', // Merah Lab
+		'bg-accent-blue/20 border-accent-blue/50' // Biru Elektrik (Opsi Tambahan)
 	];
 </script>
 
@@ -48,33 +51,7 @@
 <section class=" relative w-full bg-bg-primary-glare py-12 md:py-20">
 	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 		{#await listPerminatan}
-			<!-- Skeleton Loading State (Menggunakan variabel tema) -->
-			<div class="section-group space-y-8">
-				<div class="flex items-center gap-3">
-					<div class="h-9 w-72 animate-pulse rounded-full bg-bg-secondary-hover"></div>
-				</div>
-
-				<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-					{#each Array(3) as _}
-						<div
-							class="flex h-56 animate-pulse flex-col justify-center overflow-hidden rounded-3xl border border-border-color bg-bg-secondary p-6 shadow-sm"
-						>
-							<div class="space-y-4">
-								<div class="flex items-center gap-3">
-									<div class="h-12 w-12 rounded-2xl bg-bg-secondary-hover"></div>
-									<div class="h-6 w-3/4 rounded-lg bg-bg-secondary-hover"></div>
-								</div>
-								<div class="space-y-2 pt-2">
-									<div class="h-3.5 w-full rounded bg-bg-secondary-hover"></div>
-									<div class="h-3.5 w-4/5 rounded bg-bg-secondary-hover"></div>
-									<div class="h-3.5 w-2/3 rounded bg-bg-secondary-hover"></div>
-								</div>
-							</div>
-							<div class="h-3 w-32 rounded bg-bg-secondary-hover"></div>
-						</div>
-					{/each}
-				</div>
-			</div>
+			<Spin />
 		{:then list}
 			{#if list && list.length > 0}
 				<div class="section-group space-y-8">
@@ -97,7 +74,13 @@
 					</div>
 
 					<!-- Grid Cards -->
-					<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+					<div
+						class="grid w-full gap-6 {list.length === 1
+							? 'mx-auto max-w-xl grid-cols-1'
+							: list.length === 2
+								? 'mx-auto max-w-4xl grid-cols-1 sm:grid-cols-2'
+								: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'}"
+					>
 						{#each list as perminatan (perminatan.id)}
 							<article
 								class="group flex flex-col justify-between border border-border-color bg-bg-secondary p-6
@@ -169,69 +152,81 @@
 <section class=" w-full bg-bg-secondary py-12">
 	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 		{#await listProfil}
-			<!-- Skeleton Loading State (Modern Glow & Pulse) -->
-			<div class="section-group space-y-8">
-				<div class="flex items-center gap-3">
-					<div class="h-9 w-72 animate-pulse rounded-full bg-white/10"></div>
-				</div>
-
-				<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-					{#each Array(3) as _}
-						<div
-							class="flex animate-pulse flex-col justify-center overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl"
-						>
-							<div class="space-y-4">
-								<div class="h-48 w-full rounded-2xl bg-white/10"></div>
-								<div class="h-6 w-3/4 rounded-lg bg-white/10"></div>
-								<div class="space-y-2">
-									<div class="h-3.5 w-full rounded bg-white/10"></div>
-									<div class="h-3.5 w-4/5 rounded bg-white/10"></div>
-								</div>
-							</div>
-							<div class="mt-6 h-10 w-36 rounded-xl bg-white/10"></div>
-						</div>
-					{/each}
-				</div>
-			</div>
+			<Spin />
 		{:then items}
 			{#if items && items.length > 0}
 				<div class="section-group space-y-8">
-					<!-- Header Section -->
 					<div class="flex items-center justify-center pb-5">
 						<div class="flex flex-wrap items-center gap-3">
 							<h2 class="text-2xl font-extrabold tracking-tight text-text-main sm:text-3xl">
-								Informasi & Pengaduan
+								Informasi
 							</h2>
 							<span
-								class="rounded-lg border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-semibold text-text-muted"
+								class="rounded-lg border border-border-color/10 bg-bg-secondary/5 px-2.5 py-1 text-xs font-semibold text-text-muted"
 							>
 								{items.length} Program Studi
 							</span>
 						</div>
 					</div>
 
-					<!-- Grid Profil Prodi (Modern Glassmorphism Cards) -->
-					<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+					<!-- Container Pembungkus Dinamis (Di Luar Loop) -->
+					<div
+						class={getContainerLayoutClass(
+							items[0]?.display_instruction || 'FLEX_CENTER',
+							items.length
+						)}
+					>
 						{#each items as profil (profil.id)}
+							{@const instruction = profil.display_instruction || 'FLEX_CENTER'}
+							{@const isSplitLeft = instruction === 'SPLIT_IMAGE_LEFT'}
+							{@const isSplitRight = instruction === 'SPLIT_IMAGE_RIGHT'}
+							{@const isSplitLayout = isSplitLeft || isSplitRight}
+							{@const isMergedCard = instruction === 'MERGED_CARD'}
+
+							<!-- Ambil daftar gambar (Array images baru atau fallback ke image_url lama) -->
+							{@const imageList =
+								profil.images && profil.images.length > 0
+									? profil.images
+									: profil.image_url
+										? [{ url: profil.image_url, caption: profil.title }]
+										: []}
+							{@const primaryImage = imageList[0]?.url || null}
+
 							<article
-								class="group flex flex-col justify-between border border-border-color bg-bg-secondary p-5 text-center
-                   shadow-[0_4px_0_0_var(--border-color)] transition-all duration-300
-                   hover:-translate-y-1 hover:scale-[1.02] hover:border-border-color
-                   hover:bg-bg-secondary-hover hover:shadow-[0_8px_0_0_var(--border-color)]"
+								class="{getItemLayoutClass(instruction)} group relative transition-all duration-300
+                {isMergedCard
+									? 'w-full p-6 transition-colors hover:bg-bg-secondary-hover'
+									: isSplitLayout
+										? 'flex w-full flex-col gap-6 rounded-2xl border border-border-color bg-bg-secondary p-6 shadow-[0_4px_0_0_var(--border-color)] hover:-translate-y-1 hover:bg-bg-secondary-hover hover:shadow-[0_8px_0_0_var(--border-color)] lg:flex-row ' +
+											(isSplitRight ? 'lg:flex-row-reverse' : '')
+										: 'flex flex-col justify-between border border-border-color bg-bg-secondary p-5 text-center shadow-[0_4px_0_0_var(--border-color)] hover:-translate-y-1 hover:scale-[1.02] hover:bg-bg-secondary-hover hover:shadow-[0_8px_0_0_var(--border-color)]'}"
 							>
-								<div class="flex flex-col items-center">
-									<!-- Frame Gambar Sharp & Centered -->
+								<!-- BAGIAN 1: FRAME GAMBAR / GALERI -->
+								<div
+									class="relative flex flex-col justify-center overflow-hidden
+                    {isSplitLayout ? 'w-full shrink-0 lg:w-1/2' : 'w-full'}"
+								>
 									<div
-										class="relative mb-4 h-48 w-full overflow-hidden border border-border-color bg-bg-primary
-                           transition-colors duration-300 group-hover:border-border-color"
+										class="relative overflow-hidden border border-border-color bg-bg-primary transition-colors duration-300 group-hover:border-border-color
+                        {isSplitLayout ? 'h-64 rounded-xl sm:h-72' : 'mb-4 h-48 w-full'}"
 									>
-										{#if profil.image_url}
+										{#if primaryImage}
 											<img
-												src={profil.image_url}
+												src={primaryImage}
 												alt={profil.title}
 												class="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
 												loading="lazy"
 											/>
+
+											<!-- Badge Indikator Banyak Gambar -->
+											{#if imageList.length > 1}
+												<div
+													class="absolute right-2.5 bottom-2.5 flex items-center gap-1.5 rounded-md bg-black/70 px-2 py-1 text-[11px] font-medium text-white backdrop-blur-md"
+												>
+													<Images class="text-scitech-mint h-3.5 w-3.5" />
+													<span>+{imageList.length - 1} Foto</span>
+												</div>
+											{/if}
 										{:else}
 											<div
 												class="flex h-full w-full flex-col items-center justify-center text-text-muted"
@@ -246,28 +241,65 @@
 										{/if}
 									</div>
 
-									<!-- Judul Prodi & Deskripsi (Center Aligned) -->
-									<h3
-										class="mb-2 line-clamp-1 text-base font-bold text-text-main transition-colors duration-300 group-hover:text-text-muted sm:text-lg"
-									>
-										{profil.title}
-									</h3>
-									<p class="mb-5 line-clamp-3 text-xs leading-relaxed text-text-muted sm:text-sm">
-										{stripHtml(profil.description)}
-									</p>
+									<!-- Mini Gallery Thumbnails (Jika Ada Lebih Dari 1 Gambar pada Split Layout) -->
+									{#if isSplitLayout && imageList.length > 1}
+										<div class="mt-3 flex gap-2 overflow-x-auto pb-1">
+											{#each imageList.slice(0, 4) as img, idx}
+												<div
+													class="h-12 w-16 shrink-0 overflow-hidden rounded-lg border border-border-color/30 bg-black/20"
+												>
+													<img
+														src={img.url}
+														alt="Thumbnail {idx + 1}"
+														class="h-full w-full object-cover opacity-80 transition-opacity hover:opacity-100"
+													/>
+												</div>
+											{/each}
+										</div>
+									{/if}
 								</div>
 
-								<!-- Footer Action Link (Centered Brutalist Button) -->
-								<div class="flex items-center justify-center border-t border-border-color pt-4">
-									<a
-										href="/prodi/{profil.id}"
-										class="group/link inline-flex items-center justify-center gap-2 border border-border-color bg-bg-primary px-4 py-2 text-xs font-bold text-text-main transition-all duration-200 hover:border-border-color hover:bg-bg-secondary-hover hover:text-text-main"
+								<!-- bagian 2: konten / judul & deskripsi -->
+								<div
+									class="flex flex-col justify-between
+                    {isSplitLayout ? 'w-full text-left lg:w-1/2' : 'flex-1 items-center'}"
+								>
+									<div class={isSplitLayout ? 'space-y-3' : 'w-full'}>
+										<!-- Judul Prodi -->
+										<h3
+											class="mb-2 text-base font-bold text-text-main transition-colors duration-300 group-hover:text-text-muted sm:text-lg
+                            {isSplitLayout ? 'line-clamp-2 text-xl sm:text-2xl' : 'line-clamp-1'}"
+										>
+											{profil.title}
+										</h3>
+
+										<!-- Deskripsi Ringkas -->
+										<p
+											class="text-xs leading-relaxed text-text-muted sm:text-sm
+                            {isSplitLayout ? 'mb-4 line-clamp-6' : 'mb-5 line-clamp-3'}"
+										>
+											{stripHtml(profil.description)}
+										</p>
+									</div>
+
+									<!-- BAGIAN 3: FOOTER ACTION LINK -->
+									<div
+										class="pt-4
+                        {isSplitLayout
+											? 'border-t border-border-color/20'
+											: 'flex w-full items-center justify-center border-t border-border-color'}"
 									>
-										<span>Detail & Pengaduan</span>
-										<ArrowRight
-											class="h-3.5 w-3.5 transition-transform duration-200 group-hover/link:translate-x-1"
-										/>
-									</a>
+										<a
+											href="/profil/profil-prodi/{profil.id}"
+											class="group/link inline-flex items-center justify-center gap-2 border border-border-color bg-bg-primary px-4 py-2 text-xs font-bold text-text-main transition-all duration-200 hover:border-border-color hover:bg-bg-secondary-hover hover:text-text-main
+                            {isSplitLayout ? 'rounded-xl px-5 py-2.5' : ''}"
+										>
+											<span>Detail </span>
+											<ArrowRight
+												class="h-3.5 w-3.5 transition-transform duration-200 group-hover/link:translate-x-1"
+											/>
+										</a>
+									</div>
 								</div>
 							</article>
 						{/each}
@@ -276,7 +308,7 @@
 			{:else}
 				<!-- Modern Empty State -->
 				<div
-					class="mx-auto max-w-lg rounded-3xl border border-white/10 bg-bg-primary/20 p-10 text-center shadow-xl backdrop-blur-xl"
+					class="mx-auto max-w-lg rounded-3xl border border-border-color/10 bg-bg-primary/20 p-10 text-center shadow-xl backdrop-blur-xl"
 				>
 					<div
 						class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-border-color/20 bg-bg-primary/10 text-text-main/50 shadow-inner"
@@ -321,12 +353,12 @@
 				<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 					{#each Array(4) as _}
 						<div
-							class="flex animate-pulse flex-col items-center rounded-2xl border border-white/10 bg-bg-secondary/40 p-6 backdrop-blur-md"
+							class="flex animate-pulse flex-col items-center rounded-2xl border border-border-color/10 bg-bg-secondary/40 p-6 backdrop-blur-md"
 						>
-							<div class="mb-4 h-24 w-24 rounded-full bg-white/10"></div>
-							<div class="mb-2 h-5 w-3/4 rounded bg-white/10"></div>
-							<div class="mb-3 h-3 w-1/2 rounded bg-white/10"></div>
-							<div class="h-4 w-full rounded bg-white/10"></div>
+							<div class="mb-4 h-24 w-24 rounded-full bg-bg-secondary/10"></div>
+							<div class="mb-2 h-5 w-3/4 rounded bg-bg-secondary/10"></div>
+							<div class="mb-3 h-3 w-1/2 rounded bg-bg-secondary/10"></div>
+							<div class="h-4 w-full rounded bg-bg-secondary/10"></div>
 						</div>
 					{/each}
 				</div>
@@ -350,26 +382,26 @@
 					</div>
 
 					<!-- Grid Dosen & Staff -->
-					<!-- Retangle Belakang & Wrapper Utama -->
 					<div class="relative py-16">
-						<!-- Rectangle Absolute Kuning di Belakang -->
 						<div
 							class="bg-blend-hard-light/30 absolute inset-x-0 bottom-0 h-3/5 w-full border-y border-border-color"
 						></div>
 
 						<div
-							class="relative z-10 mx-auto grid max-w-7xl grid-cols-1 justify-items-center gap-10 sm:grid-cols-2 lg:grid-cols-3"
+							class="grid w-full gap-6 {items.length === 1
+								? 'mx-auto max-w-xl grid-cols-1'
+								: items.length === 2
+									? 'mx-auto max-w-4xl grid-cols-1 sm:grid-cols-2'
+									: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'}"
 						>
 							{#each items as dosen, index (dosen.primary_id)}
 								{@const randomHeaderBg = headerColors[index % headerColors.length]}
 
 								<article
-									class="group relative flex w-full max-w-sm flex-col justify-between border border-border-color bg-bg-secondary
-                       shadow-[0_6px_0_0_var(--border-color)] transition-all duration-300
-                       hover:-translate-y-1.5 hover:shadow-[0_10px_0_0_var(--border-color)]"
+									class={` ${classShadowDown} group relative flex w-full max-w-sm flex-col justify-between border border-border-color bg-bg-secondary
+                      `}
 								>
 									<div>
-										<!-- 1. Header Atas Kartu (Dipertinggi) -->
 										<div
 											class="relative flex h-36 w-full justify-center border-b border-border-color {randomHeaderBg}"
 										>
@@ -456,7 +488,7 @@
 				</div>
 			{:else}
 				<div
-					class="mx-auto max-w-lg rounded-2xl border border-dashed border-white/10 bg-bg-secondary/20 p-8 text-center backdrop-blur-md"
+					class="mx-auto max-w-lg rounded-2xl border border-dashed border-border-color/10 bg-bg-secondary/20 p-8 text-center backdrop-blur-md"
 				>
 					<UsersIcon class="mx-auto mb-3 h-10 w-10 text-text-muted/40" />
 					<h3 class="mb-1 text-lg font-bold text-text-main">Belum Ada Data Dosen</h3>

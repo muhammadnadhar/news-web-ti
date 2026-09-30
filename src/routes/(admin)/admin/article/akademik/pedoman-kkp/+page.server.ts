@@ -2,13 +2,15 @@ import { error, fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { writeFileSync, mkdirSync, existsSync } from 'fs';
 import { join } from 'path';
-import { getAllPedomanTa } from '$lib/repository/admin/article/akedemik/pedomanTa';
 import {
 	createPedomanKkp,
 	deletePedomanKkp,
+	getAllPedomanKkp,
+	getPedomanKkpById,
 	updatePedomanKkp
 } from '$lib/repository/admin/article/akedemik/pedomanKKP';
 import { errorResponse, successResponse } from '$lib/helper/message';
+import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
 
 export const load: PageServerLoad = async () => {
 	try {
@@ -34,7 +36,7 @@ export const load: PageServerLoad = async () => {
 		// }));
 
 		return {
-			rawPedomanList: getAllPedomanTa()
+			rawPedomanList: getAllPedomanKkp()
 		};
 	} catch (err) {
 		console.error('Error loading pedoman KKP:', err);
@@ -91,14 +93,32 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const id = formData.get('id') as string;
 
-		if (!id) return fail(400, { message: 'ID tidak valid.' });
+		if (!id) {
+			return fail(400, errorResponse('ID pedoman KKP tidak valid.', 'Gagal'));
+		}
 
 		try {
+			//  Ambil data pedoman KKP berdasarkan ID terlebih dahulu
+			const existingData = await getPedomanKkpById(id);
+
+			if (!existingData) {
+				return fail(404, errorResponse('Data pedoman KKP tidak ditemukan.', 'Gagal'));
+			}
+
+			//  Jika terdapat public_id (image/file), hapus aset dari Cloudinary
+			// Sesuaikan nama field di DTO/tabel Anda (misal: image_public_id atau file_public_id)
+			if (existingData.image_public_id) {
+				await deleteImageFromCloudinary(existingData.image_public_id);
+			}
+
+			// Hapus data dari database
 			await deletePedomanKkp(id);
-			return { success: true };
+
+			//  Kembalikan response sukses
+			return successResponse('Data pedoman KKP dan berkas terkait berhasil dihapus.', 'Berhasil');
 		} catch (err) {
 			console.error('Error deleting pedoman KKP:', err);
-			return fail(500, errorResponse('Gagal menghapus data pedoman KKP', 'Gagal'));
+			return fail(500, errorResponse('Gagal menghapus data pedoman KKP.', 'Kesalahan Sistem'));
 		}
 	}
 };
