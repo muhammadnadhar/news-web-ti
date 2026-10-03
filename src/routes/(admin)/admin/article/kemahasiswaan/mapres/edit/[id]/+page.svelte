@@ -6,11 +6,6 @@
 
 	// Jika form belum di-submit (masih null/undefined),
 	// gunakan data awal dari `data.prestasi`
-	let activeFormState = $derived(
-		form ?? {
-			values: data.prestasi
-		}
-	);
 </script>
 
 <svelte:head>
@@ -18,7 +13,7 @@
 </svelte:head>
 
 <FormMhsPrestasi
-	form={activeFormState}
+	valueData={form?.values}
 	initData={data.prestasi}
 	action="?/update"
 	title="Edit Prestasi Mahasiswa"

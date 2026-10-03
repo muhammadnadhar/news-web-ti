@@ -14,31 +14,36 @@
 	import Message from '$lib/components/admin/message.svelte';
 	import type { MessageStatus, ResponseMessage } from '$lib/types/message';
 	import type { SubmitFunction } from '@sveltejs/kit';
+	import type { CalendarFormValues } from '$lib/types/values/admin/article';
 
 	let {
 		calendar,
 		onDelete,
 		action = '?/update',
 		submitLabel = 'Update',
+		valuesData,
 		isBtnActive,
-    isBack = false,
+		isBack = false
 	}: {
 		action?: string;
 		submitLabel?: string;
 		calendar: AcademicCalendarWithImagesDTO;
 		onDelete?: (id: string) => void;
 		isBtnActive?: boolean;
-    isBack? : boolean, 
+		valuesData?: CalendarFormValues;
+		isBack?: boolean;
 	} = $props();
 
 	// Local State
-	let titleInput = $state(calendar.title || '');
-	let descriptionContent = $state(calendar.description || '');
-	let existingImages = $state<CalendarImageDTO[]>(calendar.images || []);
+	let titleInput = $state(valuesData?.title ?? calendar.title ?? '');
+	let descriptionContent = $state(valuesData?.description ?? calendar.description ?? '');
+	let existingImages = $state<CalendarImageDTO[]>(
+		valuesData?.newImageUrls ?? calendar.images ?? []
+	);
 
-	// 1. Simpan URL beserta Public ID untuk gambar baru
+	//  Simpan URL beserta Public ID untuk gambar baru
 	let newUploadedImages = $state<{ url: string; public_id: string }[]>([]);
-	let isActive = $state(calendar?.is_active ?? true);
+	let isActive = $state(valuesData?.isActive ?? calendar?.is_active ?? true);
 	let isDeletingPhoto = $state(false);
 
 	//  Handler saat Cloudinary sukses mengunggah gambar
@@ -164,7 +169,7 @@
 {/if}
 
 <div
-	class="bg-scitech-slate/60 space-y-6 rounded-3xl border border-border-color/10 p-6 shadow-2xl backdrop-blur-xl sm:p-8"
+	class="space-y-6 rounded-3xl border border-border-color/10 bg-bg-secondary/60 p-6 shadow-2xl sm:p-8"
 >
 	<form method="POST" {action} use:enhance={handleFormSubmit} class="space-y-6">
 		<!-- Hidden Inputs -->
@@ -172,12 +177,10 @@
 		<input type="hidden" name="description" value={descriptionContent} />
 		<input type="hidden" name="is_active" value={isActive ? 'true' : 'false'} />
 
-		<!-- Retained Image IDs (Gambar lama yang tetap dipertahankan) -->
 		{#each existingImages as img}
 			<input type="hidden" name="retainedImageIds" value={img.id} />
 		{/each}
 
-		<!-- Judul Kalender -->
 		<div>
 			<label for={`title-${calendar.id}`} class="mb-2 block text-xs font-medium text-text-muted">
 				Judul Kalender*
@@ -188,11 +191,10 @@
 				type="text"
 				required
 				bind:value={titleInput}
-				class="bg-bg-primary/80 focus:border-scitech-mint w-full rounded-xl border border-border-color/15 px-4 py-2.5 text-xs text-text-main focus:outline-none"
+				class="focus:border-scitech-mint w-full rounded-xl border border-border-color/15 bg-bg-primary/80 px-4 py-2.5 text-xs text-text-main focus:outline-none"
 			/>
 		</div>
 
-		<!-- 1. FormEditor (Description) -->
 		<div class="space-y-2">
 			<label for={`desc-${calendar.id}`} class="block text-xs font-medium text-text-muted">
 				Deskripsi (Form Editor)*
@@ -200,7 +202,6 @@
 			<FormEditor showSaveButton={false} bind:value={descriptionContent} />
 		</div>
 
-		<!-- 2. Grid Gambar Lama -->
 		<div class="bg-scitech-navy/40 space-y-3 rounded-2xl border border-border-color/10 p-4">
 			<span class="block text-xs font-medium text-text-muted">Gambar Terpasang:</span>
 
@@ -288,28 +289,23 @@
 		</div>
 
 		<!-- Tombol Aksi -->
-		<div class="gap-2 flex items-center justify-between pt-2">
-    {#if isBack}
-      
-    <button
-    class="bg-bg-secondary text-text-main hover:bg-scitech-mint-hover inline-flex items-center gap-2 rounded-xl px-6 py-2.5 text-xs font-bold shadow-lg transition-all active:scale-95"
-    onclick={() => history.back()}
-    >
-    Back
+		<div class="flex items-center justify-between gap-2 pt-2">
+			{#if isBack}
+				<button
+					class="hover:bg-scitech-mint-hover inline-flex items-center gap-2 rounded-xl bg-bg-secondary px-6 py-2.5 text-xs font-bold text-text-main shadow-lg transition-all active:scale-95"
+					onclick={() => history.back()}
+				>
+					Back
+				</button>
+			{/if}
 
-    </button>
-    {/if}
-
-
-      <button
+			<button
 				type="submit"
-				class="bg-bg-secondary text-text-main hover:bg-scitech-mint-hover inline-flex items-center gap-2 rounded-xl px-6 py-2.5 text-xs font-bold shadow-lg transition-all active:scale-95"
+				class="hover:bg-scitech-mint-hover inline-flex items-center gap-2 rounded-xl bg-bg-secondary px-6 py-2.5 text-xs font-bold text-text-main shadow-lg transition-all active:scale-95"
 			>
 				<Save class="h-4 w-4" />
 				<span>{submitLabel}</span>
 			</button>
-
-      
 
 			<div class="flex items-center justify-center gap-2">
 				{#if isBtnActive}

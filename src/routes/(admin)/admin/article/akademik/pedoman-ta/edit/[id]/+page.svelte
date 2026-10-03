@@ -9,4 +9,10 @@
 	<title>Edit Pedoman TA | Admin SciTech</title>
 </svelte:head>
 
-<FormGuideline action="?/update" initialData={data.pedomanTa} isEdit={true} {form} />
+<FormGuideline
+	action="?/update"
+	initialData={data.pedomanTa}
+	valuesData={form?.values}
+	isEdit={true}
+	{form}
+/>

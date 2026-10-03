@@ -28,6 +28,7 @@
 		class="border-scitech-slate/20 bg-scitech-navy-glare max-w-2xl rounded-2xl border p-6 shadow-xl"
 	>
 		<FormLeaderPriode
+			valuesData={form?.values}
 			lecturers={data.lecturers}
 			{initialData}
 			formError={form?.message}

@@ -1,6 +1,8 @@
 import { error, fail } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 import { getSemesterById, updateSemester } from '$lib/repository/admin/dataset/semester';
+import type { SemesterFormValues } from '$lib/types/values/admin/dataset';
+import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const { id } = params;
@@ -25,44 +27,54 @@ export const load: PageServerLoad = async ({ params }) => {
 
 export const actions: Actions = {
 	default: async ({ request, params }) => {
-		const { id } = params;
 		const formData = await request.formData();
 
-		const name = formData.get('name')?.toString().trim();
-		const academicYear = formData.get('academic_year')?.toString().trim();
 		const isActiveCheckbox = formData.get('is_active');
-		const isActive: boolean =
-			isActiveCheckbox === 'on' || isActiveCheckbox === 'true' || isActiveCheckbox === 'y';
 
-		const values = {
-			name,
-			academicYear,
-			isActive
+		const values: SemesterFormValues = {
+			id: params.id || (formData.get('id') as string)?.trim(),
+			name: formData.get('name')?.toString().trim() || '',
+			academicYear: formData.get('academic_year')?.toString().trim() || '',
+			isActive: isActiveCheckbox === 'on' || isActiveCheckbox === 'true' || isActiveCheckbox === 'y'
 		};
 
-		if (!name || !academicYear) {
+		if (!values.id) {
 			return fail(400, {
-				success: false,
-				title: 'Gagal Memperbarui',
-				message: 'Harap isi semua bidang form yang wajib (*).',
+				...errorResponse('ID Semester tidak ditemukan.', 'Validasi Gagal'),
+				values
+			});
+		}
+
+		if (!values.name || !values.academicYear) {
+			return fail(400, {
+				...warningResponse('Harap isi semua bidang form yang wajib (*).', 'Gagal Memperbarui'),
 				values
 			});
 		}
 
 		try {
-			await updateSemester(id, name, academicYear, isActive);
+			await updateSemester(values.id, values.name, values.academicYear, values.isActive);
 
-			return {
-				success: true,
-				title: 'Berhasil',
-				message: 'Data Semester berhasil diperbarui!'
-			};
-		} catch (err) {
+			return successResponse('Data Semester berhasil diperbarui!', 'Berhasil');
+		} catch (err: any) {
 			console.error('Error updating semester:', err);
+
+			// Pengecekan entri ganda / duplicate entry database jika ada batasan unique
+			if (err.code === 'ER_DUP_ENTRY' || err.message?.includes('Duplicate entry')) {
+				return fail(400, {
+					...warningResponse(
+						'Data Semester dengan kombinasi tersebut sudah ada.',
+						'Gagal Memperbarui'
+					),
+					values
+				});
+			}
+
 			return fail(500, {
-				success: false,
-				title: 'Kesalahan Sistem',
-				message: 'Gagal memperbarui data Semester ke database.',
+				...errorResponse(
+					err?.message || 'Gagal memperbarui data Semester ke database.',
+					'Kesalahan Sistem'
+				),
 				values
 			});
 		}

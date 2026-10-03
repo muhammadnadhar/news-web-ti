@@ -6,6 +6,7 @@ import {
 } from '$lib/repository/admin/article/kurikulum/petaMatakuliah';
 import { deleteCloudinaryImage, deleteImageFromCloudinary } from '$lib/helper/cloudinary';
 import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
+import type { CourseMapFormValues } from '$lib/types/values/admin/article';
 
 /**
  * Load function untuk mengambil data Peta Mata Kuliah berdasarkan ID dari URL
@@ -56,47 +57,70 @@ export const load: PageServerLoad = async ({ params }) => {
 export const actions: Actions = {
 	update: async ({ request, params }) => {
 		const id = params.id;
-
-		// 1. Validasi Parameter ID
-		if (!id) {
-			return fail(400, errorResponse('ID Peta Mata Kuliah tidak ditemukan di URL.', 'Gagal'));
-		}
-
-		// Ambil data dari FormData
 		const formData = await request.formData();
-		const title = formData.get('title')?.toString().trim();
-		const imageUrl = formData.get('image_url')?.toString().trim() || null;
 
-		//  Validasi Form Input
-		if (!title) {
-			return fail(400, errorResponse('Judul Peta Mata Kuliah wajib diisi.', 'Validasi Gagal'));
+		const values: CourseMapFormValues = {
+			id,
+			title: formData.get('title')?.toString().trim() || '',
+			image_url: formData.get('image_url')?.toString().trim() || null,
+			image_public_id:
+				formData.get('image_public_id')?.toString().trim() ||
+				formData.get('public_id')?.toString().trim() ||
+				null
+		};
+
+		if (!id) {
+			return fail(400, {
+				...errorResponse('ID Peta Mata Kuliah tidak ditemukan di URL.', 'Gagal'),
+				values
+			});
 		}
 
-		if (!imageUrl) {
-			return fail(400, errorResponse('Gambar Peta Mata Kuliah wajib diunggah.', 'Validasi Gagal'));
+		if (!values.title) {
+			return fail(400, {
+				...warningResponse('Judul Peta Mata Kuliah wajib diisi.', 'Validasi Gagal'),
+				values
+			});
+		}
+
+		if (!values.image_url) {
+			return fail(400, {
+				...warningResponse('Gambar Peta Mata Kuliah wajib diunggah.', 'Validasi Gagal'),
+				values
+			});
 		}
 
 		try {
-			// Jalankan query update database
-			const isUpdated = await updateCourseMap(id, title, imageUrl);
+			const isUpdated = await updateCourseMap(
+				id,
+				values.title,
+				values.image_url,
+				values.image_public_id
+			);
 
 			if (!isUpdated) {
-				return fail(
-					400,
-					errorResponse('Data gagal diperbarui atau tidak ada perubahan data.', 'Gagal Menyimpan')
-				);
+				return fail(400, {
+					...errorResponse(
+						'Data gagal diperbarui atau tidak ada perubahan data.',
+						'Gagal Menyimpan'
+					),
+					values
+				});
 			}
 
-			//  Success Response
+			// Success Response
 			return successResponse('Data Peta Mata Kuliah berhasil diperbarui.', 'Berhasil');
 		} catch (err) {
 			console.error('Error updating course map:', err);
 
-			//Error Response Sistem
-			return fail(
-				500,
-				errorResponse('Terjadi kesalahan pada sistem saat memperbarui data.', 'Kesalahan Server')
-			);
+			// Error Response Sistem
+			return fail(500, {
+				...errorResponse(
+					'Terjadi kesalahan pada sistem saat memperbarui data.',
+					'Kesalahan Server'
+				),
+				values
+			});
 		}
 	},
 	deleteImage: async ({ request }) => {

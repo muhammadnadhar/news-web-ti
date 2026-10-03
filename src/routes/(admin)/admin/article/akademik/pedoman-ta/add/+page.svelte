@@ -9,4 +9,4 @@
 	<title>Tambah Pedoman TA | Admin SciTech</title>
 </svelte:head>
 
-<FormGuideline {form} action="?/create" />
+<FormGuideline valuesData={form?.values} {form} action="?/create" />

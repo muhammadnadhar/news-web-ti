@@ -2,7 +2,9 @@ import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { getAllLecturerStaff } from '$lib/repository/admin/article/profile/dosen&staff';
 import { addHistoryLeader } from '$lib/repository/admin/article/profile/sejarah';
-import { errorResponse, successResponse } from '$lib/helper/message';
+import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
+import type { HistoryLeaderFormValues } from '$lib/types/values/admin/article';
+import { randomUUID } from '$lib/crypto';
 
 export const load: PageServerLoad = async () => {
 	// Ambil daftar seluruh dosen dan staf dari database
@@ -16,31 +18,39 @@ export const load: PageServerLoad = async () => {
 export const actions: Actions = {
 	default: async ({ request }) => {
 		const formData = await request.formData();
-		const period = formData.get('period')?.toString().trim();
-		const head_id = formData.get('head_id')?.toString().trim() || null;
-		const secretary_id = formData.get('secretary_id')?.toString().trim() || null;
 
-		if (!period) {
-			return fail(400, errorResponse('Periode jabatan wajib diisi.', 'Validasi Gagal'));
+		const values: HistoryLeaderFormValues = {
+			id: randomUUID(),
+			period: formData.get('period')?.toString().trim() || '',
+			head_id: formData.get('head_id')?.toString().trim() || null,
+			secretary_id: formData.get('secretary_id')?.toString().trim() || null
+		};
+
+		if (!values.period) {
+			return fail(400, {
+				...warningResponse('Periode jabatan wajib diisi.', 'Validasi Gagal'),
+				values
+			});
 		}
 
 		try {
-			await addHistoryLeader({
-				period,
-				head_id,
-				secretary_id
+			await addHistoryLeader(values.id ?? randomUUID(), {
+				period: values.period,
+				head_id: values.head_id,
+				secretary_id: values.secretary_id
 			});
 
 			return successResponse('Data sejarah pimpinan berhasil disimpan!', 'Berhasil');
 		} catch (error: any) {
-			// 3. Error Response Sistem
-			return fail(
-				500,
-				errorResponse('Gagal menyimpan data pimpinan: ' + error.message, 'Kesalahan Sistem')
-			);
-		}
+			console.error('Error adding history leader:', error);
 
-		// Redirect kembali ke halaman utama sejarah pimpinan setelah berhasil
-		// throw redirect(303, '/admin/profile/history');
+			return fail(500, {
+				...errorResponse(
+					'Gagal menyimpan data pimpinan: ' + (error?.message || 'Terjadi kesalahan sistem'),
+					'Kesalahan Sistem'
+				),
+				values
+			});
+		}
 	}
 };

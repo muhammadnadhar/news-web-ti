@@ -10,6 +10,7 @@
 	import type { HighGpaStudentDTO } from '$lib/dto/admin/article/kemahasiswaan';
 	import type { AngkatanDTO, SemesterDTO } from '$lib/dto/admin/dataset';
 	import type { ResponseMessage } from '$lib/types/message';
+	import type { IpkTertinggiFormValues } from '$lib/types/values/admin/article';
 	import {
 		TrendingUp,
 		User,
@@ -26,24 +27,17 @@
 	} from 'lucide-svelte';
 	import { CldUploadWidget } from 'svelte-cloudinary';
 
-	interface OptionItem {
-		id: string | number;
-		year?: string | number;
-		name?: string;
-		nama?: string;
-	}
-
-	// Props Svelte 5 Runes
 	let {
-		form = null,
 		initialData = null,
 		angkatanList = [],
 		semesterList = [],
+		valueData,
 		isEdit = false,
 		action = '?/save'
 	}: {
-		form?: HighGpaStudentDTO | null;
+		valueData?: IpkTertinggiFormValues | null;
 		initialData?: HighGpaStudentDTO | null;
+
 		angkatanList: AngkatanDTO[];
 		semesterList: SemesterDTO[];
 		isEdit?: boolean;
@@ -57,7 +51,7 @@
 	let isDeletingPhoto = $state(false);
 
 	// Default/prefilled value priority: form validation rerun > initialData > empty
-	let imgPreview = $state(form?.image_url ?? initialData?.image_url ?? '');
+	let imgPreview = $state(valueData?.image_url ?? initialData?.image_url ?? '');
 
 	function handleUploadSuccess(result: any) {
 		if (result?.info?.secure_url) {
@@ -119,17 +113,27 @@
 	}
 </script>
 
+<!-- Message Component Notification -->
+{#if showMessage}
+	<div class="transition-all duration-300">
+		<Message
+			status={messageConfig.status}
+			title={messageConfig.title}
+			message={messageConfig.message}
+			dismissible={true}
+			timeout={5000}
+			onclose={() => (showMessage = false)}
+		/>
+	</div>
+{/if}
+
 <div class="mx-auto max-w-4xl space-y-6 p-4 md:p-6">
-	<!-- Header Section -->
-	<header
-		class="flex flex-col gap-2 border-b border-slate-200 pb-4 sm:flex-row sm:items-center sm:justify-between"
-	>
+	<header class="flex flex-col gap-2 pb-4 sm:flex-row sm:items-center sm:justify-between">
 		<div>
-			<h1 class="flex items-center gap-2 text-2xl font-bold text-slate-800">
-				<TrendingUp class="h-7 w-7 text-emerald-600" />
+			<h1 class="flex items-center gap-2 text-2xl font-bold text-text-main">
 				{isEdit ? 'Edit Data Mahasiswa IPK Tertinggi' : 'Tambah Mahasiswa IPK Tertinggi'}
 			</h1>
-			<p class="text-sm text-slate-500">
+			<p class="text-sm text-text-muted">
 				{isEdit
 					? 'Perbarui informasi perolehan Indeks Prestasi Kumulatif (IPK) mahasiswa.'
 					: 'Formulir pendataan mahasiswa dengan perolehan Indeks Prestasi Kumulatif (IPK) tertinggi.'}
@@ -137,22 +141,10 @@
 		</div>
 	</header>
 
-	<!-- Message Component Notification -->
-	{#if showMessage}
-		<div class="transition-all duration-300">
-			<Message
-				status={messageConfig.status}
-				title={messageConfig.title}
-				message={messageConfig.message}
-				dismissible={true}
-				timeout={5000}
-				onclose={() => (showMessage = false)}
-			/>
-		</div>
-	{/if}
-
 	<!-- Form Card -->
-	<div class="rounded-xl border border-slate-200 bg-bg-secondary p-6 shadow-sm md:p-8">
+	<div
+		class="rounded-2xl border border-bg-secondary-hover bg-bg-secondary p-6 shadow-2xl backdrop-blur-md md:p-8"
+	>
 		<form
 			method="POST"
 			{action}
@@ -197,12 +189,12 @@
 
 			<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
 				<div class="space-y-2 md:col-span-2">
-					<label for="student_name" class="block text-sm font-semibold text-slate-700">
-						Nama Mahasiswa <span class="text-rose-500">*</span>
+					<label for="student_name" class="block text-sm font-semibold text-text-main">
+						Nama Mahasiswa <span class="text-amber-400">*</span>
 					</label>
-					<div class="relative rounded-lg shadow-sm">
+					<div class="relative rounded-xl shadow-sm">
 						<div
-							class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"
+							class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-text-muted"
 						>
 							<User class="h-5 w-5" />
 						</div>
@@ -210,23 +202,23 @@
 							type="text"
 							id="student_name"
 							name="student_name"
-							value={form?.student_name ?? initialData?.student_name ?? ''}
+							value={valueData?.student_name ?? initialData?.student_name ?? ''}
 							placeholder="Masukkan nama lengkap mahasiswa..."
 							required
 							disabled={isSubmitting}
-							class="block w-full rounded-lg border border-slate-300 bg-slate-50 py-2.5 pr-4 pl-10 text-sm text-slate-800 transition-all focus:border-emerald-500 focus:bg-bg-secondary focus:ring-2 focus:ring-emerald-500 disabled:opacity-50"
+							class="block w-full rounded-xl border border-bg-secondary-hover bg-bg-primary py-2.5 pr-4 pl-10 text-sm text-text-main placeholder-text-muted/50 transition-all outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 disabled:opacity-50"
 						/>
 					</div>
 				</div>
 
 				<!-- IPK -->
 				<div class="space-y-2">
-					<label for="gpa" class="block text-sm font-semibold text-slate-700">
-						Indeks Prestasi Kumulatif (IPK) <span class="text-rose-500">*</span>
+					<label for="gpa" class="block text-sm font-semibold text-text-main">
+						Indeks Prestasi Kumulatif (IPK) <span class="text-amber-400">*</span>
 					</label>
-					<div class="relative rounded-lg shadow-sm">
+					<div class="relative rounded-xl shadow-sm">
 						<div
-							class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"
+							class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-text-muted"
 						>
 							<Award class="h-5 w-5" />
 						</div>
@@ -237,24 +229,24 @@
 							step="0.01"
 							min="0.00"
 							max="4.00"
-							value={form?.gpa ?? initialData?.gpa ?? ''}
+							value={valueData?.gpa ?? initialData?.gpa ?? ''}
 							placeholder="Contoh: 3.95"
 							required
 							disabled={isSubmitting}
-							class="block w-full rounded-lg border border-slate-300 bg-slate-50 py-2.5 pr-4 pl-10 text-sm text-slate-800 transition-all focus:border-emerald-500 focus:bg-bg-secondary focus:ring-2 focus:ring-emerald-500 disabled:opacity-50"
+							class="block w-full rounded-xl border border-bg-secondary-hover bg-bg-primary py-2.5 pr-4 pl-10 text-sm text-text-main placeholder-text-muted/50 transition-all outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 disabled:opacity-50"
 						/>
 					</div>
-					<p class="text-xs text-slate-500">Maksimal nilai 4.00</p>
+					<p class="text-xs text-text-muted">Maksimal nilai 4.00</p>
 				</div>
 
 				<!-- Angkatan -->
 				<div class="space-y-2">
-					<label for="angkatan_id" class="block text-sm font-semibold text-slate-700">
-						Tahun Angkatan <span class="text-rose-500">*</span>
+					<label for="angkatan_id" class="block text-sm font-semibold text-text-main">
+						Tahun Angkatan <span class="text-amber-400">*</span>
 					</label>
-					<div class="relative rounded-lg shadow-sm">
+					<div class="relative rounded-xl shadow-sm">
 						<div
-							class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"
+							class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-text-muted"
 						>
 							<GraduationCap class="h-5 w-5" />
 						</div>
@@ -263,11 +255,11 @@
 							name="angkatan_id"
 							required
 							disabled={isSubmitting}
-							class="block w-full rounded-lg border border-slate-300 bg-slate-50 py-2.5 pr-4 pl-10 text-sm text-slate-800 transition-all focus:border-emerald-500 focus:bg-bg-secondary focus:ring-2 focus:ring-emerald-500 disabled:opacity-50"
+							class="block w-full rounded-xl border border-bg-secondary-hover bg-bg-primary py-2.5 pr-4 pl-10 text-sm text-text-main transition-all outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 disabled:opacity-50"
 						>
 							<option value="">-- Pilih Angkatan --</option>
 							{#each angkatanList as angkatan}
-								{@const selectedId = form?.angkatan_id ?? initialData?.angkatan_id}
+								{@const selectedId = valueData?.angkatan_id ?? initialData?.angkatan_id}
 								<option value={angkatan.id} selected={String(selectedId) === String(angkatan.id)}>
 									{angkatan.year || angkatan.nama || angkatan.id}
 								</option>
@@ -278,12 +270,12 @@
 
 				<!-- Semester -->
 				<div class="space-y-2 md:col-span-2">
-					<label for="semester_id" class="block text-sm font-semibold text-slate-700">
-						Semester <span class="text-rose-500">*</span>
+					<label for="semester_id" class="block text-sm font-semibold text-text-main">
+						Semester <span class="text-amber-400">*</span>
 					</label>
-					<div class="relative rounded-lg shadow-sm">
+					<div class="relative rounded-xl shadow-sm">
 						<div
-							class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"
+							class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-text-muted"
 						>
 							<Calendar class="h-5 w-5" />
 						</div>
@@ -292,11 +284,11 @@
 							name="semester_id"
 							required
 							disabled={isSubmitting}
-							class="block w-full rounded-lg border border-slate-300 bg-slate-50 py-2.5 pr-4 pl-10 text-sm text-slate-800 transition-all focus:border-emerald-500 focus:bg-bg-secondary focus:ring-2 focus:ring-emerald-500 disabled:opacity-50"
+							class="block w-full rounded-xl border border-bg-secondary-hover bg-bg-primary py-2.5 pr-4 pl-10 text-sm text-text-main transition-all outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 disabled:opacity-50"
 						>
 							<option value="">-- Pilih Semester --</option>
 							{#each semesterList as semester}
-								{@const selectedId = form?.semester_id ?? initialData?.semester_id}
+								{@const selectedId = valueData?.semester_id ?? initialData?.semester_id}
 								<option value={semester.id} selected={String(selectedId) === String(semester.id)}>
 									{semester.name || semester.nama || semester.id}
 								</option>
@@ -307,10 +299,7 @@
 
 				<!-- URL / Upload Foto Mahasiswa (img_url) -->
 				<div class="space-y-2 md:col-span-2">
-					<label
-						for="img_url"
-						class="block text-sm font-semibold text-slate-700 dark:text-slate-200"
-					>
+					<label for="img_url" class="block text-sm font-semibold text-text-main">
 						Foto Mahasiswa
 					</label>
 
@@ -319,19 +308,17 @@
 					{#if imgPreview}
 						<!-- Preview Foto jika sudah terunggah -->
 						<div
-							class="flex items-center gap-4 rounded-xl border border-slate-200 bg-slate-50 p-3 shadow-sm dark:border-slate-800 dark:bg-slate-800/50"
+							class="flex items-center gap-4 rounded-xl border border-bg-secondary-hover bg-bg-primary p-3 shadow-sm"
 						>
 							<img
 								src={imgPreview}
 								alt="Preview Foto Mahasiswa"
-								class="h-20 w-20 rounded-lg object-cover shadow-sm ring-1 ring-slate-200 dark:ring-slate-700"
+								class="h-20 w-20 rounded-xl object-cover shadow-sm ring-1 ring-bg-secondary-hover"
 								onerror={(e) => ((e.currentTarget as HTMLImageElement).style.display = 'none')}
 							/>
 							<div class="flex flex-1 flex-col gap-1">
-								<span class="text-xs font-medium text-slate-500 dark:text-slate-400"
-									>Foto Mahasiswa Terunggah</span
-								>
-								<p class="max-w-xs truncate text-xs text-slate-700 dark:text-slate-300">
+								<span class="text-xs font-medium text-text-muted">Foto Mahasiswa Terunggah</span>
+								<p class="max-w-xs truncate text-xs text-text-main">
 									{imgPreview}
 								</p>
 								<button
@@ -363,41 +350,41 @@
 								type="button"
 								onclick={() => open()}
 								disabled={isSubmitting}
-								class="group flex w-full flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-slate-50/50 p-6 text-center transition-all hover:border-emerald-500 hover:bg-emerald-50/30 disabled:opacity-50 dark:border-slate-700 dark:bg-slate-800/40 dark:hover:border-emerald-400 dark:hover:bg-slate-800"
+								class="group flex w-full flex-col items-center justify-center rounded-xl border-2 border-dashed border-bg-secondary-hover bg-bg-primary/50 p-6 text-center transition-all hover:border-amber-400 hover:bg-amber-400/5 disabled:opacity-50"
 							>
 								<div
-									class="mb-2 rounded-full border border-slate-200 bg-bg-secondary p-3 text-slate-600 shadow-sm transition-transform group-hover:scale-110 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+									class="mb-2 rounded-full border border-bg-secondary-hover bg-bg-secondary p-3 text-text-muted shadow-sm transition-transform group-hover:scale-110"
 								>
-									<UploadCloudIcon class="h-6 w-6 text-emerald-600" />
+									<UploadCloudIcon class="h-6 w-6 text-amber-400" />
 								</div>
-								<span class="text-sm font-semibold text-slate-700 dark:text-slate-200">
-									Unggah Foto Mahasiswa
-								</span>
-								<span class="mt-1 text-xs text-slate-500 dark:text-slate-400">
-									Klik untuk memilih foto
-								</span>
+								<span class="text-sm font-semibold text-text-main"> Unggah Foto Mahasiswa </span>
+								<span class="mt-1 text-xs text-text-muted"> Klik untuk memilih foto </span>
 							</button>
 						</CldUploadWidget>
 					{/if}
 				</div>
 
 				<!-- Form Actions -->
-				<div class="flex items-center justify-end gap-3 border-t border-slate-200 pt-4">
+				<div
+					class="flex items-center justify-end gap-3 border-t border-bg-secondary-hover pt-4 md:col-span-2"
+				>
 					<button
 						type="button"
 						onclick={() => history.back()}
 						disabled={isSubmitting}
-						class="rounded-lg border border-slate-300 bg-bg-secondary px-5 py-2.5 text-sm font-medium text-slate-700 transition-all hover:bg-slate-50 focus:ring-2 focus:ring-slate-200 focus:outline-none disabled:opacity-50"
+						class="rounded-xl border border-bg-secondary-hover bg-bg-primary px-5 py-2.5 text-sm font-medium text-text-muted transition-all hover:bg-bg-secondary-hover hover:text-text-main focus:outline-none disabled:opacity-50"
 					>
 						Batal
 					</button>
 					<button
 						type="submit"
 						disabled={isSubmitting}
-						class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-6 py-2.5 text-sm font-medium text-text-main shadow-sm transition-all hover:bg-emerald-700 focus:ring-2 focus:ring-emerald-500/50 focus:outline-none disabled:opacity-50"
+						class="inline-flex items-center gap-2 rounded-xl bg-amber-400 px-6 py-2.5 text-sm font-semibold text-slate-950 shadow-lg shadow-amber-400/20 transition-all hover:bg-amber-500 active:scale-[0.98] disabled:opacity-50"
 					>
 						{#if isSubmitting}
-							<Loader2 class="h-4 w-4 animate-spin" />
+							<span
+								class="h-4 w-4 animate-spin rounded-full border-2 border-slate-950 border-t-transparent"
+							></span>
 							<span>Menyimpan...</span>
 						{:else}
 							<Save class="h-4 w-4" />

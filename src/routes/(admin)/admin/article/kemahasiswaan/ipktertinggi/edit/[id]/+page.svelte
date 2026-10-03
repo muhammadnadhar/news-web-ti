@@ -8,7 +8,7 @@
 </script>
 
 <FormMshIpk
-	{form}
+	valueData={form?.values}
 	action="?/update"
 	initialData={data.mhsipk}
 	angkatanList={data.angkatanList}

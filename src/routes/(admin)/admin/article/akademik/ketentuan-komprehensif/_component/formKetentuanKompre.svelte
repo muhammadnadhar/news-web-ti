@@ -3,7 +3,7 @@
 	import { CldUploadWidget } from 'svelte-cloudinary';
 	import FormEditor from '$lib/components/admin/formEditor.svelte';
 	import Message from '$lib/components/admin/message.svelte';
-	import { UploadCloud, X, ArrowLeft, Save, Loader2, Trash2, LoaderCircle } from 'lucide-svelte';
+	import { UploadCloud, Save, Loader2, Trash2, LoaderCircle } from 'lucide-svelte';
 	import {
 		folder_cloudinary_admin_article_akademik,
 		getUploadConfig,
@@ -11,34 +11,33 @@
 		upload_cloudinary_preset
 	} from '$lib/cloudinary/client';
 	import type { ResponseMessage } from '$lib/types/message';
+	import type { KetentuanKomprehensifFormValues } from '$lib/types/values/admin/article';
+	import type { KetentuanKompreDTO } from '$lib/dto/admin/article/akademik';
 
 	// Props interface
 	interface Props {
-		initialData?: {
-			id?: number | string;
-			title?: string;
-			imageUrl?: string;
-			description?: string;
-		};
+		valuesData?: KetentuanKomprehensifFormValues;
+		initialData?: KetentuanKompreDTO | null;
 		action?: string;
 		isEdit?: boolean;
 		submitButtonText?: string;
 	}
 
 	let {
-		initialData = {},
+		valuesData,
 		isEdit = false,
 		action,
+		initialData,
 		submitButtonText = isEdit ? 'Perbarui Data' : 'Simpan Rekrutmen'
 	}: Props = $props();
 
 	// Reactive States
-	let title = $state(initialData?.title || '');
-	let imageUrl = $state(initialData?.imageUrl || '');
-	let description = $state(initialData?.description || '');
+	let title = $state(valuesData?.title ?? initialData?.title ?? '');
+	let imageUrl = $state(valuesData?.image_url ?? initialData?.image_url ?? '');
+	let description = $state(valuesData?.description ?? initialData?.description ?? '');
 	let isSubmitting = $state(false);
 
-	let photoPublicId = $state(''); // Simpan public_id dari Cloudinary
+	let photoPublicId = $state(valuesData?.image_public_id ?? initialData?.image_public_id ?? ''); // Simpan public_id dari Cloudinary
 	let isDeletingPhoto = $state(false);
 	let showMessage = $state(false);
 
@@ -47,8 +46,6 @@
 		title: '',
 		message: ''
 	});
-
-
 
 	// Handlers
 	function handleUploadSuccess(result: any) {
@@ -84,7 +81,7 @@
 			if (response.ok) {
 				imageUrl = '';
 				photoPublicId = '';
-        triggerMessage("success","Succes","Berhasil membatalkan image")
+				triggerMessage('success', 'Succes', 'Berhasil membatalkan image');
 			} else {
 				alert('Gagal menghapus gambar dari Cloudinary');
 			}
@@ -132,13 +129,14 @@
 							type?: 'success' | 'error';
 						};
 						showMessage = true;
-            triggerMessage(msg.type , result.type=== "success" ? "Success" : "Error",msg.message)
-						
+						triggerMessage(msg.type, result.type === 'success' ? 'Success' : 'Error', msg.message);
 					} else if (result.type === 'error') {
 						showMessage = true;
-            triggerMessage(msg.type || (result.type === "success" ? "success" : 
-            "error"),"Error","Terjadi kesalahan Pada server")
-
+						triggerMessage(
+							msg.type || (result.type === 'success' ? 'success' : 'error'),
+							'Error',
+							'Terjadi kesalahan Pada server'
+						);
 					}
 
 					await update();
@@ -167,7 +165,7 @@
 					Poster / Foto Pendukung
 				</label>
 				<input type="hidden" name="image_url" value={imageUrl} />
-				<input type="hidden" name="public_id" value={photoPublicId} />
+				<input type="hidden" name="image_public_id" value={photoPublicId} />
 
 				{#if imageUrl}
 					<div
@@ -235,7 +233,7 @@
 					type="button"
 					onclick={() => history.back()}
 					disabled={isSubmitting}
-					class="rounded-xl border-2 px-5 py-2.5 text-xs font-semibold text-text-muted transition-all hover:bg-white/10 hover:text-text-main active:scale-95 disabled:opacity-50"
+					class="hover:bg-bg-primary-glare/10 rounded-xl border-2 px-5 py-2.5 text-xs font-semibold text-text-muted transition-all hover:text-text-main active:scale-95 disabled:opacity-50"
 				>
 					Batal
 				</button>

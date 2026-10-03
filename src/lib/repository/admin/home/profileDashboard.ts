@@ -1,7 +1,6 @@
 import { query } from '$lib/database/svelteDb';
 import type { ProfileDashboardDTO } from '$lib/dto/admin/home';
 import { tableProfileDashboard } from '$lib/seeder/admin/home';
-import { randomUUID } from '$lib/crypto';
 /** Get all - mengambil semua data profile dashboard */
 export async function getAllProfileDashboards(): Promise<ProfileDashboardDTO[]> {
 	const sql = `
@@ -41,9 +40,9 @@ export async function getProfileDashboardById(id: string): Promise<ProfileDashbo
 
 /** Create / add - menambah profile dashboard baru */
 export async function addProfileDashboard(
+	id: string,
 	data: Omit<ProfileDashboardDTO, 'id' | 'created_at' | 'updated_at'>
 ): Promise<string> {
-	const id = randomUUID();
 	const sql = `
         INSERT INTO ${tableProfileDashboard} (id, title, image_path, image_public_id)
         VALUES (?, ?, ?, ?)

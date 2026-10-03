@@ -23,38 +23,29 @@
 	} from '$lib/cloudinary/client';
 	import Message from '$lib/components/admin/message.svelte';
 	import type { MessageStatus, ResponseMessage } from '$lib/types/message';
-
-	export interface DosenStaffData {
-		id?: string | number;
-		name?: string;
-		nidn?: string;
-		expertise?: string;
-		pddiktiUrl?: string;
-		photoUrl?: string;
-		publicId?: string;
-		category?: string;
-	}
+	import type { LecturerStaffItemDTO } from '$lib/dto/admin/article/profile';
+	import type { LecturerStaffFormValues } from '$lib/types/values/admin/article';
 
 	interface Props {
 		isEdit?: boolean;
 		actionUrl?: string;
-		initialData?: DosenStaffData;
-		form?: any;
+		initialData?: LecturerStaffItemDTO;
+		valuesData: LecturerStaffFormValues;
 	}
 
-	let { isEdit = false, actionUrl, initialData, form }: Props = $props();
+	let { isEdit = false, actionUrl, initialData, valuesData }: Props = $props();
 
 	// Tentukan Action URL otomatis jika tidak dikirim lewat props
 	const targetAction = $derived(actionUrl ?? (isEdit ? '?/update' : '?/create'));
 
 	// Initial State menggunakan Runes Svelte 5
-	let name = $state(initialData?.name ?? form?.values?.name ?? '');
-	let nidn = $state(initialData?.nidn ?? form?.values?.nidn ?? '');
-	let expertise = $state(initialData?.expertise ?? form?.values?.expertise ?? '');
-	let pddiktiUrl = $state(initialData?.pddiktiUrl ?? form?.values?.pddiktiUrl ?? '');
-	let photoUrl = $state(initialData?.photoUrl ?? form?.values?.photoUrl ?? '');
-	let publicId = $state(initialData?.publicId ?? form?.values?.publicId ?? '');
-	let category = $state(initialData?.category ?? form?.values?.category ?? 'dosen');
+	let name = $state(initialData?.name ?? valuesData?.name ?? '');
+	let nidn = $state(initialData?.nidn ?? valuesData?.nidn ?? '');
+	let expertise = $state(initialData?.expertise ?? valuesData?.expertise ?? '');
+	let pddiktiUrl = $state(initialData?.pddikti_url ?? valuesData?.pddikti_url ?? '');
+	let photoUrl = $state(initialData?.photo_url ?? valuesData?.photo_url ?? '');
+	let publicId = $state(initialData?.photo_public_id ?? valuesData?.photo_public_id ?? '');
+	let category = $state(initialData?.role ?? valuesData?.category ?? 'dosen');
 
 	let isSubmitting = $state(false);
 	let isDeletingPhoto = $state(false);
@@ -72,10 +63,10 @@
 			name = initialData.name ?? name;
 			nidn = initialData.nidn ?? nidn;
 			expertise = initialData.expertise ?? expertise;
-			pddiktiUrl = initialData.pddiktiUrl ?? pddiktiUrl;
-			photoUrl = initialData.photoUrl ?? photoUrl;
-			publicId = initialData.publicId ?? publicId;
-			category = initialData.category ?? category;
+			pddiktiUrl = initialData.pddikti_url ?? pddiktiUrl;
+			photoUrl = initialData.photo_url ?? photoUrl;
+			publicId = initialData.photo_public_id ?? publicId;
+			category = initialData.role ?? 'dosen';
 		}
 	});
 

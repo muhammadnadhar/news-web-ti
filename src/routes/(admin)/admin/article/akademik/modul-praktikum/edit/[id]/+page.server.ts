@@ -6,6 +6,7 @@ import {
 } from '$lib/repository/admin/article/akedemik/modulePratikum';
 import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
 import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
+import type { ModulPraktikumFormValues } from '$lib/types/values/admin/article';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const id = params.id;
@@ -17,8 +18,6 @@ export const load: PageServerLoad = async ({ params }) => {
 	}
 
 	const moduleData = await getPracticumModuleById(id);
-
-	console.info(moduleData);
 
 	if (!moduleData) {
 		throw error(404, 'Data Modul Praktikum tidak ditemukan.');
@@ -33,54 +32,79 @@ export const actions: Actions = {
 	update: async ({ request, params }) => {
 		const formData = await request.formData();
 
-		// Ambil ID dari URL params atau hidden input form
-		const idFromForm = formData.get('id') as string | null;
-		const targetId = params.id || idFromForm;
+		// Ekstraksi data ke objek values bertipe ModulPraktikumFormValues
+		const values: ModulPraktikumFormValues = {
+			id: params.id || formData.get('id')?.toString().trim() || undefined,
+			title: formData.get('title')?.toString().trim() || '',
+			imageUrl:
+				formData.get('image_url')?.toString().trim() ||
+				formData.get('imageUrl')?.toString().trim() ||
+				null,
+			publicId:
+				formData.get('image_public_id')?.toString().trim() ||
+				formData.get('public_id')?.toString().trim() ||
+				null,
+			description: formData.get('description')?.toString().trim() || null
+		};
 
-		// Extract input form
-		const title = (formData.get('title') as string)?.trim();
-		const imageUrl = (formData.get('image_url') as string)?.trim() || null;
-		const description = (formData.get('description') as string)?.trim() || null;
-
-		// Validasi field wajib
-		if (!title) {
+		if (!values.id) {
 			return fail(400, {
-				success: false,
-				title: 'Validasi Gagal',
-				message: 'Judul Modul Praktikum wajib diisi.',
-				values: { title, imageUrl, description }
+				...warningResponse('ID Modul Praktikum tidak ditemukan.', 'Gagal'),
+				values
+			});
+		}
+
+		if (!values.title) {
+			return fail(400, {
+				...warningResponse('Judul Modul Praktikum wajib diisi.', 'Validasi Gagal'),
+				values
+			});
+		}
+
+		if (values.title.length > 255) {
+			return fail(400, {
+				...warningResponse(
+					'Judul Modul Praktikum terlalu panjang, maksimal 255 karakter.',
+					'Validasi Gagal'
+				),
+				values
 			});
 		}
 
 		try {
-			if (targetId) {
-				const isUpdated = await updatePracticumModule(targetId, title, imageUrl, description);
+			const isUpdated = await updatePracticumModule(
+				values.id,
+				values.title,
+				values.imageUrl,
+				values.description,
+				values.publicId
+			);
 
-				if (!isUpdated) {
-					return fail(500, {
-						success: false,
-						title: 'Gagal Memperbarui',
-						message: 'Data modul praktikum tidak dapat diperbarui di database.'
-					});
-				}
-
-				return {
-					success: true,
-					title: 'Berhasil Memperbarui',
-					message: 'Modul praktikum berhasil diperbarui!'
-				};
-			} else {
-				return warningResponse('Id data tidak ada');
+			if (!isUpdated) {
+				return fail(500, {
+					...errorResponse(
+						'Data modul praktikum tidak dapat diperbarui di database.',
+						'Gagal Memperbarui'
+					),
+					values
+				});
 			}
+
+			return {
+				...successResponse('Modul praktikum berhasil diperbarui!', 'Berhasil Memperbarui'),
+				values
+			};
 		} catch (err: any) {
+			console.error('Error updating Practicum Module:', err);
 			return fail(500, {
-				success: false,
-				title: 'Kesalahan Sistem',
-				message: err?.message || 'Terjadi kesalahan sistem saat memproses modul praktikum.'
+				...errorResponse(
+					err?.message || 'Terjadi kesalahan sistem saat memproses modul praktikum.',
+					'Kesalahan Sistem'
+				),
+				values
 			});
 		}
-	},
-	// untuk edit dia akan memanggil fungsi delete Photo saat tombol batal di click
+	}, // untuk edit dia akan memanggil fungsi delete Photo saat tombol batal di click
 	deletePhoto: async ({ request }) => {
 		const formData = await request.formData();
 		const publicId = formData.get('public_id')?.toString();

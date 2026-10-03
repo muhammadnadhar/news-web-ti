@@ -9,32 +9,25 @@
 		upload_cloudinary_preset
 	} from '$lib/cloudinary/client';
 	import Message, { type MessageStatus } from '$lib/components/admin/message.svelte';
-	import type { ActivityDocumentationDTO } from '$lib/dto/admin/article/kerjasama';
 	import FormEditor from '$lib/components/admin/formEditor.svelte';
 	import type { ResponseMessage } from '$lib/types/message';
+	import type { DocumentationFormValues } from '$lib/types/values/admin/article';
+	import { formatDate } from '$lib/utils';
 
 	interface Props {
-		initialData?: Partial<ActivityDocumentationDTO> | null;
-		formError?: string | null;
+		valuesData?: DocumentationFormValues | null;
 		isEditMode?: boolean;
 		submitLabel?: string;
 		onCancel?: () => void;
 		action: string;
 	}
 
-	let {
-		initialData = null,
-		formError = null,
-		isEditMode = false,
-		submitLabel,
-		action,
-		onCancel
-	}: Props = $props();
+	let { valuesData, isEditMode = false, submitLabel, action, onCancel }: Props = $props();
 
 	// State lokal
-	let description = $state(initialData?.description ?? '');
-	let imageUrl = $state(initialData?.image_url || '');
-	let imagePublicId = $state(initialData?.image_public_id || '');
+	let description = $state(valuesData?.description ?? '');
+	let imageUrl = $state(valuesData?.image_url || '');
+	let imagePublicId = $state(valuesData?.image_public_id || '');
 	let isSubmitting = $state(false);
 	let isDeletingImage = $state(false);
 	let showMessage = $state(false);
@@ -60,12 +53,6 @@
 		showMessage = true;
 	}
 
-	// Format tanggal untuk input type="date" (YYYY-MM-DD)
-	function formatDateForInput(dateStr?: string | null): string {
-		if (!dateStr) return '';
-		return dateStr.split('T')[0];
-	}
-
 	// Handler upload Cloudinary
 	function handleUploadSuccess(result: any) {
 		if (result?.info?.secure_url) {
@@ -75,10 +62,10 @@
 	}
 
 	$effect(() => {
-		if (initialData) {
-			description = initialData.description || '';
-			imageUrl = initialData.image_url || '';
-			imagePublicId = initialData.image_public_id || '';
+		if (valuesData) {
+			description = valuesData.description || '';
+			imageUrl = valuesData.image_url || '';
+			imagePublicId = valuesData.image_public_id || '';
 		}
 	});
 
@@ -140,12 +127,6 @@
 		</div>
 	{/if}
 
-	{#if formError}
-		<div class="mb-6">
-			<Message status="error" title="Gagal" message={formError} dismissible={true} />
-		</div>
-	{/if}
-
 	<!-- Container Card -->
 	<div class="rounded-xl border border-border-light bg-bg-secondary shadow-sm">
 		<form
@@ -199,7 +180,7 @@
 					type="text"
 					id="title"
 					name="title"
-					defaultValue={initialData?.title || ''}
+					defaultValue={valuesData?.title || ''}
 					placeholder="Contoh: Workshop Pemrograman SvelteKit 2026"
 					required
 					class="w-full rounded-lg border border-border-light bg-bg-primary px-4 py-2.5 text-sm text-text-main transition duration-150 placeholder:text-text-muted focus:border-accent-purple focus:outline-none"
@@ -215,7 +196,7 @@
 					type="date"
 					id="event_date"
 					name="event_date"
-					defaultValue={formatDateForInput(initialData?.event_date)}
+					defaultValue={formatDate(valuesData?.event_date)}
 					class="w-full rounded-lg border border-border-light bg-bg-primary px-4 py-2.5 text-sm text-text-main transition duration-150 focus:border-accent-purple focus:outline-none"
 				/>
 			</div>
@@ -229,7 +210,7 @@
 					type="url"
 					id="link_drive"
 					name="link_drive"
-					defaultValue={initialData?.link_drive || ''}
+					defaultValue={valuesData?.link_drive || ''}
 					placeholder="https://drive.google.com/drive/folders/..."
 					class="w-full rounded-lg border border-border-light bg-bg-primary px-4 py-2.5 text-sm text-text-main transition duration-150 placeholder:text-text-muted focus:border-accent-purple focus:outline-none"
 				/>
@@ -295,7 +276,7 @@
 				{/if}
 			</div>
 
-			<div class="space-y-2">
+			<div class="relative space-y-2">
 				<input type="hidden" value={description} name="description" />
 
 				<FormEditor

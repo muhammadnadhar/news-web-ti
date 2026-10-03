@@ -1,13 +1,13 @@
 import { error, fail } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 
-import { errorResponse, successResponse } from '$lib/helper/message';
+import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
 import {
 	getPedomanTaById,
 	updatePedomanTa
 } from '$lib/repository/admin/article/akedemik/pedomanTa';
-import { cloudinary } from '$lib/cloudinary/server';
 import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
+import type { PedomanTaFormValues } from '$lib/types/values/admin/article';
 
 // Fetch data awal berdasarkan ID
 export const load: PageServerLoad = async ({ params }) => {
@@ -34,29 +34,74 @@ export const load: PageServerLoad = async ({ params }) => {
 // Menangani aksi UPDATE saat form disubmit
 export const actions: Actions = {
 	update: async ({ request, params }) => {
-		const { id } = params;
 		const formData = await request.formData();
 
-		const title = (formData.get('title') as string)?.trim();
-		const image_url = (formData.get('image_url') as string)?.trim() || null;
-		const description = (formData.get('description') as string)?.trim() || null;
+		const values: PedomanTaFormValues = {
+			id: params.id || formData.get('id')?.toString().trim() || undefined,
+			title: formData.get('title')?.toString().trim() || '',
+			image_url:
+				formData.get('image_url')?.toString().trim() ||
+				formData.get('imageUrl')?.toString().trim() ||
+				null,
+			publicId:
+				formData.get('image_public_id')?.toString().trim() ||
+				formData.get('public_id')?.toString().trim() ||
+				null,
+			description: formData.get('description')?.toString().trim() || null
+		};
 
-		if (!title) {
+		if (!values.id) {
 			return fail(400, {
-				...errorResponse('Judul Pedoman TA wajib diisi.', 'Validasi Gagal'),
-				values: { title, image_url, description }
+				...warningResponse('ID Pedoman TA tidak ditemukan.', 'Gagal'),
+				values
+			});
+		}
+
+		if (!values.title) {
+			return fail(400, {
+				...warningResponse('Judul Pedoman TA wajib diisi.', 'Validasi Gagal'),
+				values
+			});
+		}
+
+		if (values.title.length > 255) {
+			return fail(400, {
+				...warningResponse(
+					'Judul Pedoman TA terlalu panjang, maksimal 255 karakter.',
+					'Validasi Gagal'
+				),
+				values
 			});
 		}
 
 		try {
-			await updatePedomanTa(id, title, image_url, description);
+			const success = await updatePedomanTa(
+				values.id,
+				values.title,
+				values.image_url,
+				values.description,
+				values.image_public_id
+			);
 
-			return successResponse('Data Pedoman TA berhasil diperbarui.', 'Berhasil');
+			if (!success) {
+				return fail(500, {
+					...errorResponse('Gagal memperbarui data Pedoman TA ke database.', 'Error Server'),
+					values
+				});
+			}
+
+			return {
+				...successResponse('Data Pedoman TA berhasil diperbarui.', 'Berhasil'),
+				values
+			};
 		} catch (err: any) {
 			console.error('Error updating Pedoman TA:', err);
 			return fail(500, {
-				...errorResponse('Gagal memperbarui data Pedoman TA ke database.', 'Error Server'),
-				values: { title, image_url, description }
+				...errorResponse(
+					`Gagal memperbarui data Pedoman TA ke database: ${err?.message || 'Terjadi kesalahan sistem'}`,
+					'Error Server'
+				),
+				values
 			});
 		}
 	},

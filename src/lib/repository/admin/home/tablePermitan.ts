@@ -1,4 +1,3 @@
-import { randomUUID } from '$lib/crypto';
 import { query } from '$lib/database/svelteDb';
 import type { PerminatanTIItemDTO } from '$lib/dto/admin/home';
 import { tablePerminatanTI } from '$lib/seeder/admin/home';
@@ -18,9 +17,9 @@ export async function getPerminatanTIById(id: string): Promise<PerminatanTIItemD
 
 /** create / add perminatan ti */
 export async function addPerminatanTI(
+	id: string,
 	data: Omit<PerminatanTIItemDTO, 'id' | 'created_at' | 'updated_at'>
 ): Promise<string> {
-	const id = randomUUID();
 	const sql = `
 		INSERT INTO ${tablePerminatanTI} (id, title, description)
 		VALUES (?, ?, ?)

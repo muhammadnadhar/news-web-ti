@@ -6,7 +6,7 @@ import { tableAdminUser } from '$lib/seeder/admin/userAdmin';
 export type UpdateUserData = Partial<Omit<UserAdminDTO, 'id' | 'createdAt'>>;
 
 /**
- * TAMBAH USER ADMIN BARU
+ * tambah user admin baru
  */
 export async function createUserAdmin(userData: Omit<UserAdminDTO, 'createdAt'>): Promise<boolean> {
 	const sql = `
@@ -131,7 +131,53 @@ export async function getUserById(id: string): Promise<UserAdminDTO | null> {
 		createdAt: row.createdAt ? new Date(row.createdAt).toISOString() : String(row.created_at)
 	};
 }
+/**
+ * UPDATE PROFILE (Name, Username, & Email)
+ */
+export async function updateUserProfile(
+	id: string,
+	data: { name: string; username: string; email: string }
+): Promise<boolean> {
+	const sql = `
+        UPDATE ${tableAdminUser} 
+        SET name = ?, username = ?, email = ? 
+        WHERE id = ?
+    `;
+	const params = [data.name, data.username, data.email, id];
+	const result = (await query(sql, params)) as any;
+	return result.affectedRows > 0;
+}
 
+/**
+ * UPDATE PASSWORD
+ */
+export async function updatePassword(id: string, hashedPassword: string): Promise<boolean> {
+	const sql = `
+        UPDATE ${tableAdminUser} 
+        SET password = ? 
+        WHERE id = ?
+    `;
+	const result = (await query(sql, [hashedPassword, id])) as any;
+	return result.affectedRows > 0;
+}
+
+/**
+ * UPDATE FOTO PROFILE (Image URL & Image Public ID)
+ */
+export async function updateProfileImage(
+	id: string,
+	imageUrl: string | null,
+	imagePublicId: string | null
+): Promise<boolean> {
+	const sql = `
+        UPDATE ${tableAdminUser} 
+        SET image_url = ?, image_public_id = ? 
+        WHERE id = ?
+    `;
+	const params = [imageUrl, imagePublicId, id];
+	const result = (await query(sql, params)) as any;
+	return result.affectedRows > 0;
+}
 /**
  *  UPDATE USER (Dinamis)
  */

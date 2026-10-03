@@ -1,12 +1,12 @@
 import { error, fail } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
-import { errorResponse, successResponse } from '$lib/helper/message';
+import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
 import {
 	getstudentpublicationbyid,
 	updateStudentPublication
 } from '$lib/repository/admin/article/penelitian/publikasiMahasiswa';
+import type { StudentPublicationFormValues } from '$lib/types/values/admin/article';
 
-// Fetch data berdasarkan ID untuk dimasukkan ke dalam form edit
 export const load: PageServerLoad = async ({ params }) => {
 	const { id } = params;
 
@@ -30,33 +30,42 @@ export const actions: Actions = {
 		const { id } = params;
 		const formData = await request.formData();
 
-		const student_name = (formData.get('student_name') as string)?.trim();
-		const journal_list = (formData.get('journal_list') as string)?.trim();
+		const values: StudentPublicationFormValues = {
+			id,
+			student_name: (formData.get('student_name') as string)?.trim() || '',
+			journal_list: (formData.get('journal_list') as string)?.trim() || ''
+		};
 
-		// Validasi input
-		if (!student_name) {
+		if (!id) {
 			return fail(400, {
-				...errorResponse('Nama mahasiswa wajib diisi.', 'Validasi Gagal'),
-				values: { student_name, journal_list }
+				...errorResponse('ID Publikasi Mahasiswa tidak ditemukan di URL.', 'Validasi Gagal')
 			});
 		}
 
-		if (!journal_list) {
+		if (!values.student_name) {
 			return fail(400, {
-				...errorResponse('Daftar jurnal wajib diisi.', 'Validasi Gagal'),
-				values: { student_name, journal_list }
+				...warningResponse('Nama mahasiswa wajib diisi.', 'Validasi Gagal'),
+				values
+			});
+		}
+
+		if (!values.journal_list) {
+			return fail(400, {
+				...warningResponse('Daftar jurnal wajib diisi.', 'Validasi Gagal'),
+				values
 			});
 		}
 
 		try {
-			await updateStudentPublication(id, student_name, journal_list);
+			await updateStudentPublication(id, values.student_name, values.journal_list);
 
-			return successResponse('Data publikasi mahasiswa berhasil diperbarui.');
+			return successResponse('Data publikasi mahasiswa berhasil diperbarui.', 'Berhasil');
 		} catch (err: any) {
 			console.error('Error updating student publication:', err);
+
 			return fail(500, {
-				...errorResponse('Gagal memperbarui data publikasi mahasiswa.'),
-				values: { student_name, journal_list }
+				...errorResponse('Gagal memperbarui data publikasi mahasiswa.', 'Kesalahan Server'),
+				values
 			});
 		}
 	}

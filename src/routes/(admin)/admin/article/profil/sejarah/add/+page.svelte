@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	import { ArrowLeft } from 'lucide-svelte';
 	import FormLeaderPriode from '../_component/formLeaderPriode.svelte';
 
 	let { data, form } = $props();
@@ -14,6 +12,7 @@
 	<!-- wrapper form -->
 	<div class="max-w-2xl border bg-bg-secondary p-3.5 shadow-xl">
 		<FormLeaderPriode
+			valuesData={form?.values}
 			lecturers={data.lecturers}
 			formError={form?.message}
 			submitLabel="Simpan Data Pimpinan"

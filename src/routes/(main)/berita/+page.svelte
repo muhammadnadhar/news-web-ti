@@ -6,6 +6,7 @@
 	import { classTopSpace } from '$lib/constants';
 	import BtnFloatPagination from '$lib/components/admin/btnFloatPagination.svelte';
 	import Spin from '$lib/components/loading/spin.svelte';
+	import EmptyData from '../_components/emptyData.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -30,7 +31,7 @@
 <div class={` ${classTopSpace} mx-auto max-w-7xl px-4 py-8 pb-32 sm:px-6`}>
 	<div class="mb-8 border-b border-border-color/10 pb-6">
 		<div class="flex items-center gap-3">
-			<div class="bg-scitech-mint/10 text-scitech-mint border-scitech-mint/30 border p-2.5">
+			<div class="text-scitech-mint border-scitech-mint/30 border bg-bg-secondary/10 p-2.5">
 				<Newspaper class="h-6 w-6" />
 			</div>
 			<div>
@@ -45,11 +46,7 @@
 		<Spin />
 	{:then newsList}
 		{#if newsList.length === 0}
-			<!-- State Data Kosong -->
-			<div class="bg-scitech-slate/40 border border-border-color/10 p-12 text-center">
-				<Newspaper class="mx-auto mb-3 h-12 w-12 text-text-muted/50" />
-				<p class="font-mono text-sm text-text-muted">Belum ada berita yang diterbitkan.</p>
-			</div>
+			<EmptyData title="Belum ada berita yang diterbitkan." icon={'Newspaper'} />
 		{:else}
 			<!-- Grid 2 Kolom Desktop & 1 Kolom Mobile -->
 			<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -80,7 +77,7 @@
 								<div class="flex flex-wrap items-center gap-3 text-xs text-text-muted">
 									{#if item.category_name}
 										<span
-											class="bg-scitech-mint/10 text-scitech-mint border-scitech-mint/30 inline-flex items-center gap-1.5 border px-2.5 py-1 text-[11px] font-semibold tracking-wider uppercase"
+											class="text-scitech-mint border-scitech-mint/30 inline-flex items-center gap-1.5 border bg-bg-secondary/10 px-2.5 py-1 text-[11px] font-semibold tracking-wider uppercase"
 										>
 											<Folder class="h-3 w-3" />
 											{item.category_name}
@@ -93,14 +90,12 @@
 									</span>
 								</div>
 
-								<!-- Judul Berita -->
 								<h2
 									class="group-hover:text-scitech-mint line-clamp-2 text-lg font-bold text-text-main transition-colors"
 								>
 									{item.title}
 								</h2>
 
-								<!-- Ringkasan Konten -->
 								<p class="line-clamp-3 text-xs leading-relaxed text-text-muted sm:text-sm">
 									{item.content.replace(/<[^>]*>?/gm, '')}
 								</p>
@@ -121,7 +116,7 @@
 			</div>
 		{/if}
 	{:catch error}
-		<div class="border border-red-500/40 bg-red-500/10 p-6 text-center text-red-400">
+		<div class="border border-red-500/40 bg-status-error/10 p-6 text-center text-red-400">
 			<p class="text-sm font-semibold">Gagal memuat berita: {error.message}</p>
 		</div>
 	{/await}

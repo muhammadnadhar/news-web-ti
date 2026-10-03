@@ -2,6 +2,7 @@
 	import { enhance } from '$app/forms';
 	import FormEditor from '$lib/components/admin/formEditor.svelte';
 	import Message from '$lib/components/admin/message.svelte';
+	import { randomUUID } from '$lib/crypto.js';
 	import type { MessageStatus, ResponseMessage } from '$lib/types/message.js';
 
 	// Props dari SvelteKit PageData
@@ -9,8 +10,8 @@
 	let formElement = $state<HTMLFormElement | null>(null);
 
 	// Local state terhubung dengan data dari server
-	let id = $state(data?.visiMisi?.id ?? crypto.randomUUID());
-	let content = $state(data?.visiMisi?.content ?? '');
+	let id = $state(form?.values.id ?? data?.visiMisi?.id ?? randomUUID());
+	let content = $state(form?.values.content ?? data?.visiMisi?.content ?? '');
 	let isSubmitting = $state(false);
 
 	function handleParentSubmit(editorData: string) {

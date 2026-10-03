@@ -20,15 +20,16 @@
 	} from '$lib/cloudinary/client';
 	import { type MessageStatus, type ResponseMessage } from '$lib/types/message';
 	import Message from '$lib/components/admin/message.svelte';
+	import type { BeasiswaFormValues } from '$lib/types/values/admin/article';
 
 	interface Props {
 		initialData?: ScholarshipDTO | null; // Null saat Add, terisi saat Edit
-		form?: any; // Respon balik dari Form Action
 		action?: string; // Target URL Form Action (misal: '?/create' atau '?/update')
+		valueData: BeasiswaFormValues;
 		onCancel?: () => void; // Event Handler opsional tombol Batal
 	}
 
-	let { initialData = null, form = null, action = '', onCancel }: Props = $props();
+	let { initialData = null, valueData, action = '', onCancel }: Props = $props();
 
 	// Mode Edit terdeteksi jika initialData memiliki ID
 	let isEdit = $derived(!!initialData?.id);
@@ -39,8 +40,8 @@
 	let showMessage = $state(false);
 
 	// State Image URL & Public ID Cloudinary
-	let imageUrl = $state(form?.values?.image_url ?? initialData?.image_url ?? '');
-	let imagePublicId = $state(form?.values?.public_id ?? initialData?.image_public_id ?? '');
+	let imageUrl = $state(valueData?.image_url ?? initialData?.image_url ?? '');
+	let imagePublicId = $state(valueData?.image_public_id ?? initialData?.image_public_id ?? '');
 
 	let messageConfig = $state<ResponseMessage>({
 		status: 'info',
@@ -200,7 +201,7 @@
 						type="text"
 						id="student_name"
 						name="student_name"
-						value={form?.values?.student_name ?? initialData?.student_name ?? ''}
+						value={valueData?.student_name ?? initialData?.student_name ?? ''}
 						placeholder="Masukkan nama lengkap mahasiswa..."
 						required
 						disabled={isSubmitting}
@@ -223,7 +224,7 @@
 						type="text"
 						id="scholarship_name"
 						name="scholarship_name"
-						value={form?.values?.scholarship_name ?? initialData?.scholarship_name ?? ''}
+						value={valueData?.scholarship_name ?? initialData?.scholarship_name ?? ''}
 						placeholder="Contoh: Beasiswa Unggulan 2026"
 						required
 						disabled={isSubmitting}
@@ -242,7 +243,7 @@
 				Foto / Media Utama Dokumentasi <span class="text-status-error">*</span>
 			</label>
 			<input type="hidden" name="image_url" value={imageUrl} required />
-			<input type="hidden" name="public_id" value={imagePublicId} />
+			<input type="hidden" name="image_public_id" value={imagePublicId} />
 
 			{#if imageUrl}
 				<div

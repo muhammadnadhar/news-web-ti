@@ -10,8 +10,7 @@
 </svelte:head>
 
 <FormDocActivity
-	initialData={form?.values}
-	formError={form?.error}
+	valuesData={form?.values}
 	action="?/create"
 	isEditMode={false}
 	submitLabel="Simpan Dokumentasi"

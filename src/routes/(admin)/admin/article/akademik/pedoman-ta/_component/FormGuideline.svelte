@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { goto } from '$app/navigation';
 	import { CldUploadWidget } from 'svelte-cloudinary';
 	import Message from '$lib/components/admin/message.svelte';
 	import { removeLastPath } from '$lib/utils';
@@ -23,21 +22,24 @@
 		getUploadOptions,
 		upload_cloudinary_preset
 	} from '$lib/cloudinary/client';
+	import type { PedomanTaFormValues } from '$lib/types/values/admin/article';
 	import type { PedomanTaDTO } from '$lib/dto/admin/article/akademik';
 
 	let {
 		form,
-		initialData = null,
+		valuesData,
 		isEdit = false,
-		action
+		action,
+		initialData
 	}: {
 		form: any;
+		valuesData?: PedomanTaFormValues | null;
 		initialData?: PedomanTaDTO | null;
 		action?: string;
 		isEdit?: boolean;
 	} = $props();
 
-	let photoPublicId = $state(initialData?.image_public_id ?? ''); // Simpan public_id dari Cloudinary
+	let photoPublicId = $state(valuesData?.image_public_id ?? initialData?.image_public_id ?? ''); // Simpan public_id dari Cloudinary
 	let isDeletingPhoto = $state(false);
 
 	let isSubmitting = $state(false);
@@ -49,8 +51,8 @@
 	});
 
 	// State lokal untuk gambar dan deskripsi editor
-	let imageUrl = $state(form?.values?.image_url ?? initialData?.image_url ?? '');
-	let description = $state(form?.values?.description ?? initialData?.description ?? '');
+	let imageUrl = $state(valuesData?.image_url ?? initialData?.image_url ?? '');
+	let description = $state(valuesData?.description ?? initialData?.description ?? '');
 
 	// Fungsi untuk menghapus foto dari Cloudinary & mereset state
 	async function removeImage() {
@@ -74,8 +76,9 @@
 			if (response.ok) {
 				imageUrl = '';
 				photoPublicId = '';
+				triggerMessage('success', 'Berhasil', 'Gambar Berhasil di hapus');
 			} else {
-				alert('Gagal menghapus gambar dari Cloudinary');
+				triggerMessage('error', 'Gagal menghapus Gambar', 'Terjadi kesalahan di cloudinary');
 			}
 		} catch (err) {
 			console.error('Error deleting photo:', err);
@@ -147,7 +150,7 @@
 
 	<!-- Glassmorphism Form Card -->
 	<div
-		class="bg-scitech-slate/50 rounded-2xl border border-white/10 p-6 shadow-2xl backdrop-blur-xl sm:p-8"
+		class="rounded-2xl border border-white/10 bg-bg-secondary/50 p-6 shadow-2xl backdrop-blur-xl sm:p-8"
 	>
 		<form
 			method="POST"
@@ -160,7 +163,7 @@
 					isSubmitting = false;
 
 					if (result.type === 'success') {
-						const resData = (result.data as ResponseMessage) ?? {
+						const resData = (result?.data as ResponseMessage) ?? {
 							status: 'success',
 							title: 'Berhasil',
 							message: isEdit ? 'Pedoman TA berhasil diperbarui.' : 'Pedoman TA berhasil disimpan.'
@@ -172,7 +175,7 @@
 						}
 						await update({ reset: !isEdit });
 					} else if (result.type === 'failure') {
-						const resData = (result.data as ResponseMessage) ?? {
+						const resData = (result?.data as ResponseMessage) ?? {
 							status: 'error',
 							title: 'Gagal',
 							message: (result.data?.message as string) || 'Gagal menyimpan pedoman.'
@@ -198,7 +201,7 @@
 					type="text"
 					id="title"
 					name="title"
-					value={form?.values?.title ?? initialData?.title ?? ''}
+					value={valuesData?.title ?? initialData?.title ?? ''}
 					placeholder="Contoh: Pedoman Penulisan Tugas Akhir 2026"
 					required
 					disabled={isSubmitting}
@@ -233,7 +236,7 @@
 									type="button"
 									onclick={removeImage}
 									disabled={isDeletingPhoto}
-									class="inline-flex items-center gap-1.5 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-xs font-medium text-red-400 transition-all hover:bg-red-500/20 active:scale-95 disabled:opacity-50"
+									class="inline-flex items-center gap-1.5 rounded-lg border border-red-500/30 bg-status-error/10 px-3 py-1.5 text-xs font-medium text-red-400 transition-all hover:bg-status-error/20 active:scale-95 disabled:opacity-50"
 								>
 									<Trash2 class="h-3.5 w-3.5" />
 									{#if isDeletingPhoto}
@@ -261,7 +264,9 @@
 							disabled={isSubmitting}
 							class="bg-scitech-navy/50 hover:border-scitech-mint/50 hover:bg-scitech-navy flex w-full flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-white/20 p-6 text-text-muted transition-all hover:text-text-main active:scale-98 disabled:opacity-50"
 						>
-							<div class="text-scitech-cyan rounded-full border border-white/10 bg-white/5 p-3">
+							<div
+								class="text-scitech-cyan rounded-full border border-white/10 bg-bg-primary/5 p-3"
+							>
 								<Upload class="h-5 w-5" />
 							</div>
 							<span class="text-xs font-semibold">Klik untuk Unggah Foto Sampul (Cloudinary)</span>
@@ -302,7 +307,7 @@
 						history.back();
 					}}
 					disabled={isSubmitting}
-					class="rounded-xl border border-white/10 bg-white/5 px-5 py-2.5 text-xs font-semibold text-text-muted transition-all hover:bg-white/10 hover:text-text-main active:scale-95 disabled:opacity-50"
+					class="rounded-xl border border-white/10 bg-bg-primary/5 px-5 py-2.5 text-xs font-semibold text-text-muted transition-all hover:bg-bg-primary/10 hover:text-text-main active:scale-95 disabled:opacity-50"
 				>
 					Batal
 				</button>
@@ -310,7 +315,7 @@
 				<button
 					type="submit"
 					disabled={isSubmitting}
-					class="bg-scitech-mint text-scitech-navy shadow-scitech-mint/10 hover:bg-scitech-mint-hover inline-flex items-center gap-2 rounded-xl px-6 py-2.5 text-xs font-bold shadow-md transition-all active:scale-95 disabled:opacity-50"
+					class="text-scitech-navy shadow-scitech-mint/10 inline-flex items-center gap-2 rounded-xl bg-bg-secondary px-6 py-2.5 text-xs font-bold shadow-md transition-all hover:bg-bg-secondary-hover active:scale-95 disabled:opacity-50"
 				>
 					{#if isSubmitting}
 						<Loader2Icon class="h-4 w-4 animate-spin" />

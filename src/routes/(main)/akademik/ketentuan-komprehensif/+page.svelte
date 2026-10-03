@@ -70,10 +70,8 @@
 						</div>
 					</div>
 
-					<!-- Content Grid -->
 					<div class="p-6 sm:p-8">
 						<div class="grid grid-cols-1 gap-8 lg:grid-cols-12">
-							<!-- Poster/Flyer Rekrutmen (Jika Ada) -->
 							{#if item.image_url}
 								<div class="lg:col-span-5">
 									<div
@@ -85,7 +83,6 @@
 											class="h-auto max-h-[450px] w-full object-cover transition-transform duration-500 group-hover:scale-105"
 											loading="lazy"
 										/>
-										<!-- Overlay Button Zoom -->
 										<div
 											class="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
 										>
@@ -161,7 +158,7 @@
 				</h3>
 				<button
 					onclick={closeModal}
-					class="rounded-lg p-1.5 text-text-muted transition-colors hover:bg-white/10 hover:text-text-main"
+					class="rounded-lg p-1.5 text-text-muted transition-colors hover:bg-bg-primary/10 hover:text-text-main"
 					aria-label="Tutup Modal"
 				>
 					<X class="h-5 w-5" />

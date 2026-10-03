@@ -5,10 +5,12 @@
 	import { mergeNewPath } from '$lib/utils.js';
 	import Spin from '$lib/components/loading/spin.svelte';
 
-	let { data } = $props();
+	import type { ActionData, PageServerLoad } from './$types';
+
+	let { form, data }: { form: ActionData; data: PageServerLoad } = $props();
 
 	// Mengambil array daftar kalender dari server
-	let calendarList = $derived(data.calendars ?? []);
+	let calendarList = $derived(form?.values ?? data.calendars ?? []);
 
 	function handleDelete(id: string) {
 		if (confirm('Apakah Anda yakin ingin menghapus kalender ini?')) {
@@ -39,7 +41,7 @@
 		<button
 			type="button"
 			onclick={() => goto(mergeNewPath('add'))}
-			class="bg-scitech-mint text-scitech-navy hover:bg-scitech-mint-hover inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-bold shadow-lg transition-all active:scale-95"
+			class="text-scitech-navy inline-flex items-center gap-2 rounded-xl bg-bg-secondary px-5 py-2.5 text-xs font-bold shadow-lg transition-all hover:bg-bg-secondary-hover active:scale-95"
 		>
 			<Plus class="h-4 w-4" />
 			<span>Tambah Kalender</span>
@@ -49,21 +51,26 @@
 	<!-- looping form (dengan penanganan promise {#await}) -->
 	<div class="space-y-8">
 		{#await calendarList}
-		<Spin/>
+			<Spin />
 		{:then rawdata}
 			<!-- normalisasi: ubah single object / array / null menjadi bentuk array yang konsisten -->
 			{@const calendarList = Array.isArray(rawdata) ? rawdata : rawdata ? [rawdata] : []}
 
 			{#if calendarList.length === 0}
 				<div
-					class="bg-scitech-slate/40 rounded-2xl border border-white/10 p-8 text-center text-xs text-text-muted"
+					class="rounded-2xl border border-white/10 bg-bg-secondary/40 p-8 text-center text-xs text-text-muted"
 				>
 					Belum ada data kalender akademik. Klik tombol
 					<strong class="text-scitech-mint">"Tambah Kalender"</strong> di atas.
 				</div>
 			{:else}
 				{#each calendarList as item (item.id)}
-					<FormKalenderItem calendar={item} onDelete={handleDelete} isBtnActive={true} />
+					<FormKalenderItem
+						valuesData={form?.values}
+						calendar={item}
+						onDelete={handleDelete}
+						isBtnActive={true}
+					/>
 				{/each}
 			{/if}
 		{:catch error}

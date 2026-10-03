@@ -13,16 +13,12 @@ export const actions: Actions = {
 		// Ekstraksi data ke objek values bertipe PedomanKkpFormValues
 		const values: PedomanKkpFormValues = {
 			title: formData.get('title')?.toString().trim() || '',
-			imageUrl:
-				formData.get('image_url')?.toString().trim() ||
-				formData.get('imageUrl')?.toString().trim() ||
-				null,
-			imageId:
-				formData.get('public_id')?.toString().trim() ||
-				formData.get('image_id')?.toString().trim() ||
-				null,
+			image_url: formData.get('image_url')?.toString().trim() || null,
+			image_public_id: formData.get('image_public_id')?.toString().trim() || null,
 			description: formData.get('description')?.toString().trim() || null
 		};
+
+		console.table(values);
 
 		if (!values.title) {
 			return fail(400, {
@@ -44,9 +40,9 @@ export const actions: Actions = {
 			const success = await createPedomanKkp(
 				id,
 				values.title,
-				values.imageUrl,
+				values.image_url,
 				values.description,
-				values.imageId
+				values.image_public_id
 			);
 
 			if (!success) {

@@ -30,7 +30,7 @@
 		isSubmitting?: boolean;
 		actionUrl?: string;
 		onCancel?: () => void;
-		valuesData?: FasilitasFormValues;
+		valuesData?: FasilitasFormValues | null;
 	}
 
 	let {
@@ -50,8 +50,8 @@
 	let description = $state(valuesData?.description ?? initialData?.description ?? '');
 
 	// Cloudinary States (URL & Public ID)
-	let imageUrl = $state(valuesData?.imageUrl ?? initialData?.image_url ?? '');
-	let imagePublicId = $state(valuesData?.imageId ?? initialData?.image_public_id ?? '');
+	let imageUrl = $state(valuesData?.image_url ?? initialData?.image_url ?? '');
+	let imagePublicId = $state(valuesData?.image_public_id ?? initialData?.image_public_id ?? '');
 	let sopUrl = $state(valuesData?.sopLink ?? initialData?.sop_url ?? '');
 	let isDeletingImage = $state(false);
 
@@ -153,7 +153,6 @@
 		onclose={() => (showMessage = false)}
 	/>
 {/if}
-
 <form
 	action={actionUrl}
 	method="POST"
@@ -176,7 +175,7 @@
 			<button
 				type="button"
 				onclick={onCancel}
-				class="flex items-center gap-1.5 rounded-xl border border-border-color/10 bg-white/5 px-3 py-2 text-xs font-medium text-text-main transition-all hover:bg-white/10"
+				class="flex items-center gap-1.5 rounded-xl border border-border-color/10 bg-bg-primary/5 px-3 py-2 text-xs font-medium text-text-main transition-all hover:bg-bg-primary/10"
 			>
 				<ArrowLeft class="h-4 w-4" />
 				Kembali
@@ -294,7 +293,7 @@
 								class="group hover:border-scitech-mint flex w-full flex-col items-center justify-center rounded-xl border-2 border-dashed border-border-color/20 bg-black/20 p-6 text-center transition-all hover:bg-black/30"
 							>
 								<div
-									class="text-scitech-mint mb-2 rounded-full border border-border-color/10 bg-white/5 p-3 shadow-sm transition-transform group-hover:scale-110"
+									class="text-scitech-mint mb-2 rounded-full border border-border-color/10 bg-bg-primary/5 p-3 shadow-sm transition-transform group-hover:scale-110"
 								>
 									<UploadCloudIcon class="h-6 w-6" />
 								</div>
@@ -345,7 +344,7 @@
 			<button
 				type="button"
 				onclick={onCancel}
-				class="rounded-xl border border-border-color/10 bg-white/5 px-5 py-2.5 text-xs font-semibold text-text-main transition-all hover:bg-white/10"
+				class="rounded-xl border border-border-color/10 bg-bg-primary/5 px-5 py-2.5 text-xs font-semibold text-text-main transition-all hover:bg-bg-primary/10"
 			>
 				Batal
 			</button>

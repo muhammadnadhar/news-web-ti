@@ -12,9 +12,9 @@
 </script>
 
 <div class={`${classTopSpace} mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8`}>
-	<div class="mb-12 border-b border-border-color/40 pb-6 text-center sm:text-left">
+	<div class="mb-12  pb-6 text-center sm:text-left">
 		<div
-			class="bg-scitech-mint/10 text-scitech-mint mb-3 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold"
+			class="text-scitech-mint mb-3 inline-flex items-center gap-2 rounded-full bg-bg-secondary/10 px-3 py-1 text-xs font-semibold"
 		>
 			<History class="h-4 w-4" />
 			<span>Profil Program Studi</span>
@@ -31,7 +31,7 @@
 	{#if data.historyContent}
 		<section class="mb-16">
 			<div
-				class="bg-scitech-slate/40 overflow-hidden rounded-2xl border border-border-color backdrop-blur-md"
+				class="bg-bg-secondary/40 overflow-hidden rounded-2xl border border-border-color backdrop-blur-md"
 			>
 				{#if data.historyContent.image_url}
 					<div class="relative h-64 w-full sm:h-96">
@@ -53,13 +53,15 @@
 				{/if}
 			</div>
 		</section>
+	{:else}
+		<EmptyData title="Data Sejarah Program Studi belum tersedia" />
 	{/if}
 
 	<!-- BAGIAN 2: SEJARAH PIMPINAN (PERIODE) -->
 	<section>
 		<div class="mb-8 flex items-center gap-3">
 			<div
-				class="bg-scitech-mint/10 text-scitech-mint flex h-10 w-10 items-center justify-center rounded-xl"
+				class="text-scitech-mint flex h-10 w-10 items-center justify-center rounded-xl bg-bg-secondary/10"
 			>
 				<Users class="h-5 w-5" />
 			</div>
@@ -75,7 +77,7 @@
 			<div class="space-y-8">
 				{#each data.historyLeaders as leader (leader.id)}
 					<div
-						class="bg-scitech-slate/40 overflow-hidden rounded-2xl border border-border-color p-6 backdrop-blur-md sm:p-8"
+						class="bg-bg-secondary/40 overflow-hidden rounded-2xl border border-border-color p-6 backdrop-blur-md sm:p-8"
 					>
 						<div class="mb-6 flex items-center gap-2 border-b border-border-color/40 pb-4">
 							<Calendar class="text-scitech-cyan h-4 w-4" />

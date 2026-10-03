@@ -35,21 +35,21 @@
 		</div>
 
 		<!-- Filter Semester (Tab Navigation) -->
-		{#if semesters.length > 0}
-			<div class="mt-6 flex flex-wrap gap-2">
-				{#each semesters as sem}
-					<a
-						href="?semester={encodeURIComponent(sem.name)}"
-						class="border px-3 py-1.5 text-xs font-semibold transition-colors {selectedSemester ===
-						sem.name
-							? 'border-accent-primary bg-accent-primary/10 text-accent-primary'
-							: 'border-border-light bg-bg-secondary text-text-muted hover:border-text-muted hover:text-text-main'}"
-					>
-						{sem.name}
-					</a>
-				{/each}
-			</div>
-		{/if}
+		<!-- {#if semesters.length > 0} -->
+		<!-- 	<div class="mt-6 flex flex-wrap gap-2"> -->
+		<!-- 		{#each semesters as sem} -->
+		<!-- 			<a -->
+		<!-- 				href="?semester={encodeURIComponent(sem.name)}" -->
+		<!-- 				class="border px-3 py-1.5 text-xs font-semibold transition-colors {selectedSemester === -->
+		<!-- 				sem.name -->
+		<!-- 					? 'border-accent-primary bg-accent-primary/10 text-accent-primary' -->
+		<!-- 					: 'border-border-light bg-bg-secondary text-text-muted hover:border-text-muted hover:text-text-main'}" -->
+		<!-- 			> -->
+		<!-- 				{sem.name} -->
+		<!-- 			</a> -->
+		<!-- 		{/each} -->
+		<!-- 	</div> -->
+		<!-- {/if} -->
 	</div>
 
 	<!-- Konten Data Prestasi -->
@@ -67,7 +67,6 @@
 					class="group flex flex-col justify-between border border-border-light bg-bg-secondary p-5 transition-all hover:border-accent-primary/50"
 				>
 					<div>
-						<!-- Gambar Prestasi / Cover -->
 						<div
 							class="relative mb-4 aspect-video w-full overflow-hidden border border-border-light bg-bg-primary"
 						>

@@ -6,8 +6,9 @@ import {
 	getHighGpaStudentById,
 	updateHighGpaStudent
 } from '$lib/repository/admin/article/kemahasiswaan/ipkTertinggi';
-import { errorResponse, successResponse } from '$lib/helper/message';
-import { cloudinary } from '$lib/cloudinary/server';
+import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
+import type { IpkTertinggiFormValues } from '$lib/types/values/admin/article';
+import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
 export const load: PageServerLoad = async ({ params }) => {
 	const { id } = params;
 
@@ -45,27 +46,41 @@ export const actions: Actions = {
 	update: async ({ request, params }) => {
 		const formData = await request.formData();
 
-		const id = params.id || (formData.get('id') as string);
-		const studentName = formData.get('student_name')?.toString().trim();
-		const gpa = parseFloat(formData.get('gpa')?.toString() || '0');
-		const angkatanId = formData.get('angkatan_id')?.toString();
-		const semesterId = formData.get('semester_id')?.toString();
-		const imgUrl = formData.get('img_url')?.toString().trim() || null;
+		const id = params.id || formData.get('id')?.toString().trim() || undefined;
 
-		const values = { id, studentName, gpa, angkatanId, semesterId, imgUrl };
+		const values: IpkTertinggiFormValues = {
+			id,
+			student_name: formData.get('student_name')?.toString().trim() || '',
+			gpa: parseFloat(formData.get('gpa')?.toString() || '0'),
+			angkatan_id: formData.get('angkatan_id')?.toString().trim() || '',
+			semester_id: formData.get('semester_id')?.toString().trim() || '',
+			image_url:
+				formData.get('image_url')?.toString().trim() ||
+				formData.get('img_url')?.toString().trim() ||
+				null,
+			image_public_id:
+				formData.get('image_public_id')?.toString().trim() ||
+				formData.get('public_id')?.toString().trim() ||
+				null
+		};
 
-		// Validasi Input Wajib
-		if (!studentName || !gpa || !angkatanId || !semesterId) {
+		if (!values.id) {
 			return fail(400, {
-				...errorResponse('Mohon isi semua field yang wajib (*).', 'Validasi Gagal'),
+				...warningResponse('ID mahasiswa IPK tertinggi tidak ditemukan.', 'Gagal'),
 				values
 			});
 		}
 
-		//  Validasi Rentang Nilai IPK
-		if (isNaN(gpa) || gpa < 0 || gpa > 4.0) {
+		if (!values.student_name || isNaN(values.gpa) || !values.angkatan_id || !values.semester_id) {
 			return fail(400, {
-				...errorResponse('IPK harus bernilai antara 0.00 hingga 4.00.', 'Nilai IPK Tidak Valid'),
+				...warningResponse('Mohon isi semua field yang wajib (*).', 'Validasi Gagal'),
+				values
+			});
+		}
+
+		if (isNaN(values.gpa) || values.gpa < 0 || values.gpa > 4.0) {
+			return fail(400, {
+				...warningResponse('IPK harus bernilai antara 0.00 hingga 4.00.', 'Nilai IPK Tidak Valid'),
 				values
 			});
 		}
@@ -73,29 +88,42 @@ export const actions: Actions = {
 		try {
 			// Update ke database
 			/*
-			await db.mahasiswaIpk.update({
-				where: { id },
-				data: {
-					studentName,
-					gpa,
-					angkatanId,
-					semesterId,
-					imgUrl
-				}
-			});
-			*/
-			await updateHighGpaStudent(id, studentName, gpa, angkatanId, semesterId, imgUrl);
-
-			return successResponse(
-				`Data mahasiswa ${studentName} berhasil diperbarui.`,
-				'Berhasil Diperbarui'
+            await db.mahasiswaIpk.update({
+                where: { id },
+                data: {
+                    studentName,
+                    gpa,
+                    angkatanId,
+                    semesterId,
+                    imgUrl
+                }
+            });
+            */
+			await updateHighGpaStudent(
+				values.id,
+				values.student_name,
+				values.gpa,
+				values.angkatan_id,
+				values.semester_id,
+				values.image_url,
+				values.image_public_id
 			);
-		} catch (err) {
+
+			return {
+				...successResponse(
+					`Data mahasiswa ${values.student_name} berhasil diperbarui.`,
+					'Berhasil Diperbarui'
+				),
+				values
+			};
+		} catch (err: any) {
 			console.error('Error updating data:', err);
 
-			// Menggunakan helper errorResponse dan digabung dengan data values sebelumnya
 			return fail(500, {
-				...errorResponse('Terjadi kesalahan pada server saat memperbarui data.', 'Gagal Memproses'),
+				...errorResponse(
+					`Terjadi kesalahan pada server saat memperbarui data: ${err?.message || 'Kesalahan tidak diketahui'}`,
+					'Gagal Memproses'
+				),
 				values
 			});
 		}
@@ -109,7 +137,7 @@ export const actions: Actions = {
 		}
 
 		try {
-			await cloudinary.uploader.destroy(publicId);
+			await deleteImageFromCloudinary(publicId);
 			return successResponse('Berhasil di batalkan', 'Succcess');
 		} catch (err) {
 			console.error('Error deleting photo:', err);

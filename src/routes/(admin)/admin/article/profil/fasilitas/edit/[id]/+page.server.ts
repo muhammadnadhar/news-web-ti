@@ -40,11 +40,11 @@ export const actions: Actions = {
 				formData.get('brand_model')?.toString().trim() ||
 				null,
 			description: formData.get('description')?.toString().trim() || null,
-			imageUrl:
+			image_url:
 				formData.get('image_url')?.toString().trim() ||
 				formData.get('imageUrl')?.toString().trim() ||
 				null,
-			imageId:
+			image_public_id:
 				formData.get('image_public_id')?.toString().trim() ||
 				formData.get('image_id')?.toString().trim() ||
 				null,
@@ -72,8 +72,8 @@ export const actions: Actions = {
 			category: values.category,
 			brandModel: values.brandModel,
 			description: values.description,
-			imageUrl: values.imageUrl,
-			image_public_id: values.imageId,
+			imageUrl: values.image_url,
+			image_public_id: values.image_public_id,
 			sopUrl: values.sopLink
 		};
 

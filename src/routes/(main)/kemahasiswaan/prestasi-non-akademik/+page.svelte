@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { classTopSpace } from '$lib/constants';
+	import { classShadowDown, classTopSpace } from '$lib/constants';
 import EmptyData from '../../_components/emptyData.svelte';
 	import type { PageData } from './$types';
 	import { Award, Calendar, GraduationCap, User } from 'lucide-svelte';
@@ -17,7 +17,7 @@ import EmptyData from '../../_components/emptyData.svelte';
 </svelte:head>
 
 <div class={` ${classTopSpace} mx-auto max-w-7xl px-6`}>
-	<div class="mb-8 border-b border-border-light pb-6">
+	<div class="mb-8 pb-6">
 		<div class="flex items-center gap-3">
 			<div class="flex h-10 w-10 items-center justify-center border border-border-light bg-bg-secondary text-accent-primary">
 				<Award class="h-5 w-5" />
@@ -33,20 +33,20 @@ import EmptyData from '../../_components/emptyData.svelte';
 		</div>
 
 		<!-- Filter Semester (Tab Navigation) -->
-		{#if semesters.length > 0}
-			<div class="mt-6 flex flex-wrap gap-2">
-				{#each semesters as sem}
-					<a
-						href="?semester={encodeURIComponent(sem.name)}"
-						class="border px-3 py-1.5 text-xs font-semibold transition-colors {selectedSemester === sem.name
-							? 'border-accent-primary bg-accent-primary/10 text-accent-primary'
-							: 'border-border-light bg-bg-secondary text-text-muted hover:border-text-muted hover:text-text-main'}"
-					>
-						{sem.name}
-					</a>
-				{/each}
-			</div>
-		{/if}
+		<!-- {#if semesters.length > 0} -->
+		<!-- 	<div class="mt-6 flex flex-wrap gap-2"> -->
+		<!-- 		{#each semesters as sem} -->
+		<!-- 			<a -->
+		<!-- 				href="?semester={encodeURIComponent(sem.name)}" -->
+		<!-- 				class="border px-3 py-1.5 text-xs font-semibold transition-colors {selectedSemester === sem.name -->
+		<!-- 					? 'border-accent-primary bg-accent-primary/10 text-accent-primary' -->
+		<!-- 					: 'border-border-light bg-bg-secondary text-text-muted hover:border-text-muted hover:text-text-main'}" -->
+		<!-- 			> -->
+		<!-- 				{sem.name} -->
+		<!-- 			</a> -->
+		<!-- 		{/each} -->
+		<!-- 	</div> -->
+		<!-- {/if} -->
 	</div>
 
 	{#if achievements.length === 0}
@@ -59,7 +59,7 @@ import EmptyData from '../../_components/emptyData.svelte';
 		<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
 			{#each achievements as item (item.id)}
 				<div
-					class="group flex flex-col justify-between border border-border-light bg-bg-secondary p-5 transition-all hover:border-accent-primary/50"
+					class={`${classShadowDown} group flex flex-col justify-between border border-border-light bg-bg-secondary p-5 hover:border-accent-primary/50`}
 				>
 					<div>
 						<div class="relative mb-4 aspect-video w-full overflow-hidden border border-border-light bg-bg-primary">

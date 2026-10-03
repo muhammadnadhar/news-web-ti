@@ -5,29 +5,114 @@
 	import { LayoutDashboard, Trash2, ImageIcon, Upload, ArrowLeft } from 'lucide-svelte';
 	import Message from '$lib/components/admin/message.svelte';
 
+	// Type Definitions untuk Message State
+	type MessageStatus = 'success' | 'error' | 'info' | 'warning';
+	type ResponseMessage = {
+		status: MessageStatus;
+		title: string;
+		message: string;
+	};
+
 	let { data, form } = $props();
 
 	// State Svelte 5
 	let title = $state(data.profile?.title || '');
-	let imagePath = $state(data.profile?.image_path || '');
 	let isSubmitting = $state(false);
 	let isDeleting = $state(false);
+	let isDeletingPhoto = $state(false);
 	let showDeleteConfirm = $state(false);
 
-	// Cloudinary Handlers
+	let imagePath = $state(form?.values?.image_path || data.profile?.image_path || '');
+	let image_public_id = $state(
+		form?.values?.image_public_id || data.profile?.image_public_id || ''
+	);
+
+	// Message State
+	let showMessage = $state(false);
+	let messageConfig = $state<ResponseMessage>({
+		status: 'info',
+		title: '',
+		message: ''
+	});
+
+	function triggerMessage(status: MessageStatus, titleMsg: string, message: string) {
+		messageConfig = { status, title: titleMsg, message };
+		showMessage = true;
+	}
+
+	// Cloudinary Upload Handler
 	function handleUploadSuccess(result: any) {
 		if (result?.info?.secure_url) {
 			imagePath = result.info.secure_url;
+			image_public_id = result.info.public_id || '';
+		}
+
+		// Restorasi scroll pada document body jika modal/widget ditutup
+		if (typeof document !== 'undefined') {
+			document.body.style.overflow = 'auto';
 		}
 	}
 
-	function handleRemoveImage() {
-		imagePath = '';
+	// Handler Hapus Gambar (Async dipasang dengan benar)
+	async function handleRemoveImage() {
+		if (!image_public_id) {
+			imagePath = '';
+			return;
+		}
+
+		isDeletingPhoto = true;
+
+		try {
+			const formData = new FormData();
+			formData.append('public_id', image_public_id);
+
+			const response = await fetch('?/deletePhoto', {
+				method: 'POST',
+				body: formData
+			});
+
+			if (response.ok) {
+				imagePath = '';
+				image_public_id = '';
+				triggerMessage('success', 'Berhasil', 'Gambar berhasil dihapus dari Cloudinary.');
+			} else {
+				triggerMessage('error', 'Gagal', 'Gagal menghapus gambar dari Cloudinary.');
+			}
+		} catch (err) {
+			console.error('Error deleting photo:', err);
+			triggerMessage('error', 'Error', 'Terjadi kesalahan saat menghapus foto.');
+		} finally {
+			isDeletingPhoto = false;
+		}
 	}
+
+	// Tampilkan notifikasi jika server memberikan respons form
+	$effect(() => {
+		if (form?.message) {
+			triggerMessage(
+				form.success ? 'success' : 'error',
+				form.success ? 'Berhasil' : 'Gagal',
+				form.message
+			);
+		}
+	});
 </script>
 
+<!-- Notifikasi Pesan -->
+{#if showMessage}
+	<div class="mb-6">
+		<Message
+			status={messageConfig.status}
+			title={messageConfig.title}
+			message={messageConfig.message}
+			dismissible={true}
+			timeout={5000}
+			onclose={() => (showMessage = false)}
+		/>
+	</div>
+{/if}
+
 <div class="mx-auto max-w-3xl space-y-6">
-	<!-- Top Bar / Navigation Header -->
 	<div class="flex items-center justify-between gap-4">
 		<div class="flex items-center gap-3">
 			<button
@@ -55,11 +140,7 @@
 		</button>
 	</div>
 
-	{#if form?.message}
-		<Message type={form.message.type} text={form.message.text} />
-	{/if}
-
-	<!-- Form Update Container 3D Neobrutalist -->
+	<!-- Form Update Container -->
 	<form
 		method="POST"
 		action="?/update"
@@ -72,8 +153,9 @@
 		}}
 		class="space-y-6 border border-border-color bg-bg-secondary p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,0.4)] md:p-8"
 	>
-		<!-- Input Hidden untuk Path Gambar -->
+		<!-- Hidden Inputs -->
 		<input type="hidden" name="image_path" value={imagePath} />
+		<input type="hidden" name="image_public_id" value={image_public_id} />
 
 		<!-- Field 1: Profile Text -->
 		<div class="space-y-2">
@@ -98,7 +180,7 @@
 			</label>
 
 			{#if imagePath}
-				<!-- Pratinjau Gambar 3D -->
+				<!-- Pratinjau Gambar -->
 				<div
 					class="relative flex flex-col items-center justify-center border border-border-color bg-bg-primary p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)]"
 				>
@@ -110,14 +192,15 @@
 					<button
 						type="button"
 						onclick={handleRemoveImage}
-						class="mt-3 inline-flex items-center gap-1.5 border border-status-error/30 bg-status-error/10 px-3 py-2 text-xs font-bold text-status-error transition-all hover:bg-status-error/20 active:scale-95"
+						disabled={isDeletingPhoto}
+						class="mt-3 inline-flex items-center gap-1.5 border border-status-error/30 bg-status-error/10 px-3 py-2 text-xs font-bold text-status-error transition-all hover:bg-status-error/20 active:scale-95 disabled:opacity-50"
 					>
 						<Trash2 class="h-3.5 w-3.5" />
-						<span>Ganti Gambar</span>
+						<span>{isDeletingPhoto ? 'Menghapus...' : 'Hapus/Ganti Gambar'}</span>
 					</button>
 				</div>
 			{:else}
-				<!-- Dropzone Box Upload Gambar 3D -->
+				<!-- Dropzone Box Upload Gambar -->
 				<div
 					class="flex w-full flex-col items-center justify-center border-2 border-dashed border-border-color bg-bg-primary p-6 text-center transition-all hover:bg-bg-primary-glare"
 				>
@@ -163,7 +246,7 @@
 	</form>
 </div>
 
-<!-- Modal Konfirmasi Hapus Data (3D Neobrutalist) -->
+<!-- Modal Konfirmasi Hapus Data -->
 {#if showDeleteConfirm}
 	<div
 		class="fixed inset-0 z-50 flex items-center justify-center bg-bg-primary/80 p-4 backdrop-blur-sm"

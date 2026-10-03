@@ -246,12 +246,12 @@
 <!-- ----------- components ---------------- -->
 
 <div class="container">
-	<h1 class="text-2xl font-black tracking-tight text-text-main uppercase md:text-3xl">
+	<h1 class="text-2xl font-black tracking-tight text-text-main md:text-3xl">
 		Manajemen Data Prodi Teknologi Informasi
 	</h1>
 
 	<!-- section dashboard profile  -->
-	<section class="mt-5 w-full space-y-6">
+	<section class="my-10 w-full space-y-6">
 		<div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 			<div>
 				<h2 class="text-pure-white text-xl font-bold md:text-2xl">Profile Dashboard</h2>
@@ -308,7 +308,7 @@
 	</section>
 
 	<!-- section  tabel dosen -->
-	<section class="mt-5 w-full space-y-6">
+	<section class="my-10 w-full space-y-6">
 		<div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 			<div>
 				<h2 class="text-pure-white text-xl font-bold md:text-2xl">Daftar Dosen atau Staff</h2>
@@ -358,7 +358,7 @@
 	</section>
 
 	<!-- seksi 2: tabel perminatan ti -->
-	<section class="mt-5 w-full space-y-6">
+	<section class="my-10 w-full space-y-6">
 		<div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 			<div>
 				<h2 class="text-pure-white text-xl font-bold md:text-2xl">Peminatan / Konsentrasi TI</h2>
@@ -453,7 +453,7 @@
 	</section>
 
 	<!-- seksi 3: tabel profil prodi -->
-	<section class="mt-5 w-full space-y-6">
+	<section class="my-10 w-full space-y-6">
 		<div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 			<div>
 				<h2 class="text-pure-white text-xl font-bold md:text-2xl">Profil & Pengaduan Prodi</h2>

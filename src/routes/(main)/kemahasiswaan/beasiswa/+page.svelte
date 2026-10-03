@@ -1,11 +1,12 @@
 <script lang="ts">
+	import { classTopSpace } from '$lib/constants';
 	import EmptyData from '../../_components/emptyData.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
 </script>
 
-<div class="container">
+<div class={`relative container ${classTopSpace} `}>
 	<header class="page-header">
 		<h1 class="title">Daftar Penerima Beasiswa</h1>
 		<p class="subtitle">Mahasiswa Program Studi Teknologi Informasi penerima program beasiswa.</p>

@@ -3,13 +3,22 @@ import type { PageServerLoad, Actions } from './$types';
 import { sessionAdmin } from '$lib/constants';
 import { fail } from '@sveltejs/kit';
 import { getUserById, updateUser } from '$lib/repository/admin/userAdmin';
-import { updateJabatanProdi } from '$lib/repository/admin/dataset/jabatanProdi';
+import type {
+	AvatarFormValues,
+	PasswordFormValues,
+	ProfileFormValues
+} from '$lib/types/values/admin/user';
+import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
+import { Argon2id } from 'oslo/password';
+import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
+
+const login = '/admin/signIn';
 
 export const load: PageServerLoad = async ({ locals, cookies }) => {
 	const userId = locals.user?.id || cookies.get(sessionAdmin);
 
 	if (!userId) {
-		throw redirect(303, '/login');
+		throw redirect(303, login);
 	}
 
 	try {
@@ -36,107 +45,165 @@ export const load: PageServerLoad = async ({ locals, cookies }) => {
 };
 
 export const actions: Actions = {
-	// Action  Update Avatar dari Cloudinary
+	// Action 1: Update Avatar
 	updateAvatar: async ({ request, locals, cookies }) => {
-		const userId = locals.user?.id || cookies.get('sessionAdmin');
-		if (!userId) throw redirect(303, '/login');
+		const userId = locals.user?.id || cookies.get(sessionAdmin);
+		if (!userId) throw redirect(303, login);
 
 		const formData = await request.formData();
-		const avatarUrl = formData.get('avatarUrl') as string;
 
-		if (!avatarUrl) {
+		// Ekstraksi data sesuai struktur AvatarFormValues (menggunakan image_url dan image_public_id)
+		const values: AvatarFormValues = {
+			image_url: formData.get('image_url')?.toString().trim() || '',
+			image_public_id: formData.get('image_public_id')?.toString().trim() || ''
+		};
+
+		if (!values.image_url) {
 			return fail(400, {
-				success: false,
-				status: 'warning' as const,
-				title: 'Validasi Gagal',
-				message: 'URL Gambar tidak valid'
+				...warningResponse('URL Gambar tidak valid.', 'Validasi Gagal'),
+				values
 			});
 		}
 
-		const success = await updateJabatanProdi(userId, { avatar: avatarUrl });
-		if (!success)
-			return fail(500, {
-				success: false,
-				status: 'error' as const,
-				title: 'Gagal',
-				message: 'Gagal memperbarui avatar'
+		try {
+			//  Ambil data user saat ini untuk mendapatkan public_id foto lama di Cloudinary
+			const currentUser = await getUserById(userId); // Sesuaikan dengan fungsi fetch user repository Anda
+			const oldPublicId = currentUser?.image_public_id;
+
+			// Jika update database berhasil dan user sebelumnya punya foto lama di Cloudinary, hapus foto lama tersebut
+			if (oldPublicId && oldPublicId !== values.image_public_id) {
+				try {
+					await deleteImageFromCloudinary(oldPublicId);
+				} catch (deleteErr) {
+					console.error('Gagal menghapus foto lama dari Cloudinary:', deleteErr);
+					// Proses tetap dilanjutkan karena update database sudah sukses
+				}
+			}
+
+			// Memanggil method update / updateProfileImage sesuai repository
+			const success = await updateUser(userId, {
+				image_url: values.image_url,
+				image_public_id: values.image_public_id
 			});
-		return {
-			success: true,
-			status: 'success' as const,
-			title: 'Berhasil',
-			message: 'Foto profil berhasil diperbarui!'
-		};
+
+			if (!success) {
+				return fail(500, {
+					...errorResponse('Gagal memperbarui foto profil.', 'Gagal Update'),
+					values
+				});
+			}
+
+			return successResponse('Foto profil berhasil diperbarui!', 'Berhasil');
+		} catch (err: any) {
+			console.error('Error updating avatar:', err);
+			return fail(500, {
+				...errorResponse(
+					err?.message || 'Terjadi kesalahan sistem saat memperbarui avatar.',
+					'Kesalahan Server'
+				),
+				values
+			});
+		}
 	},
 
-	// Action Update Password
+	// Action 2: Update Password
 	updatePassword: async ({ request, locals, cookies }) => {
-		const userId = locals.user?.id || cookies.get('sessionAdmin');
-		if (!userId) throw redirect(303, '/login');
+		const userId = locals.user?.id || cookies.get(sessionAdmin);
+		if (!userId) throw redirect(303, login);
 
 		const formData = await request.formData();
-		const newPassword = formData.get('newPassword') as string;
 
-		if (!newPassword || newPassword.length < 6) {
+		const values: PasswordFormValues = {
+			newPassword: formData.get('newPassword')?.toString() || ''
+		};
+
+		if (!values.newPassword || values.newPassword.length < 6) {
 			return fail(400, {
-				success: false,
-				status: 'warning' as const,
-				title: 'Validasi Gagal',
-				message: 'Password minimal 6 karakter'
+				...warningResponse('Password minimal 6 karakter.', 'Validasi Gagal'),
+				values
 			});
 		}
 
-		// Jalankan hashing jika Anda menggunakan bcrypt/argon2
-		// const hashedPassword = await hashPassword(newPassword);
-		const success = await updateUser(userId, { password: newPassword });
+		try {
+			// Jalankan hashing jika menggunakan Argon2id / bcrypt, lalu masukkan ke field password
+			const hashedPassword = await new Argon2id().hash(values.newPassword);
+			const success = await updateUser(userId, { password: hashedPassword });
 
-		if (!success)
+			if (!success) {
+				return fail(500, {
+					...errorResponse('Gagal mengubah password.', 'Gagal Update'),
+					values
+				});
+			}
+
+			return successResponse('Password berhasil diperbarui!', 'Berhasil');
+		} catch (err: any) {
+			console.error('Error updating password:', err);
 			return fail(500, {
-				success: false,
-				status: 'error' as const,
-				title: 'Gagal',
-				message: 'Gagal mengubah password'
+				...errorResponse(
+					err?.message || 'Terjadi kesalahan sistem saat memperbarui password.',
+					'Kesalahan Server'
+				),
+				values
 			});
-
-		return {
-			success: true,
-			status: 'success' as const,
-			title: 'Berhasil',
-			message: 'Password berhasil diperbarui!'
-		};
+		}
 	},
 
-	// Action 3: Update Profile (Nama & Email)
+	// Action 3: Update Profile (Nama, Username, & Email)
 	updateProfile: async ({ request, locals, cookies }) => {
-		const userId = locals.user?.id || cookies.get('sessionAdmin');
+		const userId = locals.user?.id || cookies.get(sessionAdmin);
 		if (!userId) throw redirect(303, '/login');
 
 		const formData = await request.formData();
-		const name = formData.get('name') as string;
-		const email = formData.get('email') as string;
 
-		if (!name || !email) {
+		// Ekstraksi data ke objek values bertipe ProfileFormValues
+		const values: ProfileFormValues = {
+			name: formData.get('name')?.toString().trim() || '',
+			username: formData.get('username')?.toString().trim() || '',
+			email: formData.get('email')?.toString().trim() || ''
+		};
+		console.info(values);
+
+		if (!values.name || !values.username || !values.email) {
 			return fail(400, {
-				success: false,
-				status: 'warning' as const,
-				title: 'Validasi Gagal',
-				message: 'Nama dan Email wajib diisi'
+				...warningResponse('Nama, Username, dan Email wajib diisi.', 'Validasi Gagal'),
+				values
 			});
 		}
 
-		const success = await updateUser(userId, { name, email });
-		if (!success)
-			return fail(500, {
-				success: false,
-				status: 'error' as const,
-				title: 'Gagal',
-				message: 'Gagal memperbarui profil'
+		try {
+			const success = await updateUser(userId, {
+				name: values.name,
+				username: values.username,
+				email: values.email
 			});
-		return {
-			success: true,
-			status: 'success' as const,
-			title: 'Berhasil',
-			message: 'Data profil berhasil diperbarui!'
-		};
+
+			if (!success) {
+				return fail(500, {
+					...errorResponse('Gagal memperbarui profil.', 'Gagal Update'),
+					values
+				});
+			}
+
+			return successResponse('Data profil berhasil diperbarui!', 'Berhasil');
+		} catch (err: any) {
+			console.error('Error updating profile:', err);
+
+			// Pengecekan entri ganda untuk Email atau Username
+			if (err.code === 'ER_DUP_ENTRY' || err.message?.includes('Duplicate entry')) {
+				return fail(400, {
+					...warningResponse('Email atau Username sudah digunakan oleh akun lain.', 'Gagal Update'),
+					values
+				});
+			}
+
+			return fail(500, {
+				...errorResponse(
+					err?.message || 'Terjadi kesalahan sistem saat memperbarui profil.',
+					'Kesalahan Server'
+				),
+				values
+			});
+		}
 	}
 };

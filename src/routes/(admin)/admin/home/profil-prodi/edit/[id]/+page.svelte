@@ -6,4 +6,8 @@
 </script>
 
 <FormProfilProdi
-isEdit={true} actionUrl="?/update" initialData={data.item} {form} />
+	isEdit={true}
+	actionUrl="?/update"
+	initialData={data.item}
+	valuesData={form?.values}
+/>

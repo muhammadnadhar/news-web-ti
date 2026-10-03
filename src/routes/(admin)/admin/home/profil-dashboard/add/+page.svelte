@@ -16,8 +16,8 @@
 	let { form } = $props();
 
 	// State untuk URL/Path gambar hasil unggahan Cloudinary
-	let imagePath = $state(form?.image_path || '');
-	let image_public_id = $state('');
+	let imagePath = $state(form?.values?.image_path || '');
+	let image_public_id = $state(form?.values?.image_public_id ?? '');
 	let isSubmitting = $state(false);
 
 	// Callback ketika unggahan ke Cloudinary berhasil
@@ -33,7 +33,6 @@
 			// atau document.body.style.removeProperty('overflow');
 		}
 	}
-	$inspect(image_public_id);
 
 	function handleRemoveImage() {
 		imagePath = '';
@@ -125,7 +124,7 @@
 				id="title"
 				name="title"
 				required
-				value={form?.title || ''}
+				value={form?.values?.title || ''}
 				placeholder="Contoh: Banner Dashboard Utama"
 				class="w-full border border-border-color bg-bg-primary px-4 py-3 text-sm text-text-main transition-all placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
 			/>
@@ -138,7 +137,6 @@
 			</label>
 
 			{#if imagePath}
-				<!-- Frame Pratinjau Gambar 3D -->
 				<div
 					class="relative flex flex-col items-center justify-center border border-border-color bg-bg-primary p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)]"
 				>

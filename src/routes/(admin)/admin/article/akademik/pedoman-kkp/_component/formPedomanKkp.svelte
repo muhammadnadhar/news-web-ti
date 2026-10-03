@@ -29,8 +29,8 @@
 	// State lokal input form
 	// State lokal input form
 	let title = $state(valuesData?.title ?? initialData?.title ?? '');
-	let imageUrl = $state(valuesData?.imageUrl ?? initialData?.image_url ?? '');
-	let imagePublicId = $state(valuesData?.imageId ?? initialData?.image_public_id ?? '');
+	let imageUrl = $state(valuesData?.image_url ?? initialData?.image_url ?? '');
+	let imagePublicId = $state(valuesData?.image_public_id ?? initialData?.image_public_id ?? '');
 	let description = $state(valuesData?.description ?? initialData?.description ?? '');
 
 	let isSubmitting = $state(false);
@@ -198,13 +198,12 @@
 				/>
 			</div>
 
-			<!-- INPUT: Upload Sampul / Foto -->
 			<div class="space-y-2">
 				<label class="block text-xs font-bold tracking-wider text-text-main uppercase">
 					Foto Sampul / Banner Pedoman
 				</label>
 				<input type="hidden" name="image_url" value={imageUrl} />
-				<input type="hidden" name="public_id" value={imagePublicId} />
+				<input type="hidden" name="image_public_id" value={imagePublicId} />
 
 				{#if imageUrl}
 					<div
@@ -268,6 +267,7 @@
 			<div class="space-y-2">
 				<input type="hidden" name="description" value={description} />
 				<FormEditor
+					showSaveButton={false}
 					title="Editor Deskripsi Pedoman KKP"
 					label="Deskripsi Lengkap / Ringkasan Pedoman KKP"
 					bind:value={description}

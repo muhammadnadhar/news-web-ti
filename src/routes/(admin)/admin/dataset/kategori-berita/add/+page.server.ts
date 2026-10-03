@@ -1,52 +1,63 @@
 import { fail } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { randomUUID } from 'node:crypto';
-import { successResponse, warningResponse } from '$lib/helper/message';
+import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
 import { createNewsCategory } from '$lib/repository/admin/dataset/beritaKategory';
+import type { KategoriBeritaFormValues } from '$lib/types/values/admin/dataset';
 
 export const actions: Actions = {
-	// default: async ({ request }) => {
-  save: async ({ request }) => {
+	save: async ({ request }) => {
 		const formData = await request.formData();
 
-		const name = formData.get('name')?.toString().trim() || '';
-		const slug = formData.get('slug')?.toString().trim() || null;
+		const values: KategoriBeritaFormValues = {
+			id: (formData.get('id') as string)?.trim() || randomUUID(),
+			name: formData.get('name')?.toString().trim() || '',
+			slug: formData.get('slug')?.toString().trim() || null
+		};
 
 		// Validasi input wajib
-		if (!name) {
+		if (!values.name) {
 			return fail(400, {
-				...warningResponse('Nama kategori wajib diisi.', 'warning'),
-				values: { name, slug }
+				...warningResponse('Nama kategori wajib diisi.', 'Validasi Gagal'),
+				values
 			});
 		}
 
-		const categoryId = randomUUID();
-
 		try {
-			const isCreated = await createNewsCategory(categoryId, {
-				name,
-				slug
+			const isCreated = await createNewsCategory(values.id!, {
+				name: values.name,
+				slug: values.slug
 			});
 
 			if (!isCreated) {
 				return fail(500, {
-					...warningResponse('Gagal menyimpan kategori berita.', 'warning'),
-					values: { name, slug }
+					...errorResponse('Gagal menyimpan kategori berita.', 'Gagal Simpan'),
+					values
 				});
 			}
-		} catch (err) {
+
+			return successResponse('Berhasil menambahkan kategori berita.', 'Berhasil');
+		} catch (err: any) {
 			console.error('Error creating news category:', err);
+
+			// Pengecekan entri ganda / duplicate entry jika name atau slug bertipe UNIQUE
+			if (err.code === 'ER_DUP_ENTRY' || err.message?.includes('Duplicate entry')) {
+				return fail(400, {
+					...warningResponse(
+						'Kategori berita dengan nama/slug tersebut sudah terdaftar.',
+						'Gagal Simpan'
+					),
+					values
+				});
+			}
+
 			return fail(500, {
-				...warningResponse('Terjadi kesalahan server saat menyimpan kategori.', 'warning'),
-				values: { name, slug }
+				...errorResponse(
+					err?.message || 'Terjadi kesalahan server saat menyimpan kategori.',
+					'Kesalahan Server'
+				),
+				values
 			});
 		}
-
-		// Jika ingin otomatis kembali ke halaman daftar kategori setelah sukses:
-		// throw redirect(303, '/admin/kategori-berita');
-
-		return {
-			...successResponse('Berhasil menambahkan kategori berita', 'Success')
-		};
 	}
 };

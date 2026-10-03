@@ -1,48 +1,71 @@
-import { fail, redirect } from '@sveltejs/kit';
+import { fail } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { createPracticumModule } from '$lib/repository/admin/article/akedemik/modulePratikum';
-import { errorResponse, successResponse } from '$lib/helper/message';
+import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
 import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
 import { randomUUID } from '$lib/crypto';
+import type { ModulPraktikumFormValues } from '$lib/types/values/admin/article';
 
 export const actions: Actions = {
 	create: async ({ request }) => {
 		const formData = await request.formData();
 
-		const title = formData.get('title') as string;
-		const imageUrl = (formData.get('image_url') as string) || null;
-		const description = (formData.get('description') as string) || null;
+		// Ekstraksi data input ke objek values bertipe ModulPraktikumFormValues
+		const values: ModulPraktikumFormValues = {
+			title: formData.get('title')?.toString().trim() || '',
+			image_url: formData.get('image_url')?.toString().trim() || null,
+			image_public_id: formData.get('image_public_id')?.toString().trim() || null,
+			description: formData.get('description')?.toString().trim() || null
+		};
 
-		// Validasi input wajib
-		if (!title || title.trim() === '') {
+		if (!values.title) {
 			return fail(400, {
-				success: false,
-				message: 'Judul Modul Praktikum wajib diisi.',
-				values: { title, imageUrl, description }
+				...warningResponse('Judul Modul Praktikum wajib diisi.', 'Validasi Gagal'),
+				values
 			});
 		}
+
+		if (values.title.length > 255) {
+			return fail(400, {
+				...warningResponse(
+					'Judul Modul Praktikum terlalu panjang, maksimal 255 karakter.',
+					'Validasi Gagal'
+				),
+				values
+			});
+		}
+
 		const id = randomUUID();
 
 		try {
-			const success = await createPracticumModule(id, title, imageUrl, description);
+			const success = await createPracticumModule(
+				id,
+				values.title,
+				values.image_url,
+				values.description,
+				values.image_public_id
+			);
 
 			if (!success) {
 				return fail(500, {
-					success: false,
-          ...errorResponse("Gagal menyimpan data module Praktikum "),
-					values: { title, imageUrl, description }
+					...errorResponse('Gagal menyimpan data modul Praktikum.', 'Gagal Menyimpan'),
+					values
 				});
 			}
 		} catch (error: any) {
+			console.error('Error creating Practicum Module:', error);
 			return fail(500, {
-				...errorResponse('Terjaid kesalah sistem'),
-				values: { title, imageUrl, description }
+				...errorResponse(
+					`Terjadi kesalahan sistem: ${error.message || 'Kesalahan tidak diketahui'}`,
+					'Kesalahan Sistem'
+				),
+				values
 			});
 		}
 
 		// Redirect ke halaman daftar Modul Praktikum
 		// throw redirect(303, '/admin/akademik/modul-praktikum');
-		return successResponse('berhasil membuat module Praktikum',"Success");
+		return successResponse('Berhasil membuat modul Praktikum', 'Berhasil');
 	},
 
 	deletePhoto: async ({ request }) => {

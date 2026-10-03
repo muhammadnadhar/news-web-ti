@@ -1,21 +1,14 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import type { HistoryLeadersDTO, LecturerStaffItemDTO } from '$lib/dto/admin/article/profile';
+	import type { HistoryLeaderFormValues } from '$lib/types/values/admin/article';
 	import { parsePhotoToUrl } from '$lib/utils.js';
-	import {
-		Calendar,
-		Check,
-		Search,
-		ShieldAlert,
-		User,
-		UserCheck,
-		UserPlus,
-		X
-	} from 'lucide-svelte';
+	import { Calendar, Check, Search, ShieldAlert, User, UserPlus, X } from 'lucide-svelte';
 
 	type Props = {
 		lecturers: LecturerStaffItemDTO[];
 		initialData?: HistoryLeadersDTO | null;
+		valueData: HistoryLeaderFormValues | null;
 		formError?: string | null;
 		submitLabel?: string;
 		actionUrl?: string;
@@ -26,15 +19,18 @@
 		lecturers = [],
 		initialData = null,
 		formError = null,
+		valueData,
 		submitLabel = 'Simpan Data Pimpinan',
 		actionUrl = '',
 		onCancel
 	}: Props = $props();
 
 	// Form state
-	let period = $state(initialData?.period ?? '');
-	let headId = $state<string | null>(initialData?.head_id ?? null);
-	let secretaryId = $state<string | null>(initialData?.secretary_id ?? null);
+	let period = $state(valueData?.period ?? initialData?.period ?? '');
+	let headId = $state<string | null>(valueData?.head_id ?? initialData?.head_id ?? null);
+	let secretaryId = $state<string | null>(
+		valueData?.secretary_id ?? initialData?.secretary_id ?? null
+	);
 
 	// Picker Modal State
 	let activePicker = $state<'head' | 'secretary' | null>(null);
@@ -179,7 +175,7 @@
 					class="group border-scitech-slate/40 bg-scitech-navy/40 hover:border-scitech-mint/60 hover:bg-scitech-navy/80 hover:text-scitech-mint flex w-full items-center justify-center gap-2.5 rounded-xl border border-dashed p-5 text-xs text-slate-400 transition-all duration-200"
 				>
 					<div
-						class="bg-scitech-slate/20 group-hover:bg-scitech-mint/10 group-hover:text-scitech-mint flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition-colors"
+						class="group-hover:bg-scitech-mint/10 group-hover:text-scitech-mint flex h-8 w-8 items-center justify-center rounded-lg bg-bg-secondary/20 text-slate-400 transition-colors"
 					>
 						<UserPlus class="h-4 w-4" />
 					</div>
@@ -254,7 +250,7 @@
 					class="group border-scitech-slate/40 bg-scitech-navy/40 hover:border-scitech-mint/60 hover:bg-scitech-navy/80 hover:text-scitech-mint flex w-full items-center justify-center gap-2.5 rounded-xl border border-dashed p-5 text-xs text-slate-400 transition-all duration-200"
 				>
 					<div
-						class="bg-scitech-slate/20 group-hover:bg-scitech-mint/10 group-hover:text-scitech-mint flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition-colors"
+						class="group-hover:bg-scitech-mint/10 group-hover:text-scitech-mint flex h-8 w-8 items-center justify-center rounded-lg bg-bg-secondary/20 text-slate-400 transition-colors"
 					>
 						<UserPlus class="h-4 w-4" />
 					</div>
@@ -264,13 +260,12 @@
 		</div>
 	</div>
 
-	<!-- AKSI TOMBOL -->
 	<div class="border-scitech-slate/20 flex items-center justify-end gap-3 border-t pt-5">
 		{#if onCancel}
 			<button
 				type="button"
 				onclick={onCancel}
-				class="border-scitech-slate/30 hover:bg-scitech-slate/20 rounded-xl border px-4 py-2.5 text-xs font-semibold text-slate-300 transition-colors hover:text-text-main"
+				class="border-scitech-slate/30 rounded-xl border px-4 py-2.5 text-xs font-semibold text-slate-300 transition-colors hover:bg-bg-secondary/20 hover:text-text-main"
 			>
 				Batal
 			</button>
@@ -306,7 +301,7 @@
 				<button
 					type="button"
 					onclick={closePicker}
-					class="hover:bg-scitech-slate/20 rounded-lg p-1.5 text-slate-400 transition-colors hover:text-text-main"
+					class="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-bg-secondary/20 hover:text-text-main"
 				>
 					<X class="h-5 w-5" />
 				</button>

@@ -26,13 +26,13 @@ export const actions: Actions = {
 			title: formData.get('title')?.toString().trim() || '',
 			category: formData.get('category')?.toString().trim() || '',
 			content: formData.get('content')?.toString().trim() || '',
-			imageUrl: formData.get('imageUrl')?.toString().trim() || null,
+			image_url: formData.get('imageUrl')?.toString().trim() || null,
 			imageId: formData.get('image_public_id')?.toString().trim() || null
 		};
 
 		console.info('data  : ', values);
 
-		// 2. Pengecekan kolom wajib diisi
+		//Pengecekan kolom wajib diisi
 		if (!values.title || !values.category || !values.content) {
 			return fail(400, {
 				...warningResponse('Harap isi semua kolom yang wajib (*).', 'warning'),
@@ -56,7 +56,7 @@ export const actions: Actions = {
 				title: values.title,
 				category_id: values.category,
 				content: values.content,
-				image_url: values.imageUrl,
+				image_url: values.image_url,
 				image_public_id: values.imageId,
 				published_at: new Date()
 			});
@@ -86,6 +86,7 @@ export const actions: Actions = {
 		if (!publicId) {
 			return fail(400, { ...errorResponse('Public Id tidak di temukan', 'Error') });
 		}
+		console.info('id : ', publicId);
 		try {
 			await deleteImageFromCloudinary(publicId);
 			return successResponse('Berhasil di batalkan', 'Succcess');

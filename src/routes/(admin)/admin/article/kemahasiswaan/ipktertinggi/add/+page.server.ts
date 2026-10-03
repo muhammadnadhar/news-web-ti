@@ -5,6 +5,7 @@ import { getAllSemesters } from '$lib/repository/admin/dataset/semester';
 import { createHighGpaStudent } from '$lib/repository/admin/article/kemahasiswaan/ipkTertinggi';
 import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
 import { cloudinary } from '$lib/cloudinary/server';
+import type { IpkTertinggiFormValues } from '$lib/types/values/admin/article';
 
 export const load: PageServerLoad = async () => {
 	try {
@@ -27,32 +28,32 @@ export const actions: Actions = {
 	create: async ({ request }) => {
 		const formData = await request.formData();
 
-		const studentName = formData.get('student_name')?.toString().trim();
 		const gpaRaw = formData.get('gpa')?.toString().trim();
-		const angkatanId = formData.get('angkatan_id')?.toString().trim();
-		const semesterId = formData.get('semester_id')?.toString().trim();
-		const imgUrl = formData.get('img_url')?.toString().trim() || '';
+		const gpaParsed = gpaRaw ? parseFloat(gpaRaw) : NaN;
 
-		const gpa = gpaRaw ? parseFloat(gpaRaw) : NaN;
-
-		const values = {
-			studentName,
-			gpa: gpaRaw,
-			angkatanId,
-			semesterId,
-			imgUrl
+		const values: IpkTertinggiFormValues = {
+			student_name: formData.get('student_name')?.toString().trim() || '',
+			gpa: gpaParsed,
+			angkatan_id: formData.get('angkatan_id')?.toString().trim() || '',
+			semester_id: formData.get('semester_id')?.toString().trim() || '',
+			image_url:
+				formData.get('image_url')?.toString().trim() ||
+				formData.get('img_url')?.toString().trim() ||
+				null,
+			image_public_id:
+				formData.get('image_public_id')?.toString().trim() ||
+				formData.get('public_id')?.toString().trim() ||
+				null
 		};
 
-		// 1. Validasi Input Wajib
-		if (!studentName || !gpaRaw || !angkatanId || !semesterId) {
+		if (!values.student_name || !gpaRaw || !values.angkatan_id || !values.semester_id) {
 			return fail(400, {
 				...warningResponse('Harap isi semua bidang form yang wajib (*).', 'Gagal Menyimpan'),
 				values
 			});
 		}
 
-		//  Validasi Nilai IPK (0.00 - 4.00)
-		if (isNaN(gpa) || gpa < 0 || gpa > 4.0) {
+		if (isNaN(values.gpa) || values.gpa < 0 || values.gpa > 4.0) {
 			return fail(400, {
 				...warningResponse(
 					'Nilai IPK harus berupa angka rentang 0.00 hingga 4.00.',
@@ -65,16 +66,26 @@ export const actions: Actions = {
 		const id = crypto.randomUUID();
 
 		try {
-			await createHighGpaStudent(id, studentName, gpa, angkatanId, semesterId, imgUrl);
+			await createHighGpaStudent(
+				id,
+				values.student_name,
+				values.gpa,
+				values.angkatan_id,
+				values.semester_id,
+				values.image_url,
+				values.image_public_id
+			);
 
-			// Return langsung untuk success response standar SvelteKit
-			return successResponse('Data Mahasiswa IPK Tertinggi berhasil disimpan!', 'Berhasil');
-		} catch (err) {
+			return {
+				...successResponse('Data Mahasiswa IPK Tertinggi berhasil disimpan!', 'Berhasil'),
+				values
+			};
+		} catch (err: any) {
 			console.error('Error creating high GPA student:', err);
 
 			return fail(500, {
 				...errorResponse(
-					'Gagal menyimpan data Mahasiswa IPK Tertinggi ke database.',
+					`Gagal menyimpan data Mahasiswa IPK Tertinggi ke database: ${err?.message || 'Terjadi kesalahan sistem'}`,
 					'Kesalahan Sistem'
 				),
 				values

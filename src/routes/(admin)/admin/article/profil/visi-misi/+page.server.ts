@@ -1,7 +1,8 @@
 import { error, fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { getVisiMisi, upsertVisiMisi } from '$lib/repository/admin/article/profile/visiMisi';
-import { errorResponse, successResponse } from '$lib/helper/message';
+import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
+import type { VisiMisiFormValues } from '$lib/types/values/admin/article';
 
 export const load: PageServerLoad = async () => {
 	try {
@@ -18,28 +19,37 @@ export const load: PageServerLoad = async () => {
 export const actions: Actions = {
 	default: async ({ request }) => {
 		const formData = await request.formData();
-		const id = (formData.get('id') as string) || crypto.randomUUID();
-		const content = formData.get('content') as string;
 
-		if (!content || content.trim() === '') {
-			return fail(
-				400,
-				errorResponse('Isi Visi Misi tidak boleh kosong.', 'Validasi Gagal', {
-					content: ['Isi Visi Misi wajib diisi.']
-				})
-			);
+		const values: VisiMisiFormValues = {
+			id: (formData.get('id') as string)?.trim() || crypto.randomUUID(),
+			content: (formData.get('content') as string)?.trim() || ''
+		};
+
+		if (!values.content) {
+			return fail(400, {
+				...warningResponse('Isi Visi Misi tidak boleh kosong.', 'Validasi Gagal'),
+				values
+			});
 		}
 
 		try {
-			const success = await upsertVisiMisi(id, { content });
+			const success = await upsertVisiMisi(values.id!, { content: values.content });
 
 			if (!success) {
-				return fail(500, errorResponse('Gagal memperbarui data Visi Misi.'));
+				return fail(500, {
+					...errorResponse('Gagal memperbarui data Visi Misi.', 'Gagal Memperbarui'),
+					values
+				});
 			}
 
-			return successResponse('Data Visi Misi berhasil disimpan!');
-		} catch (err) {
-			return fail(500, errorResponse('Terjadi kesalahan sistem saat menyimpan data.'));
+			return successResponse('Data Visi Misi berhasil disimpan!', 'Berhasil');
+		} catch (err: any) {
+			console.error('Error saving Visi Misi:', err);
+
+			return fail(500, {
+				...errorResponse('Terjadi kesalahan sistem saat menyimpan data.', 'Kesalahan Server'),
+				values
+			});
 		}
 	}
 };

@@ -2,6 +2,7 @@ export interface PartnershipDTO {
 	id: string;
 	institution_name: string;
 	logo_url: string | null;
+	logo_public_id: string | null;
 	created_at?: Date;
 	updated_at?: Date;
 }

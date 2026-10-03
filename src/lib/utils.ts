@@ -1,7 +1,5 @@
 import { goto } from '$app/navigation';
 
-
-
 export function mergeNewPath(newPath: string): string {
 	// Ambil URL saat ini
 	const url = new URL(window.location.href);
@@ -85,4 +83,19 @@ export function formatDate(date?: Date | string | null): string | null {
 export function stripHtml(html: string): string {
 	if (!html) return '';
 	return html.replace(/<[^>]*>?/gm, '');
+}
+
+export function convertYouTubeUrlToEmbed(url: string): string {
+	let videoId = '';
+
+	// Menangkap ID dari format watch?v=ID atau youtu.be/ID
+	if (url.includes('watch?v=')) {
+		videoId = url.split('watch?v=')[1]?.split('&')[0];
+	} else if (url.includes('youtu.be/')) {
+		videoId = url.split('youtu.be/')[1]?.split('?')[0];
+	} else if (url.includes('embed/')) {
+		return url; // Sudah format embed
+	}
+
+	return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
 }

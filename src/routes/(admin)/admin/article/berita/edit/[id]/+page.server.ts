@@ -53,21 +53,16 @@ export const actions: Actions = {
 			title: formData.get('title')?.toString().trim() || '',
 			category: formData.get('category')?.toString().trim() || '',
 			content: formData.get('content')?.toString().trim() || '',
-			imageUrl: formData.get('imageUrl')?.toString().trim() || null,
+			image_url: formData.get('imageUrl')?.toString().trim() || null,
 			imageId: formData.get('image_public_id')?.toString().trim() || null
 		};
 
-		console.info('data update : ', values);
-
-		// 2. Validasi input wajib
 		if (!values.title || !values.category || !values.content) {
 			return fail(400, {
 				...warningResponse('Harap isi semua kolom yang wajib (*).', 'warning'),
 				values
 			});
 		}
-
-		// 3. Pengecekan panjang title untuk VARCHAR(255)
 		if (values.title.length > 255) {
 			return fail(400, {
 				...warningResponse('Judul terlalu panjang, maksimal 255 karakter.', 'warning'),
@@ -81,7 +76,7 @@ export const actions: Actions = {
 				title: values.title,
 				category_id: values.category,
 				content: values.content,
-				image_url: values.imageUrl,
+				image_url: values.image_url,
 				image_public_id: values.imageId
 			});
 

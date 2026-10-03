@@ -16,7 +16,7 @@
 
 	interface Props {
 		form?: any;
-		initialData?: NewsItemDTO;
+		initialData: NewsItemDTO;
 		valuesData?: NewsFormValues;
 		isEdit?: boolean;
 		actionUrl?: string;
@@ -26,9 +26,9 @@
 
 	// Inisialisasi state dari valuesData -> initialData -> default ('')
 	let title = $state(valuesData?.title ?? initialData?.title ?? '');
-	let selectedCategory = $state(valuesData?.category ?? initialData?.category ?? '');
+	let selectedCategory = $state(valuesData?.category ?? initialData?.category_id ?? '');
 	let content = $state(valuesData?.content ?? initialData?.content ?? '');
-	let imageUrl = $state(valuesData?.imageUrl ?? initialData?.image_url ?? '');
+	let imageUrl = $state(valuesData?.image_url ?? initialData?.image_url ?? '');
 	let image_public_id = $state(valuesData?.imageId ?? initialData?.image_public_id ?? '');
 	let isSubmitting = $state(false);
 
@@ -50,9 +50,9 @@
 	$effect(() => {
 		if (initialData && !form?.values) {
 			title = initialData.title ?? '';
-			selectedCategory = initialData.category ?? '';
+			selectedCategory = initialData.category_id ?? '';
 			content = initialData.content ?? '';
-			imageUrl = initialData.imageUrl ?? '';
+			imageUrl = initialData.image_url ?? '';
 		}
 	});
 
@@ -102,7 +102,7 @@
 			formData.append('public_id', photoPublicId);
 
 			// Panggil named action '?/deletePhoto'
-			const response = await fetch('?/deletePhoto', {
+			const response = await fetch(`?/deletePhoto`, {
 				method: 'POST',
 				body: formData
 			});
@@ -110,8 +110,9 @@
 			if (response.ok) {
 				imageUrl = '';
 				photoPublicId = '';
+				triggerMessage('success', 'Berhasil', 'Berhasil mengahpus data dari Cloudinary');
 			} else {
-				alert('Gagal menghapus gambar dari Cloudinary');
+				triggerMessage('error', 'Gagal', 'Gagal menghapus gambar dari cloudinary');
 			}
 		} catch (err) {
 			console.error('Error deleting photo:', err);

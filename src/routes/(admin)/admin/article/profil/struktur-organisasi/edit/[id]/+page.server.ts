@@ -1,7 +1,14 @@
-import { getPublicIdOrgStructureById, updateOrgStructure } from '$lib/repository/admin/article/profile/structure';
+import {
+	getOrgStructureById,
+	getPublicIdOrgStructureById,
+	updateOrgStructure
+} from '$lib/repository/admin/article/profile/structure';
 import { fail, error } from '@sveltejs/kit';
 
 import type { PageServerLoad, Actions } from './$types';
+import type { OrgStructureFormValues } from '$lib/types/values/admin/article';
+import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
+import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
 export const load: PageServerLoad = async ({ params }) => {
 	const { id } = params;
 
@@ -9,8 +16,7 @@ export const load: PageServerLoad = async ({ params }) => {
 		throw error(400, 'ID tidak valid');
 	}
 
-	const item = await getPublicIdOrgStructureById(id);
-  console.info(item)
+	const item = await getOrgStructureById(id);
 
 	if (!item) {
 		throw error(404, 'Data struktur organisasi tidak ditemukan');
@@ -22,53 +28,64 @@ export const load: PageServerLoad = async ({ params }) => {
 export const actions: Actions = {
 	update: async ({ request, params }) => {
 		const { id } = params;
-		if (!id) {
-			return fail(400, { message: 'ID tidak ditemukan.' });
-		}
-
 		const formData = await request.formData();
 
-		const title = formData.get('title')?.toString().trim();
-		const image_url = formData.get('image_url')?.toString().trim() || null;
-		const image_public_id = formData.get('image_public_id')?.toString().trim() || null;
-		const description = formData.get('description')?.toString().trim() || null;
+		// Ekstraksi data ke objek values bertipe OrgStructureFormValues
+		const values: OrgStructureFormValues = {
+			id,
+			title: formData.get('title')?.toString().trim() || '',
+			image_url: formData.get('image_url')?.toString().trim() || null,
+			image_public_id:
+				formData.get('image_public_id')?.toString().trim() ||
+				formData.get('public_id')?.toString().trim() ||
+				null,
+			description: formData.get('description')?.toString().trim() || null
+		};
 
-		if (!title) {
+		// Validasi ID dari URL
+		if (!id) {
 			return fail(400, {
-				message: 'Judul struktur organisasi wajib diisi.',
-				values: { title, image_url, image_public_id, description }
+				...errorResponse('ID Struktur Organisasi tidak ditemukan di URL.', 'Validasi Gagal'),
+				values
+			});
+		}
+
+		// Validasi Input Wajib: Judul
+		if (!values.title) {
+			return fail(400, {
+				...warningResponse('Judul struktur organisasi wajib diisi.', 'Validasi Gagal'),
+				values
 			});
 		}
 
 		try {
 			const isUpdated = await updateOrgStructure(id, {
-				title,
-				image_url,
-				image_public_id,
-				description
+				title: values.title,
+				image_url: values.image_url,
+				image_public_id: values.image_public_id,
+				description: values.description
 			});
 
-			if (isUpdated) {
-				return {
-					status: 'success',
-					title: 'Berhasil',
-					message: 'Struktur organisasi berhasil diperbarui.'
-				};
-			} else {
+			if (!isUpdated) {
 				return fail(500, {
-					message: 'Gagal memperbarui data struktur organisasi.',
-					values: { title, image_url, image_public_id, description }
+					...errorResponse('Gagal memperbarui data struktur organisasi.', 'Gagal Memperbarui'),
+					values
 				});
 			}
-		} catch (err) {
+
+			return successResponse('Struktur organisasi berhasil diperbarui.', 'Berhasil');
+		} catch (err: any) {
 			console.error('Error updateOrgStructure:', err);
+
 			return fail(500, {
-				message: 'Terjadi kesalahan sistem saat memperbarui data.',
-				values: { title, image_url, image_public_id, description }
+				...errorResponse(
+					'Terjadi kesalahan sistem saat memperbarui data: ' + (err?.message || 'Gagal menyimpan'),
+					'Kesalahan Server'
+				),
+				values
 			});
 		}
 	},
-
 	deletePhoto: async ({ request, params }) => {
 		const formData = await request.formData();
 		let publicId = formData.get('public_id')?.toString();
@@ -83,6 +100,7 @@ export const actions: Actions = {
 
 		try {
 			// Jika ada helper penghapusan Cloudinary server-side, panggil di sini
+			await deleteImageFromCloudinary(publicId);
 			return {
 				status: 'success',
 				title: 'Berhasil',

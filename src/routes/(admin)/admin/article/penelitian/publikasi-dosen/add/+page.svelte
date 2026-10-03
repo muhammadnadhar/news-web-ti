@@ -10,8 +10,8 @@
 </svelte:head>
 
 <FormLecturerPublication
-	{form}
-	lecturers={data.lecturers}
+	valueData={form?.values}
+	lecturers={data?.lecturers}
 	initialData={data.initialData}
 	isEdit={Boolean(data.initialData?.id)}
 />

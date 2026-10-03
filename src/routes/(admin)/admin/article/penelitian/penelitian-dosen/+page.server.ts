@@ -4,7 +4,8 @@ import {
 	getLecturerResearch,
 	saveOrUpdateLecturerResearch
 } from '$lib/repository/admin/article/penelitian/penelitianDosen';
-import type { ResponseMessage } from '$lib/types/message';
+import type { LecturerResearchFormValues } from '$lib/types/values/admin/article';
+import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
 
 export const load: PageServerLoad = async () => {
 	try {
@@ -21,35 +22,29 @@ export const load: PageServerLoad = async () => {
 export const actions: Actions = {
 	save: async ({ request }) => {
 		const formData = await request.formData();
-		const description = formData.get('description') as string;
 
-		if (!description || description.trim() === '') {
-			const resData: ResponseMessage = {
-				status: 'error',
-				title: 'Gagal',
-				message: 'Isi Penelitian Dosen tidak boleh kosong.'
-			};
-			return fail(400, resData);
+		const values: LecturerResearchFormValues = {
+			description: formData.get('description')?.toString().trim() || ''
+		};
+
+		if (!values.description) {
+			return fail(400, {
+				...warningResponse('Isi Penelitian Dosen tidak boleh kosong.', 'Validasi Gagal'),
+				values
+			});
 		}
 
 		try {
-			await saveOrUpdateLecturerResearch(description);
+			await saveOrUpdateLecturerResearch(values.description);
 
-			const resData: ResponseMessage = {
-				status: 'success',
-				title: 'Berhasil',
-				message: 'Data Penelitian Dosen berhasil disimpan.'
-			};
-			return resData;
-		} catch (err) {
+			return successResponse('Data Penelitian Dosen berhasil disimpan.', 'Berhasil');
+		} catch (err: any) {
 			console.error('Error saving lecturer research:', err);
 
-			const resData: ResponseMessage = {
-				status: 'error',
-				title: 'Gagal',
-				message: 'Gagal menyimpan data Penelitian Dosen.'
-			};
-			return fail(500, resData);
+			return fail(500, {
+				...errorResponse('Gagal menyimpan data Penelitian Dosen.', 'Kesalahan Server'),
+				values
+			});
 		}
 	}
 };

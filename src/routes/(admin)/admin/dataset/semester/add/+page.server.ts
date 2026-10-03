@@ -3,57 +3,74 @@ import type { Actions } from './$types';
 import { createSemester } from '$lib/repository/admin/dataset/semester';
 import { randomUUID } from '$lib/crypto';
 import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
+import type { SemesterFormValues } from '$lib/types/values/admin/dataset';
 
 export const actions: Actions = {
 	default: async ({ request }) => {
 		const formData = await request.formData();
 
-		const name = formData.get('name') as string;
-		const academicYear = formData.get('academic_year') as string;
-		// Checkbox mengembalikan 'on' atau null, konversi ke boolean
-		const isActive = formData.get('is_active') === 'on';
+		const isActiveCheckbox = formData.get('is_active');
 
-		// Validasi input wajib: Nama Semester
+		const values: SemesterFormValues = {
+			id: (formData.get('id') as string)?.trim() || crypto.randomUUID(),
+			name: formData.get('name')?.toString().trim() || '',
+			academicYear: formData.get('academic_year')?.toString().trim() || '',
+			isActive: isActiveCheckbox === 'on' || isActiveCheckbox === 'true' || isActiveCheckbox === 'y'
+		};
 
-		if (!name || name.trim() === '') {
+		if (!values.name) {
 			return fail(400, {
-				...warningResponse('Nama Semester wajib diisi.', 'Gagal'),
-				values: { name, academicYear, isActive }
+				...warningResponse('Nama Semester wajib diisi.', 'Validasi Gagal'),
+				values
 			});
 		}
 
-		// Validasi input wajib: Tahun Ajaran
-		if (!academicYear || academicYear.trim() === '') {
+		if (!values.academicYear) {
 			return fail(400, {
-				...warningResponse('Tahun Ajaran wajib diisi.', 'Gagal'),
-				values: { name, academicYear, isActive }
+				...warningResponse('Tahun Ajaran wajib diisi.', 'Validasi Gagal'),
+				values
 			});
 		}
-
-		// Generate UUID unik untuk Primary Key
-		const id = randomUUID();
 
 		try {
-			const success = await createSemester(id, name, academicYear, isActive);
-
-			console.info(success);
+			const success = await createSemester(
+				values.id!,
+				values.name,
+				values.academicYear,
+				values.isActive
+			);
 
 			if (!success) {
 				return fail(500, {
-					...errorResponse('Gagal menyimpan data Semester ke database.', 'Gagal'),
-					values: { name, academicYear, isActive }
+					...errorResponse('Gagal menyimpan data Semester ke database.', 'Gagal Simpan'),
+					values
 				});
 			}
-		} catch (error: any) {
+
+			return successResponse('Data Semester baru berhasil ditambahkan!', 'Berhasil');
+		} catch (err: any) {
+			console.error('Error creating semester:', err);
+
+			// Pengecekan entri ganda / duplicate entry database
+			if (err.code === 'ER_DUP_ENTRY' || err.message?.includes('Duplicate entry')) {
+				return fail(400, {
+					...warningResponse(
+						'Data Semester dengan kombinasi tersebut sudah terdaftar.',
+						'Gagal Simpan'
+					),
+					values
+				});
+			}
+
 			return fail(500, {
-				...errorResponse('Terjadi kesalahan sistem: ' + error.message, 'Gagal'),
-				values: { name, academicYear, isActive }
+				...errorResponse(
+					err?.message
+						? `Terjadi kesalahan sistem: ${err.message}`
+						: 'Gagal menyimpan data Semester.',
+					'Kesalahan Sistem'
+				),
+				values
 			});
 		}
-
-		// Redirect ke halaman daftar Semester
-		// throw redirect(303, '/admin/akademik/semester');
-
-		return successResponse('Data semester berhasil diperbarui!', 'Berhasil');
 	}
 };

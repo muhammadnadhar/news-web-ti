@@ -15,7 +15,7 @@ export function getUploadOptions(folder: string = 'default') {
 		folder: folder,
 
 		multiple: false,
-		singleUploadAutoSubmit: false // 👈 Menahan gambar agar tidak langsung upload
+		singleUploadAutoSubmit: false //  Menahan gambar agar tidak langsung upload
 	};
 }
 
@@ -49,6 +49,10 @@ export const folder_cloudinary_admin_dataset_angkatan = 'admin/dataset/angkatan'
 export const folder_cloudinary_admin_dataset_semester = 'admin/dataset/semester';
 
 export const folder_cloudinary_admin_home_profilDashboard = 'admin/home/profileDashboard';
+
+export const folder_cloudinary_admin_user = 'admin/user';
+
+export const folder_cloudinary_default = 'default';
 
 /**
  * Helper Backend: MengeloGmpokkan kredensial rahasia untuk keperluan server.

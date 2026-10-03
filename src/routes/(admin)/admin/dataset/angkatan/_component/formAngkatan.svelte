@@ -1,21 +1,22 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { goto } from '$app/navigation';
 	import Message from '$lib/components/admin/message.svelte';
 	import type { ResponseMessage } from '$lib/types/message';
+	import type { AngkatanFormValues } from '$lib/types/values/admin/dataset';
 	import { ArrowLeft, Save, Loader2Icon, Calendar } from 'lucide-svelte';
 
 	let {
 		title = 'Tambah Angkatan Baru',
 		actionUrl = '',
-		form = null,
+		valueData,
 		initialData = null, // Prop baru untuk menampung data lama
 		onSuccess,
 		onError
 	}: {
 		title?: string;
 		actionUrl?: string;
-		form?: any;
+		valueData: AngkatanFormValues | null;
+
 		initialData?: { id?: string; year?: number | string } | null;
 		onSuccess?: (res: ResponseMessage) => void;
 		onError?: (res: ResponseMessage) => void;
@@ -40,7 +41,7 @@
 	<!-- Header & Navigation Bar -->
 	<div class="flex items-center justify-between border-b border-white/10 pb-4">
 		<div class="flex items-center gap-3">
-					<div>
+			<div>
 				<h1 class="text-scitech-mint text-lg font-bold tracking-wide sm:text-xl">{title}</h1>
 				<p class="text-xs text-text-muted">
 					Isi formulir di bawah ini untuk mengelola data angkatan.
@@ -118,7 +119,7 @@
 						type="number"
 						id="year"
 						name="year"
-						value={form?.values?.year ?? initialData?.year ?? ''}
+						value={valueData?.year ?? initialData?.year ?? ''}
 						placeholder={`Contoh: ${currentYear}`}
 						min="1990"
 						max={currentYear + 10}
@@ -140,7 +141,7 @@
 					type="button"
 					onclick={() => history.back()}
 					disabled={isSubmitting}
-					class="rounded-xl border border-white/10 bg-white/5 px-5 py-2.5 text-xs font-semibold text-text-muted transition-all hover:bg-white/10 hover:text-white active:scale-95 disabled:opacity-50"
+					class="rounded-xl border border-white/10 bg-bg-secondary/5 px-5 py-2.5 text-xs font-semibold text-text-muted transition-all hover:bg-white/10 hover:text-white active:scale-95 disabled:opacity-50"
 				>
 					Batal
 				</button>

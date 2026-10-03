@@ -5,6 +5,9 @@ import {
 	updatePartnership
 } from '$lib/repository/admin/article/kerjasama/daftar';
 import { cloudinary } from '$lib/cloudinary/server';
+import type { KerjasamaFormValues } from '$lib/types/values/admin/article';
+import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
+import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
 // import { deleteFromCloudinary } from '$lib/cloudinary/server'; // Tambahkan jika ada helper server Cloudinary
 
 export const load: PageServerLoad = async ({ params }) => {
@@ -26,56 +29,56 @@ export const load: PageServerLoad = async ({ params }) => {
 };
 
 export const actions: Actions = {
-	// Action untuk memperbarui data Kerjasama (?/update)
 	update: async ({ request, params }) => {
 		const formData = await request.formData();
-
 		const id = params.id || (formData.get('id') as string);
-		const institutionName = (formData.get('institution_name') as string)?.trim();
-		const logoUrl = (formData.get('logo_url') as string)?.trim() || null;
 
-		// Validasi Input
-		if (!id) {
+		const values: KerjasamaFormValues = {
+			id,
+			institution_name: (formData.get('institution_name') as string)?.trim() || '',
+			logo_url: (formData.get('logo_url') as string)?.trim() || null,
+			public_id:
+				(formData.get('logo_public_id') as string)?.trim() ||
+				(formData.get('public_id') as string)?.trim() ||
+				null
+		};
+		if (!values.id) {
 			return fail(400, {
-				status: 'error',
-				title: 'Validasi Gagal',
-				message: 'ID Kerjasama tidak valid atau tidak ditemukan.'
+				...errorResponse('ID Kerjasama tidak valid atau tidak ditemukan.', 'Validasi Gagal')
 			});
 		}
 
-		if (!institutionName) {
+		if (!values.institution_name) {
 			return fail(400, {
-				status: 'error',
-				title: 'Validasi Gagal',
-				message: 'Nama Instansi / Mitra Kerjasama wajib diisi.',
-				values: { institutionName, logoUrl }
+				...warningResponse('Nama Instansi / Mitra Kerjasama wajib diisi.', 'Validasi Gagal'),
+				values
 			});
 		}
 
 		try {
-			const success = await updatePartnership(id, institutionName, logoUrl);
+			const success = await updatePartnership(
+				values.id,
+				values.institution_name,
+				values.logo_url,
+				values.logo_public_id
+			);
 
 			if (!success) {
 				return fail(500, {
-					status: 'error',
-					title: 'Gagal Memperbarui',
-					message: 'Data tidak ditemukan atau tidak ada perubahan yang disimpan.',
-					values: { institutionName, logoUrl }
+					...errorResponse(
+						'Data tidak ditemukan atau tidak ada perubahan yang disimpan.',
+						'Gagal Memperbarui'
+					),
+					values
 				});
 			}
 
-			return {
-				status: 'success',
-				title: 'Berhasil',
-				message: 'Data kerjasama berhasil diperbarui.'
-			};
+			return successResponse('Data kerjasama berhasil diperbarui.', 'Berhasil');
 		} catch (err) {
 			console.error('Error saat update partnership:', err);
 			return fail(500, {
-				status: 'error',
-				title: 'Error Server',
-				message: 'Terjadi kesalahan sistem saat memperbarui data.',
-				values: { institutionName, logoUrl }
+				...errorResponse('Terjadi kesalahan sistem saat memperbarui data.', 'Error Server'),
+				values
 			});
 		}
 	},
@@ -87,25 +90,18 @@ export const actions: Actions = {
 
 		if (!publicId) {
 			return fail(400, {
-				status: 'error',
-				message: 'Public ID gambar tidak ditemukan.'
+				...errorResponse('Public ID gambar tidak ditemukan.', 'Validasi Gagal')
 			});
 		}
 
 		try {
-			// Jika Anda memiliki API/Helper server-side untuk Cloudinary:
-			// await deleteFromCloudinary(publicId);
-			await cloudinary.uploader.destroy(publicId);
+			await deleteImageFromCloudinary(publicId);
 
-			return {
-				status: 'success',
-				message: 'Gambar berhasil dihapus dari Cloudinary.'
-			};
+			return successResponse('Gambar berhasil dihapus dari Cloudinary.', 'Berhasil');
 		} catch (err) {
 			console.error('Error deleting photo from Cloudinary:', err);
 			return fail(500, {
-				status: 'error',
-				message: 'Gagal menghapus gambar dari server Cloudinary.'
+				...errorResponse('Gagal menghapus gambar dari server Cloudinary.', 'Error Server')
 			});
 		}
 	}

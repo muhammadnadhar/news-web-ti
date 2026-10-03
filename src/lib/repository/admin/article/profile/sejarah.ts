@@ -122,8 +122,9 @@ export async function getHistoryLeaderById(id: string): Promise<HistoryLeadersDT
 	return rows[0] || null;
 }
 
-/** CREATE / ADD HISTORY LEADER */
+/** create / add history leader */
 export async function addHistoryLeader(
+	id: string,
 	data: Omit<
 		HistoryLeadersDTO,
 		| 'id'
@@ -139,7 +140,6 @@ export async function addHistoryLeader(
 		| 'secretary'
 	>
 ): Promise<string> {
-	const id = crypto.randomUUID();
 	const sql = `
         INSERT INTO ${tableSejarahLeaders} (
             id, 

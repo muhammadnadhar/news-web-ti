@@ -24,6 +24,7 @@
 		UserIcon,
 		UsersIcon
 	} from 'lucide-svelte';
+	import EmptyData from './emptyData.svelte';
 
 	// Props opsional dari ke-3 tabel
 	let {
@@ -201,7 +202,7 @@
 											(isSplitRight ? 'lg:flex-row-reverse' : '')
 										: 'flex flex-col justify-between border border-border-color bg-bg-secondary p-5 text-center shadow-[0_4px_0_0_var(--border-color)] hover:-translate-y-1 hover:scale-[1.02] hover:bg-bg-secondary-hover hover:shadow-[0_8px_0_0_var(--border-color)]'}"
 							>
-								<!-- BAGIAN 1: FRAME GAMBAR / GALERI -->
+								<!-- bagian 1: frame gambar / galeri -->
 								<div
 									class="relative flex flex-col justify-center overflow-hidden
                     {isSplitLayout ? 'w-full shrink-0 lg:w-1/2' : 'w-full'}"
@@ -221,7 +222,7 @@
 											<!-- Badge Indikator Banyak Gambar -->
 											{#if imageList.length > 1}
 												<div
-													class="absolute right-2.5 bottom-2.5 flex items-center gap-1.5 rounded-md bg-black/70 px-2 py-1 text-[11px] font-medium text-white backdrop-blur-md"
+													class="absolute right-2.5 bottom-2.5 flex items-center gap-1.5 rounded-md bg-black/70 px-2 py-1 text-[11px] font-medium text-text-main backdrop-blur-md"
 												>
 													<Images class="text-scitech-mint h-3.5 w-3.5" />
 													<span>+{imageList.length - 1} Foto</span>
@@ -265,7 +266,6 @@
                     {isSplitLayout ? 'w-full text-left lg:w-1/2' : 'flex-1 items-center'}"
 								>
 									<div class={isSplitLayout ? 'space-y-3' : 'w-full'}>
-										<!-- Judul Prodi -->
 										<h3
 											class="mb-2 text-base font-bold text-text-main transition-colors duration-300 group-hover:text-text-muted sm:text-lg
                             {isSplitLayout ? 'line-clamp-2 text-xl sm:text-2xl' : 'line-clamp-1'}"
@@ -273,7 +273,6 @@
 											{profil.title}
 										</h3>
 
-										<!-- Deskripsi Ringkas -->
 										<p
 											class="text-xs leading-relaxed text-text-muted sm:text-sm
                             {isSplitLayout ? 'mb-4 line-clamp-6' : 'mb-5 line-clamp-3'}"
@@ -282,7 +281,6 @@
 										</p>
 									</div>
 
-									<!-- BAGIAN 3: FOOTER ACTION LINK -->
 									<div
 										class="pt-4
                         {isSplitLayout
@@ -307,22 +305,10 @@
 				</div>
 			{:else}
 				<!-- Modern Empty State -->
-				<div
-					class="mx-auto max-w-lg rounded-3xl border border-border-color/10 bg-bg-primary/20 p-10 text-center shadow-xl backdrop-blur-xl"
-				>
-					<div
-						class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-border-color/20 bg-bg-primary/10 text-text-main/50 shadow-inner"
-					>
-						<Inbox class="h-8 w-8" />
-					</div>
-					<h3 class="mb-2 text-lg font-bold text-text-main">Belum Ada Informasi Prodi</h3>
-					<p class="text-xs leading-relaxed text-text-muted">
-						Saat ini belum tersedia profil informasi & pengaduan program studi. Silakan periksa
-						kembali nanti.
-					</p>
-				</div>
-			{/if}
-		{:catch error}
+			
+      <EmptyData title="Belum ada Informasi" description="	Saat ini belum tersedia profil informasi . Silakan periksa kembali nanti." /> 
+		{/if}
+    {:catch error}
 			<!-- Modern Error State -->
 			<div
 				class="mx-auto max-w-lg rounded-3xl border border-rose-500/30 bg-rose-950/20 p-10 text-center text-rose-300 shadow-xl backdrop-blur-xl"
@@ -464,7 +450,7 @@
 											target="_blank"
 											rel="noopener noreferrer"
 											title="Lihat Profil PDDikti"
-											class="absolute -right-3 -bottom-3 flex h-11 w-11 items-center justify-center border border-border-color bg-rose-500 text-white shadow-md transition-all duration-200 hover:scale-110 hover:bg-rose-600"
+											class="absolute -right-3 -bottom-3 flex h-11 w-11 items-center justify-center border border-border-color bg-rose-500 text-text-main shadow-md transition-all duration-200 hover:scale-110 hover:bg-rose-600"
 										>
 											<ExternalLinkIcon class="h-5 w-5" />
 										</a>

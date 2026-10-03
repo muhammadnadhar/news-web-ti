@@ -1,10 +1,10 @@
 import { error, fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { getUserById, updateUser, type UpdateUserData } from '$lib/repository/admin/userAdmin';
-import { successResponse } from '$lib/helper/message';
+import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
+import type { UserFormValues } from '$lib/types/values/admin/user';
 
 /**
- * LOAD DATA:
  * Mengambil data user berdasarkan ID dari URL parameter
  */
 export const load: PageServerLoad = async ({ params }) => {
@@ -24,68 +24,85 @@ export const load: PageServerLoad = async ({ params }) => {
 };
 
 /**
- * FORM ACTIONS:
  * Memproses perubahan data pengguna
  */
 export const actions: Actions = {
 	default: async ({ request, params }) => {
-		const { id } = params;
 		const formData = await request.formData();
 
-		const name = formData.get('name')?.toString().trim();
-		const username = formData.get('username')?.toString().trim();
-		const email = formData.get('email')?.toString().trim();
-		const password = formData.get('password')?.toString();
-		const role = formData.get('role')?.toString().trim();
-		const status = formData.get('status')?.toString().trim();
+		const passwordRaw = formData.get('password')?.toString();
 
-		const values = { name, username, email, role, status };
+		const values: UserFormValues = {
+			id: params.id || (formData.get('id') as string)?.trim(),
+			name: formData.get('name')?.toString().trim() || '',
+			username: formData.get('username')?.toString().trim() || '',
+			email: formData.get('email')?.toString().trim() || '',
+			role: formData.get('role')?.toString().trim() || '',
+			status: formData.get('status')?.toString().trim() || '',
+			password: passwordRaw || ''
+		};
+
+		// Validasi ID
+		if (!values.id) {
+			return fail(400, {
+				...errorResponse('ID User tidak ditemukan.', 'Validasi Gagal'),
+				values
+			});
+		}
 
 		// 1. Validasi Input Wajib
-		if (!name || !username || !email || !role || !status) {
+		if (!values.name || !values.username || !values.email || !values.role || !values.status) {
 			return fail(400, {
-				error: 'Harap isi semua kolom yang wajib diisi.',
+				...warningResponse('Harap isi semua kolom yang wajib diisi.', 'Validasi Gagal'),
 				values
 			});
 		}
 
 		// Menyusun Objek Data yang Akan Diperbarui
 		const updateData: UpdateUserData & { password?: string } = {
-			name,
-			username,
-			email,
-			role: role as any,
-			status: status as any
+			name: values.name,
+			username: values.username,
+			email: values.email,
+			role: values.role as any,
+			status: values.status as any
 		};
 
-		// 3. Opsional: Kata Sandi (Hanya jika diisi/diubah)
-		if (password && password.trim() !== '') {
-			// CATATAN: Jika kata sandi perlu di-hash (misal menggunakan bcrypt/argon2),
-			// lakukan proses hashing sebelum dimasukkan ke objek updateData:
-			// updateData.password = await hashPassword(password);
-			updateData.password = password;
+		if (values.password && values.password.trim() !== '') {
+			updateData.password = values.password;
 		}
 
 		try {
-			// 4. Eksekusi Query Update
-			const isSuccess = await updateUser(id, updateData);
+			const isSuccess = await updateUser(values.id, updateData);
 
 			if (!isSuccess) {
 				return fail(400, {
-					error: 'Gagal memperbarui data user. Tidak ada perubahan yang disimpan.',
+					...warningResponse(
+						'Gagal memperbarui data user. Tidak ada perubahan yang disimpan.',
+						'Gagal Update'
+					),
 					values
 				});
 			}
+
+			return successResponse('Berhasil memperbarui data user.', 'Berhasil');
 		} catch (err: any) {
 			console.error('Error saat update user:', err);
+
+			// Pengecekan entri ganda / duplicate entry (Username atau Email)
+			if (err.code === 'ER_DUP_ENTRY' || err.message?.includes('Duplicate entry')) {
+				return fail(400, {
+					...warningResponse('Username atau Email sudah terdaftar pada user lain.', 'Gagal Update'),
+					values
+				});
+			}
+
 			return fail(500, {
-				error: 'Terjadi kesalahan pada server saat memperbarui data.',
+				...errorResponse(
+					err?.message || 'Terjadi kesalahan pada server saat memperbarui data user.',
+					'Kesalahan Server'
+				),
 				values
 			});
 		}
-
-		// Redirect jika berhasil
-		// redirect(303, '/admin/users');
-		return successResponse('Berhasil Editing data', ' Success');
 	}
 };

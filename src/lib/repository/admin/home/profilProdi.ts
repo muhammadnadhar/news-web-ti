@@ -50,8 +50,18 @@ export async function getAllPublicIdsProfilProdiById(id: string): Promise<string
 
 	return item.images.map((img) => img.public_id).filter((pubId): pubId is string => Boolean(pubId));
 }
+/**
+ * Mengambil satu image_public_id pertama langsung dari database berdasarkan ID Profil Prodi.
+ */
+export async function getPublicIdProfilProdiById(id: string): Promise<string | null> {
+	const item = await getProfilProdiById(id);
+	if (!item || !item.images || item.images.length === 0) {
+		return null;
+	}
+	return item.images[0].public_id || null;
+}
 
-/** CREATE / ADD PROFIL PRODI */
+/** create / add profil prodi */
 export async function addProfilProdi(
 	data: Omit<ProfilProdiItemDTO, 'id' | 'created_at' | 'updated_at'>
 ): Promise<string> {

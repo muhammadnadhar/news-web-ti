@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS ${tablePartnership} (
     id VARCHAR(36) PRIMARY KEY, -- Primary key berupa UUID string
     institution_name VARCHAR(255) NOT NULL, -- Nama Instansi / Mitra Kerjasama (contoh: 'Bank Indonesia', 'Forum Konservasi Leuser')
     logo_url VARCHAR(255) NULL, -- URL/Path foto logo instansi mitra
+    logo_public_id VARCHAR(255) NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Waktu pembuatan data
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP -- Waktu update data
 );

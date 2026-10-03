@@ -52,5 +52,21 @@ export const actions: Actions = {
 				errorResponse('Terjadi kesalahan sistem saat menghapus data.', 'Kesalahan Sistem')
 			);
 		}
+	},
+	deletePhoto: async ({ request }) => {
+		const formData = await request.formData();
+		const publicId = formData.get('public_id')?.toString();
+
+		if (!publicId) {
+			return fail(400, { ...errorResponse('Public Id tidak di temukan', 'Error') });
+		}
+		console.info('id : ', publicId);
+		try {
+			await deleteImageFromCloudinary(publicId);
+			return successResponse('Berhasil di batalkan', 'Succcess');
+		} catch (err) {
+			console.error('Error deleting photo:', err);
+			return fail(500, errorResponse('Gagal menghapus foto ', 'Gagal'));
+		}
 	}
 };

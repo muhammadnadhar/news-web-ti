@@ -1,68 +1,70 @@
 import { cloudinary } from '$lib/cloudinary/server';
 import { randomUUID } from '$lib/crypto';
 import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
-import { errorResponse, successResponse } from '$lib/helper/message';
+import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
 import { createLecturerStaff } from '$lib/repository/admin/article/profile/dosen&staff';
+import type { LecturerStaffFormValues } from '$lib/types/values/admin/article';
 import { fail, redirect, type Actions } from '@sveltejs/kit';
 
 export const actions: Actions = {
-	// Action untuk Menyimpan Data Dosen / Staff
 	create: async ({ request }) => {
 		const formData = await request.formData();
 
-		const name = formData.get('name')?.toString().trim();
-		const nidn = formData.get('nidn')?.toString().trim() || null;
-		const expertise = formData.get('expertise')?.toString().trim();
-		const pddiktiUrl = formData.get('pddikti_url')?.toString().trim() || null;
-		const category = formData.get('category')?.toString().trim();
+		const values: LecturerStaffFormValues = {
+			name: formData.get('name')?.toString().trim() || '',
+			nidn: formData.get('nidn')?.toString().trim() || null,
+			expertise: formData.get('expertise')?.toString().trim() || '',
+			pddikti_url: formData.get('pddikti_url')?.toString().trim() || null,
+			category: formData.get('category')?.toString().trim() || 'dosen',
+			photo_url: formData.get('photo_url')?.toString().trim() || null,
+			photo_public_id:
+				formData.get('photo_public_id')?.toString().trim() ||
+				formData.get('public_id')?.toString().trim() ||
+				null
+		};
 
-		// Mengambil foto_url & public_id yang sudah dihandle oleh CldUploadWidget dari client
-		const photoUrl = formData.get('photo_url')?.toString().trim() || null;
-		const publicId = formData.get('public_id')?.toString().trim() || null;
-
-		if (!name || !expertise) {
+		// Validasi Field Wajib
+		if (!values.name || !values.expertise) {
 			return fail(400, {
-				...errorResponse('Harap isi Nama Lengkap dan Bidang Keahlian / Tugas.', 'Validasi Gagal'),
-				values: { name, nidn, expertise, pddiktiUrl, category, photoUrl, publicId }
+				...warningResponse('Harap isi Nama Lengkap dan Bidang Keahlian / Tugas.', 'Validasi Gagal'),
+				values
 			});
 		}
 
-		const id = randomUUID();
+		const id = crypto.randomUUID(); // Standarisasi penggunaan crypto.randomUUID()
+		const role = values.category;
 
 		try {
 			await createLecturerStaff(id, {
-				name,
-				nidn,
-				expertise,
-				pddikti_url: pddiktiUrl,
-				photo_url: photoUrl,
-				role: category,
-				photo_public_id: publicId
+				name: values.name,
+				nidn: values.nidn,
+				expertise: values.expertise,
+				pddikti_url: values.pddikti_url,
+				photo_url: values.photo_url,
+				role: role,
+				photo_public_id: values.photo_public_id
 			});
 		} catch (err: any) {
 			console.error('Error creating lecturer/staff:', err);
 
-			// Rollback: Hapus foto dari Cloudinary jika simpan DB Gagal
-			if (publicId) {
+			// Rollback: Hapus foto dari Cloudinary jika simpan ke DB Gagal
+			if (values.photo_public_id) {
 				try {
-					await cloudinary.uploader.destroy(publicId);
-					return successResponse('Berhasil memberhasihkan foto ', 'Rolback');
+					await deleteImageFromCloudinary(values.photo_public_id);
 				} catch (cleanupErr) {
 					console.error('Gagal melakukan cleanup Cloudinary:', cleanupErr);
 				}
 			}
 
-			// Menggunakan helper errorResponse dan menyertakan values
 			return fail(500, {
 				...errorResponse(
-					err.message || 'Gagal menyimpan data Dosen/Staff ke database.',
+					err?.message || 'Gagal menyimpan data Dosen/Staff ke database.',
 					'Kesalahan Sistem'
 				),
-				values: { name, nidn, expertise, pddiktiUrl, category, photoUrl, publicId }
+				values
 			});
 		}
 
-		// Menggunakan helper successResponse untuk hasil sukses
 		return successResponse('Berhasil menambahkan data Dosen/Staff baru!', 'Berhasil');
 	},
 

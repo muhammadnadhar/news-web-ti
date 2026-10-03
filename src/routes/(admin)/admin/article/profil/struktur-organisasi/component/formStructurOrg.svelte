@@ -25,32 +25,27 @@
 		getUploadConfig,
 		getUploadOptions
 	} from '$lib/cloudinary/client';
-
-	interface InitialData {
-		id?: string;
-		title?: string;
-		image_url?: string;
-		image_public_id?: string;
-		description?: string;
-	}
+	import type { OrgStructureFormValues } from '$lib/types/values/admin/article';
+	import type { OrgStructureItemDTO } from '$lib/dto/admin/article/profile';
 
 	let {
 		isEdit = false,
 		actionUrl = isEdit ? '?/update' : '?/create',
 		initialData = null,
-		form = null
+		valuesData
 	}: {
 		isEdit?: boolean;
 		actionUrl?: string;
-		initialData?: InitialData | null;
+		initialData?: OrgStructureItemDTO | null;
+		valuesData: OrgStructureFormValues | null;
 		form?: ActionData | null;
 	} = $props();
 
 	// State diinisialisasi berdasarkan data dari form (jika error) atau initialData
-	let title = $state(form?.values?.title ?? initialData?.title ?? '');
-	let imageUrl = $state(form?.values?.image_url ?? initialData?.image_url ?? '');
-	let photoPublicId = $state(form?.values?.image_public_id ?? initialData?.image_public_id ?? '');
-	let description = $state(form?.values?.description ?? initialData?.description ?? '');
+	let title = $state(valuesData?.title ?? initialData?.title ?? '');
+	let imageUrl = $state(valuesData?.image_url ?? initialData?.image_url ?? '');
+	let photoPublicId = $state(valuesData?.image_public_id ?? initialData?.image_public_id ?? '');
+	let description = $state(valuesData?.description ?? initialData?.description ?? '');
 
 	let editorRef = $state<any>(null);
 	let isSubmitting = $state(false);
@@ -109,8 +104,7 @@
 </script>
 
 <div class="mx-auto max-w-4xl space-y-6">
-	<!-- Header & Navigation Bar -->
-	<div class="flex items-center justify-between border-b border-white/10 pb-4">
+	<div class="flex items-center justify-between pb-4">
 		<div class="flex items-center gap-3">
 			<div>
 				<div class="flex items-center gap-2">
@@ -129,11 +123,11 @@
 	</div>
 
 	<!-- Alert / Toast Message Component -->
-	{#if showMessage || form?.message}
+	{#if showMessage}
 		<Message
-			status={showMessage ? messageConfig.status : 'error'}
-			title={showMessage ? messageConfig.title : 'Gagal'}
-			message={showMessage ? messageConfig.message : form?.message || ''}
+			status={messageConfig.status}
+			title={messageConfig.title}
+			message={messageConfig.message}
 			dismissible={true}
 			timeout={5000}
 			onclose={() => (showMessage = false)}
@@ -142,7 +136,7 @@
 
 	<!-- Glassmorphism Card Form Container -->
 	<div
-		class="bg-scitech-slate/50 rounded-2xl border border-white/10 p-6 shadow-2xl backdrop-blur-xl sm:p-8"
+		class="rounded-2xl border border-white/10 bg-bg-secondary/50 p-6 shadow-2xl backdrop-blur-xl sm:p-8"
 	>
 		<form
 			method="POST"
@@ -159,7 +153,7 @@
 					isSubmitting = false;
 
 					if (result.type === 'success') {
-						const resData = (result.data as ResponseMessage) ?? {
+						const resData = (result?.data as ResponseMessage) ?? {
 							status: 'success',
 							title: 'Berhasil',
 							message: isEdit
@@ -213,7 +207,7 @@
 					placeholder="Contoh: Struktur Organisasi Program Studi Teknologi Informasi"
 					required
 					disabled={isSubmitting}
-					class="bg-scitech-navy focus:border-scitech-mint focus:ring-scitech-mint/20 w-full rounded-xl border border-white/10 px-4 py-3 text-xs text-text-main placeholder-text-muted transition-all focus:ring-2 focus:outline-none disabled:opacity-50"
+					class="bg-scitech-navy focus:border-scitech-mint focus:ring-scitech-mint/20 w-full rounded-xl border border-border-color/10 px-4 py-3 text-xs text-text-main placeholder-text-muted transition-all focus:ring-2 focus:outline-none disabled:opacity-50"
 				/>
 			</div>
 
@@ -228,9 +222,7 @@
 				</label>
 
 				{#if imageUrl}
-					<div
-						class="relative overflow-hidden rounded-xl border border-white/10 bg-black/30 p-3"
-					>
+					<div class="relative overflow-hidden rounded-xl border border-white/10 bg-black/30 p-3">
 						<div
 							class="group relative flex max-h-80 items-center justify-center overflow-hidden rounded-lg bg-black/40"
 						>
@@ -275,7 +267,7 @@
 							class="hover:border-scitech-mint/50 group flex w-full flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-white/10 bg-black/20 p-8 transition-all hover:bg-white/5 active:scale-[0.99] disabled:opacity-50"
 						>
 							<div
-								class="group-hover:bg-scitech-mint/20 text-scitech-mint rounded-full bg-white/5 p-3 transition-all group-hover:scale-110"
+								class="text-scitech-mint rounded-full bg-white/5 p-3 transition-all group-hover:scale-110 group-hover:bg-bg-secondary/20"
 							>
 								<UploadCloud class="h-6 w-6" />
 							</div>
@@ -312,11 +304,10 @@
 				/>
 			</div>
 
-			<!-- Actions -->
 			<div class="flex items-center justify-end gap-3 border-t border-white/10 pt-6">
 				<button
 					type="button"
-					onclick={() => goto(removeLastPath())}
+					onclick={() => history.back()}
 					disabled={isSubmitting}
 					class="rounded-xl border border-white/10 bg-white/5 px-5 py-2.5 text-xs font-semibold text-text-muted transition-all hover:bg-white/10 hover:text-text-main active:scale-95 disabled:opacity-50"
 				>
@@ -326,7 +317,7 @@
 				<button
 					type="submit"
 					disabled={isSubmitting}
-					class="bg-scitech-mint text-scitech-navy shadow-scitech-mint/10 hover:bg-scitech-mint-hover inline-flex items-center gap-2 rounded-xl px-6 py-2.5 text-xs font-bold shadow-md transition-all active:scale-95 disabled:opacity-50"
+					class="text-scitech-navy shadow-scitech-mint/10 inline-flex items-center gap-2 rounded-xl bg-bg-secondary px-6 py-2.5 text-xs font-bold shadow-md transition-all hover:bg-bg-secondary-hover active:scale-95 disabled:opacity-50"
 				>
 					{#if isSubmitting}
 						<Loader2Icon class="h-4 w-4 animate-spin" />

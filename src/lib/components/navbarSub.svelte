@@ -22,7 +22,6 @@
 	>
 		<div class="mb-4 flex items-center justify-between border-b border-white/10 pb-4">
 			<div class="flex items-center gap-3">
-				<!-- Icon dengan Background khusus dari MenuItem -->
 				<div class="flex shrink-0 items-center justify-center rounded-xl p-2.5">
 					<item.icon class="h-5 w-5" />
 				</div>
@@ -32,10 +31,9 @@
 				</div>
 			</div>
 
-			<!-- Indicator Jumlah Sub Menu -->
 			{#if item.subMenu && item.subMenu.length > 0}
 				<span
-					class="bg-scitech-mint-dim text-scitech-mint border-scitech-mint/20 rounded-full border px-2.5 py-1 text-[10px] font-semibold"
+					class="bg-bg-secondary-dim text-scitech-mint border-scitech-mint/20 rounded-full border px-2.5 py-1 text-[10px] font-semibold"
 				>
 					{item.subMenu.length} Menu
 				</span>
@@ -71,7 +69,6 @@
 								/>
 							</button>
 
-							<!-- Render Child Level Selanjutnya secara Rekursif -->
 							{#if activeNestedId === sub.id}
 								<div
 									transition:slide={{ duration: 250 }}
@@ -82,7 +79,6 @@
 							{/if}
 						</div>
 
-						<!-- kondisi 2: jika menu adalah tautan biasa tanpa cabang -->
 					{:else}
 						<a
 							href={sub.href}

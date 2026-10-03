@@ -6,6 +6,8 @@ import {
 } from '$lib/repository/admin/home/dosenPrimary';
 import { getAllLecturerStaff } from '$lib/repository/admin/article/profile/dosen&staff';
 import { getJabatanProdiList } from '$lib/repository/admin/dataset/jabatanProdi';
+import type { DosenPrimaryFormValue } from '$lib/types/values/admin/home';
+import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const { id } = params;
@@ -39,40 +41,56 @@ export const load: PageServerLoad = async ({ params }) => {
 export const actions: Actions = {
 	update: async ({ request, params }) => {
 		const formData = await request.formData();
-		const id = (formData.get('id') as string) || params.id;
-		const lecturerStaffId = formData.get('lecturer_staff_id') as string;
-		const position = formData.get('position') as string;
 
-		if (!id || !lecturerStaffId || !position) {
+		// Ekstraksi data ke objek values bertipe DosenPrimaryFormValue
+		const values: DosenPrimaryFormValue = {
+			id: (formData.get('id') as string)?.trim() || params.id,
+			lecturerStaffId: formData.get('lecturer_staff_id')?.toString().trim() || '',
+			position: formData.get('position')?.toString().trim() || ''
+		};
+
+		if (!values.id) {
 			return fail(400, {
-				message: 'Dosen dan Jabatan wajib dipilih.',
-				values: { lecturerStaffId, position }
+				...errorResponse('ID Dosen Primary tidak ditemukan.', 'Validasi Gagal'),
+				values
+			});
+		}
+
+		// Validasi field wajib
+		if (!values.lecturerStaffId || !values.position) {
+			return fail(400, {
+				...warningResponse('Harap pilih Dosen/Staff dan jabatan Prodi.', 'Validasi Gagal'),
+				values
 			});
 		}
 
 		try {
-			const success = await updatePrimaryDosenSlot(id, lecturerStaffId, position);
+			const success = await updatePrimaryDosenSlot(
+				values.id,
+				values.lecturerStaffId,
+				values.position
+			);
 
 			if (!success) {
 				return fail(500, {
-					message: 'Gagal memperbarui data Dosen Primary.',
-					values: { lecturerStaffId, position }
+					...errorResponse('Gagal memperbarui data Dosen Primary.', 'Gagal Memperbarui'),
+					values
 				});
 			}
 
-			return {
-				success: true,
-				message: 'Data Dosen Primary berhasil diperbarui!'
-			};
-		} catch (err) {
+			return successResponse('Data Dosen Primary berhasil diperbarui!', 'Berhasil');
+		} catch (err: any) {
 			console.error('Error updating Dosen Primary:', err);
+
 			return fail(500, {
-				message: 'Terjadi kesalahan sistem saat memperbarui data.',
-				values: { lecturerStaffId, position }
+				...errorResponse(
+					err?.message || 'Terjadi kesalahan sistem saat memperbarui data.',
+					'Kesalahan Server'
+				),
+				values
 			});
 		}
 	}
-
 	// Action khusus untuk mengubah status is_primary
 	// 	togglePrimary: async ({ params, request }) => {
 	// 		const formData = await request.formData();

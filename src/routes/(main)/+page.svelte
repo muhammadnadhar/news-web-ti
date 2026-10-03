@@ -100,7 +100,6 @@
 		<!-- 	class="h-full w-full scale-105 object-cover object-center filter dark:brightness-75 dark:contrast-110" -->
 		<!-- /> -->
 		<section class="relative flex h-screen min-h-170 w-full flex-col justify-end">
-			<!-- Container Gambar Utama -->
 			<div class="absolute inset-0 z-0 overflow-hidden">
 				{#await data.profileImgDashboard}
 					<div class="absolute inset-0 flex items-center justify-center bg-bg-secondary">
@@ -152,7 +151,6 @@
 					</div>
 				{/await}
 			</div>
-			<!-- Bottom Left Card Get Started -->
 			<div
 				class="absolute top-1/2 left-1/2 z-20 flex w-full -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center px-6 text-center lg:px-12"
 			>
@@ -160,7 +158,6 @@
 					<GetStarted {currentText} />
 				{/if}
 			</div>
-			<!-- Floating Quick Access Bar -->
 			<div
 				class="absolute bottom-[8vh] left-2.5 z-40 flex w-[calc(100%-2rem)] max-w-2xl transform-gpu flex-col gap-2.5 rounded-2xl border border-border-color bg-transparent p-2.5 shadow-md backdrop-blur-md transition-all sm:w-fit sm:flex-row sm:items-center sm:gap-2 sm:p-2"
 			>

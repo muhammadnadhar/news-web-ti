@@ -12,9 +12,10 @@
 	import { UploadCloud, Save, Plus, ImageIcon, X, Trash2, LoaderCircleIcon } from 'lucide-svelte';
 	import type { ResponseMessage } from '$lib/types/message';
 	import type { PracticumModuleDTO } from '$lib/dto/admin/article/akademik';
+	import type { ModulPraktikumFormValues } from '$lib/types/values/admin/article';
 
 	interface Props {
-		initialData?: Partial<PracticumModuleDTO> | null;
+		valuesData?: Partial<ModulPraktikumFormValues> | null;
 		formError?: string | null;
 		isEditMode?: boolean;
 		submitLabel?: string;
@@ -23,7 +24,7 @@
 	}
 
 	let {
-		initialData = null,
+		valuesData = null,
 		formError = null,
 		isEditMode = false,
 		submitLabel,
@@ -32,10 +33,10 @@
 	}: Props = $props();
 
 	// State Lokal Svelte 5 Runes
-	let title = $state(initialData?.title ?? '');
-	let imageUrl = $state(initialData?.image_url ?? '');
-	let description = $state(initialData?.description ?? '');
-	let photoPublicId = $state(initialData?.image_public_id ?? ''); // Simpan public_id dari Cloudinary
+	let title = $state(valuesData?.title ?? '');
+	let imageUrl = $state(valuesData?.image_url ?? '');
+	let description = $state(valuesData?.description ?? '');
+	let photoPublicId = $state(valuesData?.image_public_id ?? ''); // Simpan public_id dari Cloudinary
 
 	let isSubmitting = $state(false);
 	let showMessage = $state(false);
@@ -53,12 +54,12 @@
 		showMessage = true;
 	}
 
-	// Sinkronisasi data saat prop initialData berubah
+	// Sinkronisasi data saat prop valuesData berubah
 	$effect(() => {
-		if (initialData) {
-			title = initialData.title ?? '';
-			imageUrl = initialData.image_url ?? '';
-			description = initialData.description ?? '';
+		if (valuesData) {
+			title = valuesData.title ?? '';
+			imageUrl = valuesData.image_url ?? '';
+			description = valuesData.description ?? '';
 		}
 	});
 
@@ -103,7 +104,6 @@
 </script>
 
 <div class="mx-auto max-w-4xl p-4 sm:p-6 lg:p-8">
-	<!-- Header Komponen -->
 	<header class="mb-6 space-y-1">
 		<h1 class="text-2xl font-bold tracking-tight text-text-main">
 			{isEditMode ? 'Edit Modul Praktikum' : 'Tambah Modul Praktikum Baru'}
@@ -132,7 +132,6 @@
 		</div>
 	{/if}
 
-	<!-- Container Card 3D Neobrutalist -->
 	<div class="border border-border-light bg-bg-secondary">
 		<form
 			method="POST"
@@ -176,7 +175,6 @@
 			}}
 			class="space-y-6 p-6 sm:p-8"
 		>
-			<!-- Field: Judul Modul Praktikum -->
 			<div class="space-y-2">
 				<label for="title" class="block text-sm font-bold text-text-main">
 					Judul Modul Praktikum <span class="text-status-error">*</span>
@@ -197,8 +195,8 @@
 				<label for="image_upload" class="block text-sm font-bold text-text-main">
 					Foto Sampul / Gambar Pendukung Modul
 				</label>
-				<!-- Hidden Input untuk dikirim ke Form Action SvelteKit -->
 				<input type="hidden" name="image_url" value={imageUrl} />
+				<input type="hidden" name="image_public_id" value={photoPublicId} />
 
 				{#if imageUrl}
 					<div
@@ -240,9 +238,7 @@
 							>
 								<UploadCloud class="h-6 w-6" />
 							</div>
-							<span class="text-sm font-bold text-accent-purple">
-								Unggah Foto Sampul Modul (Cloudinary)
-							</span>
+							<span class="text-sm font-bold text-accent-purple"> Unggah Foto Sampul Modul </span>
 							<span class="mt-1 text-xs text-text-muted">Format gambar (PNG, JPG, WEBP)</span>
 						</button>
 					</CldUploadWidget>

@@ -5,13 +5,13 @@
 </script>
 
 <FormSemester
-	{form}
+	valuesData={form?.values}
 	isEdit={true}
 	title="Edit Data Semester"
 	backUrl="/admin/akademik/semester"
 	initialData={{
 		name: data.semester.name,
-		academicYear: data.semester.academic_year,
-		isActive: data.semester.is_active === 'y' || data.semester.is_active === true
+		academic_year: data.semester.academic_year,
+		is_active: data.semester.is_active === 'y' || data.semester.is_active === true
 	}}
 />

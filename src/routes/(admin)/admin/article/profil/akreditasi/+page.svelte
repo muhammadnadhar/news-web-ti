@@ -13,19 +13,21 @@
 	import { CldUploadButton } from 'svelte-cloudinary';
 
 	// Props dari SvelteKit PageData
-	let { data } = $props();
+	let { data, form } = $props();
 
 	// Local States (Svelte 5 Runes)
 	let title = $state(data?.accreditation?.title ?? 'Akreditasi');
-	let description = $state(data?.accreditation?.description ?? '');
-	let imageUrl = $state<string | null>(data?.accreditation?.image_url ?? null);
-	let previewUrl = $state<string | null>(data?.accreditation?.image_url ?? null);
+	let description = $state(form?.values?.description ?? data?.accreditation?.description ?? '');
+	let imageUrl = $state<string | null>(
+		form?.values.image_url ?? data?.accreditation?.image_url ?? null
+	);
+	let previewUrl = $state<string | null>(
+		form?.values.image_url ?? data?.accreditation?.image_url ?? null
+	);
 	let isSubmitting = $state(false);
 
-	$inspect('data yg di dapat : ', data.accreditation);
-
 	// State tambahan untuk menyimpan Public ID Cloudinary & status hapus
-	let publicId = $state<string | null>(null);
+	let publicId = $state<string | null>(form?.values?.image_public_id ?? null);
 	let isDeleting = $state(false);
 
 	// State untuk Pesan/Notifikasi
@@ -52,9 +54,42 @@
 	}
 
 	// Handler untuk menghapus gambar sertifikat terpilih
-	function handleRemoveImage() {
-		imageUrl = null;
-		previewUrl = null;
+	async function handleRemoveImage() {
+		// Jika tidak ada publicId atau imageUrl, cukup bersihkan state lokal saja
+		if (!publicId && !imageUrl) {
+			imageUrl = null;
+			previewUrl = null;
+			return;
+		}
+
+		isDeleting = true;
+		const formData = new FormData();
+		if (publicId) {
+			formData.append('public_id', publicId);
+		}
+
+		try {
+			const response = await fetch('?/deletePhoto', {
+				method: 'POST',
+				body: formData
+			});
+
+			const result = await response.json();
+
+			if (response.ok) {
+				imageUrl = null;
+				previewUrl = null;
+				publicId = null;
+				triggerMessage('success', 'Berhasil', 'Foto dokumentasi berhasil dihapus.');
+			} else {
+				triggerMessage('error', 'Gagal', result?.message || 'Gagal menghapus foto dari server.');
+			}
+		} catch (err) {
+			console.error('Error deleting photo:', err);
+			triggerMessage('error', 'Kesalahan', 'Terjadi kesalahan saat menghapus foto.');
+		} finally {
+			isDeleting = false;
+		}
 	}
 </script>
 
@@ -76,7 +111,7 @@
 	<div class="border-scitech-slate/20 flex items-center justify-between pb-4">
 		<div>
 			<h1 class="text-2xl font-bold tracking-tight text-text-main">Akreditasi</h1>
-			<p class="text-xs text-slate-400 sm:text-sm">
+			<p class="text-xs text-text-muted sm:text-sm">
 				Kelola sertifikat dan informasi akreditasi Program Studi.
 			</p>
 		</div>
@@ -91,10 +126,10 @@
 		</button>
 	</div>
 
-	<!-- FORM UTAMA -->
 	<form
 		id="accreditation-form"
 		method="POST"
+		action="?/update"
 		use:enhance={() => {
 			isSubmitting = true;
 			return async ({ result, update }) => {
@@ -111,6 +146,7 @@
 	>
 		<!-- Hidden input untuk menyimpan URL gambar dari Cloudinary -->
 		<input type="hidden" name="image_url" value={imageUrl ?? ''} />
+		<input type="hidden" name="id" value={form?.values?.id ?? ''} />
 		<input type="hidden" name="image_public_id" value={publicId ?? ''} />
 
 		<div class="border-scitech-slate/20 bg-scitech-navy-glare rounded-2xl border p-6 shadow-xl">
@@ -152,7 +188,7 @@
 									type="button"
 									onclick={handleRemoveImage}
 									disabled={isDeleting}
-									class="inline-flex items-center gap-1.5 rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-2.5 text-xs font-semibold text-red-400 hover:bg-red-500/20 disabled:opacity-50"
+									class="inline-flex items-center gap-1.5 rounded-xl border border-red-500/30 px-3 py-2.5 text-xs font-semibold text-status-error/10 hover:text-status-error/20 disabled:opacity-50"
 									title="Hapus / Batal menggunakan gambar ini"
 								>
 									{#if isDeleting}
@@ -182,8 +218,8 @@
 								class="max-h-[420px] w-auto rounded-lg object-contain shadow-md"
 							/>
 						{:else}
-							<div class="flex flex-col items-center gap-2 text-center text-xs text-slate-400">
-								<FileCheck2 class="h-10 w-10 text-slate-500 opacity-40" />
+							<div class="flex flex-col items-center gap-2 text-center text-xs text-text-muted">
+								<FileCheck2 class="h-10 w-10 text-text-muted opacity-40" />
 								<span>Sertifikat belum diunggah</span>
 							</div>
 						{/if}

@@ -5,15 +5,16 @@
 	import { ArrowLeft, GraduationCap, User, BookOpen, Save, Loader2Icon } from 'lucide-svelte';
 	import FormEditor from '$lib/components/admin/formEditor.svelte';
 	import type { StudentPublicationDTO } from '$lib/dto/admin/article/penelitian';
+	import type { StudentPublicationFormValues } from '$lib/types/values/admin/article';
 
 	let {
-		form,
+		valueData,
 		initialData = null,
 		isEdit = false
 	}: {
-		form: any;
 		initialData?: StudentPublicationDTO | null;
 		isEdit?: boolean;
+		valueData?: StudentPublicationFormValues;
 	} = $props();
 
 	let isSubmitting = $state(false);
@@ -25,7 +26,7 @@
 	});
 
 	// State listener for FormEditor (HTML/LONGTEXT string)
-	let journalListContent = $state(form?.values?.journal_list ?? initialData?.journal_list ?? '');
+	let journalListContent = $state(valueData?.journal_list ?? initialData?.journal_list ?? '');
 
 	function triggerMessage(status: ResponseMessage['status'], title: string, message: string) {
 		messageConfig = { status, title, message };
@@ -54,18 +55,17 @@
 	</div>
 
 	<!-- Alert / Toast Notification -->
-	{#if showMessage || form?.message}
+	{#if showMessage}
 		<Message
 			status={showMessage ? messageConfig.status : 'error'}
 			title={showMessage ? messageConfig.title : 'Gagal'}
-			message={showMessage ? messageConfig.message : form?.message || ''}
+			message={messageConfig.message}
 			dismissible={true}
 			timeout={4000}
 			onclose={() => (showMessage = false)}
 		/>
 	{/if}
 
-	<!-- Glassmorphism Form Card -->
 	<div
 		class="rounded-2xl border border-white/10 bg-bg-secondary/50 p-6 shadow-2xl backdrop-blur-xl sm:p-8"
 	>
@@ -105,7 +105,6 @@
 			}}
 			class="space-y-6"
 		>
-			<!-- Hidden input to guarantee HTML content payload in standard formData -->
 			<textarea name="journal_list" class="hidden" bind:value={journalListContent}></textarea>
 
 			<!-- Field 1: Nama Mahasiswa -->
@@ -123,7 +122,7 @@
 					type="text"
 					id="student_name"
 					name="student_name"
-					value={form?.values?.student_name ?? initialData?.student_name ?? ''}
+					value={valueData?.student_name ?? initialData?.student_name ?? ''}
 					placeholder="Contoh: Aulia Sabri"
 					required
 					disabled={isSubmitting}
@@ -147,13 +146,12 @@
 				</div>
 			</div>
 
-			<!-- Action Buttons -->
 			<div class="flex items-center justify-end gap-3 border-t border-white/10 pt-6">
 				<button
 					type="button"
 					onclick={() => history.back()}
 					disabled={isSubmitting}
-					class="rounded-xl border border-white/10 bg-white/5 px-5 py-2.5 text-xs font-semibold text-text-muted transition-all hover:bg-white/10 hover:text-white active:scale-95 disabled:opacity-50"
+					class="rounded-xl border border-white/10 bg-bg-secondary/5 px-5 py-2.5 text-xs font-semibold text-text-muted transition-all hover:bg-white/10 hover:text-white active:scale-95 disabled:opacity-50"
 				>
 					Batal
 				</button>

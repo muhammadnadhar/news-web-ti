@@ -11,6 +11,11 @@
 
 <div class="text-text-mai min-h-screen bg-bg-primary p-4 md:p-8">
 	<div class="mx-auto max-w-4xl space-y-6">
-		<FormDosenStaff {form} isEdit={true} actionUrl="?/update" initialData={data.initialData} />
+		<FormDosenStaff
+			valuesData={form?.values}
+			isEdit={true}
+			actionUrl="?/update"
+			initialData={data.initialData}
+		/>
 	</div>
 </div>

@@ -6,13 +6,12 @@
 	import type { MessageStatus } from '$lib/types/message';
 
 	// Props / State
-	let { data, form , actionUrl } = $props();
+	let { data, actionUrl, valuesData } = $props();
 
 	let isEdit = $derived(!!data?.kategori?.id);
 
-
 	let title = $derived(isEdit ? 'Edit Kategori Berita' : 'Tambah Kategori Berita');
-//	let actionUrl = $derived(isEdit ? `${page.url.pathname}/${data.kategori.id}` : '${page.url.pathname}/add');
+	//	let actionUrl = $derived(isEdit ? `${page.url.pathname}/${data.kategori.id}` : '${page.url.pathname}/add');
 
 	let isSubmitting = $state(false);
 	let showMessage = $state(false);
@@ -23,8 +22,8 @@
 	});
 
 	// Field state || sekaligus default data jika di edit
-	let name = $state(form?.values?.name ?? data?.kategori?.name ?? '');
-	let slug = $state(form?.values?.slug ?? data?.kategori?.slug ?? '');
+	let name = $state(valuesData?.name ?? data?.kategori?.name ?? '');
+	let slug = $state(valuesData?.slug ?? data?.kategori?.slug ?? '');
 
 	// Utility Helper untuk Trigger Message
 	function triggerMessage(status: MessageStatus, title: string, message: string) {
@@ -64,7 +63,7 @@
 			<!-- 	<ArrowLeft class="h-5 w-5" /> -->
 			<!-- </button> -->
 			<div>
-				<h1 class="text-lg font-bold tracking-wide text-scitech-mint sm:text-xl">{title}</h1>
+				<h1 class="text-scitech-mint text-lg font-bold tracking-wide sm:text-xl">{title}</h1>
 				<p class="text-xs text-text-muted">
 					{isEdit
 						? 'Perbarui informasi kategori berita di bawah ini.'
@@ -88,7 +87,7 @@
 
 	<!-- Form Card Container -->
 	<div
-		class="rounded-2xl border border-white/10 bg-scitech-slate/50 p-6 shadow-2xl backdrop-blur-xl sm:p-8"
+		class="bg-scitech-slate/50 rounded-2xl border border-white/10 p-6 shadow-2xl backdrop-blur-xl sm:p-8"
 	>
 		<form
 			method="POST"
@@ -110,7 +109,7 @@
 						};
 						triggerMessage(resData.status, resData.title, resData.message);
 						await update({ reset: !isEdit });
-					} else if (result.type === "error") {
+					} else if (result.type === 'error') {
 						const resData = (result.data as any) ?? {
 							status: 'error',
 							title: 'Gagal',
@@ -134,7 +133,7 @@
 			<!-- Field Input: Nama Kategori -->
 			<div class="space-y-2">
 				<label for="name" class="flex items-center gap-2 text-xs font-semibold text-text-main">
-					<Tag class="h-4 w-4 text-scitech-cyan" />
+					<Tag class="text-scitech-cyan h-4 w-4" />
 					<span>Nama Kategori</span>
 					<span class="text-red-400">*</span>
 				</label>
@@ -149,7 +148,7 @@
 						placeholder="Contoh: Pengumuman, Seminar, Prestasi"
 						required
 						disabled={isSubmitting}
-						class="w-full rounded-xl border border-white/10 bg-bg-secondary px-4 py-3 text-xs text-text-main placeholder-text-muted transition-all focus:border-scitech-mint focus:outline-none focus:ring-2 focus:ring-scitech-mint/20 disabled:opacity-50"
+						class="focus:border-scitech-mint focus:ring-scitech-mint/20 w-full rounded-xl border border-white/10 bg-bg-secondary px-4 py-3 text-xs text-text-main placeholder-text-muted transition-all focus:ring-2 focus:outline-none disabled:opacity-50"
 					/>
 				</div>
 
@@ -160,7 +159,7 @@
 
 			<div class="space-y-2">
 				<label for="slug" class="flex items-center gap-2 text-xs font-semibold text-text-main">
-					<LinkIcon class="h-4 w-4 text-scitech-cyan" />
+					<LinkIcon class="text-scitech-cyan h-4 w-4" />
 					<span>Slug URL</span>
 				</label>
 
@@ -173,13 +172,13 @@
 						oninput={handleSlugInput}
 						placeholder="contoh: pengumuman-seminar"
 						disabled={isSubmitting}
-						class="w-full rounded-xl border border-white/10 bg-bg-secondary px-4 py-3 text-xs text-text-main placeholder-text-muted transition-all focus:border-scitech-mint focus:outline-none focus:ring-2 focus:ring-scitech-mint/20 disabled:opacity-50"
+						class="focus:border-scitech-mint focus:ring-scitech-mint/20 w-full rounded-xl border border-white/10 bg-bg-secondary px-4 py-3 text-xs text-text-main placeholder-text-muted transition-all focus:ring-2 focus:outline-none disabled:opacity-50"
 					/>
 				</div>
 
 				<p class="text-[11px] text-text-muted">
-					Slug digunakan untuk Spesifik Kategory Berita  (contoh: <span class="font-mono text-scitech-mint"
-						>/berita/kategori/{slug || 'nama-kategori'}</span
+					Slug digunakan untuk Spesifik Kategory Berita (contoh: <span
+						class="text-scitech-mint font-mono">/berita/kategori/{slug || 'nama-kategori'}</span
 					>).
 				</p>
 			</div>
@@ -187,9 +186,9 @@
 			<div class="flex items-center justify-end gap-3 border-t border-white/10 pt-6">
 				<button
 					type="button"
-					onclick={() => history.back() }
+					onclick={() => history.back()}
 					disabled={isSubmitting}
-					class="rounded-xl border border-white/10 bg-bg-secondary/5 px-5 py-2.5 text-xs font-semibold text-text-muted transition-all hover:bg-white/10 hover:text-text-main active:scale-95 disabled:opacity-50"
+					class="rounded-xl border border-white/10 bg-bg-secondary/5 px-5 py-2.5 text-xs font-semibold text-text-muted transition-all hover:bg-bg-secondary/10 hover:text-text-main active:scale-95 disabled:opacity-50"
 				>
 					Batal
 				</button>
@@ -197,7 +196,7 @@
 				<button
 					type="submit"
 					disabled={isSubmitting}
-					class="inline-flex items-center gap-2 rounded-xl bg-scitech-mint px-6 py-2.5 text-xs font-bold text-scitech-navy shadow-md shadow-scitech-mint/10 transition-all hover:bg-scitech-mint-hover active:scale-95 disabled:opacity-50"
+					class="bg-scitech-mint text-scitech-navy shadow-scitech-mint/10 hover:bg-scitech-mint-hover inline-flex items-center gap-2 rounded-xl px-6 py-2.5 text-xs font-bold shadow-md transition-all active:scale-95 disabled:opacity-50"
 				>
 					{#if isSubmitting}
 						<Loader2Icon class="h-4 w-4 animate-spin" />

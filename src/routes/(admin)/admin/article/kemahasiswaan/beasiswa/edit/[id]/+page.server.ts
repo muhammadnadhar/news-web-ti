@@ -5,10 +5,10 @@ import {
 	updateScholarship
 } from '$lib/repository/admin/article/kemahasiswaan/beasiswa';
 import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
-import { errorResponse, successResponse } from '$lib/helper/message';
+import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
+import type { BeasiswaFormValues } from '$lib/types/values/admin/article';
 
 /**
- * 1. LOAD FUNCTION
  * Mengambil data awal beasiswa berdasarkan ID di URL
  */
 export const load: PageServerLoad = async ({ params }) => {
@@ -37,53 +37,70 @@ export const actions: Actions = {
 	update: async ({ request, params }) => {
 		const formData = await request.formData();
 
-		// Ambil ID dari params URL atau hidden field
-		const id = params.id || (formData.get('id') as string);
-		const studentName = (formData.get('student_name') as string)?.trim();
-		const scholarshipName = (formData.get('scholarship_name') as string)?.trim();
-		const imageUrl = (formData.get('image_url') as string)?.trim() || '';
+		const id = params.id || formData.get('id')?.toString().trim() || undefined;
 
-		// Simpan nilai input untuk dikembalikan jika validasi gagal
-		const values = {
-			student_name: studentName,
-			scholarship_name: scholarshipName,
-			image_url: imageUrl
+		const values: BeasiswaFormValues = {
+			id,
+			student_name: formData.get('student_name')?.toString().trim() || '',
+			scholarship_name: formData.get('scholarship_name')?.toString().trim() || '',
+			image_url: formData.get('image_url')?.toString().trim() || null,
+			image_public_id:
+				formData.get('image_public_id')?.toString().trim() ||
+				formData.get('public_id')?.toString().trim() ||
+				null
 		};
 
-		// Validasi dasar di server
-		if (!studentName || !scholarshipName) {
+		if (!values.id) {
 			return fail(400, {
-				success: false,
-				title: 'Validasi Gagal',
-				message: 'Nama mahasiswa dan nama beasiswa wajib diisi.',
+				...warningResponse('ID data beasiswa tidak ditemukan.', 'Gagal'),
+				values
+			});
+		}
+
+		if (!values.student_name || !values.scholarship_name) {
+			return fail(400, {
+				...warningResponse('Nama mahasiswa dan nama beasiswa wajib diisi.', 'Validasi Gagal'),
+				values
+			});
+		}
+
+		if (values.student_name.length > 255 || values.scholarship_name.length > 255) {
+			return fail(400, {
+				...warningResponse(
+					'Nama mahasiswa atau nama beasiswa terlalu panjang (maksimal 255 karakter).',
+					'Validasi Gagal'
+				),
 				values
 			});
 		}
 
 		try {
-			// Panggil method repository
-			const isUpdated = await updateScholarship(id, studentName, scholarshipName, imageUrl);
+			const isUpdated = await updateScholarship(
+				values.id,
+				values.student_name,
+				values.scholarship_name,
+				values.image_url,
+				values.image_public_id
+			);
 
 			if (!isUpdated) {
 				return fail(500, {
-					success: false,
-					title: 'Gagal Memperbarui',
-					message: 'Data beasiswa gagal diperbarui di database.',
+					...errorResponse('Data beasiswa gagal diperbarui di database.', 'Gagal Memperbarui'),
 					values
 				});
 			}
 
 			return {
-				success: true,
-				title: 'Berhasil',
-				message: 'Data beasiswa berhasil diperbarui.'
+				...successResponse('Data beasiswa berhasil diperbarui.', 'Berhasil'),
+				values
 			};
-		} catch (err) {
+		} catch (err: any) {
 			console.error('Error updateScholarship:', err);
 			return fail(500, {
-				success: false,
-				title: 'Error Sistem',
-				message: 'Terjadi kesalahan pada server saat memperbarui data.',
+				...errorResponse(
+					`Terjadi kesalahan pada server saat memperbarui data: ${err?.message || 'Kesalahan tidak diketahui'}`,
+					'Error Sistem'
+				),
 				values
 			});
 		}

@@ -1,56 +1,67 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
-import { errorResponse } from '$lib/helper/message';
+import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
 import { addPerminatanTI } from '$lib/repository/admin/home/tablePermitan';
+import type { PeminatanFormValues } from '$lib/types/values/admin/home';
+import { randomUUID } from '$lib/crypto';
 
 export const actions: Actions = {
 	create: async ({ request }) => {
 		const formData = await request.formData();
-		const title = formData.get('title')?.toString().trim();
-		const description = formData.get('description')?.toString().trim();
 
-		// Validasi Input
-		if (!title || title.length > 150) {
+		// Ekstraksi data ke objek values bertipe PeminatanFormValues
+		const values: PeminatanFormValues = {
+			id: randomUUID(),
+			title: formData.get('title')?.toString().trim() || '',
+			description: formData.get('description')?.toString().trim() || ''
+		};
+
+		// Validasi Judul Peminatan
+		if (!values.title || values.title.length > 150) {
 			return fail(400, {
-				success: false,
-				status: 'warning' as const,
-				title: 'Validasi Gagal',
-				message: 'Judul peminatan wajib diisi dan maksimal 150 karakter.'
+				...warningResponse(
+					'Judul peminatan wajib diisi dan maksimal 150 karakter.',
+					'Validasi Gagal'
+				),
+				values
 			});
 		}
 
-		if (!description) {
+		// Validasi Deskripsi Peminatan
+		if (!values.description) {
 			return fail(400, {
-				success: false,
-				status: 'warning' as const,
-				title: 'Validasi Gagal',
-				message: 'Deskripsi peminatan wajib diisi.'
+				...warningResponse('Deskripsi peminatan wajib diisi.', 'Validasi Gagal'),
+				values
 			});
 		}
 
 		try {
-			const data = await addPerminatanTI({
-				title,
-				description
+			const data = await addPerminatanTI(values.id ?? randomUUID(), {
+				title: values.title,
+				description: values.description
 			});
 
 			if (!data) {
-				return fail(403, errorResponse('gagal membuat data perminatan TI ', 'Error'));
+				return fail(500, {
+					...errorResponse('Gagal membuat data peminatan TI.', 'Gagal Menyimpan'),
+					values
+				});
 			}
 
-			return {
-				success: true,
-				status: 'success' as const,
-				title: 'Berhasil Disimpan!',
-				message: 'Data peminatan TI baru telah berhasil ditambahkan.'
-			};
-		} catch (err) {
+			return successResponse(
+				'Data peminatan TI baru telah berhasil ditambahkan.',
+				'Berhasil Disimpan!'
+			);
+		} catch (err: any) {
 			console.error('Error in addPeminatanTI:', err);
+
 			return fail(500, {
-				success: false,
-				status: 'error' as const,
-				title: 'Terjadi Kesalahan',
-				message: 'Gagal menyimpan data peminatan ke database. Silakan coba beberapa saat lagi.'
+				...errorResponse(
+					err?.message ||
+						'Gagal menyimpan data peminatan ke database. Silakan coba beberapa saat lagi.',
+					'Terjadi Kesalahan'
+				),
+				values
 			});
 		}
 	}

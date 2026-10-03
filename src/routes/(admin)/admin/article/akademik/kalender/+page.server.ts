@@ -11,6 +11,8 @@ import {
 } from '$lib/repository/admin/article/akedemik/kalender';
 import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
 import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
+import type { CalendarFormValues } from '$lib/types/values/admin/article';
+import { randomUUID } from '$lib/crypto';
 
 export const load: PageServerLoad = async () => {
 	try {
@@ -48,39 +50,55 @@ export const actions: Actions = {
 	update: async ({ request }) => {
 		const formData = await request.formData();
 
-		let id = (formData.get('id') as string)?.trim();
-		const title = (formData.get('title') as string)?.trim();
-		const description = (formData.get('description') as string)?.trim();
-		const is_active = formData.get('is_active') === 'true';
-
-		// Ambil list ID gambar lama yang tetap dipertahankan
-		const retainedImageIds = formData.getAll('retainedImageIds') as string[];
-
-		// Ambil string URL gambar baru dari input name "image_url"
+		//  Ekstraksi data input ke objek values bertipe CalendarFormValues
 		const rawUrls = formData.getAll('image_url') as string[];
-		const newImageUrls = rawUrls.map((url) => url.trim()).filter((url) => url.length > 0);
 
-		// Validasi input
-		if (!title) {
-			return fail(400, errorResponse('Judul Kalender wajib diisi.', 'Validasi Gagal'));
+		const values: CalendarFormValues = {
+			id: formData.get('id')?.toString().trim() || undefined,
+			title: formData.get('title')?.toString().trim() || '',
+			description: formData.get('description')?.toString().trim() || null,
+			isActive: formData.get('is_active') === 'true',
+			retainedImageIds: formData.getAll('retainedImageIds') as string[],
+			newImageUrls: rawUrls.map((url) => url.trim()).filter((url) => url.length > 0)
+		};
+
+		// Validasi input wajib
+		if (!values.title) {
+			return fail(400, {
+				...warningResponse('Judul Kalender wajib diisi.', 'Validasi Gagal'),
+				values
+			});
+		}
+
+		//  Pengecekan panjang title (VARCHAR 255)
+		if (values.title.length > 255) {
+			return fail(400, {
+				...warningResponse(
+					'Judul Kalender terlalu panjang, maksimal 255 karakter.',
+					'Validasi Gagal'
+				),
+				values
+			});
 		}
 
 		try {
-			// Generasi UUID jika form baru
-			if (!id) {
-				id = crypto.randomUUID();
-			}
+			// Generasi UUID jika ID belum ada
+			const calendarId = values.id || crypto.randomUUID();
 
-			//Simpan / Update data utama kalender
-			const calendarId = await saveAcademicCalendar(id, title, description, is_active);
+			await saveAcademicCalendar(
+				calendarId,
+				values.title,
+				values.description || '',
+				values.isActive
+			);
 
-			// Hapus gambar lama dari DB yang telah dibuang oleh pengguna
-			await syncRetainedCalendarImages(calendarId, retainedImageIds);
+			// Hapus gambar lama dari DB yang tidak ada di retainedImageIds
+			await syncRetainedCalendarImages(calendarId, values.retainedImageIds);
 
 			// Buat array record untuk URL gambar baru
-			const newImageRecords = newImageUrls.map((url) => ({
-				id: crypto.randomUUID(),
-				calendarId: calendarId,
+			const newImageRecords = values.newImageUrls.map((url) => ({
+				id: randomUUID(),
+				calendarId,
 				imageUrl: url
 			}));
 
@@ -88,12 +106,22 @@ export const actions: Actions = {
 			if (newImageRecords.length > 0) {
 				await addCalendarImages(newImageRecords);
 			}
-			return successResponse('Data Kalender Akademik berhasil diperbarui!');
+
+			return {
+				...successResponse('Data Kalender Akademik berhasil diperbarui!', 'Berhasil')
+			};
 		} catch (err: any) {
 			console.error('Error updating Academic Calendar:', err);
-			return fail(500, errorResponse(`Terjadi kesalahan sistem: ${err.message}`));
+			return fail(500, {
+				...warningResponse(
+					`Terjadi kesalahan sistem: ${err.message || 'Gagal menyimpan kalender'}`,
+					'Kesalahan Sistem'
+				),
+				values
+			});
 		}
 	},
+
 	delete: async ({ request }) => {
 		const formData = await request.formData();
 		const id = formData.get('id') as string;
@@ -135,6 +163,22 @@ export const actions: Actions = {
 					'Kesalahan Sistem'
 				)
 			);
+		}
+	},
+	deleteImage: async ({ request }) => {
+		const formData = await request.formData();
+		const publicId = formData.get('public_id')?.toString();
+
+		if (!publicId) {
+			return fail(400, { ...errorResponse('Public Id tidak di temukan', 'Error') });
+		}
+		console.info('id : ', publicId);
+		try {
+			await deleteImageFromCloudinary(publicId);
+			return successResponse('Berhasil di batalkan', 'Succcess');
+		} catch (err) {
+			console.error('Error deleting photo:', err);
+			return fail(500, errorResponse('Gagal menghapus foto ', 'Gagal'));
 		}
 	}
 };

@@ -12,25 +12,24 @@
 	import type { ResponseMessage } from '$lib/types/message';
 	import type { PartnershipDTO } from '$lib/dto/admin/article/kerjasama';
 	import { goto } from '$app/navigation';
+	import type { KerjasamaFormValues } from '$lib/types/values/admin/article';
 
 	interface Props {
 		initialData?: PartnershipDTO | null;
-		form?: any;
+		valueData: KerjasamaFormValues;
 		actionUrl?: string;
 		backUrl?: string;
 	}
 
-	let { initialData = null, form = null, actionUrl = '', backUrl }: Props = $props();
+	let { initialData = null, valueData, actionUrl = '', backUrl }: Props = $props();
 
 	// Deteksi mode Edit
 	const isEdit = $derived(!!initialData?.id);
 
 	// State lokal input form
-	let institutionName = $state(
-		form?.values?.institutionName ?? initialData?.institution_name ?? ''
-	);
-	let logoUrl = $state(form?.values?.logoUrl ?? initialData?.logo_url ?? '');
-	let photoPublicId = $state(''); // Simpan public_id dari Cloudinary jika diunggah baru
+	let institutionName = $state(valueData?.institution_name ?? initialData?.institution_name ?? '');
+	let logoUrl = $state(valueData?.logo_url ?? initialData?.logo_url ?? '');
+	let photoPublicId = $state(valueData?.public_id ?? ''); // Simpan public_id dari Cloudinary jika diunggah baru
 
 	let isSubmitting = $state(false);
 	let isDeletingPhoto = $state(false);
@@ -77,7 +76,7 @@
 				body: formData
 			});
 
-		if (response.ok) {
+			if (response.ok) {
 				logoUrl = '';
 				photoPublicId = '';
 				triggerMessage('success', 'Berhasil', 'Gambar berhasil dihapus dari .');
@@ -94,7 +93,7 @@
 </script>
 
 <!-- notifikasi pesan -->
-{#if showMessage || form?.message}
+{#if showMessage}
 	<div class="mb-6">
 		<Message
 			status={showMessage ? messageConfig.status : 'error'}
@@ -163,7 +162,7 @@
 						if (resData.status === 'success' && !isEdit) {
 							institutionName = '';
 							logoUrl = '';
-							photoPublp-00icId = '';
+							photoPublicId = '';
 						}
 						await update();
 					} else if (result.type === 'failure') {
@@ -186,19 +185,10 @@
 				<input type="hidden" name="id" value={initialData.id} />
 			{/if}
 
-			{#if form?.error}
-				<div
-					class="rounded-lg border border-status-error/40 bg-status-error/20 p-3.5 text-xs font-medium text-status-error"
-				>
-					{form.error}
-				</div>
-			{/if}
-
 			<!-- Hidden input URL Logo untuk backend -->
 			<input type="hidden" name="logo_url" value={logoUrl} />
-			<input type="hidden" name="public_id" value={photoPublicId} />
+			<input type="hidden" name="logo_public_id" value={photoPublicId} />
 
-			<!-- Nama Instansi / Mitra -->
 			<div class="space-y-1.5">
 				<label for="institution_name" class="block text-xs font-medium text-text-muted">
 					Nama Instansi / Mitra Kerjasama <span class="text-status-error">*</span>

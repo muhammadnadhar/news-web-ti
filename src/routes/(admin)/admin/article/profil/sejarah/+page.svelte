@@ -17,17 +17,7 @@
 	import type { TableContentType } from '$lib/types/tableContent.js';
 	import { gotoEdit, mergeNewPath, parsePhotoToUrl } from '$lib/utils.js';
 	import type { SubmitFunction } from '@sveltejs/kit';
-	import {
-		UploadCloud,
-		Plus,
-		Edit,
-		Trash2,
-		Save,
-		X,
-		AlertTriangleIcon,
-		UploadIcon,
-		Loader2
-	} from 'lucide-svelte';
+	import { Save, UploadIcon, Loader2 } from 'lucide-svelte';
 	import { CldUploadButton } from 'svelte-cloudinary';
 
 	let { data, form } = $props();

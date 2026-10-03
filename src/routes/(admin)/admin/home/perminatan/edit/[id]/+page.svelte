@@ -4,4 +4,9 @@
 	let { data, form } = $props();
 </script>
 
-<FormPeminatan isEdit={true} initialData={data.peminatan} {form} action="?/update" />
+<FormPeminatan
+	isEdit={true}
+	initialData={data.peminatan}
+	valuesData={form?.values}
+	action="?/update"
+/>

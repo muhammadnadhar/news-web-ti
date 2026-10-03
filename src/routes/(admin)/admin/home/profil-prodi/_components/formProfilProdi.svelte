@@ -2,7 +2,6 @@
 	import { enhance } from '$app/forms';
 	import { CldUploadWidget } from 'svelte-cloudinary';
 	import Message from '$lib/components/admin/message.svelte';
-	import type { ActionData } from '.././$types';
 	import type { ResponseMessage } from '$lib/types/message';
 	import {
 		Building2,
@@ -28,22 +27,23 @@
 	import type { ProfilProdiItemDTO, ImageItem } from '$lib/dto/admin/home';
 	import type { DisplayInstructionType } from '$lib/types/home';
 	import { getInstructionOptions } from '$lib/data/home';
+	import type { ProfilProdiFormValues } from '$lib/types/values/admin/home';
 
 	let {
 		isEdit = false,
 		actionUrl = isEdit ? '?/update' : '?/create',
 		initialData = null,
-		form = null
+		valuesData
 	}: {
 		isEdit?: boolean;
 		actionUrl?: string;
+		valuesData: ProfilProdiFormValues | null;
 		initialData?: ProfilProdiItemDTO | null;
-		form?: ActionData | null;
 	} = $props();
 
 	// Inisialisasi state judul & deskripsi
-	let title = $state(form?.values?.title ?? initialData?.title ?? '');
-	let description = $state(form?.values?.description ?? initialData?.description ?? '');
+	let title = $state(valuesData?.title ?? initialData?.title ?? '');
+	let description = $state(valuesData?.description ?? initialData?.description ?? '');
 
 	// Helper untuk mengekstrak nama asli file dari Cloudinary public_id atau URL
 	function extractOriginalName(publicId?: string | null, url?: string | null): string {
@@ -60,10 +60,10 @@
 	}
 
 	// Mengambil data awal array gambar
-	let rawImages = form?.values?.images
-		? typeof form.values.images === 'string'
-			? JSON.parse(form.values.images)
-			: form.values.images
+	let rawImages = valuesData?.images
+		? typeof valuesData?.images === 'string'
+			? JSON.parse(valuesData?.images)
+			: valuesData?.images
 		: (initialData?.images ?? []);
 
 	// State Array Gambar (ImageItem[]) dengan pengisian caption default jika belum diisi
@@ -149,11 +149,11 @@
 </script>
 
 <!-- Message Toast -->
-{#if showMessage || form?.message}
+{#if showMessage}
 	<Message
 		status={showMessage ? messageConfig.status : 'error'}
 		title={showMessage ? messageConfig.title : 'Gagal'}
-		message={showMessage ? messageConfig.message : form?.message || ''}
+		message={messageConfig.message}
 		dismissible={true}
 		timeout={5000}
 		onclose={() => (showMessage = false)}
@@ -179,9 +179,8 @@
 		</div>
 	</div>
 
-	<!-- Form Container -->
 	<div
-		class="bg-scitech-slate/50 rounded-2xl border border-border-color/10 p-6 shadow-2xl backdrop-blur-xl sm:p-8"
+		class="rounded-2xl border border-border-color/10 bg-bg-secondary/50 p-6 shadow-2xl backdrop-blur-xl sm:p-8"
 	>
 		<form
 			method="POST"
@@ -198,7 +197,7 @@
 					isSubmitting = false;
 
 					if (result.type === 'success') {
-						const resData = (result.data as ResponseMessage) ?? {
+						const resData = (result?.data as ResponseMessage) ?? {
 							status: 'success',
 							title: 'Berhasil',
 							message: isEdit
@@ -217,7 +216,7 @@
 							await update({ reset: false });
 						}
 					} else if (result.type === 'failure') {
-						const resData = (result.data as ResponseMessage) ?? {
+						const resData = (result?.data as ResponseMessage) ?? {
 							status: 'error',
 							title: 'Gagal',
 							message: (result.data?.message as string) || 'Gagal menyimpan data.'
@@ -288,7 +287,7 @@
 										type="button"
 										onclick={() => removePhoto(idx)}
 										disabled={deletingIndex === idx || isSubmitting}
-										class="absolute top-1.5 right-1.5 rounded-lg bg-red-600/80 p-1.5 text-white backdrop-blur-md transition-all hover:bg-red-600 active:scale-95 disabled:opacity-50"
+										class="absolute top-1.5 right-1.5 rounded-lg bg-red-600/80 p-1.5 text-text-main backdrop-blur-md transition-all hover:bg-red-600 active:scale-95 disabled:opacity-50"
 										title="Hapus gambar ini"
 									>
 										{#if deletingIndex === idx}
@@ -335,7 +334,7 @@
 						class="group hover:border-scitech-mint/50 flex w-full flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-border-color/10 bg-black/20 p-6 transition-all hover:bg-bg-secondary/5 active:scale-[0.99] disabled:opacity-50"
 					>
 						<div
-							class="text-scitech-mint group-hover:bg-scitech-mint/20 rounded-full bg-bg-secondary/5 p-2.5 transition-all group-hover:scale-110"
+							class="text-scitech-mint rounded-full bg-bg-secondary/5 p-2.5 transition-all group-hover:scale-110 group-hover:bg-bg-secondary/20"
 						>
 							<UploadCloud class="h-5 w-5" />
 						</div>
@@ -375,14 +374,14 @@
 							onclick={() => (displayInstruction = opt.value)}
 							class="group relative flex flex-col justify-between rounded-xl border p-4 text-left transition-all duration-200 active:scale-[0.98] disabled:opacity-50
                             {isSelected
-								? 'border-scitech-mint bg-scitech-mint/10 ring-scitech-mint/30 shadow-scitech-mint/5 shadow-lg ring-2'
+								? 'border-scitech-mint ring-scitech-mint/30 shadow-scitech-mint/5 bg-bg-secondary/10 shadow-lg ring-2'
 								: 'bg-scitech-navy/60 hover:border-scitech-mint/40 hover:bg-scitech-navy border-border-color/10'}"
 						>
 							<!-- Top Bar Kartu: Icon & Badge -->
 							<div class="flex items-start justify-between gap-2">
 								<div
 									class="rounded-lg p-2 transition-colors {isSelected
-										? 'bg-scitech-mint text-scitech-navy'
+										? 'text-scitech-navy bg-bg-secondary'
 										: 'group-hover:text-scitech-mint bg-bg-secondary/10 text-text-muted'}"
 								>
 									<opt.icon class="h-4 w-4" />
@@ -390,13 +389,13 @@
 
 								{#if isSelected}
 									<span
-										class="border-scitech-mint/30 bg-scitech-mint/20 text-scitech-mint inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold"
+										class="border-scitech-mint/30 text-scitech-mint inline-flex items-center gap-1 rounded-full border bg-bg-secondary/20 px-2 py-0.5 text-[10px] font-bold"
 									>
 										<Check class="h-3 w-3" /> Dipilih
 									</span>
 								{:else}
 									<span
-										class="rounded-md bg-white/5 px-2 py-0.5 text-[10px] font-medium text-text-muted"
+										class="rounded-md bg-bg-secondary/5 px-2 py-0.5 text-[10px] font-medium text-text-muted"
 									>
 										{opt.badge}
 									</span>
@@ -445,7 +444,7 @@
 					type="button"
 					onclick={() => history.back()}
 					disabled={isSubmitting}
-					class="rounded-xl border border-border-color/10 bg-bg-secondary/5 px-5 py-2.5 text-xs font-semibold text-text-muted transition-all hover:bg-white/10 hover:text-text-main active:scale-95 disabled:opacity-50"
+					class="rounded-xl border border-border-color/10 bg-bg-secondary/5 px-5 py-2.5 text-xs font-semibold text-text-muted transition-all hover:bg-bg-secondary/10 hover:text-text-main active:scale-95 disabled:opacity-50"
 				>
 					Batal
 				</button>
@@ -453,7 +452,7 @@
 				<button
 					type="submit"
 					disabled={isSubmitting}
-					class="bg-scitech-mint text-scitech-navy shadow-scitech-mint/10 hover:bg-scitech-mint-hover inline-flex items-center gap-2 rounded-xl px-6 py-2.5 text-xs font-bold shadow-md transition-all active:scale-95 disabled:opacity-50"
+					class="text-scitech-navy shadow-scitech-mint/10 inline-flex items-center gap-2 rounded-xl bg-bg-secondary px-6 py-2.5 text-xs font-bold shadow-md transition-all hover:bg-bg-secondary-hover active:scale-95 disabled:opacity-50"
 				>
 					{#if isSubmitting}
 						<Loader2Icon class="h-4 w-4 animate-spin" />

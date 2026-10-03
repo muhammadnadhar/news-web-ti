@@ -9,5 +9,5 @@
 	angkatanList={data.angkatanList}
 	semesterList={data.semesterList}
 	action="?/create"
-	{form}
+	valueData={form?.values}
 />

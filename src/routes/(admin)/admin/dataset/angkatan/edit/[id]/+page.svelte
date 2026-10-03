@@ -9,4 +9,8 @@
 	<title>Edit Angkatan {data.angkatan.year} | Admin SciTech</title>
 </svelte:head>
 
-<FormAngkatan title={`Edit Angkatan (${data.angkatan.year})`} initialData={data.angkatan} {form} />
+<FormAngkatan
+	title={`Edit Angkatan (${data.angkatan.year})`}
+	initialData={data.angkatan}
+	valueData={form?.values}
+/>

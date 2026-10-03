@@ -57,10 +57,14 @@
 	/>
 {/if}
 
+<div class="p-6 shadow-xl">
+	<h2 class="mb-6 text-sm font-extrabold text-text-main">Fasilitas</h2>
+</div>
+
 <div>
 	<!-- Component TableContent dengan Promise Streaming -->
 	{#await data.fasilitis}
-		<TableSkeleton columnsCount={5} showTitle={true} title="loading data fasilitas laboratorium" />
+		<TableSkeleton columnsCount={5} title="loading data fasilitas laboratorium" />
 	{:then rawList}
 		<TableContent
 			title="Data Fasilitas"

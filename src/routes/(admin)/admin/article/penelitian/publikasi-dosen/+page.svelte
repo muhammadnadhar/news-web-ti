@@ -7,6 +7,7 @@
 	import { page } from '$app/state';
 	import type { LecturerPublicationDTO } from '$lib/dto/admin/article/penelitian.js';
 	import type { MessageStatus, ResponseMessage } from '$lib/types/message.js';
+	import Message from '$lib/components/admin/message.svelte';
 
 	let { data } = $props();
 
@@ -111,11 +112,21 @@
 			Publikasi Dosen
 		</h1>
 	</div>
-
-	<!-- Component TableContent -->
+	{#if showMessage}
+		<div class="mb-6">
+			<Message
+				status={messageConfig.status}
+				title={messageConfig.title}
+				message={messageConfig.message}
+				dismissible={true}
+				timeout={5000}
+				onclose={() => (showMessage = false)}
+			/>
+		</div>
+	{/if}
 
 	{#await data.rawPublicationList}
-		<TableSkeleton showTitle={true} title="Memuat Data Publikasi Dosen..." columnsCount={3} />
+		<TableSkeleton columnsCount={3} rowCount={2} />
 	{:then rawList}
 		<TableContent
 			title="Data Publikasi Dosen"
@@ -138,7 +149,7 @@
 				)}
 		/>
 	{:catch error}
-		<div class="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-400">
+		<div class="rounded-xl border border-red-500/20 bg-status-error/10 p-4 text-sm text-red-400">
 			Gagal memuat data kerjasama: {error.message}
 		</div>
 	{/await}

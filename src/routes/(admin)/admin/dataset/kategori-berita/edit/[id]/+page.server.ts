@@ -1,10 +1,14 @@
 import { error, fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
-import { getNewsCategoryById, updateNewsCategory } from '$lib/repository/admin/dataset/beritaKategory';
-import { successResponse, warningResponse } from '$lib/helper/message';
+import {
+	getNewsCategoryById,
+	updateNewsCategory
+} from '$lib/repository/admin/dataset/beritaKategory';
+import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
+import type { KategoriBeritaFormValues } from '$lib/types/values/admin/dataset';
 
 /**
- * 1. Load data kategori berdasarkan ID dari URL
+ *  Load data kategori berdasarkan ID dari URL
  */
 export const load: PageServerLoad = async ({ params }) => {
 	const categoryId = params.id;
@@ -29,49 +33,70 @@ export const load: PageServerLoad = async ({ params }) => {
 };
 
 /**
- * 2. Action Form Submit untuk Update Kategori
+ *  Action Form Submit untuk Update Kategori
  */
 export const actions: Actions = {
 	update: async ({ request, params }) => {
-		const categoryId = params.id;
 		const formData = await request.formData();
 
-		const name = formData.get('name')?.toString().trim() || '';
-		const slug = formData.get('slug')?.toString().trim() || null;
+		// Ekstraksi data ke objek values bertipe KategoriBeritaFormValues
+		const values: KategoriBeritaFormValues = {
+			id: params.id || (formData.get('id') as string)?.trim(),
+			name: formData.get('name')?.toString().trim() || '',
+			slug: formData.get('slug')?.toString().trim() || null
+		};
+
+		// Validasi ID
+		if (!values.id) {
+			return fail(400, {
+				...warningResponse('ID kategori berita tidak ditemukan.', 'Validasi Gagal'),
+				values
+			});
+		}
 
 		// Validasi input wajib
-		if (!name) {
+		if (!values.name) {
 			return fail(400, {
-				...warningResponse('Nama kategori wajib diisi.', 'warning'),
-				values: { name, slug }
+				...warningResponse('Nama kategori wajib diisi.', 'Validasi Gagal'),
+				values
 			});
 		}
 
 		try {
-			const isUpdated = await updateNewsCategory(categoryId, {
-				name,
-				slug
+			const isUpdated = await updateNewsCategory(values.id, {
+				name: values.name,
+				slug: values.slug
 			});
 
 			if (!isUpdated) {
 				return fail(500, {
-					...warningResponse('Gagal memperbarui kategori berita.', 'warning'),
-					values: { name, slug }
+					...errorResponse('Gagal memperbarui kategori berita.', 'Gagal Update'),
+					values
 				});
 			}
-		} catch (err) {
+
+			return successResponse('Berhasil memperbarui kategori berita.', 'Berhasil');
+		} catch (err: any) {
 			console.error('Error updating news category:', err);
+
+			// Pengecekan entri ganda / duplicate entry jika name atau slug bertipe UNIQUE
+			if (err.code === 'ER_DUP_ENTRY' || err.message?.includes('Duplicate entry')) {
+				return fail(400, {
+					...warningResponse(
+						'Kategori berita dengan nama/slug tersebut sudah terdaftar.',
+						'Gagal Update'
+					),
+					values
+				});
+			}
+
 			return fail(500, {
-				...warningResponse('Terjadi kesalahan server saat memperbarui kategori.', 'warning'),
-				values: { name, slug }
+				...errorResponse(
+					err?.message || 'Terjadi kesalahan server saat memperbarui kategori.',
+					'Kesalahan Server'
+				),
+				values
 			});
 		}
-
-		// Jika ingin otomatis kembali ke halaman daftar kategori setelah sukses:
-		// throw redirect(303, '/admin/kategori-berita');
-
-		return {
-			...successResponse('Berhasil memperbarui kategori berita', 'Success')
-		};
 	}
 };

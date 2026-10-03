@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { JabatanProdiDTO } from '$lib/types/admin/dataset';
+	import type { JabatanProdiDTO } from '$lib/dto/admin/dataset';
 	import { Briefcase, ChevronDown } from 'lucide-svelte';
 
 	interface Props {

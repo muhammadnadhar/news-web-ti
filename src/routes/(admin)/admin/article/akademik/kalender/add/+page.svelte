@@ -3,31 +3,25 @@
 	import FormKalenderItem from '../_component/formKalenderItem.svelte';
 	import { goto } from '$app/navigation';
 	import { mergeNewPath } from '$lib/utils.js';
+
+	import type { ActionData } from './$types';
+
+	let { form }: { form: ActionData } = $props();
 </script>
 
 <div class="mx-auto max-w-7xl space-y-8 p-6 lg:p-10">
 	<div class="flex items-center justify-between border-b border-border-color/10 pb-6">
-		<div>
-			<h1 class="text-2xl font-extrabold tracking-tight text-text-main sm:text-3xl">
-				Buat Kalender Akademik Baru
-			</h1>
-		</div>
-
-		<button
-			type="button"
-			onclick={() => goto(mergeNewPath('..'))}
-			class="bg-scitech-navy hover:bg-scitech-navy/80 inline-flex items-center gap-2 rounded-xl border border-border-color/15 px-4 py-2.5 text-xs font-medium text-text-muted transition-all hover:text-text-main"
-		>
-			<ArrowLeft class="h-4 w-4" />
-			<span>Kembali ke Daftar</span>
-		</button>
+		<h1 class="text-2xl font-extrabold tracking-tight text-text-main sm:text-3xl">
+			Buat Kalender Akademik Baru
+		</h1>
 	</div>
 
 	<!-- Form Input Kalender Baru -->
 	<FormKalenderItem
 		action="?/create"
+		valuesData={form?.values}
 		submitLabel="Simpan Kalender Baru"
-    isBack={true}
+		isBack={true}
 		calendar={{
 			id: '',
 			title: '',

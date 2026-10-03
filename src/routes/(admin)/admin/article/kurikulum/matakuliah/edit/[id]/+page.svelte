@@ -10,8 +10,8 @@
 
 <FormCourceMap
 	curAction={'?/update'}
-	initialData={form?.values ?? data.courseMap}
-	formError={form?.message}
+	initialData={data.courseMap}
+	valueData={form?.values}
 	isEditMode={true}
 	submitLabel="Perbarui Peta MK"
 />

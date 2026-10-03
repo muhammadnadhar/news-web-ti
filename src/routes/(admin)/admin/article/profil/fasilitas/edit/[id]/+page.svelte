@@ -1,7 +1,4 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
-	import { goto } from '$app/navigation';
-	import { AlertCircle } from 'lucide-svelte';
 	import FormFasilitas from '../../_component/formFasilitas.svelte';
 
 	let { data, form } = $props();

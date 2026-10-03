@@ -6,6 +6,7 @@ import {
 } from '$lib/repository/admin/article/akedemik/ketentuan-komprehensif';
 import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
 import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
+import type { KetentuanKomprehensifFormValues } from '$lib/types/values/admin/article';
 
 // Load: Mengambil data rekrutmen spesifik berdasarkan ID dari URL Params
 export const load: PageServerLoad = async ({ params }) => {
@@ -35,42 +36,68 @@ export const load: PageServerLoad = async ({ params }) => {
 // Actions: Menangani Update & Delete Data Form
 export const actions: Actions = {
 	update: async ({ request, params }) => {
-		const { id } = params;
+		const formData = await request.formData();
 
-		if (!id) {
-			return fail(400, errorResponse('ID Rekruitmen tidak di temukan', 'Gagal'));
+		const values: KetentuanKomprehensifFormValues = {
+			id: params.id || formData.get('id')?.toString().trim() || undefined,
+			title: formData.get('title')?.toString().trim() || '',
+			image_url: formData.get('image_url')?.toString().trim() || null,
+			image_public_id: formData.get('public_id')?.toString().trim() || null,
+			description: formData.get('description')?.toString().trim() || null
+		};
+
+		if (!values.id) {
+			return fail(400, {
+				...warningResponse('ID Ketentuan Komprehensif tidak ditemukan.', 'Gagal'),
+				values
+			});
 		}
 
-		const formData = await request.formData();
-		const title = (formData.get('title') as string)?.trim();
-		const imageUrl = (formData.get('image_url') as string)?.trim() || null;
-		const description = (formData.get('description') as string)?.trim() || null;
-
-		if (!title) {
+		if (!values.title) {
 			return fail(400, {
-				values: { title, imageUrl, description },
-        ...warningResponse("Judul / Ketentuan Rekrutmen wajib di isi","Warning")
+				...warningResponse('Judul / Ketentuan Komprehensif wajib diisi.', 'Validasi Gagal'),
+				values
+			});
+		}
+
+		if (values.title.length > 255) {
+			return fail(400, {
+				...warningResponse('Judul terlalu panjang, maksimal 255 karakter.', 'Validasi Gagal'),
+				values
 			});
 		}
 
 		try {
-			const success = await updateRecruitment(id, title, imageUrl, description);
+			const success = await updateRecruitment(
+				values.id,
+				values.title,
+				values.image_url,
+				values.description,
+				values.image_public_id
+			);
 
 			if (!success) {
 				return fail(500, {
-					values: { title, imageUrl, description },
-					...errorResponse('Gagal memperbarui data', 'Gagal menyimpan data')
+					...errorResponse(
+						'Gagal memperbarui data Ketentuan Komprehensif di database.',
+						'Gagal Menyimpan'
+					),
+					values
 				});
 			}
 
 			return {
-				values: { title, imageUrl, description },
-			...successResponse("Data rekrutmen berhasil di perbaharui"),
-  			};
+				...successResponse('Data Ketentuan Komprehensif berhasil diperbarui!', 'Berhasil'),
+				values
+			};
 		} catch (err: any) {
+			console.error('Error updating Ketentuan Komprehensif:', err);
 			return fail(500, {
-				values: { title, imageUrl, description },
-		...errorResponse("Gagal memperbarui data pada server","Terjadi Kesalahn")
+				...errorResponse(
+					`Gagal memperbarui data pada server: ${err?.message || 'Terjadi kesalahan sistem'}`,
+					'Kesalahan Sistem'
+				),
+				values
 			});
 		}
 	},

@@ -13,5 +13,5 @@
 	lecturers={data.lecturers}
 	initialData={data.lecturerPublication}
 	isEdit={true}
-	{form}
+	valueData={form?.values}
 />

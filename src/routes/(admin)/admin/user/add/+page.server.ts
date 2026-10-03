@@ -3,75 +3,89 @@ import type { Actions } from './$types';
 import type { UserAdminDTO } from '$lib/dto/admin/userAdmin';
 import { checkUserExists, createUserAdmin } from '$lib/repository/admin/userAdmin';
 import { randomUUID } from '$lib/crypto';
-import { errorResponse, successResponse } from '$lib/helper/message';
+import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
 import { Argon2id } from 'oslo/password';
+import type { UserFormValues } from '$lib/types/values/admin/user';
 
 export const actions: Actions = {
 	default: async ({ request }) => {
 		const data = await request.formData();
 
-		const name = (data.get('name') as string)?.trim();
-		const username = (data.get('username') as string)?.trim();
-		const email = (data.get('email') as string)?.trim();
-		const password = data.get('password') as string;
-		const role = data.get('role') as UserAdminDTO['role'];
-		const status = (data.get('status') as UserAdminDTO['status']) || 'Active';
+		const values: UserFormValues = {
+			id: (data.get('id') as string)?.trim() || randomUUID(),
+			name: (data.get('name') as string)?.trim() || '',
+			username: (data.get('username') as string)?.trim() || '',
+			email: (data.get('email') as string)?.trim() || '',
+			password: (data.get('password') as string) || '',
+			role: (data.get('role') as string)?.trim() || '',
+			status: (data.get('status') as string)?.trim() || 'Active'
+		};
 
-		// Validasi Form Sederhana
-		if (!name || !username || !email || !password || !role) {
+		if (!values.name || !values.username || !values.email || !values.password || !values.role) {
 			return fail(400, {
-				error: 'Semua bidang wajib diisi.',
-				values: { name, username, email, role, status }
+				...warningResponse('Semua bidang wajib diisi.', 'Validasi Gagal'),
+				values
 			});
 		}
 
 		try {
-			// Cek duplikasi Username/Email
-			const { usernameExists, emailExists } = await checkUserExists(username, email);
+			const { usernameExists, emailExists } = await checkUserExists(values.username, values.email);
 			if (usernameExists) {
 				return fail(400, {
-					error: 'Username sudah digunakan oleh pengguna lain.',
-					values: { name, username, email, role, status }
+					...warningResponse('Username sudah digunakan oleh pengguna lain.', 'Gagal Simpan'),
+					values
 				});
 			}
 			if (emailExists) {
 				return fail(400, {
-					error: 'Email sudah terdaftar dalam sistem.',
-					values: { name, username, email, role, status }
+					...warningResponse('Email sudah terdaftar dalam sistem.', 'Gagal Simpan'),
+					values
 				});
 			}
 
-			// const id = crypto.randomUUID();
-			const id = randomUUID();
 			let passHash = '';
-
 			try {
-				passHash = await new Argon2id().hash(password);
+				passHash = await new Argon2id().hash(values.password);
 			} catch (err: any) {
-				return fail(
-					429,
-					errorResponse('Terjadi kesalahan sistem saat mengamankan kata sandi', 'Error pasword')
-				);
+				console.error('Error hashing password:', err);
+				return fail(429, {
+					...errorResponse(
+						'Terjadi kesalahan sistem saat mengamankan kata sandi.',
+						'Gagal Hashing'
+					),
+					values
+				});
 			}
 
 			await createUserAdmin({
-				id,
-				name,
-				username,
-				email,
+				id: values.id!,
+				name: values.name,
+				username: values.username,
+				email: values.email,
 				password: passHash,
-				role,
-				status
+				role: values.role as UserAdminDTO['role'],
+				status: values.status as UserAdminDTO['status']
 			});
 
-			// Arahkan ke daftar manajemen pengguna
-			return successResponse('Berhasil Menambah User', 'Succes add');
-		} catch (err) {
+			return successResponse('Berhasil menambah user baru.', 'Berhasil');
+		} catch (err: any) {
 			if (err instanceof Response) throw err;
 			console.error('Gagal menambahkan user:', err);
+
+			// Pengecekan entri ganda / duplicate entry database
+			if (err.code === 'ER_DUP_ENTRY' || err.message?.includes('Duplicate entry')) {
+				return fail(400, {
+					...warningResponse('Username atau Email sudah terdaftar pada user lain.', 'Gagal Simpan'),
+					values
+				});
+			}
+
 			return fail(500, {
-				error: 'Terjadi kesalahan sistem saat menyimpan user baru.',
-				values: { name, username, email, role, status }
+				...errorResponse(
+					err?.message || 'Terjadi kesalahan sistem saat menyimpan user baru.',
+					'Kesalahan Server'
+				),
+				values
 			});
 		}
 	}

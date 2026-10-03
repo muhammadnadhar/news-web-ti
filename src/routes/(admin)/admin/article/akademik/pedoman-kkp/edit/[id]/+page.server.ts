@@ -33,7 +33,7 @@ export const actions: Actions = {
 
 		const values: PedomanKkpFormValues = {
 			title: formData.get('title')?.toString().trim() || '',
-			imageUrl:
+			image_url:
 				formData.get('image_url')?.toString().trim() ||
 				formData.get('imageUrl')?.toString().trim() ||
 				null,
@@ -62,7 +62,7 @@ export const actions: Actions = {
 			const success = await updatePedomanKkp(
 				id,
 				values.title,
-				values.imageUrl,
+				values.image_url,
 				values.description,
 				values.imageId
 			);

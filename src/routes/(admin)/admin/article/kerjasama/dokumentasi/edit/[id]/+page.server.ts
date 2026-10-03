@@ -4,12 +4,12 @@ import {
 	getActivityDocumentationById,
 	updateActivityDocumentation
 } from '$lib/repository/admin/article/kerjasama/documentasi';
-import { errorResponse, successResponse } from '$lib/helper/message';
+import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
 import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
+import type { DocumentationFormValues } from '$lib/types/values/admin/article';
 // Sesuaikan import path repository Anda
 
 /**
- * LOAD DATA:
  * Mengambil data dokumentasi berdasarkan ID dari URL parameter
  */
 export const load: PageServerLoad = async ({ params }) => {
@@ -29,7 +29,6 @@ export const load: PageServerLoad = async ({ params }) => {
 };
 
 /**
- * FORM ACTIONS:
  * Memproses pembaruan data dokumentasi kegiatan
  */
 export const actions: Actions = {
@@ -37,77 +36,68 @@ export const actions: Actions = {
 		const { id } = params;
 		const formData = await request.formData();
 
-		const title = formData.get('title')?.toString().trim() || '';
-		const imageUrl = formData.get('image_url')?.toString().trim() || '';
-		const eventDate = formData.get('event_date')?.toString().trim() || null;
-		const description = formData.get('description')?.toString().trim() || null;
-		const linkDrive = formData.get('link_drive')?.toString().trim() || null;
-
-		// Objek nilai untuk dikembalikan jika terjadi kegagalan/validasi
-		const values = {
+		const values: DocumentationFormValues = {
 			id,
-			title,
-			image_url: imageUrl,
-			event_date: eventDate,
-			description
+			title: formData.get('title')?.toString().trim() || '',
+			image_url: formData.get('image_url')?.toString().trim() || '',
+			image_public_id:
+				formData.get('image_public_id')?.toString().trim() ||
+				formData.get('public_id')?.toString().trim() ||
+				null,
+			event_date: formData.get('event_date')?.toString().trim() || null,
+			description: formData.get('description')?.toString().trim() || null,
+			link_drive: formData.get('link_drive')?.toString().trim() || null
 		};
 
-		// 1. Validasi Kolom Wajib
-		if (!title) {
+		if (!values.title) {
 			return fail(400, {
-				success: false,
-				title: 'Validasi Gagal',
-				message: 'Judul kegiatan wajib diisi.',
+				...warningResponse('Judul kegiatan wajib diisi.', 'Validasi Gagal'),
 				values
 			});
 		}
 
-		if (!imageUrl) {
+		if (!values.image_url) {
 			return fail(400, {
-				success: false,
-				title: 'Validasi Gagal',
-				message: 'Foto / media dokumentasi wajib diunggah.',
+				...warningResponse('Foto / media dokumentasi wajib diunggah.', 'Validasi Gagal'),
 				values
 			});
 		}
 
 		try {
-			// Eksekusi Repository Method Update
 			const isSuccess = await updateActivityDocumentation(
 				id,
-				title,
-				imageUrl,
-				description,
-				eventDate,
-				linkDrive
+				values.title,
+				values.image_url,
+				values.description,
+				values.event_date,
+				values.link_drive,
+				values.image_public_id
 			);
 
 			if (!isSuccess) {
 				return fail(400, {
-					success: false,
-					title: 'Gagal Menyimpan',
-					message: 'Data tidak mengalami perubahan atau gagal diperbarui.',
+					...errorResponse(
+						'Data tidak mengalami perubahan atau gagal diperbarui.',
+						'Gagal Menyimpan'
+					),
 					values
 				});
 			}
 
 			// 3. Kembalikan Response Berhasil (Sesuai penanganan pada komponen ActivityDocumentationForm)
-			return {
-				success: true,
-				title: 'Berhasil',
-				message: 'Dokumentasi kegiatan berhasil diperbarui.',
-				values
-			};
+			return successResponse('Dokumentasi kegiatan berhasil diperbarui.', 'Berhasil');
 		} catch (err: any) {
 			console.error('Error saat update dokumentasi kegiatan:', err);
 			return fail(500, {
-				success: false,
-				title: 'Kesalahan Server',
-				message: 'Terjadi kesalahan sistem saat memperbarui data dokumentasi.',
+				...errorResponse(
+					'Terjadi kesalahan sistem saat memperbarui data dokumentasi.',
+					'Kesalahan Server'
+				),
 				values
 			});
 		}
 	},
+
 	deletePhoto: async ({ request }) => {
 		const formData = await request.formData();
 		const publicId = formData.get('public_id')?.toString();

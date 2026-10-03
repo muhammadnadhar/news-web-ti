@@ -4,7 +4,6 @@
 	import Message from '$lib/components/admin/message.svelte';
 	import SelectJabatan from '../../../dataset/jabatan-prodi/_component/selectJabatan.svelte';
 	import type { MessageStatus, ResponseMessage } from '$lib/types/message';
-	import type { PrimaryDosenDTO } from '$lib/dto/admin/home';
 	import type { LecturerStaffItemDTO } from '$lib/dto/admin/article/profile';
 
 	interface Position {

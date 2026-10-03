@@ -10,8 +10,7 @@
 </svelte:head>
 
 <FormDocActivity
-	initialData={form?.values ?? data.documentation}
-	formError={form?.error}
+	valuesData={form?.values ?? data.documentation}
 	isEditMode={true}
 	action="?/update"
 	submitLabel="Perbarui Dokumentasi"

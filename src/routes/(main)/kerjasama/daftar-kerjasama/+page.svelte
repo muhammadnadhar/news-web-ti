@@ -18,7 +18,7 @@
 	class={` ${classTopSpace} relative overflow-hidden border-b border-border-color/40 bg-bg-secondary/90 py-12 lg:py-16`}
 >
 	<div
-		class="bg-scitech-mint/10 pointer-events-none absolute -top-24 -left-24 h-96 w-96 blur-3xl"
+		class="bg-bg-secondary/10 pointer-events-none absolute -top-24 -left-24 h-96 w-96 blur-3xl"
 	></div>
 	<div
 		class="pointer-events-none absolute -right-24 -bottom-24 h-96 w-96 bg-blue-500/10 blur-3xl"
@@ -27,7 +27,7 @@
 	<div class="relative z-10 mx-auto max-w-7xl px-6 lg:px-10">
 		<div class="flex items-center gap-4">
 			<div
-				class="border-scitech-mint/30 bg-scitech-mint/10 text-scitech-mint flex h-12 w-12 items-center justify-center border shadow-[3px_3px_0px_0px_rgba(0,0,0,0.4)]"
+				class="border-scitech-mint/30 bg-bg-secondary/10 text-scitech-mint flex h-12 w-12 items-center justify-center border shadow-[3px_3px_0px_0px_rgba(0,0,0,0.4)]"
 			>
 				<Handshake class="h-6 w-6" />
 			</div>
@@ -51,11 +51,11 @@
 		<div class="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
 			{#each partnerships as item (item.id)}
 				<div
-					class="group bg-scitech-slate/50 hover:border-scitech-mint/60 relative flex flex-col items-center justify-between border border-border-color p-6 text-center shadow-[6px_6px_0px_0px_rgba(0,0,0,0.4)] backdrop-blur-md transition-all duration-300 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,0.5)]"
+					class="group bg-bg-secondary/50 hover:border-scitech-mint/60 relative flex flex-col items-center justify-between border border-border-color p-6 text-center shadow-[6px_6px_0px_0px_rgba(0,0,0,0.4)] backdrop-blur-md transition-all duration-300 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,0.5)]"
 				>
 					<!-- Frame Khusus Logo Instansi (Sangat Bersih & Berkontras Tinggi) -->
 					<div
-						class="mb-5 flex h-36 w-full items-center justify-center border border-border-color bg-white p-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,0.3)] transition-transform duration-300 group-hover:scale-[1.02]"
+						class="mb-5 flex h-36 w-full items-center justify-center border border-border-color bg-bg-primary p-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,0.3)] transition-transform duration-300 group-hover:scale-[1.02]"
 					>
 						{#if item.logo_url}
 							<img

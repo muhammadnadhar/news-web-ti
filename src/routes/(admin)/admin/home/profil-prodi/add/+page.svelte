@@ -5,5 +5,4 @@
 	let { form }: { form: ActionData } = $props();
 </script>
 
-<FormProfilProdi
-isEdit={false} actionUrl="?/create" {form} />
+<FormProfilProdi isEdit={false} actionUrl="?/create" valuesData={form?.values} />

@@ -10,10 +10,11 @@
 	} from '$lib/cloudinary/client';
 	import Message, { type MessageStatus } from '$lib/components/admin/message.svelte';
 	import type { CourseMapDTO } from '$lib/dto/admin/article/kurikulum';
+	import type { CourseMapFormValues } from '$lib/types/values/admin/article';
 
 	interface Props {
 		initialData?: CourseMapDTO | null;
-		formError?: string | null;
+		valueData: CourseMapFormValues | undefined;
 		isEditMode?: boolean;
 		submitLabel?: string;
 		curAction?: string;
@@ -22,7 +23,7 @@
 
 	let {
 		initialData = null,
-		formError = null,
+		valueData,
 		isEditMode = false,
 		submitLabel,
 		curAction = '?/default',
@@ -30,8 +31,8 @@
 	}: Props = $props();
 
 	// State lokal
-	let imageUrl = $state(initialData?.image_url || '');
-	let publicId = $state(initialData?.image_public_id || '');
+	let imageUrl = $state(valueData?.image_url ?? initialData?.image_url ?? '');
+	let publicId = $state(valueData?.image_public_id ?? initialData?.image_public_id ?? '');
 	let isSubmitting = $state(false);
 	let showMessage = $state(false);
 
@@ -137,11 +138,7 @@
 		</div>
 	{/if}
 
-	{#if formError}
-		<div class="mb-6">
-			<Message status="error" title="Gagal" message={formError} dismissible={true} />
-		</div>
-	{/if}
+
 
 	<div class="rounded-2xl border border-border-color bg-bg-secondary p-6 shadow-sm">
 		<form
@@ -157,8 +154,8 @@
 					if (result.type === 'success') {
 						triggerMessage(
 							'success',
-							(result.data.title as string) || 'Berhasil',
-							(result.data.message as string) || 'Data Peta Mata Kuliah berhasil disimpan.'
+							(result?.data. title as string) || 'Berhasil',
+							(result?.data.message as string) || 'Data Peta Mata Kuliah berhasil disimpan.'
 						);
 
 						if (!isEditMode) {
@@ -189,13 +186,13 @@
 			<!-- Field: Judul Peta Mata Kuliah -->
 			<div class="flex flex-col gap-2">
 				<label for="title" class="text-xs font-semibold text-text-main">
-					Judul Peta Mata Kuliah <span class="text-red-500">*</span>
+					Judul Peta Mata Kuliah <span class="text-status">*</span>
 				</label>
 				<input
 					type="text"
 					id="title"
 					name="title"
-					value={initialData?.title || ''}
+					value={valueData?.title ?? initialData?.title ?? ''}
 					placeholder="Contoh: Peta Mata Kuliah Kurikulum Angkatan 2026 Keatas"
 					required
 					class="w-full rounded-xl border border-border-light bg-bg-primary px-4 py-2.5 text-sm text-text-main transition-all placeholder:text-text-muted focus:border-accent-blue focus:ring-2 focus:ring-accent-blue/20 focus:outline-none"
@@ -205,7 +202,7 @@
 			<!-- Field: Upload Foto Peta Mata Kuliah -->
 			<div class="flex flex-col gap-2">
 				<label for="image_upload" class="text-xs font-semibold text-text-main">
-					Gambar Peta Mata Kuliah <span class="text-red-500">*</span>
+					Gambar Peta Mata Kuliah <span class="text-status">*</span>
 				</label>
 				<input type="hidden" name="image_url" value={imageUrl} />
 				<input type="hidden" name="public_id" value={publicId} />
@@ -223,7 +220,7 @@
 							type="button"
 							onclick={removeImage}
 							disabled={isDeletingPhoto}
-							class="mt-3 inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs font-semibold text-red-500 transition-all hover:bg-red-500/20 disabled:opacity-50"
+							class="mt-3 inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-status-error/20 bg-status-error0/10 px-3 py-2 text-xs font-semibold text-status transition-all hover:bg-status-error/20 disabled:opacity-50"
 						>
 							{#if isDeletingPhoto}
 								<LoaderCircleIcon class="h-3.5 w-3.5 animate-spin" />
@@ -274,7 +271,7 @@
 				<button
 					type="submit"
 					disabled={isSubmitting}
-					class="inline-flex items-center gap-2 rounded-xl bg-accent-blue px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-accent-blue/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-blue disabled:opacity-50"
+					class="inline-flex items-center gap-2 rounded-xl bg-accent-blue px-5 py-2.5 text-sm font-semibold text-text-main shadow-sm transition-all hover:bg-accent-blue/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-blue disabled:opacity-50"
 				>
 					{#if isSubmitting}
 						<LoaderCircleIcon class="h-4 w-4 animate-spin" />

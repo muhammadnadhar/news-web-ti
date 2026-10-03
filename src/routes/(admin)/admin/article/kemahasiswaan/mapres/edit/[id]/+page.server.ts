@@ -5,10 +5,12 @@ import {
 	getStudentAchievementById,
 	updateStudentAchievement
 } from '$lib/repository/admin/article/kemahasiswaan/mapres';
-import { errorResponse, successResponse } from '$lib/helper/message';
+import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
 import { getAllSemesters } from '$lib/repository/admin/dataset/semester';
 import { getAllAngkatan } from '$lib/repository/admin/dataset/angkatan';
 import { cloudinary } from '$lib/cloudinary/server';
+import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
+import type { MapresFormValues } from '$lib/types/values/admin/article';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const { id } = params;
@@ -48,60 +50,78 @@ export const load: PageServerLoad = async ({ params }) => {
 
 export const actions: Actions = {
 	update: async ({ request, params }) => {
-		const { id } = params;
+		const id =
+			params.id || (await request.clone().formData()).get('id')?.toString().trim() || undefined;
 		const formData = await request.formData();
 
-		const studentName = formData.get('student_name')?.toString().trim();
-		const achievementName = formData.get('achievement_name')?.toString().trim();
-		const isAcademic = formData.get('is_academic')?.toString() || 'y';
-		const batchYear = formData.get('batch_year')?.toString().trim();
-		const semester = formData.get('semester')?.toString().trim();
-		const imageUrl = formData.get('image_url')?.toString().trim();
-
-		const values = {
-			studentName,
-			achievementName,
-			isAcademic,
-			batchYear,
-			semester
+		const values: MapresFormValues = {
+			id,
+			student_name: formData.get('student_name')?.toString().trim() || '',
+			achievement_name: formData.get('achievement_name')?.toString().trim() || '',
+			is_academic: formData.get('is_academic')?.toString().trim() || 'y',
+			batch_year: formData.get('batch_year')?.toString().trim() || '',
+			semester: formData.get('semester')?.toString().trim() || '',
+			image_url: formData.get('image_url')?.toString().trim() || null,
+			image_public_id:
+				formData.get('image_public_id')?.toString().trim() ||
+				formData.get('public_id')?.toString().trim() ||
+				null
 		};
 
-		// Validasi Sederhana
-		if (!studentName || !achievementName || !batchYear || !semester) {
+		if (!values.id) {
 			return fail(400, {
-				title: 'Validasi Gagal',
-				message: 'Mohon lengkapi semua bidang yang wajib diisi.',
+				...warningResponse('ID data prestasi tidak ditemukan.', 'Gagal'),
 				values
 			});
 		}
 
-		if (!imageUrl) {
-			return fail(400, errorResponse('Buuhkan Gambar', 'Error'));
+		if (
+			!values.student_name ||
+			!values.achievement_name ||
+			!values.batch_year ||
+			!values.semester
+		) {
+			return fail(400, {
+				...warningResponse('Mohon lengkapi semua bidang yang wajib diisi.', 'Validasi Gagal'),
+				values
+			});
+		}
+
+		if (!values.image_url) {
+			return fail(400, {
+				...warningResponse('Butuhkan Gambar / Foto Prestasi.', 'Error'),
+				values
+			});
 		}
 
 		try {
 			// TODO: Jalankan query update ke database Anda
 			// await db.prestasi.update({ where: { id }, data: { ... } });
 			await updateStudentAchievement(
-				id,
-				studentName,
-				isAcademic ? 'y' : 'n',
-				batchYear,
-				semester,
-				achievementName,
-				imageUrl
+				values.id,
+				values.student_name,
+				values.is_academic,
+				values.batch_year,
+				values.semester,
+				values.achievement_name,
+				values.image_url,
+				values.image_public_id
 			);
 
 			return {
-				success: true,
-				title: 'Berhasil Diperbarui',
-				message: `Data prestasi "${achievementName}" milik ${studentName} berhasil diperbarui.`,
+				...successResponse(
+					`Data prestasi "${values.achievement_name}" milik ${values.student_name} berhasil diperbarui.`,
+					'Berhasil Diperbarui'
+				),
 				values
 			};
-		} catch (err) {
+		} catch (err: any) {
+			console.error('Error updating student achievement:', err);
 			return fail(500, {
-				title: 'Gagal Menyimpan',
-				message: 'Terjadi kesalahan sistem saat memperbarui data.',
+				...errorResponse(
+					`Terjadi kesalahan sistem saat memperbarui data: ${err?.message || 'Kesalahan tidak diketahui'}`,
+					'Gagal Menyimpan'
+				),
 				values
 			});
 		}
@@ -117,7 +137,7 @@ export const actions: Actions = {
 		}
 
 		try {
-			await cloudinary.uploader.destroy(publicId);
+			await deleteImageFromCloudinary(publicId);
 			return successResponse('Berhasil di batalkan', 'Succcess');
 		} catch (err) {
 			console.error('Error deleting photo:', err);

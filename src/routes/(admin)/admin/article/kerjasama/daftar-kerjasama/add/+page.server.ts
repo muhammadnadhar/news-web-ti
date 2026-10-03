@@ -4,33 +4,38 @@ import { randomUUID } from '$lib/crypto';
 import { createPartnership } from '$lib/repository/admin/article/kerjasama/daftar';
 import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
 import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
+import type { KerjasamaFormValues } from '$lib/types/values/admin/article';
 
 export const actions: Actions = {
 	create: async ({ request }) => {
 		const formData = await request.formData();
 
-		const institutionName = formData.get('institution_name')?.toString().trim();
-		const logoUrl = formData.get('logo_url')?.toString().trim() || null;
+		const values: KerjasamaFormValues = {
+			institution_name: formData.get('institution_name')?.toString().trim() || '',
+			logo_url: formData.get('logo_url')?.toString().trim() || null,
+			logo_public_id:
+				formData.get('logo_public_id')?.toString().trim() ||
+				formData.get('public_id')?.toString().trim() ||
+				null
+		};
 
-		console.info(institutionName, logoUrl);
-
-		if (!institutionName) {
+		if (!values.institution_name) {
 			return fail(400, {
 				...warningResponse('Harap isi Nama Instansi / Mitra Kerjasama.', 'Gagal'),
-				values: { institutionName, logoUrl }
+				values
 			});
 		}
 
 		const id = randomUUID();
 
 		try {
-			await createPartnership(id, institutionName, logoUrl);
+			await createPartnership(id, values.institution_name, values.logo_url, values.logo_public_id);
 		} catch (err) {
 			console.error('Error creating partnership:', err);
 
 			return fail(500, {
 				...errorResponse('Gagal menyimpan data Kerjasama ke database.', 'Gagal'),
-				values: { institutionName, logoUrl }
+				values
 			});
 		}
 

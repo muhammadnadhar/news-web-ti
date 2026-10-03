@@ -3,6 +3,7 @@
 	import type { LecturerStaffItemDTO } from '$lib/types/admin/article/profile';
 	import EmptyData from '../../_components/emptyData.svelte';
 	import { classTopSpace } from '$lib/constants';
+	import { mergeNewPath } from '$lib/utils.js';
 
 	let { data } = $props();
 
@@ -73,12 +74,11 @@
 		<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
 			{#each filteredLecturers as item (item.id)}
 				<a
-					href={`/dosen-staff/${item.id}`}
+					href={mergeNewPath(item.id)}
 					class="group relative flex flex-col justify-between border border-border-color bg-bg-secondary
                shadow-[0_4px_0_0_var(--border-color)] transition-all duration-300
                hover:-translate-y-1 hover:border-border-color hover:bg-bg-secondary-hover hover:shadow-[0_8px_0_0_var(--border-color)]"
 				>
-					<!-- 1. Frame Gambar Full Width (Border-b Tajam) -->
 					<div
 						class="relative aspect-[4/5] w-full overflow-hidden border-b border-border-color bg-bg-primary"
 					>

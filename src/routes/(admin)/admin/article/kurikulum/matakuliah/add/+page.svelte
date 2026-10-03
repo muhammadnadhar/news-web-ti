@@ -9,8 +9,8 @@
 </svelte:head>
 
 <FormCourceMap
-	curAction={'?/save'}
-	initialData={form?.values}
+	curAction={'?/create'}
+	valueData={form?.values}
 	formError={form?.message}
 	isEditMode={false}
 	submitLabel="Simpan Peta MK"

@@ -39,6 +39,15 @@ export async function getAllOrgStructures(): Promise<OrgStructureItemDTO[]> {
 }
 
 /**
+ * Mendapatkan 1 data struktur organisasi berdasarkan ID (read by id)
+ */
+export async function getOrgStructureById(id: string): Promise<OrgStructureItemDTO | null> {
+	const sql = `SELECT * FROM ${tableOrganizationalStructure} WHERE id = ? LIMIT 1`;
+	const rows = (await query(sql, [id])) as OrgStructureItemDTO[];
+	return rows.length > 0 ? rows[0] : null;
+}
+
+/**
  * Mengambil hanya image_public_id dari Struktur Organisasi berdasarkan ID
  *
  * @param id - ID Struktur Organisasi

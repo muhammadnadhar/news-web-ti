@@ -6,6 +6,7 @@
 	import BtnFloatPagination from '$lib/components/admin/btnFloatPagination.svelte';
 	import { classTopSpace } from '$lib/constants';
 	import SpinLoading from '$lib/components/loading/spin.svelte';
+	import EmptyData from '../../../_components/emptyData.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -48,7 +49,7 @@
 			<SpinLoading />
 		{:then category}
 			<div class="flex items-center gap-3 pt-2">
-				<div class="bg-scitech-mint/10 text-scitech-mint border-scitech-mint/30 border p-3">
+				<div class="text-scitech-mint border-scitech-mint/30 border bg-bg-secondary/10 p-3">
 					<Folder class="h-6 w-6" />
 				</div>
 				<div>
@@ -70,17 +71,12 @@
 		<SpinLoading />
 	{:then newsList}
 		{#if newsList.length === 0}
-			<div class="border border-border-color bg-bg-secondary p-12 text-center">
-				<Newspaper class="mx-auto mb-3 h-12 w-12 text-text-muted/50" />
-				<p class="font-mono text-sm text-text-muted">
-					Belum ada berita yang diterbitkan pada kategori ini.
-				</p>
-			</div>
+			<EmptyData title="Belum ada Berita yang di terbitka" icon={'Newspaper'} />
 		{:else}
 			<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
 				{#each newsList as item (item.id)}
 					<article
-						class="bg-scitech-slate/70 hover:border-scitech-mint/50 group flex flex-col justify-between border border-border-color/10 transition-colors"
+						class="hover:border-scitech-mint/50 group flex flex-col justify-between border border-border-color/10 bg-bg-secondary/70 transition-colors"
 					>
 						<div>
 							{#if item.image_url}
@@ -105,7 +101,7 @@
 								<div class="flex flex-wrap items-center gap-3 text-xs text-text-muted">
 									{#if item.category_name}
 										<span
-											class="bg-scitech-mint/10 text-scitech-mint border-scitech-mint/30 inline-flex items-center gap-1.5 border px-2.5 py-1 text-[11px] font-semibold tracking-wider uppercase"
+											class="text-scitech-mint border-scitech-mint/30 inline-flex items-center gap-1.5 border bg-bg-primary/10 px-2.5 py-1 text-[11px] font-semibold tracking-wider uppercase"
 										>
 											<Folder class="h-3 w-3" />
 											{item.category_name}

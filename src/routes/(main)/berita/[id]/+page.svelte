@@ -49,7 +49,7 @@
 				<div class="flex flex-wrap items-center justify-between gap-3">
 					{#if news.category_name}
 						<span
-							class="bg-scitech-mint/10 text-scitech-mint border-scitech-mint/30 inline-flex items-center gap-1.5 border px-3 py-1 text-xs font-bold tracking-wider uppercase"
+							class="text-scitech-mint border-scitech-mint/30 inline-flex items-center gap-1.5 border bg-bg-secondary/10 px-3 py-1 text-xs font-bold tracking-wider uppercase"
 						>
 							<Folder class="h-3.5 w-3.5" />
 							{news.category_name}

@@ -5,6 +5,4 @@
 	let { form }: { form: ActionData } = $props();
 </script>
 
-<FormStructurOrg
-
-isEdit={false} actionUrl="?/create" {form} />
+<FormStructurOrg isEdit={false} valuesData={form?.values} actionUrl="?/create" />

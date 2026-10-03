@@ -72,7 +72,6 @@
 				</p>
 			</div>
 
-			<!-- Input Pencarian -->
 			{#if data.documentations && data.documentations.length > 0}
 				<div class="relative min-w-[260px]">
 					<Search class="absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-text-muted" />
@@ -80,16 +79,16 @@
 						type="text"
 						bind:value={searchQuery}
 						placeholder="Cari nama kegiatan..."
-						class="bg-bg-secondary focus:border-border-color/15 focus:ring-scitech-mint w-full border border-border-color py-2.5 pr-4 pl-10 text-xs text-text-main placeholder-text-muted shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)] transition-all outline-none focus:ring-1"
+						class="focus:ring-scitech-mint w-full border border-border-color bg-bg-secondary py-2.5 pr-4 pl-10 text-xs text-text-main placeholder-text-muted shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)] transition-all outline-none focus:border-border-color/15 focus:ring-1"
 					/>
 				</div>
 			{/if}
 		</div>
 	</div>
 
-	<!-- GRID GALERI FOTO DOKUMENTASI -->
+	<!-- grid galeri foto dokumentasi -->
 	{#if filteredDocumentations.length > 0}
-		<div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+		<div class="grid grid-cols-1 gap-8 lg:grid-cols-2 xl:grid-cols-3">
 			{#each filteredDocumentations as item (item.id)}
 				{@const formattedDate = item.event_date
 					? new Date(item.event_date).toLocaleDateString('id-ID', {
@@ -100,7 +99,7 @@
 					: null}
 
 				<article
-					class="group bg-scitech-slate/40 hover:border-scitech-mint/60 relative flex flex-col justify-between border border-border-color shadow-[6px_6px_0px_0px_rgba(0,0,0,0.4)] backdrop-blur-md transition-all duration-300 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,0.5)]"
+					class="group bg-bg-secondary/40 hover:border-border-color/60 relative flex flex-col justify-between border border-border-color shadow-[6px_6px_0px_0px_rgba(0,0,0,0.4)] backdrop-blur-md transition-all duration-300 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,0.5)]"
 				>
 					<div
 						class="bg-scitech-navy relative h-56 w-full overflow-hidden border-b border-border-color"
@@ -141,7 +140,7 @@
 
 							{#if item.description}
 								<p class="line-clamp-3 text-xs leading-relaxed text-text-muted">
-									 {@html  item.description}
+									{@html item.description}
 								</p>
 							{/if}
 						</div>

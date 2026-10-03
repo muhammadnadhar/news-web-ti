@@ -6,7 +6,7 @@
 </script>
 
 <FormMshIpk
-	{form}
+	valueData={form?.values}
 	action="?/create"
 	angkatanList={data.angkatanList}
 	semesterList={data.semesterList}

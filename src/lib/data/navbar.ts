@@ -1,8 +1,6 @@
 import type { NavMenuItemType } from '$lib/types/navbar';
 import {
-	Building2,
 	GraduationCap,
-	Users,
 	Newspaper,
 	SearchIcon,
 	HandshakeIcon,
@@ -165,7 +163,8 @@ export const navMenuItems: NavMenuItemType[] = [
 		label: 'Berita',
 		icon: Newspaper,
 		bgClass: ' bg-text-main text-bg-primary hover:bg-scitech-mint hover:text-scitech-navy',
-		badge: 2,
-		subMenu: [{ id: 'berita', label: 'Berita', href: '/berita' }]
+		// badge: 2, // suatu hari akan bermanfaat sebagai custome nitifikasi
+		badge : null, 
+    subMenu: [{ id: 'berita', label: 'Berita', href: '/berita' }]
 	}
 ];

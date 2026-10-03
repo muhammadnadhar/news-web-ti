@@ -10,6 +10,7 @@
 	import type { StudentAchievementDTO } from '$lib/dto/admin/article/kemahasiswaan';
 	import type { AngkatanDTO, SemesterDTO } from '$lib/dto/admin/dataset';
 	import type { ResponseMessage } from '$lib/types/message';
+	import type { MapresFormValues } from '$lib/types/values/admin/article';
 	import {
 		Award,
 		User,
@@ -27,7 +28,7 @@
 	import { CldUploadWidget } from 'svelte-cloudinary';
 
 	interface Props {
-		form?: any;
+		valuesData?: MapresFormValues | null;
 		initData?: StudentAchievementDTO;
 		action?: string;
 		title?: string;
@@ -39,8 +40,8 @@
 	}
 
 	let {
-		form,
 		initData,
+		valuesData,
 		action = '',
 		title = 'Tambah Prestasi Mahasiswa',
 		subtitle = 'Isi formulir berikut untuk menambahkan riwayat prestasi akademik atau non-akademik mahasiswa.',
@@ -55,7 +56,7 @@
 	let photoPublicId = $state(''); // Simpan public_id dari Cloudinary
 
 	// State untuk menyimpan URL gambar dan status hapus
-	let photoUrl = $state<string | null>(form?.values?.image_url || prestasi?.image_url);
+	let photoUrl = $state<string | null>(valuesData?.image_url ?? prestasi?.image_url);
 	let isDeletingPhoto = $state(false);
 
 	// State Form
@@ -118,37 +119,31 @@
 	}
 </script>
 
+{#if showMessage}
+	<div class="transition-all duration-300">
+		<Message
+			status={messageConfig.status}
+			title={messageConfig.title}
+			message={messageConfig.message}
+			dismissible={true}
+			timeout={5000}
+			onclose={() => (showMessage = false)}
+		/>
+	</div>
+{/if}
 <div class="mx-auto max-w-4xl space-y-6 p-4 md:p-6">
-	<!-- Header Section -->
-	<header
-		class="flex flex-col gap-2 border-b border-slate-200 pb-4 sm:flex-row sm:items-center sm:justify-between"
-	>
+	<header class="flex flex-col gap-2 pb-4 sm:flex-row sm:items-center sm:justify-between">
 		<div>
-			<h1 class="flex items-center gap-2 text-2xl font-bold text-slate-800">
-				<Award class="h-7 w-7 text-indigo-600" />
+			<h1 class="flex items-center gap-2 text-2xl font-bold text-text-main">
+				<Award class="h-7 w-7 text-accent-primary" />
 				{title}
 			</h1>
 			{#if subtitle}
-				<p class="text-sm text-slate-500">{subtitle}</p>
+				<p class="text-sm text-text-muted">{subtitle}</p>
 			{/if}
 		</div>
 	</header>
 
-	<!-- Message Component Notification -->
-	{#if showMessage}
-		<div class="transition-all duration-300">
-			<Message
-				status={messageConfig.status}
-				title={messageConfig.title}
-				message={messageConfig.message}
-				dismissible={true}
-				timeout={5000}
-				onclose={() => (showMessage = false)}
-			/>
-		</div>
-	{/if}
-
-	<!-- Form Card -->
 	<div class="rounded-xl border border-border-color bg-bg-secondary p-6 shadow-sm md:p-8">
 		<form
 			method="POST"
@@ -161,7 +156,7 @@
 				return async ({ result, update }) => {
 					isSubmitting = false;
 
-					//Pengecekan jika response sukses dari server
+					// Pengecekan jika response sukses dari server
 					if (result.type === 'success') {
 						const data = result.data;
 
@@ -183,7 +178,7 @@
 							await update({ reset: false });
 						}
 					}
-					//Pengecekan jika return fail(...) dari server (HTTP status 4xx/5xx)
+					// Pengecekan jika return fail(...) dari server (HTTP status 4xx/5xx)
 					else if (result.type === 'failure' && result.data) {
 						const data = result.data;
 						triggerMessage(
@@ -193,7 +188,7 @@
 						);
 						await update({ reset: false });
 					}
-					//Kesalahan koneksi / unhandled exception
+					// Kesalahan koneksi / unhandled exception
 					else {
 						triggerMessage('error', 'Error', 'Terjadi kesalahan koneksi/sistem.');
 						await update({ reset: false });
@@ -202,14 +197,13 @@
 			}}
 		>
 			<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-				<!-- Nama Mahasiswa -->
 				<div class="space-y-2 md:col-span-2">
-					<label for="student_name" class="block text-sm font-semibold text-slate-700">
-						Nama Mahasiswa <span class="text-rose-500">*</span>
+					<label for="student_name" class="block text-sm font-semibold text-text-main">
+						Nama Mahasiswa <span class="text-status-error">*</span>
 					</label>
 					<div class="relative rounded-lg shadow-sm">
 						<div
-							class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"
+							class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-text-muted"
 						>
 							<User class="h-5 w-5" />
 						</div>
@@ -217,22 +211,24 @@
 							type="text"
 							id="student_name"
 							name="student_name"
-							value={form?.values?.student_name || prestasi?.student_name}
+							value={valuesData?.student_name ?? prestasi?.student_name}
 							placeholder="Masukkan nama lengkap mahasiswa..."
 							required
 							disabled={isSubmitting}
-							class="block w-full rounded-lg border border-slate-300 bg-slate-50 py-2.5 pr-4 pl-10 text-sm text-slate-800 transition-all focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-500 disabled:opacity-50"
+							class="block w-full rounded-lg border border-border-light bg-bg-primary py-2.5 pr-4 pl-10 text-sm text-text-main transition-all focus:border-accent-primary focus:bg-bg-secondary focus:ring-2 focus:ring-accent-primary disabled:opacity-50"
 						/>
 					</div>
 				</div>
 
 				<!-- Nama Prestasi -->
 				<div class="space-y-2 md:col-span-2">
-					<label for="achievement_name" class="block text-sm font-semibold text-slate-700">
-						Nama / Judul Prestasi <span class="text-rose-500">*</span>
+					<label for="achievement_name" class="block text-sm font-semibold text-text-main">
+						Nama / Judul Prestasi <span class="text-status-error">*</span>
 					</label>
 					<div class="relative rounded-lg shadow-sm">
-						<div class="pointer-events-none absolute top-3 left-3 flex items-center text-slate-400">
+						<div
+							class="pointer-events-none absolute top-3 left-3 flex items-center text-text-muted"
+						>
 							<Sparkles class="h-5 w-5" />
 						</div>
 						<textarea
@@ -242,73 +238,71 @@
 							placeholder="Contoh: Juara 1 Lomba Karya Tulis Ilmiah Nasional (LKTIN) 2026"
 							required
 							disabled={isSubmitting}
-							class="block w-full rounded-lg border border-slate-300 bg-slate-50 py-2.5 pr-4 pl-10 text-sm text-slate-800 transition-all focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-500 disabled:opacity-50"
-							>{form?.values?.achievement_name ?? prestasi?.achievement_name}</textarea
+							class="block w-full rounded-lg border border-border-light bg-bg-primary py-2.5 pr-4 pl-10 text-sm text-text-main transition-all focus:border-accent-primary focus:bg-bg-secondary focus:ring-2 focus:ring-accent-primary disabled:opacity-50"
+							>{valuesData?.achievement_name ?? prestasi?.achievement_name}</textarea
 						>
 					</div>
 				</div>
 
 				<!-- Jenis Prestasi -->
 				<div class="space-y-2 md:col-span-2">
-					<label class="block text-sm font-semibold text-slate-700">
-						Kategori Prestasi <span class="text-rose-500">*</span>
+					<label class="block text-sm font-semibold text-text-main">
+						Kategori Prestasi <span class="text-status-error">*</span>
 					</label>
 					<div class="grid grid-cols-2 gap-4">
 						<label
-							class="flex cursor-pointer items-center justify-between rounded-lg border p-3.5 transition-all hover:bg-slate-50 has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-50/60 has-[:checked]:ring-1 has-[:checked]:ring-indigo-500"
+							class="flex cursor-pointer items-center justify-between rounded-lg border border-border-light p-3.5 transition-all hover:bg-bg-primary-glare has-[:checked]:border-accent-primary has-[:checked]:bg-accent-primary-dim has-[:checked]:ring-1 has-[:checked]:ring-accent-primary"
 						>
 							<div class="flex items-center gap-3">
-								<BookOpen class="h-5 w-5 text-indigo-600" />
+								<BookOpen class="h-5 w-5 text-accent-primary" />
 								<div>
-									<div class="text-sm font-medium text-slate-800">Akademik</div>
-									<div class="text-xs text-slate-500">Lomba Ilmiah, Olimpiade, dll.</div>
+									<div class="text-sm font-medium text-text-main">Akademik</div>
+									<div class="text-xs text-text-muted">Lomba Ilmiah, Olimpiade, dll.</div>
 								</div>
 							</div>
 							<input
 								type="radio"
 								name="is_academic"
 								value="y"
-								checked={(form?.values?.is_academic ?? prestasi?.is_academic ?? 'y') === 'y'}
+								checked={(valuesData?.is_academic ?? prestasi?.is_academic ?? 'y') === 'y'}
 								disabled={isSubmitting}
-								class="h-4 w-4 border-slate-300 text-indigo-600 focus:ring-indigo-500"
+								class="h-4 w-4 border-border-light text-accent-primary focus:ring-accent-primary"
 							/>
 						</label>
 
 						<label
-							class="flex cursor-pointer items-center justify-between rounded-lg border p-3.5 transition-all hover:bg-slate-50 has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-50/60 has-[:checked]:ring-1 has-[:checked]:ring-indigo-500"
+							class="flex cursor-pointer items-center justify-between rounded-lg border border-border-light p-3.5 transition-all hover:bg-bg-primary-glare has-[:checked]:border-accent-yellow has-[:checked]:bg-accent-yellow-dim has-[:checked]:ring-1 has-[:checked]:ring-accent-yellow"
 						>
 							<div class="flex items-center gap-3">
-								<Award class="h-5 w-5 text-amber-600" />
+								<Award class="h-5 w-5 text-accent-yellow" />
 								<div>
-									<div class="text-sm font-medium text-slate-800">Non-Akademik</div>
-									<div class="text-xs text-slate-500">Seni, Olahraga, Organisasi, dll.</div>
+									<div class="text-sm font-medium text-text-main">Non-Akademik</div>
+									<div class="text-xs text-text-muted">Seni, Olahraga, Organisasi, dll.</div>
 								</div>
 							</div>
 							<input
 								type="radio"
 								name="is_academic"
 								value="n"
-								checked={(form?.values?.is_academic ?? prestasi?.is_academic) === 'n'}
+								checked={(valuesData?.is_academic ?? prestasi?.is_academic) === 'n'}
 								disabled={isSubmitting}
-								class="h-4 w-4 border-slate-300 text-indigo-600 focus:ring-indigo-500"
+								class="h-4 w-4 border-border-light text-accent-yellow focus:ring-accent-yellow"
 							/>
 						</label>
 					</div>
 				</div>
 
-				<!-- Upload Foto / Bukti Sertifikat (Cloudinary Input) -->
 				<div class="space-y-2 md:col-span-2">
-					<label for="image_url" class="block text-sm font-semibold text-slate-700"> Foto </label>
+					<label for="image_url" class="block text-sm font-semibold text-text-main"> Foto </label>
 
 					<input type="hidden" id="image_url" name="image_url" bind:value={photoUrl} />
 
 					<div
-						class="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-slate-50/50 p-6 transition-all hover:border-indigo-400"
+						class="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-border-light bg-bg-primary/50 p-6 transition-all hover:border-accent-primary"
 					>
 						{#if photoUrl}
-							<!-- Preview Gambar yang Sudah Diunggah -->
 							<div
-								class="relative w-full max-w-md overflow-hidden rounded-lg border border-slate-200 bg-white p-2 shadow-sm"
+								class="relative w-full max-w-md overflow-hidden rounded-lg border border-border-light bg-bg-primary p-2 shadow-sm"
 							>
 								<img
 									src={photoUrl}
@@ -319,7 +313,7 @@
 									type="button"
 									onclick={removePhoto}
 									disabled={isDeletingPhoto}
-									class="absolute top-4 right-4 rounded-full bg-rose-600 p-1.5 text-white shadow transition-transform hover:scale-110 focus:outline-none disabled:opacity-50"
+									class="absolute top-4 right-4 rounded-full bg-status-error p-1.5 text-white shadow transition-transform hover:scale-110 focus:outline-none disabled:opacity-50"
 									title="Hapus Foto"
 								>
 									{#if isDeletingPhoto}
@@ -329,12 +323,12 @@
 									{/if}
 								</button>
 							</div>
-							<p class="mt-2 max-w-md truncate text-center text-xs text-slate-500">
+							<p class="mt-2 max-w-md truncate text-center text-xs text-text-muted">
 								{photoUrl}
 							</p>
 						{:else}
 							<div
-								class="mb-3 flex h-24 w-24 items-center justify-center rounded-xl border border-slate-200 bg-slate-100 text-slate-400"
+								class="mb-3 flex h-24 w-24 items-center justify-center rounded-xl border border-border-light bg-bg-primary-glare text-text-muted"
 							>
 								<ImageIcon class="h-10 w-10 opacity-40" />
 							</div>
@@ -351,7 +345,7 @@
 									type="button"
 									onclick={() => open()}
 									disabled={isLoading}
-									class="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-xs font-semibold text-indigo-600 shadow-sm transition-all hover:bg-slate-50 disabled:opacity-50"
+									class="inline-flex items-center gap-2 rounded-xl border border-border-light bg-bg-primary px-4 py-2.5 text-xs font-semibold text-accent-primary shadow-sm transition-all hover:bg-bg-primary-glare disabled:opacity-50"
 								>
 									{#if isLoading}
 										<LoaderCircle class="h-4 w-4 animate-spin" />
@@ -368,22 +362,22 @@
 
 				<!-- Angkatan -->
 				<div class="space-y-2">
-					<label for="angkatan_id" class="block text-sm font-semibold text-slate-700">
-						Tahun Angkatan <span class="text-rose-500">*</span>
+					<label for="angkatan_id" class="block text-sm font-semibold text-text-main">
+						Tahun Angkatan <span class="text-status-error">*</span>
 					</label>
 					<div class="relative rounded-lg shadow-sm">
 						<div
-							class="pointer-events-none absolute inset-y-0 left-0 z-10 flex items-center pl-3 text-slate-400"
+							class="pointer-events-none absolute inset-y-0 left-0 z-10 flex items-center pl-3 text-text-muted"
 						>
 							<GraduationCap class="h-5 w-5" />
 						</div>
 						<select
 							id="angkatan_id"
 							name="angkatan_id"
-							value={form?.values?.angkatan_id ?? prestasi?.angkatan_id ?? ''}
+							value={valuesData?.angkatan_id ?? prestasi?.angkatan_id ?? ''}
 							required
 							disabled={isSubmitting}
-							class="block w-full rounded-lg border border-slate-300 bg-slate-50 py-2.5 pr-4 pl-10 text-sm text-slate-800 transition-all focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-500 disabled:opacity-50"
+							class="block w-full rounded-lg border border-border-light bg-bg-primary py-2.5 pr-4 pl-10 text-sm text-text-main transition-all focus:border-accent-primary focus:bg-bg-secondary focus:ring-2 focus:ring-accent-primary disabled:opacity-50"
 						>
 							<option value="" disabled selected>-- Pilih Tahun Angkatan --</option>
 							{#each angkatanList as item (item.id)}
@@ -395,22 +389,22 @@
 
 				<!-- Semester -->
 				<div class="space-y-2">
-					<label for="semester_id" class="block text-sm font-semibold text-slate-700">
-						Semester <span class="text-rose-500">*</span>
+					<label for="semester_id" class="block text-sm font-semibold text-text-main">
+						Semester <span class="text-status-error">*</span>
 					</label>
 					<div class="relative rounded-lg shadow-sm">
 						<div
-							class="pointer-events-none absolute inset-y-0 left-0 z-10 flex items-center pl-3 text-slate-400"
+							class="pointer-events-none absolute inset-y-0 left-0 z-10 flex items-center pl-3 text-text-muted"
 						>
 							<Calendar class="h-5 w-5" />
 						</div>
 						<select
 							id="semester_id"
 							name="semester_id"
-							value={form?.values?.semester_id ?? prestasi?.semester_id ?? ''}
+							value={valuesData?.semester ?? prestasi?.semester_id ?? ''}
 							required
 							disabled={isSubmitting}
-							class="block w-full rounded-lg border border-slate-300 bg-slate-50 py-2.5 pr-4 pl-10 text-sm text-slate-800 transition-all focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-500 disabled:opacity-50"
+							class="block w-full rounded-lg border border-border-light bg-bg-primary py-2.5 pr-4 pl-10 text-sm text-text-main transition-all focus:border-accent-primary focus:bg-bg-secondary focus:ring-2 focus:ring-accent-primary disabled:opacity-50"
 						>
 							<option value="" disabled selected>-- Pilih Semester --</option>
 							{#each semesterList as item (item.id)}
@@ -425,19 +419,21 @@
 				</div>
 
 				<!-- Form Actions -->
-				<div class="flex items-center justify-end gap-3 border-t border-slate-200 pt-4">
+				<div
+					class="flex items-center justify-end gap-3 border-t border-border-color pt-4 md:col-span-2"
+				>
 					<button
 						type="button"
 						onclick={onCancel}
 						disabled={isSubmitting}
-						class="rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 transition-all hover:bg-slate-50 focus:ring-2 focus:ring-slate-200 focus:outline-none disabled:opacity-50"
+						class="rounded-lg border border-border-light bg-bg-primary px-5 py-2.5 text-sm font-medium text-text-main transition-all hover:bg-bg-primary-glare focus:ring-2 focus:ring-border-light focus:outline-none disabled:opacity-50"
 					>
 						Batal
 					</button>
 					<button
 						type="submit"
 						disabled={isSubmitting}
-						class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-6 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500/50 focus:outline-none disabled:opacity-50"
+						class="inline-flex items-center gap-2 rounded-lg bg-accent-primary px-6 py-2.5 text-sm font-medium text-text-dark shadow-sm transition-all hover:bg-accent-primary-hover focus:ring-2 focus:ring-accent-primary/50 focus:outline-none disabled:opacity-50"
 					>
 						{#if isSubmitting}
 							<Loader2 class="h-4 w-4 animate-spin" />

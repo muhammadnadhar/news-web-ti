@@ -111,11 +111,9 @@
 		<h1 class="text-2xl font-bold tracking-tight text-text-main">Dosen & Staff</h1>
 	</div>
 
-	<div
-		class="bg-scitech-navy-glare space-y-4  p-6 shadow-xl"
-	>
+	<div class="bg-scitech-navy-glare space-y-4 p-6 shadow-xl">
 		{#await data.lecturerStaffList}
-			<TableSkeleton showTitle={true} title="Memuat Data Kerjasama..." columnsCount={6} />
+			<TableSkeleton columnsCount={6} />
 		{:then rawList}
 			<TableContent
 				title="Daftar Dosen dan Staff"

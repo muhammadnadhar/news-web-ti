@@ -4,4 +4,4 @@
 	let { form }: { form: ActionData } = $props();
 </script>
 
-<FormSemester {form} isEdit={false} />
+<FormSemester valuesData={form?.values} isEdit={false} />

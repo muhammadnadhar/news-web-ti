@@ -4,4 +4,4 @@
 	let { form } = $props();
 </script>
 
-<FormPeminatan {form} action="?/create" />
+<FormPeminatan valuesData={form?.values} action="?/create" />

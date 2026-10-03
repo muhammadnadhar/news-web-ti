@@ -24,13 +24,8 @@
 </script>
 
 <section class={`mx-auto ${classTopSpace} max-w-7xl px-4 py-12 sm:px-6 lg:px-8`}>
-	<div class="mb-10 border-b border-border-color/40 pb-6 text-center sm:text-left">
-		<div
-			class="border-scitech-mint/30 bg-scitech-mint/10 text-scitech-mint mb-3 inline-flex items-center gap-2 border px-3 py-1 text-xs font-semibold shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]"
-		>
-			<Map class="h-4 w-4" />
-			<span>Struktur Kurikulum</span>
-		</div>
+	<div class="mb-10 pb-6 text-center sm:text-left">
+	
 		<h1 class="text-3xl font-extrabold tracking-tight text-text-main sm:text-4xl">
 			Peta Mata Kuliah
 		</h1>
@@ -51,7 +46,7 @@
 					: '-'}
 
 				<article
-					class="group bg-scitech-slate/40 hover:border-scitech-mint/60 relative flex flex-col justify-between border border-border-color shadow-[6px_6px_0px_0px_rgba(0,0,0,0.4)] backdrop-blur-md transition-all duration-300 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,0.5)]"
+					class="group hover:border-scitech-mint/60 relative flex flex-col justify-between border border-border-color bg-bg-secondary/40 shadow-[6px_6px_0px_0px_rgba(0,0,0,0.4)] backdrop-blur-md transition-all duration-300 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,0.5)]"
 				>
 					<!-- Preview Gambar -->
 					<div
@@ -69,7 +64,7 @@
 						>
 							<button
 								onclick={() => openModal(item)}
-								class="bg-scitech-mint text-scitech-navy hover:bg-scitech-mint-hover inline-flex items-center gap-2 border border-border-color px-4 py-2 text-xs font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,0.6)] transition-all active:scale-95"
+								class="text-scitech-navy inline-flex items-center gap-2 border border-border-color bg-bg-secondary px-4 py-2 text-xs font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,0.6)] transition-all hover:bg-bg-secondary-hover active:scale-95"
 							>
 								<Maximize2 class="h-4 w-4" />
 								<span>Perbesar Peta</span>
@@ -94,7 +89,7 @@
 						<div class="mt-4 border-t border-border-color/40 pt-4">
 							<button
 								onclick={() => openModal(item)}
-								class="bg-scitech-navy/70 text-scitech-mint hover:bg-scitech-mint hover:text-scitech-navy inline-flex w-full items-center justify-center gap-2 border border-border-color px-3 py-2 text-xs font-bold transition-all hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,0.5)] active:scale-95"
+								class="bg-scitech-navy/70 text-scitech-mint hover:text-scitech-navy inline-flex w-full items-center justify-center gap-2 border border-border-color px-3 py-2 text-xs font-bold transition-all hover:bg-bg-secondary hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,0.5)] active:scale-95"
 							>
 								<span>Lihat Ukuran Penuh</span>
 								<Maximize2 class="h-3.5 w-3.5" />
@@ -128,7 +123,7 @@
 		></button>
 
 		<div
-			class="bg-scitech-slate relative z-10 flex max-h-[90vh] max-w-5xl flex-col overflow-hidden border border-border-color shadow-[12px_12px_0px_0px_rgba(0,0,0,0.7)]"
+			class="relative z-10 flex max-h-[90vh] max-w-5xl flex-col overflow-hidden border border-border-color bg-bg-secondary shadow-[12px_12px_0px_0px_rgba(0,0,0,0.7)]"
 		>
 			<!-- Header Modal -->
 			<div

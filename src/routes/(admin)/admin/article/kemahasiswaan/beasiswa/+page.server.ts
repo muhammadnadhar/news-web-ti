@@ -4,7 +4,6 @@ import type { Actions, PageServerLoad } from './$types';
 import {
 	deleteScholarship,
 	getAllScholarships,
-	getScholarshipById,
 	getScholarshipPublicImageIdyId
 } from '$lib/repository/admin/article/kemahasiswaan/beasiswa';
 import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { ChevronRight, MapPin, Phone, Mail, ArrowUp, GitBranchPlusIcon } from 'lucide-svelte';
+	import uinIcon from '$lib/assets/uin-icon.webp';
 
 	// Props Svelte 5 (sesuaikan jika memakai Svelte 4)
 	let { layananOnline = [], scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' }) } =
@@ -9,7 +10,6 @@
 </script>
 
 <footer class="relative mt-28 border-t border-border-color text-text-muted transition-colors">
-	<!-- svg curve wave vector (warna menyatu presisi dengan bg-[#070c18]) -->
 	<div
 		class="pointer-events-none absolute top-0 left-0 w-full -translate-y-[98%] overflow-hidden leading-none"
 	>
@@ -31,12 +31,12 @@
 			<div class="flex flex-col gap-4 lg:col-span-5">
 				<div class="flex items-start gap-3">
 					<div
-						class="bg-scitech-mint/10 border-scitech-mint/30 shrink-0 rounded-xl border p-2 backdrop-blur-md"
+						class="border-scitech-mint/30 shrink-0 rounded-xl border bg-bg-secondary/10 p-2 backdrop-blur-md"
 					>
 						<div
-							class="bg-scitech-mint text-scitech-navy flex h-8 w-8 items-center justify-center rounded-lg text-xs font-black shadow-md"
+							class="text-scitech-navy flex h-8 w-8 items-center justify-center rounded-lg bg-bg-secondary text-xs font-black shadow-md"
 						>
-							UIN
+							<img src={uinIcon} alt="UIN ICON" />
 						</div>
 					</div>
 					<div>
@@ -59,7 +59,7 @@
 					<a
 						href="https://www.youtube.com/@programstuditeknologiinfor1880"
 						aria-label="YouTube"
-						class="hover:bg-scitech-mint hover:text-scitech-navy text-scitech-mint rounded-xl border border-white/10 bg-white/5 p-2.5 shadow-md transition-all duration-300"
+						class="hover:text-scitech-navy text-scitech-mint rounded-xl border border-white/10 bg-white/5 p-2.5 shadow-md transition-all duration-300 hover:bg-bg-secondary"
 					>
 						Youtube
 						<!-- <Youtube class="w-4 h-4" /> -->
@@ -67,7 +67,7 @@
 					<a
 						href="https://www.instagram.com/infotech.uinarraniry?igshid=YmMyMTA2M2Y%3D"
 						aria-label="Instagram"
-						class="hover:bg-scitech-mint hover:text-scitech-navy text-scitech-mint rounded-xl border border-white/10 bg-white/5 p-2.5 shadow-md transition-all duration-300"
+						class="hover:text-scitech-navy text-scitech-mint rounded-xl border border-white/10 bg-white/5 p-2.5 shadow-md transition-all duration-300 hover:bg-bg-secondary"
 					>
 						Instagram
 						<!-- <Instagram class="w-4 h-4" /> -->
@@ -95,7 +95,6 @@
 				</ul>
 			</div>
 
-			<!-- Kolom 3: Contact Us -->
 			<div class="flex flex-col gap-4 lg:col-span-3">
 				<h4 class="text-scitech-mint text-xs font-bold tracking-wider uppercase">Contact Us</h4>
 
@@ -133,15 +132,11 @@
 				</div>
 			</div>
 		</div>
-	</div>
-
-	<div class="space-y-1">
-		<p>
-			© Copyright <span class="text-scitech-mint font-semibold">Prodi Teknologi Informasi</span>
-			2023-{currentYear}.
-		</p>
-		<p>
-			© Powered by <span class="font-semibold text-text-main">HIMA-TI</span>. All Rights Reserved.
-		</p>
+		<div class="space-y-1">
+			<p>
+				© Copyright <span class="text-scitech-mint font-semibold">Prodi Teknologi Informasi</span>
+				2023-{currentYear}.
+			</p>
+		</div>
 	</div>
 </footer>

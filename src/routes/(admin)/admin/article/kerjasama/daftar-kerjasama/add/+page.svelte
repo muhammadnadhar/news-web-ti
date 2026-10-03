@@ -10,5 +10,5 @@
 </svelte:head>
 
 <div class="min-h-screen bg-bg-primary p-4 text-text-main md:p-8">
-	<FormDaftarKerjasama {form} actionUrl="?/create" />
+	<FormDaftarKerjasama valueData={form?.values} actionUrl="?/create" />
 </div>

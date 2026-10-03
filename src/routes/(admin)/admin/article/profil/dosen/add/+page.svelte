@@ -9,8 +9,8 @@
 	<title>Tambah Dosen & Staff - Admin Portal</title>
 </svelte:head>
 
-<div class="min-h-screen bg-[var(--color-bg-primary)] p-4 text-[var(--color-text-main)] md:p-8">
+<div class="bg-color-bg-primary min-h-screen p-4 text-text-main md:p-8">
 	<div class="mx-auto max-w-4xl space-y-6">
-		<FormDosenStaff {form} isEdit={false} actionUrl="?/create" />
+		<FormDosenStaff valuesData={form?.values} isEdit={false} actionUrl="?/create" />
 	</div>
 </div>

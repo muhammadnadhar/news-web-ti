@@ -8,5 +8,5 @@
 <div class="container">
 	<h1>Edit Data Beasiswa</h1>
 
-	<FormBeasiswa initialData={data.scholarship} {form} action="?/update" />
+	<FormBeasiswa initialData={data.scholarship} valueData={form?.values} action="?/update" />
 </div>

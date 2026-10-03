@@ -10,5 +10,5 @@
 </svelte:head>
 
 <div class="min-h-screen p-4 md:p-8">
-	<FormJabatan title="Edit Jabatan Prodi" initialData={data.position} {form} />
+	<FormJabatan title="Edit Jabatan Prodi" initialData={data.position} valuesData={form?.values} />
 </div>

@@ -15,7 +15,9 @@
 
 	// State Management
 	let titleInput = $state('Penelitian Dosen Prodi TI');
-	let descriptionContent = $state(data.researchData?.description || '');
+	let descriptionContent = $state(
+		form?.values?.description ?? data.researchData?.description ?? ''
+	);
 	let isSaving = $state(false);
 
 	// Message / Toast State
@@ -37,11 +39,11 @@
 </svelte:head>
 
 <!-- Komponen Message Response -->
-{#if showMessage || form?.message}
+{#if showMessage}
 	<Message
 		status={showMessage ? messageConfig.status : 'error'}
 		title={showMessage ? messageConfig.title : 'Gagal'}
-		message={showMessage ? messageConfig.message : form?.message || ''}
+		message={messageConfig.message}
 		dismissible={true}
 		timeout={4000}
 		onclose={() => (showMessage = false)}
@@ -56,7 +58,7 @@
 	</div>
 
 	<div
-		class="bg-scitech-slate/60 space-y-6 rounded-3xl border border-border-color/10 p-6 shadow-2xl backdrop-blur-xl sm:p-8"
+class="space-y-6 rounded-3xl border border-border-color/10 bg-bg-secondary/60 p-6 shadow-2xl sm:p-8"
 	>
 		<div class="border-b border-border-color/10 pb-4">
 			<h2 class="text-scitech-mint text-sm font-bold sm:text-base">
@@ -129,7 +131,7 @@
 				<button
 					type="submit"
 					disabled={isSaving}
-					class="bg-scitech-mint text-scitech-navy hover:bg-scitech-mint-hover inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-bold transition-all active:scale-95 disabled:opacity-50"
+					class="text-scitech-navy inline-flex items-center gap-2 rounded-xl bg-bg-secondary px-5 py-2.5 text-xs font-bold transition-all hover:bg-bg-secondary-hover active:scale-95 disabled:opacity-50"
 				>
 					<Send class="h-4 w-4" />
 					<span>{isSaving ? 'Menyimpan...' : 'Simpan Data'}</span>

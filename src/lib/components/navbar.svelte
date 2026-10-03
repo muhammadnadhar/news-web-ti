@@ -97,7 +97,6 @@
 					{/if}
 				</button>
 
-				<!-- Submenu Dropdown Desktop (Rendernya presisi di bawah ikon item masing-masing) -->
 				{#if activeDesktopMenu?.id === item.id && item.subMenu && item.subMenu.length > 0}
 					<div
 						transition:fly={{ y: -10, duration: 200 }}
@@ -179,7 +178,7 @@
 	<button
 		onclick={toggleMenu}
 		aria-label="Toggle Navigation Menu"
-		class="border-scitech-navy bg-scitech-mint text-scitech-navy shadow-scitech-mint/20 fixed right-6 bottom-6 z-50 flex h-14 w-14 items-center justify-center rounded-full border-2 shadow-lg transition-all duration-300 hover:scale-105 active:scale-95"
+		class="border-scitech-navy bg-bg-secondary text-scitech-navy shadow-scitech-mint/20 fixed right-6 bottom-6 z-50 flex h-14 w-14 items-center justify-center rounded-full border-2 shadow-lg transition-all duration-300 hover:scale-105 active:scale-95"
 	>
 		{#if isOpen}
 			<X class="h-6 w-6 rotate-90 transition-transform" />

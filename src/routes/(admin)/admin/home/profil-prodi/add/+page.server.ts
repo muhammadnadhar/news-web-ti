@@ -1,61 +1,63 @@
 import type { ImageItem } from '$lib/dto/admin/home';
 import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
-import { errorResponse, successResponse } from '$lib/helper/message';
+import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
 import { addProfilProdi } from '$lib/repository/admin/home/profilProdi';
+import type { ProfilProdiFormValues } from '$lib/types/values/admin/home';
 import { fail, type Actions } from '@sveltejs/kit';
 
 export const actions: Actions = {
 	create: async ({ request }) => {
 		const formData = await request.formData();
 
-		const title = formData.get('title')?.toString().trim();
-		const description = formData.get('description')?.toString().trim() || '';
-		const display_instruction =
-			formData.get('display_instruction')?.toString().trim() || 'FLEX_CENTER';
 		const imagesRaw = formData.get('images')?.toString() || '[]';
+		let parsedImages: ImageItem[] = [];
 
-		// Parse array images dari JSON string
-		let images: ImageItem[] = [];
 		try {
-			images = JSON.parse(imagesRaw);
+			parsedImages = JSON.parse(imagesRaw);
 		} catch (e) {
-			images = [];
+			console.error('Error parsing images JSON:', e);
+			parsedImages = [];
 		}
 
+		// Ekstraksi data ke objek values bertipe ProfilProdiFormValues
+		const values: ProfilProdiFormValues = {
+			id: (formData.get('id') as string)?.trim() || crypto.randomUUID(),
+			title: formData.get('title')?.toString().trim() || '',
+			description: formData.get('description')?.toString().trim() || '',
+			displayInstruction: formData.get('display_instruction')?.toString().trim() || 'FLEX_CENTER',
+			images: parsedImages
+		};
+
 		// Validasi input wajib
-		if (!title) {
+		if (!values.title) {
 			return fail(400, {
-				status: 'error',
-				title: 'Gagal Simpan',
-				message: 'Judul profil prodi wajib diisi.',
-				values: { title, description, display_instruction, images: imagesRaw }
+				...warningResponse('Judul profil prodi wajib diisi.', 'Gagal Simpan'),
+				values
 			});
 		}
 
 		try {
 			await addProfilProdi({
-				title,
-				description,
-				display_instruction,
-				images
+				id: values.id,
+				title: values.title,
+				description: values.description,
+				display_instruction: values.displayInstruction,
+				images: values.images
 			});
 
-			return {
-				status: 'success',
-				title: 'Berhasil',
-				message: 'Profil prodi berhasil ditambahkan.'
-			};
-		} catch (err) {
+			return successResponse('Profil prodi berhasil ditambahkan.', 'Berhasil');
+		} catch (err: any) {
 			console.error('Error addProfilProdi:', err);
+
 			return fail(500, {
-				status: 'error',
-				title: 'Gagal',
-				message: 'Terjadi kesalahan server saat menambahkan profil prodi.',
-				values: { title, description, display_instruction, images: imagesRaw }
+				...errorResponse(
+					err?.message || 'Terjadi kesalahan server saat menambahkan profil prodi.',
+					'Gagal'
+				),
+				values
 			});
 		}
 	},
-
 	deletePhoto: async ({ request }) => {
 		const formData = await request.formData();
 		const publicId = formData.get('public_id')?.toString();
