@@ -41,7 +41,6 @@ export interface ProfilProdiItemDTO {
 	title: string;
 	description: string;
 	images: ImageItem[]; // Array berisi daftar gambar dinamis
-	image_public_id?: string | null;
 	display_instruction?: DisplayInstructionType | string; // Instruksi tampilan dinamis
 	created_at?: Date | string;
 	updated_at?: Date | string;

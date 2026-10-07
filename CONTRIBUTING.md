@@ -1,19 +1,22 @@
-
 # Panduan Kontributing
+
 Terima kasih telah meluangkan waktu untuk berkontribusi dalam proyek ini! Kami sangat menghargai bantuan Kamu untuk membuat proyek ini menjadi lebih baik.
 
+> Jangan Lupa Type nya ( ^ _ ^ )
 
-
-
+> Boleh menggunakan `ai` , _tapi_ perhatikan structur code dan pastikan fitur yang mau di tambhakan jalan dengan lancar dan juga tidak **MENGHANCURKAN FITUR YANG LAIN**
 
 ### Kirim PR
 
-1. Fork repo ini 
+1. Fork repo ini
 2. Buat branch
+
 ```bash
 git checkout -b add-xxx-agent
 ```
-3. silahkan edit , tambahin dna sebagainya , ikutin format ini 
+
+3. silahkan edit , tambahin dna sebagainya , ikutin format ini
+
 ```
 - add : <deskripsi untuk jika menambah fitur baru>
 - update : <deskripsi untuk jika ada yang di ubah atau di tambhakan >
@@ -21,6 +24,8 @@ git checkout -b add-xxx-agent
 - fix : <deskripsi untuk yang memperbaiki bug , fitur dan lainya >
 
 ```
-> Jika ada fitur baru yang di `add` tambhakna juga di `README.md` 
-4. Pull request 
-5. Tunngu DI `Cek` jika sesui maka akan di `Merge` ( di gabungkan )  
+
+> Jika ada fitur baru yang di `add` tambhakna juga di `README.md`
+
+4. Pull request
+5. Tunngu DI `Cek` jika sesui maka akan di `Merge` ( di gabungkan )

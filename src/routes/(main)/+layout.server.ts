@@ -3,6 +3,7 @@ import { getAchievementSemesters } from '$lib/repository/admin/article/kemahasis
 import type { LayoutServerLoad } from './$types';
 import { getRecentNews } from '$lib/repository/admin/article/berita';
 import { getAllNewsCategories } from '$lib/repository/admin/dataset/beritaKategory';
+import { getCurriculumsNav } from '$lib/repository/admin/article/kurikulum/kurikulum';
 
 export const load: LayoutServerLoad = async () => {
 	// let academicSemesters: { semester: string }[] = [];
@@ -14,13 +15,12 @@ export const load: LayoutServerLoad = async () => {
 			getAchievementSemesters('y'),
 			getAchievementSemesters('n'),
 			getHighGpaSemesters(),
+			getCurriculumsNav(),
 
 			// untuk berita | Rencanaya data nya akan di cache , jaidnya lebih cepat
 			getRecentNews(5),
 			getAllNewsCategories()
 		]);
-
-	
 
 		// Fetch semua data semester unik secara paralel dari masing-masing tabel/kategori
 		// [academicSemesters, nonAcademicSemesters, gpaSemesters] = await Promise.all([
@@ -31,23 +31,24 @@ export const load: LayoutServerLoad = async () => {
 
 		return {
 			// navItems: navMenuItems as NavMenuItemType[]
-			semesters: {
-				academic:  results[0].status === 'fulfilled' ? results[0].value : [],
+			navData: {
+				academic: results[0].status === 'fulfilled' ? results[0].value : [],
 				nonAcademic: results[1].status === 'fulfilled' ? results[1].value : [],
 				gpa: results[2].status === 'fulfilled' ? results[2].value : [],
+				curriculums: results[3].status === 'fulfilled' ? results[3].value : []
 			},
 
 			// data untuk berita
-			recentNews: results[3].status === "fulfilled"  ? results[3].value : [],
-			newsCategories: results[4].status === "fulfilled"  ? results[4].value :[],
+			recentNews: results[4].status === 'fulfilled' ? results[4].value : [],
+			newsCategories: results[5].status === 'fulfilled' ? results[5].value : []
 		};
 	} catch (error) {
 		console.error('Gagal mengambil data dropdown semester:', error);
-return {
-            semesters: { academic: [], nonAcademic: [], gpa: [] },
-            recentNews: [],
-            newsCategories: []
-        };
+		return {
+			semesters: { academic: [], nonAcademic: [], gpa: [] },
+			recentNews: [],
+			newsCategories: []
+		};
 	}
 
 	// const kemahasiswaanMenu = navMenuItems.find((m: NavMenuItemType) => m.id === 'kemahasiswaan');

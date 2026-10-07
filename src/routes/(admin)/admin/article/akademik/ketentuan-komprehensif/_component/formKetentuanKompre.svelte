@@ -129,7 +129,7 @@
 							type?: 'success' | 'error';
 						};
 						showMessage = true;
-						triggerMessage(msg.type, result.type === 'success' ? 'Success' : 'Error', msg.message);
+						triggerMessage("success", result.type === 'success' ? 'Success' : 'Error', msg.message);
 					} else if (result.type === 'error') {
 						showMessage = true;
 						triggerMessage(

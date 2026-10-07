@@ -1,10 +1,8 @@
-commit 14  finish desain #10 and debuger app and update reponse client 
-- update : di sini menambhakna dan menaljutkan untuk retuirn respone values ke client , dan semua halaamn di /admin akan memiliki type response Value di type
-- update : menambhakn public_id gambar pada table dan repository /kerjasasma/daftar-kerjasama
-- update  : update beberapa deisan halamn
-- update , sekarang formEditor memiliki modal tersendiri , dan table yang dinamis
-- update : formEditor juga menyediakn config bagi vido dan image
-- fix : FormEditor sedikit sensitif dengan wrapper yang menggunakan class "backdrop-blur-xl" , jadi di sesuikan beberapa halaman 
-
-
-
+commit 15  finish desain #10 and debuger app 
+- update : update kurikulum OBE menjaid kurikulom yang nantinya bisa menamhaoan data di nama untk kurikulum apa saja
+-  update : mengupdate utility funcitn untuk menghandle bagaimana data dynamic di tampilkan , untuk data kurikulum dan beasiswa dan ipk tertinggi
+- fix : penyesuian pada tampilan mobile untuk sidebar di admin , penyesuianya pada menu theme 
+- add : sedikit menambhakna link redirect untuk koneksi ke beberapa web alinya
+- add : update lagi bagian penelitian mahasiswa , di sini saya menambhakan agar bisa menambhakan gambar  , dan update halaman juga utama agar bisa menampilkan image mahasiswa
+- fix & update : pada menampilkan 5 berita terbaru , memperbaiki fungsi agar bisa di scroll di mobile dan update bentuk deisnanya 
+-update : penyesuikan deisan pada navbar mobile agar bisa menampilakn dengan navbarnay dengan menamfaatkan scroll

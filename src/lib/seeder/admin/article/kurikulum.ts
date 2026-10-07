@@ -1,6 +1,6 @@
 import { query } from '$lib/database/runtimeDb';
 export const tableCourseMap = 'kurikulum_course_map';
-export const tableObeCurriculum = 'kurikulum_obe_curriculum';
+export const tableCurriculums = 'kurikulum_curriculums';
 
 // Fungsi seed untuk tabel Peta Mata Kuliah (Peta)
 export async function CourseMapTableSeed() {
@@ -17,12 +17,15 @@ CREATE TABLE IF NOT EXISTS ${tableCourseMap} (
 	await query(sql);
 }
 
-// Fungsi seed untuk tabel Kurikulum OBE (hanya menyimpan teks HTML)
-export async function ObeCurriculumTableSeed() {
+// Fungsi seed untuk tabel Kurikulum  (hanya menyimpan teks HTML)
+export async function CurriculumTableSeed() {
 	const sql = `
-CREATE TABLE IF NOT EXISTS ${tableObeCurriculum} (
+CREATE TABLE IF NOT EXISTS ${tableCurriculums} (
     id VARCHAR(36) PRIMARY KEY, -- Primary key berupa UUID string
-    description LONGTEXT NOT NULL, -- Isi Kurikulum OBE bertipe LONGTEXT untuk menyimpan tag HTML/link unduhan
+    title VARCHAR(255) NOT NULL, -- Judul Kurikulum (contoh: .')
+    description LONGTEXT NOT NULL, -- Isi Kurikulum  bertipe LONGTEXT untuk menyimpan tag HTML/link unduhan
+      -- Menyimpan array dari daftar gambar [{ url, public_id, caption }]
+    images_json JSON NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Waktu pembuatan data
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP -- Waktu update data
 );

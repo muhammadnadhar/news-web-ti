@@ -9,4 +9,4 @@
 	<title>Tambah Publikasi Mahasiswa | Admin SciTech</title>
 </svelte:head>
 
-<FormMshPublish valueData={form?.values} />
+<FormMshPublish valuesData={form?.values} action="?/create" />

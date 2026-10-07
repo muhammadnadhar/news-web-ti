@@ -271,7 +271,7 @@
 			<div class="flex justify-end gap-2 border-t border-border-light pt-4">
 				<button
 					onclick={() => (backUrl ? goto(backUrl) : history.back())}
-					class="rounded-xl border border-white/10 bg-bg-secondary/5 px-5 py-2.5 text-xs font-semibold text-text-muted transition-all hover:bg-white/10 hover:text-text-main active:scale-95"
+					class="rounded-xl border border-border-color/10 bg-bg-secondary/5 px-5 py-2.5 text-xs font-semibold text-text-muted transition-all hover:bg-bg-primary/10 hover:text-text-main active:scale-95"
 				>
 					Batal
 				</button>

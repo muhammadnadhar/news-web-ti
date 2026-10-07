@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Spin from '$lib/components/loading/spin.svelte';
 	import type { NewsItemDTO } from '$lib/dto/admin/article/berita';
+	import { formatDate } from '$lib/utils';
 	import { Calendar, ArrowRight, Sparkles, NewspaperIcon, AlertCircle } from 'lucide-svelte';
 
 	interface Props {
@@ -16,6 +17,9 @@
 	let isDown = $state(false);
 	let startX = $state(0);
 	let scrollLeftPos = $state(0);
+
+	let touchStartX = 0;
+	let touchScrollLeft = 0;
 
 	function handleScroll() {
 		if (!scrollContainer) return;
@@ -83,16 +87,17 @@
 		}
 	}
 
-	// Helper Format Tanggal
-	function formatDate(dateInput: Date | string): string {
-		if (!dateInput) return '-';
-		const date = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
-		if (isNaN(date.getTime())) return '-';
-		return new Intl.DateTimeFormat('id-ID', {
-			day: 'numeric',
-			month: 'short',
-			year: 'numeric'
-		}).format(date);
+	function handleTouchStart(e: TouchEvent) {
+		if (!scrollContainer) return;
+		touchStartX = e.touches[0].pageX - scrollContainer.offsetLeft;
+		touchScrollLeft = scrollContainer.scrollLeft;
+	}
+
+	function handleTouchMove(e: TouchEvent) {
+		if (!scrollContainer) return;
+		const x = e.touches[0].pageX - scrollContainer.offsetLeft;
+		const walk = (x - touchStartX) * 1.5;
+		scrollContainer.scrollLeft = touchScrollLeft - walk;
 	}
 
 	// Helper Pembersih HTML tag dari konten artikel
@@ -128,9 +133,11 @@
 				onmouseleave={handleMouseLeave}
 				onmouseup={handleMouseUp}
 				onmousemove={handleMouseMove}
+				ontouchstart={handleTouchStart}
+				ontouchmove={handleTouchMove}
 				role="region"
 				aria-label="Carousel Berita"
-				class="flex cursor-grab touch-pan-x snap-x snap-mandatory scrollbar-none gap-6 overflow-x-auto
+				class="flex cursor-grab touch-auto snap-x snap-mandatory scrollbar-none gap-6 overflow-x-auto
            px-[calc(50%-42vw)] py-12 select-none active:cursor-grabbing md:gap-8 md:px-[calc(50%-24vw)] lg:px-[calc(50%-300px)]"
 			>
 				{#each newsList as news, index (news.id)}
@@ -158,7 +165,7 @@
 									/>
 								{:else}
 									<div
-										class="flex h-full w-full items-center justify-center bg-slate-800 text-slate-500"
+										class="flex h-full w-full items-center justify-center bg-slate-800 text-text-muted/50"
 									>
 										<NewspaperIcon class="h-12 w-12 opacity-40" />
 									</div>
@@ -219,7 +226,7 @@
 						aria-label="Ke slide {index + 1}"
 						class="h-2 rounded-full transition-all duration-300 {activeIndex === index
 							? 'bg-scitech-mint w-8'
-							: 'w-2 bg-white/20 hover:bg-white/40'}"
+							: 'w-2 bg-bg-secondary/20 hover:bg-bg-secondary/40'}"
 					></button>
 				{/each}
 			</div>

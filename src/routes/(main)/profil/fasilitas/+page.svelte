@@ -58,7 +58,7 @@
 	<title>Fasilitas & Peralatan Laboratorium</title>
 </svelte:head>
 
-<section class={`${classTopSpace} bg-scitech-navy min-h-screen px-4 py-12 text-text-main md:px-8`}>
+<section class={`${classTopSpace} bg-bg-secondary min-h-screen px-4 py-12 text-text-main md:px-8`}>
 	<div class="mx-auto max-w-7xl space-y-10">
 		<div class="space-y-4">
 			<div

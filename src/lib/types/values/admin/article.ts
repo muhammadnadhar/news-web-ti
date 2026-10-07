@@ -1,3 +1,5 @@
+import type { ImageItem } from '$lib/dto/admin/home';
+
 export interface NewsFormValues {
 	title: string;
 	category: string;
@@ -109,8 +111,11 @@ export interface CourseMapFormValues {
 	image_url: string | null;
 	image_public_id?: string | null;
 }
-export interface ObeFormValues {
+export interface kurikulumsFormValues {
+	id?: string;
 	description: string;
+	title: string;
+	images: ImageItem[];
 }
 
 // --------- article / penelitian
@@ -127,6 +132,8 @@ export interface StudentPublicationFormValues {
 	id?: string;
 	student_name: string;
 	journal_list: string;
+	image_url: string;
+	image_public_id: string | null;
 }
 
 // ---------- article /profile

@@ -25,10 +25,12 @@ export async function getstudentpublicationbyid(id: string): Promise<StudentPubl
 export async function createStudentPublication(
 	id: string,
 	studentName: string,
-	journalList: string
+	journalList: string,
+	imageUrl: string | null,
+	imagePublicId: string | null = null
 ): Promise<boolean> {
-	const sql = `INSERT INTO ${tableStudentPublication} (id, student_name, journal_list) VALUES (?, ?, ?)`;
-	const result = (await query(sql, [id, studentName, journalList])) as any;
+	const sql = `INSERT INTO ${tableStudentPublication} (id, student_name, journal_list,image_url ,image_public_id ) VALUES (?, ?, ?, ?, ?)`;
+	const result = (await query(sql, [id, studentName, journalList,imageUrl,imagePublicId])) as any;
 	return result.affectedRows > 0;
 }
 
@@ -38,12 +40,15 @@ export async function createStudentPublication(
 export async function updateStudentPublication(
 	id: string,
 	studentName: string,
-	journalList: string
+	journalList: string,
+	imageUrl: string | null,
+	imagePublicId: string | null
 ): Promise<boolean> {
-	const sql = `UPDATE ${tableStudentPublication} SET student_name = ?, journal_list = ?, updated_at = NOW() WHERE id = ?`;
-	const result = (await query(sql, [studentName, journalList, id])) as any;
+	const sql = `UPDATE ${tableStudentPublication} SET student_name = ?, journal_list = ?, image_url = ?, image_public_id = ? WHERE id = ?`;
+	const result = (await query(sql, [studentName, journalList, imageUrl, imagePublicId, id])) as any;
 	return result.affectedRows > 0;
 }
+
 
 /**
  * Menghapus data Publikasi Mahasiswa

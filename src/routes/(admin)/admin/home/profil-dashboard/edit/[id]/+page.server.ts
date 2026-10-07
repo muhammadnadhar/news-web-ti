@@ -97,7 +97,6 @@ export const actions: Actions = {
 		}
 
 		try {
-			// 1. Hapus data dari Database
 			const isDeleted = await deleteProfileDashboard(id);
 
 			if (!isDeleted) {
@@ -107,10 +106,10 @@ export const actions: Actions = {
 				);
 			}
 
-			// 2. Cleanup gambar dari Cloudinary jika image_public_id tersedia
+			//  Cleanup gambar dari Cloudinary jika image_public_id tersedia
 			if (publicId) {
 				try {
-					await cloudinary.uploader.destroy(publicId);
+					await deleteImageFromCloudinary(publicId);
 					console.log(`Berhasil menghapus file dari Cloudinary: ${publicId}`);
 				} catch (cloudinaryErr) {
 					console.error('Gagal menghapus gambar dari Cloudinary:', cloudinaryErr);

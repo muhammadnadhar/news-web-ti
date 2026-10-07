@@ -186,7 +186,6 @@
 	<!-- 		{/each} -->
 	<!-- 	</tbody> -->
 	<!-- </table> -->
-</div>
 <!-- pindahkan ke table sekarang -->
 
 {#await data.angkatanList}
@@ -217,6 +216,8 @@
 		Gagal memuat data kerjasama: {error.message}
 	</div>
 {/await}
+
+</div>
 
 <!-- Pagination Footer -->
 <!-- 		<div class="flex flex-col items-center justify-between gap-4 pt-2 sm:flex-row"> -->

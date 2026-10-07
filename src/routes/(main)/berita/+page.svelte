@@ -31,11 +31,10 @@
 <div class={` ${classTopSpace} mx-auto max-w-7xl px-4 py-8 pb-32 sm:px-6`}>
 	<div class="mb-8 border-b border-border-color/10 pb-6">
 		<div class="flex items-center gap-3">
-			<div class="text-scitech-mint border-scitech-mint/30 border bg-bg-secondary/10 p-2.5">
-				<Newspaper class="h-6 w-6" />
-			</div>
 			<div>
-				<h1 class="text-2xl font-bold tracking-tight text-text-main sm:text-3xl">Daftar Berita</h1>
+				<h1 class="text-2xl font-extrabold tracking-tight text-text-main sm:text-3xl">
+					Daftar Berita
+				</h1>
 				<p class="text-xs text-text-muted sm:text-sm">Informasi dan artikel terbaru dalam sistem</p>
 			</div>
 		</div>

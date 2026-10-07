@@ -1,10 +1,10 @@
-import { type ComponentIcon , type Component } from 'lucide-svelte';
+import { type ComponentIcon, type Component } from 'lucide-svelte';
 
 export interface SubMenuItem {
 	id: string;
 	label: string;
 	href: string;
-  subMenu? : SubMenuItem[];
+	subMenu?: SubMenuItem[];
 }
 
 export interface NavMenuItemType {
@@ -15,4 +15,14 @@ export interface NavMenuItemType {
 	badge?: number | null;
 	href?: string;
 	subMenu: SubMenuItem[];
+}
+
+// di gunakna dinavbar untuk format dynamic menu
+export interface NavMenuType {
+	id: string;
+	label: string;
+	icon: ComponentIcon | Component;
+	bgClass: string;
+	badge?: number | null;
+	href?: string;
 }

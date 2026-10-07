@@ -119,7 +119,7 @@
 			type="submit"
 			form="accreditation-form"
 			disabled={isSubmitting}
-			class="bg-scitech-mint text-scitech-navy hover:bg-scitech-mint-hover inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-bold shadow-lg transition-all active:scale-95 disabled:opacity-50"
+			class="bg-bg-secondary text-text-main hover:bg-bg-secondary/20 inline-flex items-center gap-2 px-5 py-2.5 text-xs font-bold shadow-lg transition-all active:scale-95 disabled:opacity-50"
 		>
 			<Save class="h-4 w-4" />
 			<span>{isSubmitting ? 'Menyimpan...' : 'Simpan Perubahan'}</span>
@@ -149,13 +149,13 @@
 		<input type="hidden" name="id" value={form?.values?.id ?? ''} />
 		<input type="hidden" name="image_public_id" value={publicId ?? ''} />
 
-		<div class="border-scitech-slate/20 bg-scitech-navy-glare rounded-2xl border p-6 shadow-xl">
+		<div class="border-border-color/20 bg-bg-secondary p-6 shadow-xl">
 			<h2 class="text-scitech-mint mb-6 text-sm font-semibold">Form Ubah Data Akreditasi</h2>
 
 			<div class="grid grid-cols-1 gap-8 lg:grid-cols-12">
 				<div class="space-y-6 lg:col-span-5">
 					<div class="space-y-2">
-						<label for="title" class="text-xs font-medium text-text-main">
+						<label for="title" class="text-xs font-medium bg-bg-primary/10 text-text-main">
 							Judul Akreditasi <span class="text-scitech-error">*</span>
 						</label>
 						<input
@@ -230,7 +230,7 @@
 
 		<!-- bagian bawah: isi akreditasi (form editor) -->
 		<div
-			class="border-scitech-slate/20 bg-scitech-navy-glare space-y-3 rounded-2xl border p-6 shadow-xl"
+			class="border-border-color/20 bg-bg-secondary/10 space-y-3  p-6 shadow-xl"
 		>
 			<label for="description" class="block text-xs font-medium text-text-main">
 				Isi Akreditasi <span class="text-scitech-error">*</span>

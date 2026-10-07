@@ -6,104 +6,102 @@
    Memetakan variabel CSS agar bisa digunakan sebagai class Tailwind v4
 */
 @theme {
-    --color-bg-primary: var(--bg-primary);
-    --color-bg-secondary: var(--bg-secondary);
-    --color-bg-primary-glare: var(--bg-primary-glare);
-    --color-bg-secondary-hover: var(--bg-secondary-hover);
-    
-    --color-accent-primary: var(--accent-primary);
-    --color-accent-primary-hover: var(--accent-primary-hover);
-    --color-accent-primary-dim: var(--accent-primary-dim);
-    
-    --color-text-main: var(--text-main);
-    --color-text-muted: var(--text-muted);
-    --color-text-dark: var(--text-dark);
-    --color-border-light: var(--border-light);
-    --color-border-color: var(--border-color);
-    
-    --color-accent-cyan: var(--accent-cyan);
-    --color-accent-purple: var(--accent-purple);
-    
-    /* Tambahan Aksen Kuning (Amber/Warn) */
-    --color-accent-yellow: var(--accent-yellow);
-    --color-accent-yellow-hover: var(--accent-yellow-hover);
-    --color-accent-yellow-dim: var(--accent-yellow-dim);
+	--color-bg-primary: var(--bg-primary);
+	--color-bg-secondary: var(--bg-secondary);
+	--color-bg-primary-glare: var(--bg-primary-glare);
+	--color-bg-secondary-hover: var(--bg-secondary-hover);
 
-    /* Tambahan Aksen Biru (Royal Blue) */
-    --color-accent-blue: var(--accent-blue);
-    --color-accent-blue-hover: var(--accent-blue-hover);
-    --color-accent-blue-dim: var(--accent-blue-dim);
+	--color-accent-primary: var(--accent-primary);
+	--color-accent-primary-hover: var(--accent-primary-hover);
+	--color-accent-primary-dim: var(--accent-primary-dim);
 
-    --color-status-error: var(--status-error);
+	--color-text-main: var(--text-main);
+	--color-text-muted: var(--text-muted);
+	--color-text-dark: var(--text-dark);
+	--color-border-light: var(--border-light);
+	--color-border-color: var(--border-color);
+
+	--color-accent-cyan: var(--accent-cyan);
+	--color-accent-purple: var(--accent-purple);
+
+	/* Tambahan Aksen Kuning (Amber/Warn) */
+	--color-accent-yellow: var(--accent-yellow);
+	--color-accent-yellow-hover: var(--accent-yellow-hover);
+	--color-accent-yellow-dim: var(--accent-yellow-dim);
+
+	/* Tambahan Aksen Biru (Royal Blue) */
+	--color-accent-blue: var(--accent-blue);
+	--color-accent-blue-hover: var(--accent-blue-hover);
+	--color-accent-blue-dim: var(--accent-blue-dim);
+
+	--color-status-error: var(--status-error);
 }
 
 @layer base {
-    :root {
-        /* --- LIGHT MODE (Default) --- */
-        --bg-primary: #f8fafc; /* Latar belakang utama */
-        --bg-secondary: #ffffff; /* Card, sidebar, elemen sekunder */
-        --accent-primary: #a7f3d0; /* Mint/Bio-Green */
-        --border-light: #e2e8f0; 
-        --border-color: rgba(0, 0, 0, 0.1);
-        --pure-white: #ffffff; 
+	:root {
+		/* --- LIGHT MODE (Default) --- */
+		--bg-primary: #f8fafc; /* Latar belakang utama */
+		--bg-secondary: #ffffff; /* Card, sidebar, elemen sekunder */
+		--accent-primary: #a7f3d0; /* Mint/Bio-Green */
+		--border-light: #e2e8f0;
+		--border-color: rgba(0, 0, 0, 0.1);
+		--pure-white: #ffffff;
 
-        --bg-primary-glare: #f1f5f9; 
-        --bg-secondary-hover: #e2e8f0; 
-        
-        --accent-primary-hover: #86efac; 
-        --accent-primary-dim: #dcfce7; 
+		--bg-primary-glare: #f1f5f9;
+		--bg-secondary-hover: #e2e8f0;
 
-        --text-main: #0f172a; 
-        --text-muted: #64748b; 
-        --text-dark: #0b192c; 
+		--accent-primary-hover: #86efac;
+		--accent-primary-dim: #dcfce7;
 
-        --accent-cyan: #06b6d4; 
-        --accent-purple: #6366f1; 
-        
-        /* --- Kuning / Amber (Aksen Peringatan / Highlight) --- */
-        --accent-yellow: #d97706;       /* Kuning Amber kontras tinggi untuk latar terang */
-        --accent-yellow-hover: #b45309; /* Hover kuning lebih gelap */
-        --accent-yellow-dim: #fef3c7;   /* Kuning lembut untuk background badge */
+		--text-main: #0f172a;
+		--text-muted: #64748b;
+		--text-dark: #0b192c;
 
-        /* --- Biru / Royal Blue (Aksen Informasi / Tech) --- */
-        --accent-blue: #2563eb;         /* Biru elektrik kontras di latar terang (Beda dari Cyan) */
-        --accent-blue-hover: #1d4ed8;   /* Hover biru lebih tua */
-        --accent-blue-dim: #dbeafe;     /* Biru lembut untuk background badge */
+		--accent-cyan: #06b6d4;
+		--accent-purple: #6366f1;
 
-        --status-error: #f43f5e; 
-    }
+		/* --- Kuning / Amber (Aksen Peringatan / Highlight) --- */
+		--accent-yellow: #d97706; /* Kuning Amber kontras tinggi untuk latar terang */
+		--accent-yellow-hover: #b45309; /* Hover kuning lebih gelap */
+		--accent-yellow-dim: #fef3c7; /* Kuning lembut untuk background badge */
 
-    /* --- DARK MODE --- */
-    html.dark {
-        --bg-primary: #0b192c; /* Deep Navy */
-        --bg-secondary: #1e293b; /* Charcoal */
-        --bg-secondary-hover: #334155;
-        --bg-primary-glare: #15263f;
-        
-        --accent-primary-dim: #1e3a3a;
-        
-        --text-main: #ffffff; 
-        --text-muted: #94a3b8; 
-        
-        --border-color: rgba(255, 255, 255, 0.1);
-        --border-light: rgba(255, 255, 255, 0.15);
-        
-        --accent-cyan: #22d3ee;
-        --accent-purple: #818cf8;
+		/* --- Biru / Royal Blue (Aksen Informasi / Tech) --- */
+		--accent-blue: #2563eb; /* Biru elektrik kontras di latar terang (Beda dari Cyan) */
+		--accent-blue-hover: #1d4ed8; /* Hover biru lebih tua */
+		--accent-blue-dim: #dbeafe; /* Biru lembut untuk background badge */
 
-        /* --- Kuning / Amber (Dark Mode Adaptif) --- */
-        --accent-yellow: #fbbf24;       /* Kuning emas cerah agar pop-out di latar navy gelap */
-        --accent-yellow-hover: #f59e0b; /* Hover sedikit lebih redup */
-        --accent-yellow-dim: #3a2510;   /* Background badge tembus/gelap bernuansa amber */
+		--status-error: #f43f5e;
+	}
 
-        /* --- Biru / Royal Blue (Dark Mode Adaptif) --- */
-        --accent-blue: #60a5fa;         /* Biru terang yang terbaca jelas di atas navy gelap */
-        --accent-blue-hover: #3b82f6;   /* Hover biru */
-        --accent-blue-dim: #1e2952;     /* Background badge gelap bernuansa biru */
-    }
+	/* --- DARK MODE --- */
+	html.dark {
+		--bg-primary: #0b192c; /* Deep Navy */
+		--bg-secondary: #1e293b; /* Charcoal */
+		--bg-secondary-hover: #334155;
+		--bg-primary-glare: #15263f;
+
+		--accent-primary-dim: #1e3a3a;
+
+		--text-main: #ffffff;
+		--text-muted: #94a3b8;
+
+		--border-color: rgba(255, 255, 255, 0.1);
+		--border-light: rgba(255, 255, 255, 0.15);
+
+		--accent-cyan: #22d3ee;
+		--accent-purple: #818cf8;
+
+		/* --- Kuning / Amber (Dark Mode Adaptif) --- */
+		--accent-yellow: #fbbf24; /* Kuning emas cerah agar pop-out di latar navy gelap */
+		--accent-yellow-hover: #f59e0b; /* Hover sedikit lebih redup */
+		--accent-yellow-dim: #3a2510; /* Background badge tembus/gelap bernuansa amber */
+
+		/* --- Biru / Royal Blue (Dark Mode Adaptif) --- */
+		--accent-blue: #60a5fa; /* Biru terang yang terbaca jelas di atas navy gelap */
+		--accent-blue-hover: #3b82f6; /* Hover biru */
+		--accent-blue-dim: #1e2952; /* Background badge gelap bernuansa biru */
+	}
 }
-
-
 
 html {
 	scroll-behavior: smooth;
@@ -170,7 +168,6 @@ body {
 	z-index: 1;
 }
 
-
 /* Animasi lingkaran membesar dari koordinat tombol
  * ini tidak ada animasi blue jadi lebih ringan*/
 
@@ -182,7 +179,6 @@ body {
 		clip-path: circle(var(--ripple-radius, 100vw) at var(--ripple-x, 50%) var(--ripple-y, 50%));
 	}
 }
-
 
 /* skeleton animation  */
 
@@ -247,4 +243,19 @@ body {
 	will-change: transform, opacity;
 	backface-visibility: hidden;
 	animation: charAppear 0.35s cubic-bezier(0.2, 0.65, 0.3, 0.9) forwards;
+}
+
+/* Untuk browser berbasis Webkit (Chrome, Safari, Edge) */
+.element-tanpa-scrollbar::-webkit-scrollbar {
+	display: none;
+}
+
+/* Untuk Firefox */
+.element-tanpa-scrollbar {
+	scrollbar-width: none;
+}
+
+/* Untuk Internet Explorer / Edge lama */
+.element-tanpa-scrollbar {
+	-ms-overflow-style: none;
 }

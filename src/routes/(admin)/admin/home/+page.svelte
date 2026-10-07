@@ -275,9 +275,9 @@
 
 			{#if listProfileDashboard.length === 0}
 				{@render emptyState(
-					'Belum Ad Path URL Profile Dashboard',
-					'Daftar path URL untuk navigasi dashboard belum di konfigurasi, silahkan tambah path URL baru',
-					'Tambah Foto Untuk Dashboard',
+					'Belum Gambar di Dashboard',
+					'Daftar Gambar dashboard belum di konfigurasi, silahkan tambah Gambar baru',
+					'Tambah Gambar Untuk Dashboard',
 					() => goto(mergeNewPath('profil-dashboard/add'))
 				)}
 			{:else}

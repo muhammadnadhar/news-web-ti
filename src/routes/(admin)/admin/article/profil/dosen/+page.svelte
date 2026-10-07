@@ -111,7 +111,6 @@
 		<h1 class="text-2xl font-bold tracking-tight text-text-main">Dosen & Staff</h1>
 	</div>
 
-	<div class="bg-scitech-navy-glare space-y-4 p-6 shadow-xl">
 		{#await data.lecturerStaffList}
 			<TableSkeleton columnsCount={6} />
 		{:then rawList}
@@ -140,4 +139,3 @@
 			</div>
 		{/await}
 	</div>
-</div>

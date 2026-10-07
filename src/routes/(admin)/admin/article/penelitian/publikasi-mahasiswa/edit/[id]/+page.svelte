@@ -9,4 +9,9 @@
 	<title>Edit Publikasi Mahasiswa | Admin SciTech</title>
 </svelte:head>
 
-<FormMshPublish initialData={data.studentPublication} isEdit={true} valueData={form?.values} />
+<FormMshPublish
+	initialData={data.studentPublication}
+	action="?/update"
+	isEdit={true}
+	valuesData={form?.values}
+/>

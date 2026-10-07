@@ -13,6 +13,8 @@ export interface StudentPublicationDTO {
 	id: string;
 	student_name: string;
 	journal_list: string;
+	image_url?: string | null;
+	image_public_id?: string | null;
 	created_at?: Date;
 	updated_at?: Date;
 }

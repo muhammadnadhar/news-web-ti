@@ -35,7 +35,7 @@
 	}
 </script>
 
-<!-- 1. FLOATING TRIGGER BUTTONS                -->
+<!-- floating trigger buttons                -->
 <!-- Desktop Button: Menyatu di Sisi Kanan Tengah -->
 <button
 	type="button"
@@ -74,7 +74,7 @@
 </button>
 
 <!-- ========================================== -->
-<!-- 2. BACKDROP OVERLAY                        -->
+<!--  BACKDROP OVERLAY                        -->
 <!-- ========================================== -->
 {#if isOpen}
 	<button

@@ -15,6 +15,7 @@
 
 	// Reaktivitas menggunakan Rune $derived() Svelte 5
 	let status = $derived(page.status);
+	$inspect(status);
 	let message = $derived(page.error?.message || 'Terjadi kesalahan sistem yang tidak terduga.');
 
 	// Metadata UI berdasarkan status HTTP
@@ -118,23 +119,23 @@
 				<span>Muat Ulang</span>
 			</button>
 
-			{#if status === 401}
-				<a
-					href="/admin/signIn"
-					class="inline-flex w-full items-center justify-center gap-2 border border-border-light bg-accent-primary px-5 py-2.5 text-sm font-bold text-text-dark shadow-[4px_4px_0px_0px_rgba(0,0,0,0.4)] transition-all hover:bg-accent-primary-hover active:scale-95 sm:w-auto"
-				>
-					<LogIn class="h-4 w-4" />
-					<span>Login Kembali</span>
-				</a>
-			{:else}
-				<a
-					href="/admin"
-					class="inline-flex w-full items-center justify-center gap-2 border border-border-light bg-accent-primary px-5 py-2.5 text-sm font-bold text-text-dark shadow-[4px_4px_0px_0px_rgba(0,0,0,0.4)] transition-all hover:bg-accent-primary-hover active:scale-95 sm:w-auto"
-				>
-					<LayoutDashboard class="h-4 w-4" />
-					<span>Dashboard Admin</span>
-				</a>
-			{/if}
+			<!-- {#if status === 401} -->
+			<!-- 	<a -->
+			<!-- 		href="/admin/signIn" -->
+			<!-- 		class="inline-flex w-full items-center justify-center gap-2 border border-border-light bg-accent-primary px-5 py-2.5 text-sm font-bold text-text-dark shadow-[4px_4px_0px_0px_rgba(0,0,0,0.4)] transition-all hover:bg-accent-primary-hover active:scale-95 sm:w-auto" -->
+			<!-- 	> -->
+			<!-- 		<LogIn class="h-4 w-4" /> -->
+			<!-- 		<span>Login Kembali</span> -->
+			<!-- 	</a> -->
+			<!-- {:else} -->
+			<!-- 	<a -->
+			<!-- 		href="/admin" -->
+			<!-- 		class="inline-flex w-full items-center justify-center gap-2 border border-border-light bg-accent-primary px-5 py-2.5 text-sm font-bold text-text-dark shadow-[4px_4px_0px_0px_rgba(0,0,0,0.4)] transition-all hover:bg-accent-primary-hover active:scale-95 sm:w-auto" -->
+			<!-- 	> -->
+			<!-- 		<LayoutDashboard class="h-4 w-4" /> -->
+			<!-- 		<span>Dashboard Admin</span> -->
+			<!-- 	</a> -->
+			<!-- {/if} -->
 		</div>
 
 		<div class="mt-8 border-t border-border-light pt-6">

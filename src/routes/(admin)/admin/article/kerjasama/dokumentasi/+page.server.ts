@@ -9,6 +9,7 @@ import {
 	updateActivityDocumentation
 } from '$lib/repository/admin/article/kerjasama/documentasi';
 import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
+import { randomUUID } from '$lib/crypto';
 
 export const load: PageServerLoad = async () => {
 	try {
@@ -46,7 +47,7 @@ export const load: PageServerLoad = async () => {
 export const actions: Actions = {
 	save: async ({ request }) => {
 		const formData = await request.formData();
-		const id = (formData.get('id') as string) || crypto.randomUUID();
+		const id = (formData.get('id') as string) || randomUUID();
 		const isEdit = formData.get('is_edit') === 'true';
 		const title = formData.get('title') as string;
 		const imageUrl = formData.get('image_url') as string;

@@ -29,6 +29,8 @@ CREATE TABLE IF NOT EXISTS ${tableStudentPublication} (
     id VARCHAR(36) PRIMARY KEY, -- Primary key berupa UUID string
     student_name VARCHAR(255) NOT NULL, -- Nama mahasiswa (contoh: 'Aulia Sabri')
     journal_list LONGTEXT NOT NULL, -- Daftar jurnal bertipe LONGTEXT (menampung tag list HTML <ul><li>/link)
+	image_url VARCHAR(255) NULL, -- URL Gambar Berita
+  image_public_id VARCHAR(255) NULL, -- ID untuk Url Gambar
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Waktu pembuatan data
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP -- Waktu update data
 );

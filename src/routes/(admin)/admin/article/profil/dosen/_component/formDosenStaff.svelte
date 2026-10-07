@@ -236,7 +236,7 @@
 								type="button"
 								onclick={removePhoto}
 								disabled={isDeletingPhoto}
-								class="absolute -top-1 -right-1 z-20 rounded-full bg-red-600 p-1.5 text-white shadow-md transition-transform hover:scale-110 disabled:opacity-50"
+								class="absolute -top-1 -right-1 z-20 rounded-full bg-red-600 p-1.5 text-text-main shadow-md transition-transform hover:scale-110 disabled:opacity-50"
 								title="Hapus Foto"
 							>
 								{#if isDeletingPhoto}
@@ -246,7 +246,7 @@
 								{/if}
 							</button>
 						</div>
-						<p class="mt-3 max-w-[180px] truncate text-[11px] text-text-muted">
+						<p class="mt-3 max-w-45 truncate text-[11px] text-text-muted">
 							{photoUrl}
 						</p>
 					{:else}

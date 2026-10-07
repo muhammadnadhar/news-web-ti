@@ -49,7 +49,7 @@ export async function getHighGpaSemesters(): Promise<SemesterDTO[]> {
 }
 
 /**
- * Mengambil 1 data Mahasiswa IPK Tertinggi berdasarkan ID
+ * mengambil 1 data mahasiswa ipk tertinggi berdasarkan id
  */
 export async function getHighGpaStudentById(id: string): Promise<HighGpaStudentDTO | null> {
 	const sql = `

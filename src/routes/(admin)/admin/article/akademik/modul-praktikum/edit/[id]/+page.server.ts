@@ -36,11 +36,11 @@ export const actions: Actions = {
 		const values: ModulPraktikumFormValues = {
 			id: params.id || formData.get('id')?.toString().trim() || undefined,
 			title: formData.get('title')?.toString().trim() || '',
-			imageUrl:
+			image_url:
 				formData.get('image_url')?.toString().trim() ||
 				formData.get('imageUrl')?.toString().trim() ||
 				null,
-			publicId:
+			image_public_id:
 				formData.get('image_public_id')?.toString().trim() ||
 				formData.get('public_id')?.toString().trim() ||
 				null,
@@ -75,9 +75,9 @@ export const actions: Actions = {
 			const isUpdated = await updatePracticumModule(
 				values.id,
 				values.title,
-				values.imageUrl,
+				values.image_url,
 				values.description,
-				values.publicId
+				values.image_public_id
 			);
 
 			if (!isUpdated) {
@@ -104,7 +104,7 @@ export const actions: Actions = {
 				values
 			});
 		}
-	}, // untuk edit dia akan memanggil fungsi delete Photo saat tombol batal di click
+	},
 	deletePhoto: async ({ request }) => {
 		const formData = await request.formData();
 		const publicId = formData.get('public_id')?.toString();

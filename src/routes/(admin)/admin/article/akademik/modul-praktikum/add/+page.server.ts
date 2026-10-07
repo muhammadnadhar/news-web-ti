@@ -72,6 +72,8 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const publicId = formData.get('public_id')?.toString();
 
+		console.info('module : id ', publicId);
+
 		if (!publicId) {
 			return fail(400, { ...errorResponse('Public Id tidak di temukan', 'Error') });
 		}

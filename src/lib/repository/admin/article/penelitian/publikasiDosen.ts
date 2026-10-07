@@ -4,7 +4,7 @@ import { tableLecturerPublication } from '$lib/seeder/admin/article/penelitian';
 import { tableLecturerStaff } from '$lib/seeder/admin/article/profile';
 
 /**
- * Mengambil seluruh data Publikasi Dosen (dilengkapi nama & NIDN dosen dari JOIN)
+ * mengambil seluruh data publikasi dosen (dilengkapi nama & nidn dosen dari join)
  */
 export async function getAllLecturerPublications(): Promise<LecturerPublicationDTO[]> {
 	const sql = `

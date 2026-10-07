@@ -1,3 +1,5 @@
+import type { ImageItem } from '../home';
+
 export interface CourseMapDTO {
 	id: string;
 	title: string;
@@ -7,9 +9,15 @@ export interface CourseMapDTO {
 	updated_at?: Date;
 }
 
-export interface ObeCurriculumDTO {
+export interface CurriculumDTO {
 	id: string;
 	description: string;
+	title: string; // DTO / KKN dan lainya
 	created_at?: Date;
+	images?: ImageItem[]; // Array berisi daftar gambar dinamis
 	updated_at?: Date;
+}
+export interface CurriculumNavDTO {
+	id: string;
+	title: string; // DTO / KKN dan lainya
 }

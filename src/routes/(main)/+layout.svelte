@@ -3,19 +3,18 @@
 	import { onMount } from 'svelte';
 	import Navbar from '$lib/components/navbar.svelte';
 	import MainFooter from './_components/mainFooter.svelte';
-	import { AlertCircle, RefreshCwIcon, X } from 'lucide-svelte';
+	import { AlertCircle, BookOpenIcon, RefreshCwIcon, X } from 'lucide-svelte';
 	import type { Snippet } from 'svelte';
 	import { Apptheme } from '$lib/global/theme';
 	import type { LayoutData } from '../$types';
-	import type { SubMenuItem } from '$lib/types/navbar';
-	import { navMenuItems } from '$lib/data/navbar';
+	import { generateDynamicNavMenu } from '$lib/utils';
 
 	import uinIcon from '$lib/assets/uin-icon.webp'; // Sesuaikan path
 	import { navigating } from '$app/state';
-	import type { SemesterDTO } from '$lib/dto/admin/dataset';
 	import NewsQuickDrawer from '$lib/components/newsQuickDrawer.svelte';
 	import { invalidateAll } from '$app/navigation';
 	import Spin from '$lib/components/loading/spin.svelte';
+	import type { dymaicDataType } from '$lib/types/utils';
 	interface Props {
 		data: LayoutData;
 		children: Snippet;
@@ -64,60 +63,16 @@
 		};
 	});
 
-	// Helper function untuk memformat menu
-
-	const formatSubMenu = (semesters: SemesterDTO[] | undefined, basePath: string): SubMenuItem[] => {
-		if (!semesters || !Array.isArray(semesters) || semesters.length === 0) return [];
-
-		return semesters.map((item) => ({
-			id: item.id.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
-			label: item.name,
-			// nantik halaman hanya mengambil dari search  params nya
-			// semesterId : meentukan tahun pada semester tersebut
-			href: `${basePath}?semester_id=${encodeURIComponent(item.id)}`
-		}));
-	};
-
 	// Gabungkan navMenuItems statis dengan data dari server secara reaktif
-	let dynamicNavMenu = $derived.by(() => {
-		// Gunakan JSON.parse(JSON.stringify) DI SINI hanya untuk data semesternya,
-		// TETAPI karena kita butuh Icon utuh, gunakan map() / spread operator untuk mutasi aman
-		const menu = navMenuItems.map((m) => ({ ...m }));
+	const dynamicMenu: dymaicDataType = data.navData;
 
-		const kemahasiswaanMenu = menu.find((m) => m.id === 'kemahasiswaan');
-
-		if (kemahasiswaanMenu && kemahasiswaanMenu.subMenu) {
-			const prestasiAkademik = kemahasiswaanMenu.subMenu.find((c) => c.id === 'prestasi-akademik');
-			if (prestasiAkademik && data.semesters) {
-				prestasiAkademik.subMenu = formatSubMenu(data.semesters.academic, prestasiAkademik.href);
-			}
-
-			const prestasiNonAkademik = kemahasiswaanMenu.subMenu.find(
-				(c) => c.id === 'prestasi-non-akademik' // cek di data/navbar.ts
-			);
-			if (prestasiNonAkademik && data.semesters?.nonAcademic) {
-				prestasiNonAkademik.subMenu = formatSubMenu(
-					data.semesters.nonAcademic,
-					prestasiNonAkademik.href
-				);
-			}
-
-			const ipkTertinggi = kemahasiswaanMenu.subMenu.find(
-				(c) => c.id === 'mahasiswa-ipk-tertinggi' // cek di data/navbar.ts
-			);
-			if (ipkTertinggi && data.semesters?.gpa) {
-				ipkTertinggi.subMenu = formatSubMenu(data.semesters.gpa, ipkTertinggi.href);
-			}
-		}
-
-		return menu;
-	});
+	let dynamicNavMenu = $derived.by(() => generateDynamicNavMenu(dynamicMenu));
 </script>
 
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
 
 <div
-	class=" bg-scitech-navy selection:bg-scitech-mint flex min-h-screen flex-col justify-between text-text-main selection:text-text-dark"
+	class=" bg-scitech-navy flex min-h-screen flex-col justify-between text-text-main selection:bg-bg-secondary selection:text-text-dark"
 >
 	<header
 		class="absolute top-0 right-0 left-0 z-30 flex w-full items-center justify-between px-6 pt-8 lg:px-12"
@@ -150,9 +105,6 @@
 		{@render children()}
 	</div>
 
-	<!-- Component yang menampilkan Berita terbaru  -->
-
-	<!-- Menangani Streaming Promise dari data.recentNews & data.newsCategories -->
 	{#await Promise.all([data.recentNews, data.newsCategories])}
 		<div class="space-y-4 rounded-2xl border border-border-color bg-bg-secondary p-5 shadow-xs">
 			<div class="flex items-center justify-between border-b border-border-color pb-3">
@@ -169,9 +121,7 @@
 					<div
 						class="flex items-center gap-3.5 rounded-xl border border-border-color/60 bg-bg-primary p-3"
 					>
-						<!-- Thumbnail Placeholder -->
 						<div class="h-14 w-14 shrink-0 animate-pulse rounded-lg bg-bg-secondary"></div>
-						<!-- Text Content Placeholder -->
 						<div class="flex-1 space-y-2">
 							<div class="h-3 w-1/4 animate-pulse rounded bg-bg-secondary"></div>
 							<div class="h-4 w-5/6 animate-pulse rounded bg-bg-secondary"></div>

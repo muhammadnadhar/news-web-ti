@@ -115,7 +115,6 @@
 				triggerMessage('error', 'Gagal', 'Gagal menghapus gambar dari cloudinary');
 			}
 		} catch (err) {
-			console.error('Error deleting photo:', err);
 		} finally {
 			isDeletingPhoto = false;
 		}
@@ -187,8 +186,6 @@
 					{form.error}
 				</div>
 			{/if}
-
-			<!-- Judul Berita -->
 			<div class="space-y-2">
 				<label for="title" class="block text-sm font-medium text-text-muted">
 					Judul Berita <span class="text-status-error">*</span>

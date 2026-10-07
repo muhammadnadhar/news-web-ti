@@ -50,50 +50,56 @@
 {/if}
 
 <div class="space-y-6 p-6 lg:p-10">
-	<div class="border-scitech-slate/20 pb-4">
-		<h1 class="text-2xl font-bold tracking-tight text-text-main">Visi Misi</h1>
-	</div>
+    <div class="border-b-2 border-border-color/20 pb-4">
+        <h1 class="text-2xl font-bold tracking-tight text-text-main">Visi Misi</h1>
+    </div>
 
-	<div class="border-scitech-slate/20 bg-scitech-navy-glare rounded-2xl border p-6 shadow-xl">
-		<h2 class="text-scitech-mint mb-6 text-sm font-semibold">Form Ubah Data Visi Misi</h2>
+    <div class="relative bg-bg-secondary border border-border-color/30 border-t-4 border-t-scitech-mint p-6 lg:p-8 shadow-2xl">
+        
+        <div class="absolute top-0 right-0 h-2 w-2 bg-scitech-mint"></div>
 
-		<form
-			bind:this={formElement}
-			method="POST"
-			use:enhance={() => {
-				isSubmitting = true;
-				return async ({ result, update }) => {
-					isSubmitting = false;
+        <h2 class="text-scitech-mint mb-6 text-xs font-bold uppercase tracking-widest">
+           Form Ubah Data Visi Misi
+        </h2>
 
-					if (result.type === 'success') {
-						triggerMessage('success', 'Berhasil', 'Data Visi Misi berhasil disimpan!');
-					} else if (result.type === 'failure') {
-						triggerMessage(
-							'error',
-							'Gagal',
-							(result.data?.message as string) || 'Gagal menyimpan data.'
-						);
-					}
+        <form
+            bind:this={formElement}
+            method="POST"
+            use:enhance={() => {
+                isSubmitting = true;
+                return async ({ result, update }) => {
+                    isSubmitting = false;
 
-					await update({ reset: false });
-				};
-			}}
-			class="space-y-6"
-		>
-			<!-- Hidden Input ID -->
-			<input type="hidden" name="id" value={id} />
-			<input type="hidden" name="content" value={content} />
+                    if (result.type === 'success') {
+                        triggerMessage('success', 'Berhasil', 'Data Visi Misi berhasil disimpan!');
+                    } else if (result.type === 'failure') {
+                        triggerMessage(
+                            'error',
+                            'Gagal',
+                            (result.data?.message as string) || 'Gagal menyimpan data.'
+                        );
+                    }
 
-			<div class="space-y-2">
-				<label for="content" class="text-xs font-medium text-text-main">
-					Isi Visi Misi<span class="text-scitech-error">*</span>
-				</label>
+                    await update({ reset: false });
+                };
+            }}
+            class="space-y-6"
+        >
+            <!-- Hidden Input ID -->
+            <input type="hidden" name="id" value={id} />
+            <input type="hidden" name="content" value={content} />
 
-				<!-- Component Editor -->
-				<FormEditor bind:value={content} onSave={handleParentSubmit} />
-			</div>
+            <div class="space-y-2">
+                <label for="content" class="text-xs font-semibold uppercase tracking-wider text-text-main block">
+                    Isi Visi Misi<span class="text-scitech-error ml-1">*</span>
+                </label>
 
-			<!-- {#if form?.message} -->
+                <!-- Component Editor (Pastikan komponen editor di dalam juga diatur agar tidak memiliki border-radius jika ingin konsisten total) -->
+                <div class="border border-border-color/30 bg-bg-primary/50 p-1">
+                    <FormEditor bind:value={content} onSave={handleParentSubmit} />
+                </div>
+            </div>
+       	<!-- {#if form?.message} -->
 			<!-- 	<p class="text-xs {form?.success ? 'text-scitech-mint' : 'text-scitech-error'}"> -->
 			<!-- 		{form.message} -->
 			<!-- 	</p> -->
@@ -109,6 +115,6 @@
 			<!-- 		<Send class="h-5 w-5" /> -->
 			<!-- 	</button> -->
 			<!-- </div> -->
-		</form>
-	</div>
+       </form>
+    </div>
 </div>

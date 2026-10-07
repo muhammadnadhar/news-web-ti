@@ -29,8 +29,7 @@ export const navMenuItems: NavMenuItemType[] = [
 			},
 			{ id: 'dosen-staff', label: 'Dosen & Staf', href: '/profil/dosen-staff' },
 			{ id: 'akreditasi', label: 'Akreditasi', href: '/profil/akreditasi' },
-			{ id: 'kurikulum', label: 'Kurikulum', href: '/profil/kurikulum' },
-			{ id: 'fasilitas', label: "Fasilitas", href: '/profil/fasilitas' }
+			{ id: 'fasilitas', label: 'Fasilitas', href: '/profil/fasilitas' }
 		]
 	},
 	{
@@ -101,11 +100,6 @@ export const navMenuItems: NavMenuItemType[] = [
 				id: 'matakuliah',
 				label: 'Mata Kuliah',
 				href: '/kurikulum/matakuliah'
-			},
-			{
-				id: 'kurikulum-obe',
-				label: 'Kurikulum OBE',
-				href: '/kurikulum/obe'
 			}
 		]
 	},
@@ -134,7 +128,7 @@ export const navMenuItems: NavMenuItemType[] = [
 			{
 				id: 'jurnal-jintech',
 				label: 'Jurnal JINTECH',
-				href: '/penelitian/jurnal-jintech'
+				href: 'https://journal.ar-raniry.ac.id/index.php/jintech'
 			}
 		]
 	},
@@ -164,7 +158,7 @@ export const navMenuItems: NavMenuItemType[] = [
 		icon: Newspaper,
 		bgClass: ' bg-text-main text-bg-primary hover:bg-scitech-mint hover:text-scitech-navy',
 		// badge: 2, // suatu hari akan bermanfaat sebagai custome nitifikasi
-		badge : null, 
-    subMenu: [{ id: 'berita', label: 'Berita', href: '/berita' }]
+		badge: null,
+		subMenu: [{ id: 'berita', label: 'Berita', href: '/berita' }]
 	}
 ];

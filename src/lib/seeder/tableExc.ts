@@ -16,7 +16,7 @@ import {
 	StudentAchievementTableSeed
 } from './admin/article/kemahasiswaan';
 import { ActivityDocumentationTableSeed, PartnershipTableSeed } from './admin/article/kerjasama';
-import { CourseMapTableSeed, ObeCurriculumTableSeed } from './admin/article/kurikulum';
+import { CourseMapTableSeed, CurriculumTableSeed } from './admin/article/kurikulum';
 import {
 	LecturerPublicationTableSeed,
 	LecturerResearchTableSeed,
@@ -92,7 +92,7 @@ try {
 
 	// ARTICLE - kurikulum
 	await CourseMapTableSeed();
-	await ObeCurriculumTableSeed();
+	await CurriculumTableSeed();
 
 	// ARTICLE - penelitian
 	await LecturerPublicationTableSeed();

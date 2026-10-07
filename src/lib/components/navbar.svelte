@@ -71,7 +71,7 @@
 <!-- ==================== desktop navbar ==================== -->
 <div bind:this={desktopNavRef} class="fixed top-6 right-6 z-50 hidden text-text-main md:block">
 	<nav
-		class="bg-scitech-navy/80 flex items-center gap-3 rounded-2xl border border-white/10 p-2 shadow-2xl backdrop-blur-md"
+		class="bg-scitech-navy/80 flex items-center gap-3 rounded-2xl border border-border-color/10 p-2 shadow-2xl backdrop-blur-md"
 	>
 		{#each navMenuItems as item (item.id)}
 			<!-- Pembungkus Tombol & Submenu dengan event hover -->
@@ -120,57 +120,59 @@
 			aria-label="Tutup Menu"
 			aria-hidden="true"
 			tabindex="-1"
-			class="bg-scitech-navy/70 fixed inset-0 z-40 h-full w-full cursor-default border-none backdrop-blur-sm"
+			class="fixed inset-0 z-40 h-full w-full cursor-default border-none bg-bg-secondary/70 backdrop-blur-sm"
 			transition:fade={{ duration: 200 }}
 		></button>
 	{/if}
-
 	{#if isOpen}
 		<div
-			class="bg-scitech-slate/95 fixed right-6 bottom-24 z-50 flex max-h-[70vh] max-w-[calc(100vw-3rem)] min-w-[280px] flex-col gap-2.5 overflow-y-auto rounded-2xl border border-white/15 p-2.5 shadow-2xl backdrop-blur-xl"
+			class="fixed right-6 bottom-20 z-50 flex h-[50vh] max-h-[70vh] max-w-[calc(100vw-3rem)] min-w-70 scrollbar-none flex-col gap-2.5 overflow-y-auto rounded-2xl border border-border-color/15 bg-bg-secondary/95 p-2 shadow-2xl
+      backdrop-blur-xl [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
 		>
-			{#each navMenuItems as item, index (item.id)}
-				<div
-					in:fly={{ y: 20, duration: 250, delay: index * 50, easing: backOut }}
-					out:fly={{ y: 15, duration: 150, delay: (navMenuItems.length - 1 - index) * 30 }}
-					class="flex flex-col overflow-hidden rounded-xl"
-				>
-					<button
-						onclick={() => handleMobileClick(item)}
-						class="flex items-center justify-between gap-3 p-3 transition-all duration-150 active:scale-98 {item.bgClass ??
-							''}"
+			<div class="flex-1 space-y-2.5 overflow-y-auto">
+				{#each navMenuItems as item, index (item.id)}
+					<div
+						in:fly={{ y: 20, duration: 250, delay: index * 50, easing: backOut }}
+						out:fly={{ y: 15, duration: 150, delay: (navMenuItems.length - 1 - index) * 30 }}
+						class="flex flex-col overflow-hidden rounded-xl"
 					>
-						<span class="pl-1 text-xs font-semibold">{item.label}</span>
+						<button
+							onclick={() => handleMobileClick(item)}
+							class="flex items-center justify-between gap-3 p-3 transition-all duration-150 active:scale-98 {item.bgClass ??
+								''}"
+						>
+							<span class="pl-1 text-xs font-semibold">{item.label}</span>
 
-						<div class="flex items-center gap-2">
-							<div class="relative flex items-center justify-center">
-								<item.icon class="h-5 w-5 shrink-0" />
-								{#if item.badge}
-									<span
-										class="bg-scitech-error absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-bold text-text-main"
-									>
-										{item.badge}
-									</span>
+							<div class="flex items-center gap-2">
+								<div class="relative flex items-center justify-center">
+									<item.icon class="h-5 w-5 shrink-0" />
+									{#if item.badge}
+										<span
+											class="bg-scitech-error absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-bold text-text-main"
+										>
+											{item.badge}
+										</span>
+									{/if}
+								</div>
+
+								{#if item.subMenu && item.subMenu.length > 0}
+									<ChevronDown
+										class="h-4 w-4 transition-transform duration-200 {activeMobileMenuId === item.id
+											? 'rotate-180'
+											: ''}"
+									/>
 								{/if}
 							</div>
+						</button>
 
-							{#if item.subMenu && item.subMenu.length > 0}
-								<ChevronDown
-									class="h-4 w-4 transition-transform duration-200 {activeMobileMenuId === item.id
-										? 'rotate-180'
-										: ''}"
-								/>
-							{/if}
-						</div>
-					</button>
-
-					{#if activeMobileMenuId === item.id}
-						<div transition:slide={{ duration: 200 }} class="pt-2">
-							<NavbarSub {item} />
-						</div>
-					{/if}
-				</div>
-			{/each}
+						{#if activeMobileMenuId === item.id}
+							<div transition:slide={{ duration: 200 }} class="pt-2">
+								<NavbarSub {item} />
+							</div>
+						{/if}
+					</div>
+				{/each}
+			</div>
 			<ThemeActionBtn />
 		</div>
 	{/if}
@@ -178,7 +180,7 @@
 	<button
 		onclick={toggleMenu}
 		aria-label="Toggle Navigation Menu"
-		class="border-scitech-navy bg-bg-secondary text-scitech-navy shadow-scitech-mint/20 fixed right-6 bottom-6 z-50 flex h-14 w-14 items-center justify-center rounded-full border-2 shadow-lg transition-all duration-300 hover:scale-105 active:scale-95"
+		class="text-scitech-navy shadow-scitech-mint/20 fixed right-6 bottom-6 z-50 flex h-12 w-12 items-center justify-center rounded-full border-2 border-border-color bg-transparent shadow-lg transition-all duration-300 hover:scale-105 active:scale-95"
 	>
 		{#if isOpen}
 			<X class="h-6 w-6 rotate-90 transition-transform" />

@@ -11,7 +11,6 @@
 	} from '$lib/cloudinary/client';
 	import { UploadCloud, Save, Plus, ImageIcon, X, Trash2, LoaderCircleIcon } from 'lucide-svelte';
 	import type { ResponseMessage } from '$lib/types/message';
-	import type { PracticumModuleDTO } from '$lib/dto/admin/article/akademik';
 	import type { ModulPraktikumFormValues } from '$lib/types/values/admin/article';
 
 	interface Props {
@@ -65,8 +64,13 @@
 
 	// Handler Upload Cloudinary
 	function handleUploadSuccess(result: any) {
-		if (result?.info?.secure_url) {
+		if (result?.info?.secure_url && result?.info?.public_id) {
 			imageUrl = result.info.secure_url;
+			photoPublicId = result.info.public_id;
+		}
+		// Kembalikan kemampuan scroll pada document body
+		if (typeof document !== 'undefined') {
+			document.body.style.overflow = 'auto';
 		}
 	}
 
@@ -80,20 +84,29 @@
 		isDeletingPhoto = true;
 
 		try {
+			console.info('Excecuis', photoPublicId);
 			const formData = new FormData();
 			formData.append('public_id', photoPublicId);
 
 			// Panggil named action '?/deletePhoto'
 			const response = await fetch('?/deletePhoto', {
 				method: 'POST',
-				body: formData
+				body: formData,
+				headers: {
+					'x-sveltekit-action': 'true' // Penting agar SvelteKit tahu ini request form action manual
+				}
 			});
-
-			if (response.ok) {
+			const result = await response.json();
+			if (response.ok && result.type === 'success') {
 				imageUrl = '';
 				photoPublicId = '';
+				triggerMessage('success', 'Berhasil', 'Foto sampul berhasil dihapus.');
 			} else {
-				alert('Gagal menghapus gambar dari Cloudinary');
+				triggerMessage(
+					'error',
+					'Gagal',
+					result.data?.message || 'Gagal menghapus gambar dari Cloudinary'
+				);
 			}
 		} catch (err) {
 			console.error('Error deleting photo:', err);

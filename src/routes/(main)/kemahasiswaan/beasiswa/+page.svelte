@@ -6,10 +6,14 @@
 	let { data }: { data: PageData } = $props();
 </script>
 
-<div class={`relative container ${classTopSpace} `}>
-	<header class="page-header">
-		<h1 class="title">Daftar Penerima Beasiswa</h1>
-		<p class="subtitle">Mahasiswa Program Studi Teknologi Informasi penerima program beasiswa.</p>
+<div class={`relative container mx-auto px-4 ${classTopSpace}`}>
+	<header class="mb-8 text-center sm:text-left">
+		<h1 class="text-2xl font-bold tracking-tight text-text-main sm:text-3xl">
+			Daftar Penerima Beasiswa
+		</h1>
+		<p class="mt-2 text-sm text-text-main/70">
+			Mahasiswa Program Studi Teknologi Informasi penerima program beasiswa.
+		</p>
 	</header>
 
 	{#if data.scholarships.length === 0}
@@ -18,178 +22,43 @@
 			description="Data penerima beasiswa belum dimasukkan atau belum tersedia saat ini."
 		/>
 	{:else}
-		<div class="scholarship-grid">
+		<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
 			{#each data.scholarships as item (item.id)}
-				<article class="card">
-					<div class="image-container">
+				<article
+					class="group flex flex-col overflow-hidden rounded-2xl border border-border-color/10 bg-bg-secondary p-4 shadow-lg transition-all duration-300 hover:border-border-color/30 hover:shadow-xl"
+				>
+					<div class="relative aspect-4/3 w-full overflow-hidden rounded-xl bg-bg-primary/50">
 						<img
 							src={item.image_url || '/placeholder-student.png'}
 							alt={item.student_name}
-							class="student-photo"
+							class="h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
 							loading="lazy"
 						/>
 					</div>
-					<div class="card-body">
-						<span class="badge">Penerima Beasiswa</span>
-						<h3 class="student-name">{item.student_name}</h3>
-						<p class="scholarship-program">{item.scholarship_name}</p>
+
+					<div class="mt-4 flex flex-1 flex-col justify-between">
+						<div>
+							<span
+								class="border-scitech-mint/20 bg-bg-secondary-dim text-scitech-mint inline-block rounded-full border px-2.5 py-1 text-[10px] font-semibold"
+							>
+								Penerima Beasiswa
+							</span>
+
+							<!-- Nama Mahasiswa -->
+							<h3
+								class="group-hover:text-scitech-mint mt-2 text-base font-bold tracking-wide text-text-main transition-colors"
+							>
+								{item.student_name}
+							</h3>
+
+							<!-- Program Beasiswa -->
+							<p class="mt-1 text-xs font-medium text-text-main/60">
+								{item.scholarship_name}
+							</p>
+						</div>
 					</div>
 				</article>
 			{/each}
 		</div>
 	{/if}
 </div>
-
-<style>
-	.container {
-		max-width: 1200px;
-		margin: 2rem auto;
-		padding: 0 1.5rem;
-		font-family:
-			system-ui,
-			-apple-system,
-			sans-serif;
-	}
-
-	.page-header {
-		text-align: center;
-		margin-bottom: 3rem;
-	}
-
-	.title {
-		font-size: 2.25rem;
-		font-weight: 800;
-		color: #0f172a;
-		margin: 0 0 0.5rem 0;
-		letter-spacing: -0.02em;
-	}
-
-	.subtitle {
-		font-size: 1rem;
-		color: #64748b;
-		margin: 0;
-	}
-
-	/* Responsive Grid Layout */
-	.scholarship-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-		gap: 1.75rem;
-	}
-
-	/* Card Component */
-	.card {
-		background: #ffffff;
-		border-radius: 16px;
-		overflow: hidden;
-		border: 1px solid #e2e8f0;
-		box-shadow:
-			0 4px 6px -1px rgba(0, 0, 0, 0.05),
-			0 2px 4px -2px rgba(0, 0, 0, 0.05);
-		transition:
-			transform 0.25s ease,
-			box-shadow 0.25s ease;
-		display: flex;
-		flex-direction: column;
-	}
-
-	.card:hover {
-		transform: translateY(-4px);
-		box-shadow:
-			0 12px 20px -5px rgba(0, 0, 0, 0.1),
-			0 4px 6px -4px rgba(0, 0, 0, 0.05);
-	}
-
-	.image-container {
-		width: 100%;
-		height: 220px;
-		background-color: #f1f5f9;
-		overflow: hidden;
-		position: relative;
-	}
-
-	.student-photo {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-		object-position: center top;
-		transition: transform 0.3s ease;
-	}
-
-	.card:hover .student-photo {
-		transform: scale(1.04);
-	}
-
-	.card-body {
-		padding: 1.25rem;
-		display: flex;
-		flex-direction: column;
-		flex-grow: 1;
-	}
-
-	.badge {
-		align-self: flex-start;
-		background-color: #e0f2fe;
-		color: #0369a1;
-		font-size: 0.75rem;
-		font-weight: 700;
-		padding: 0.25rem 0.65rem;
-		border-radius: 9999px;
-		margin-bottom: 0.75rem;
-		text-transform: uppercase;
-		letter-spacing: 0.025em;
-	}
-
-	.student-name {
-		font-size: 1.15rem;
-		font-weight: 700;
-		color: #0f172a;
-		margin: 0 0 0.5rem 0;
-		line-height: 1.3;
-	}
-
-	.scholarship-program {
-		font-size: 0.875rem;
-		color: #475569;
-		margin: 0;
-		line-height: 1.4;
-	}
-
-	/* Empty State */
-	.empty-state {
-		text-align: center;
-		padding: 4rem 1rem;
-		background: #f8fafc;
-		border-radius: 16px;
-		border: 2px dashed #cbd5e1;
-	}
-
-	.empty-state .icon {
-		font-size: 3rem;
-		margin-bottom: 1rem;
-	}
-
-	.empty-state h3 {
-		font-size: 1.25rem;
-		color: #1e293b;
-		margin: 0 0 0.5rem 0;
-	}
-
-	.empty-state p {
-		color: #64748b;
-		margin: 0;
-		font-size: 0.95rem;
-	}
-
-	/* Mobile adjustment */
-	@media (max-width: 640px) {
-		.title {
-			font-size: 1.75rem;
-		}
-
-		.scholarship-grid {
-			grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-			gap: 1.25rem;
-		}
-	}
-</style>

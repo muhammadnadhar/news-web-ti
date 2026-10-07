@@ -12,7 +12,7 @@
 </script>
 
 <div class={`${classTopSpace} mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8`}>
-	<div class="mb-12  pb-6 text-center sm:text-left">
+	<div class="mb-12 pb-6 text-center sm:text-left">
 		<div
 			class="text-scitech-mint mb-3 inline-flex items-center gap-2 rounded-full bg-bg-secondary/10 px-3 py-1 text-xs font-semibold"
 		>
@@ -31,7 +31,7 @@
 	{#if data.historyContent}
 		<section class="mb-16">
 			<div
-				class="bg-bg-secondary/40 overflow-hidden rounded-2xl border border-border-color backdrop-blur-md"
+				class="overflow-hidden rounded-2xl border border-border-color bg-bg-secondary/40 backdrop-blur-md"
 			>
 				{#if data.historyContent.image_url}
 					<div class="relative h-64 w-full sm:h-96">
@@ -58,7 +58,7 @@
 	{/if}
 
 	<!-- BAGIAN 2: SEJARAH PIMPINAN (PERIODE) -->
-	<section>
+	<section class="pt-10">
 		<div class="mb-8 flex items-center gap-3">
 			<div
 				class="text-scitech-mint flex h-10 w-10 items-center justify-center rounded-xl bg-bg-secondary/10"
@@ -77,7 +77,7 @@
 			<div class="space-y-8">
 				{#each data.historyLeaders as leader (leader.id)}
 					<div
-						class="bg-bg-secondary/40 overflow-hidden rounded-2xl border border-border-color p-6 backdrop-blur-md sm:p-8"
+						class="overflow-hidden rounded-2xl border border-border-color bg-bg-secondary/40 p-6 backdrop-blur-md sm:p-8"
 					>
 						<div class="mb-6 flex items-center gap-2 border-b border-border-color/40 pb-4">
 							<Calendar class="text-scitech-cyan h-4 w-4" />

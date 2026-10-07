@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { Sparkles } from 'lucide-svelte';
-
 	import TableContent from '$lib/components/admin/tableContent.svelte';
 	import type { TableContentType } from '$lib/types/tableContent';
 	import { goto } from '$app/navigation';
@@ -50,7 +48,6 @@
 	}
 </script>
 
-<!-- alert / toast notification -->
 {#if showMessage}
 	<Message
 		status={messageConfig.status}
@@ -64,7 +61,6 @@
 
 <div class="mx-auto max-w-7xl space-y-8">
 	<div class="border-b border-white/10 pb-6">
-	
 		<h1 class="text-2xl font-extrabold tracking-tight text-text-main sm:text-3xl">Semester</h1>
 	</div>
 

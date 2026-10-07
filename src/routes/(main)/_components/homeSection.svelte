@@ -56,7 +56,6 @@
 		{:then list}
 			{#if list && list.length > 0}
 				<div class="section-group space-y-8">
-					<!-- Header Section -->
 					<div
 						class="absolute top-0 left-1/2 z-20 flex w-max max-w-[90%] -translate-x-1/2 -translate-y-1/2 justify-center"
 					>
@@ -116,19 +115,7 @@
 				</div>
 			{:else}
 				<!-- Empty State (Variabel Tema) -->
-				<div
-					class="mx-auto max-w-lg rounded-3xl border border-border-color bg-bg-secondary p-10 text-center shadow-xl backdrop-blur-xl"
-				>
-					<div
-						class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-border-color bg-bg-secondary-hover text-text-muted shadow-inner"
-					>
-						<BookOpenIcon class="h-8 w-8" />
-					</div>
-					<h3 class="mb-2 text-lg font-bold text-text-main">Belum Ada Perminatan TI</h3>
-					<p class="text-xs leading-relaxed text-text-muted sm:text-sm">
-						Data peminatan bidang keahlian belum ditambahkan. Silakan periksa kembali nanti.
-					</p>
-				</div>
+        <EmptyData title={"Belum Ada Permintan TI"} description="	Data peminatan bidang keahlian belum ditambahkan. Silakan periksa kembali nanti." />
 			{/if}
 		{:catch error}
 			<!-- Error State (Status Error Tema) -->
@@ -355,15 +342,10 @@
 					<!-- Header Section -->
 					<div class="flex items-center justify-center">
 						<h2
-							class="group-title flex items-center gap-2 text-xl font-bold tracking-tight text-text-main sm:text-2xl"
+							class="group-title flex items-center gap-2 text-xl font-extrabold tracking-tight text-text-main sm:text-2xl"
 						>
-							<span
-								class="inline-flex items-center gap-1.5 rounded-full border border-border-color/20 bg-bg-primary/10 px-3 py-1 text-xs font-semibold text-text-main"
-							>
-								<UsersIcon class="h-4 w-4" /> Dosen
-							</span>
-							Daftar Dosen Teknologi Infromasi
-							<span class="ml-1 text-sm font-medium text-text-muted">({items.length})</span>
+						
+					Dosen Teknologi Infromasi
 						</h2>
 					</div>
 

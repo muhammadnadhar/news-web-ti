@@ -7,7 +7,6 @@
 		ShieldCheck,
 		Calendar,
 		ArrowLeft,
-		Mail,
 		BookOpen,
 		ExternalLinkIcon
 	} from 'lucide-svelte';
@@ -89,7 +88,6 @@
 
 						<hr class="my-6 border-[var(--color-border-light)]" />
 
-						<!-- Detail Keahlian / Tugas -->
 						<div class="space-y-4">
 							<div>
 								<h2
@@ -133,9 +131,8 @@
 						{/if}
 					</div>
 
-					<!-- Timestamps / Meta -->
 					<div
-						class="flex items-center justify-between border-t border-[var(--color-border-light)] pt-4 font-mono text-[11px] text-[var(--color-text-muted)]"
+						class="flex items-center justify-between border-t border-[var(--color-border-light)] pt-4 font-mono text-[11px] text-text-muted"
 					>
 						<div class="flex items-center gap-1.5">
 							<Calendar class="h-3.5 w-3.5" />

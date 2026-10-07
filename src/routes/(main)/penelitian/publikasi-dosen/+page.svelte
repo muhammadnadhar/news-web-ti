@@ -8,7 +8,6 @@
 		ExternalLink,
 		BookOpen,
 		UserCheck,
-		AlertCircle,
 		Search
 	} from 'lucide-svelte';
 

@@ -7,7 +7,7 @@ import { randomUUID } from '$lib/crypto';
 import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
 
 export const actions: Actions = {
-	default: async ({ request }) => {
+	create: async ({ request }) => {
 		const formData = await request.formData();
 
 		// Ekstraksi data ke objek values bertipe ProfileDashboardFormValues

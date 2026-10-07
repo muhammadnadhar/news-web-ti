@@ -76,7 +76,8 @@
 
 	<form
 		method="POST"
-		use:enhance={() => {
+	action="?/create"
+  use:enhance={() => {
 			isSubmitting = true;
 			showMessage = false;
 

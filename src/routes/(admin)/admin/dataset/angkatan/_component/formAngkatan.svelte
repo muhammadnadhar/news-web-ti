@@ -37,19 +37,6 @@
 	}
 </script>
 
-<div class="mx-auto max-w-3xl space-y-6">
-	<!-- Header & Navigation Bar -->
-	<div class="flex items-center justify-between border-b border-white/10 pb-4">
-		<div class="flex items-center gap-3">
-			<div>
-				<h1 class="text-scitech-mint text-lg font-bold tracking-wide sm:text-xl">{title}</h1>
-				<p class="text-xs text-text-muted">
-					Isi formulir di bawah ini untuk mengelola data angkatan.
-				</p>
-			</div>
-		</div>
-	</div>
-
 	<!-- Alert Message Component -->
 	{#if showMessage}
 		<Message
@@ -62,8 +49,23 @@
 		/>
 	{/if}
 
+
+<div class="mx-auto max-w-3xl space-y-6">
+	<div class="flex items-center justify-between border-b border-border-color/10 pb-4">
+		<div class="flex items-center gap-3">
+			<div>
+				<h1 class="text-text-main text-lg font-bold tracking-wide sm:text-xl">{title}</h1>
+				<p class="text-xs text-text-muted">
+					Isi formulir di bawah ini untuk mengelola data angkatan.
+				</p>
+			</div>
+		</div>
+	</div>
+
+
+
 	<div
-		class="bg-scitech-slate/50 rounded-2xl border border-white/10 p-6 shadow-2xl backdrop-blur-xl sm:p-8"
+		class="bg-bg-secondary/50 rounded-2xl border border-border-color/10 p-6 shadow-2xl backdrop-blur-xl sm:p-8"
 	>
 		<form
 			method="POST"
@@ -76,7 +78,7 @@
 					isSubmitting = false;
 
 					if (result.type === 'success') {
-						const resData = (result.data as ResponseMessage) ?? {
+						const resData = (result?.data as ResponseMessage) ?? {
 							status: 'success',
 							title: 'Berhasil',
 							message: 'Data angkatan berhasil disimpan.'
@@ -85,7 +87,7 @@
 						onSuccess?.(resData);
 						await update({ reset: true });
 					} else if (result.type === 'failure') {
-						const resData = (result.data as ResponseMessage) ?? {
+						const resData = (result?.data as ResponseMessage) ?? {
 							status: 'error',
 							title: 'Gagal',
 							message: 'Gagal menyimpan data angkatan.'
@@ -126,7 +128,7 @@
 						step="1"
 						required
 						disabled={isSubmitting}
-						class="bg-scitech-navy focus:border-scitech-mint focus:ring-scitech-mint/20 w-full rounded-xl border border-white/10 px-4 py-3 text-xs text-text-main placeholder-text-muted transition-all focus:ring-2 focus:outline-none disabled:opacity-50"
+						class="bg-bg-primary focus:border-scitech-mint focus:ring-scitech-mint/20 w-full rounded-xl border border-border-color/10 px-4 py-3 text-xs text-text-main placeholder-text-muted transition-all focus:ring-2 focus:outline-none disabled:opacity-50"
 					/>
 				</div>
 
@@ -136,12 +138,12 @@
 			</div>
 
 			<!-- Form Action Buttons -->
-			<div class="flex items-center justify-end gap-3 border-t border-white/10 pt-6">
+			<div class="flex items-center justify-end gap-3 border-t border-border-color/10 pt-6">
 				<button
 					type="button"
 					onclick={() => history.back()}
 					disabled={isSubmitting}
-					class="rounded-xl border border-white/10 bg-bg-secondary/5 px-5 py-2.5 text-xs font-semibold text-text-muted transition-all hover:bg-white/10 hover:text-white active:scale-95 disabled:opacity-50"
+					class="rounded-xl border border-border-color/10 bg-bg-secondary/5 px-5 py-2.5 text-xs font-semibold text-text-muted transition-all hover:bg-white/10 hover:text-white active:scale-95 disabled:opacity-50"
 				>
 					Batal
 				</button>

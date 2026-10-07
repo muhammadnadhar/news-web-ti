@@ -39,7 +39,6 @@
 				</p>
 			</div>
 
-			<!-- Input Pencarian -->
 			{#if data.publications && data.publications.length > 0}
 				<div class="relative min-w-[260px]">
 					<Search class="absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-text-muted" />
@@ -54,7 +53,6 @@
 		</div>
 	</div>
 
-	<!-- GRID DOKUMEN & PUBLIKASI MAHASISWA -->
 	{#if filteredPublications.length > 0}
 		<div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
 			{#each filteredPublications as item (item.id)}
@@ -69,14 +67,30 @@
 				<article
 					class="bg-scitech-slate/40 hover:border-scitech-mint/40 flex flex-col justify-between overflow-hidden rounded-2xl border border-border-color backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
 				>
+					{#if item.image_url}
+						<div
+							class="relative h-48 w-full overflow-hidden border-b border-border-color/30 bg-bg-primary"
+						>
+							<img
+								src={item.image_url}
+								alt={item.student_name}
+								class="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
+								loading="lazy"
+							/>
+						</div>
+					{/if}
+
 					<div class="p-6">
 						<!-- Informasi Mahasiswa -->
 						<div class="mb-5 flex items-center gap-3 border-b border-border-color/30 pb-4">
-							<div
-								class="border-scitech-mint/20 bg-scitech-mint/10 text-scitech-mint flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl border"
-							>
-								<User class="h-5 w-5" />
-							</div>
+							{#if !item.image_url}
+								<!-- Tampilkan Avatar Icon jika tidak ada image_url -->
+								<div
+									class="border-scitech-mint/20 bg-scitech-mint/10 text-scitech-mint flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border"
+								>
+									<User class="h-5 w-5" />
+								</div>
+							{/if}
 							<div>
 								<span class="text-scitech-cyan text-[10px] font-bold tracking-wider uppercase">
 									Penulis Utama
@@ -90,14 +104,12 @@
 							</div>
 						</div>
 
-						<!-- Daftar Jurnal / HTML List -->
-						<div class="prose-scitech prose max-w-none text-xs prose-invert">
-							<span class="mb-2 block font-semibold text-text-muted">Daftar Publikasi Jurnal:</span>
+						<div class="prose-scitech prose- prose max-w-none text-xs">
+							<span class="mb-2 block font-semibold text-text-main">Daftar Publikasi Jurnal:</span>
 							{@html item.journal_list}
 						</div>
 					</div>
 
-					<!-- Footer Card -->
 					<div
 						class="bg-scitech-navy/40 flex items-center justify-between border-t border-border-color/30 px-6 py-3 text-[11px] text-text-muted"
 					>

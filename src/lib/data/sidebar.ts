@@ -125,13 +125,13 @@ export const sidebarMenu: MenuCategory[] = [
 						iconName: 'BookMarked',
 						href: AdminUrl + '/article/akademik/modul-praktikum'
 					}
-				]
+				] 
 			},
 			{
 				title: 'Kurikulum',
 				iconName: 'BookOpen',
 				children: [
-					{ title: 'Kurikulum OBE', iconName: 'Layers', href: AdminUrl + '/article/kurikulum/obe' },
+					{ title: 'Kurikulums', iconName: 'Layers', href: AdminUrl + '/article/kurikulum/kurikulums' },
 					{
 						title: 'Daftar Mata Kuliah',
 						iconName: 'ListOrdered',

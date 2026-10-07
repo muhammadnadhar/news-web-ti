@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { classShadowDown, classTopSpace } from '$lib/constants';
-import EmptyData from '../../_components/emptyData.svelte';
+	import EmptyData from '../../_components/emptyData.svelte';
 	import type { PageData } from './$types';
 	import { Award, Calendar, GraduationCap, User } from 'lucide-svelte';
 
@@ -19,15 +19,13 @@ import EmptyData from '../../_components/emptyData.svelte';
 <div class={` ${classTopSpace} mx-auto max-w-7xl px-6`}>
 	<div class="mb-8 pb-6">
 		<div class="flex items-center gap-3">
-			<div class="flex h-10 w-10 items-center justify-center border border-border-light bg-bg-secondary text-accent-primary">
-				<Award class="h-5 w-5" />
-			</div>
 			<div>
 				<h1 class="text-xl font-bold tracking-tight text-text-main sm:text-2xl">
 					Prestasi Non-Akademik Mahasiswa
 				</h1>
 				<p class="text-xs text-text-muted sm:text-sm">
-					Daftar capaian kejuaraan mahasiswa di bidang olahraga, seni, minat/bakat, dan minat khusus lainnya.
+					Daftar capaian kejuaraan mahasiswa di bidang olahraga, seni, minat/bakat, dan minat khusus
+					lainnya.
 				</p>
 			</div>
 		</div>
@@ -52,7 +50,8 @@ import EmptyData from '../../_components/emptyData.svelte';
 	{#if achievements.length === 0}
 		<EmptyData
 			title="Belum Ada Prestasi Non-Akademik"
-			description="Tidak ditemukan data mahasiswa berprestasi non-akademik untuk semester {selectedSemester || 'ini'}."
+			description="Tidak ditemukan data mahasiswa berprestasi non-akademik untuk semester {selectedSemester ||
+				'ini'}."
 			icon={Award}
 		/>
 	{:else}
@@ -62,7 +61,9 @@ import EmptyData from '../../_components/emptyData.svelte';
 					class={`${classShadowDown} group flex flex-col justify-between border border-border-light bg-bg-secondary p-5 hover:border-accent-primary/50`}
 				>
 					<div>
-						<div class="relative mb-4 aspect-video w-full overflow-hidden border border-border-light bg-bg-primary">
+						<div
+							class="relative mb-4 aspect-video w-full overflow-hidden border border-border-light bg-bg-primary"
+						>
 							{#if item.image_url}
 								<img
 									src={item.image_url}
@@ -74,17 +75,23 @@ import EmptyData from '../../_components/emptyData.svelte';
 									<Award class="h-10 w-10 opacity-30" />
 								</div>
 							{/if}
-							
-							<span class="absolute top-2 right-2 border border-border-light bg-bg-primary/90 px-2 py-0.5 text-[10px] font-bold text-accent-primary backdrop-blur-sm">
+
+							<span
+								class="absolute top-2 right-2 border border-border-light bg-bg-primary/90 px-2 py-0.5 text-[10px] font-bold text-accent-primary backdrop-blur-sm"
+							>
 								Non-Akademik
 							</span>
 						</div>
 
-						<h3 class="line-clamp-2 text-base font-bold text-text-main group-hover:text-accent-primary">
+						<h3
+							class="line-clamp-2 text-base font-bold text-text-main group-hover:text-accent-primary"
+						>
 							{item.achievement_name}
 						</h3>
 
-						<div class="mt-4 space-y-2 border-t border-border-light/60 pt-3 text-xs text-text-muted">
+						<div
+							class="mt-4 space-y-2 border-t border-border-light/60 pt-3 text-xs text-text-muted"
+						>
 							<div class="flex items-center gap-2">
 								<User class="h-3.5 w-3.5 shrink-0 text-accent-primary" />
 								<span class="font-medium text-text-main">{item.student_name}</span>

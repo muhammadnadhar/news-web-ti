@@ -114,19 +114,9 @@
 
 <div class="mx-auto max-w-3xl space-y-6">
 	<div class="flex items-center justify-between gap-4">
-		<div class="flex items-center gap-3">
-			<button
-				type="button"
-				onclick={() => history.back()}
-				class="border border-border-color bg-bg-secondary p-2.5 text-text-main shadow-[3px_3px_0px_0px_rgba(0,0,0,0.3)] transition-all hover:bg-bg-secondary-hover active:scale-95"
-				title="Kembali"
-			>
-				<ArrowLeft class="h-5 w-5" />
-			</button>
-			<div>
+	
 				<h1 class="text-xl font-bold text-text-main md:text-2xl">Edit Profile Dashboard</h1>
 				<p class="text-sm text-text-muted">Perbarui atau hapus banner/gambar profile dashboard.</p>
-			</div>
 		</div>
 
 		<!-- Tombol Trigger Modal Hapus -->
@@ -153,7 +143,6 @@
 		}}
 		class="space-y-6 border border-border-color bg-bg-secondary p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,0.4)] md:p-8"
 	>
-		<!-- Hidden Inputs -->
 		<input type="hidden" name="image_path" value={imagePath} />
 		<input type="hidden" name="image_public_id" value={image_public_id} />
 

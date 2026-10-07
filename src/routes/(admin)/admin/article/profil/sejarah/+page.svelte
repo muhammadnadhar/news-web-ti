@@ -186,16 +186,14 @@
 {/if}
 
 <div class="space-y-6 p-6 lg:p-10">
-	<div class="border-scitech-slate/20 pb-4">
+	<div class=" pb-4">
 		<h1 class="text-2xl font-bold tracking-tight text-text-main">Sejarah</h1>
 	</div>
 
 	<!-- grid 2 kolom (kiri: konten sejarah, kanan: pimpinan jurusan) -->
 	<div class="grid grid-cols-1 items-start gap-8 lg:grid-cols-12">
 		<!-- ================= bagian kiri: form ubah data sejarah ================= -->
-		<div
-			class="border-scitech-slate/20 bg-scitech-navy-glare space-y-6 rounded-2xl border p-6 shadow-xl lg:col-span-6"
-		>
+		<div class="space-y-6 border-border-color/20 bg-bg-secondary p-6 shadow-xl lg:col-span-6">
 			<h2 class="text-scitech-mint text-sm font-semibold">Form Ubah Data Sejarah</h2>
 
 			<form
@@ -221,7 +219,7 @@
 							type="text"
 							bind:value={title}
 							required
-							class="border-scitech-slate/30 bg-scitech-navy focus:border-scitech-mint w-full rounded-xl border px-3 py-2 text-xs text-text-main focus:outline-none"
+							class="focus:border-scitech-mint w-full rounded-xl border border-border-color/30 bg-bg-primary px-3 py-2 text-xs text-text-main focus:outline-none"
 						/>
 					</div>
 
@@ -295,7 +293,7 @@
 					data={mapHistoryLeadersToTableContent(rawList)}
 					onAdd={() => goto(mergeNewPath('add'))}
 					onEdit={(data) => gotoEdit(data.id, page.url.pathname)}
-					deleteAction="?/delete"
+					deleteAction="?/deleteLeader"
 					onDeleteSuccess={(res) =>
 						triggerMessage(
 							res?.status ?? 'success',

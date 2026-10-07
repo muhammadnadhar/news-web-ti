@@ -1,4 +1,12 @@
 import { goto } from '$app/navigation';
+import type { ComponentType } from 'svelte';
+import type { CurriculumDTO } from './dto/admin/article/kurikulum';
+import type { SemesterDTO } from './dto/admin/dataset';
+import type { NavMenuItemType, NavMenuType, SubMenuItem } from './types/navbar';
+import type { MenuItem } from './types/sedebar';
+import type { dymaicDataType } from './types/utils';
+import { navMenuItems } from '$lib/data/navbar';
+import { CurrencyIcon, type Component } from 'lucide-svelte';
 
 export function mergeNewPath(newPath: string): string {
 	// Ambil URL saat ini
@@ -98,4 +106,124 @@ export function convertYouTubeUrlToEmbed(url: string): string {
 	}
 
 	return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
+}
+// Helper function untuk memformat sub-menu (seperti Semester)
+const formatSubMenu = (
+	subMenu: SubMenuItem[] | undefined,
+	basePath: string,
+	param?: string
+): SubMenuItem[] => {
+	if (!subMenu || !Array.isArray(subMenu) || subMenu.length === 0) return [];
+
+	return subMenu.map((item) => ({
+		id: item.id.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+		label: item.label, // Menggunakan item.label sesuai interface SubMenuItem
+		href: param
+			? `${basePath}?${param}=${encodeURIComponent(item.id)}`
+			: `${basePath}\\${encodeURIComponent(item.id)}`
+	}));
+};
+
+/**
+ * Helper function untuk memformat data NavMenuType menjadi Menu Utama Navigasi
+ */
+const formatNavbarMenu = (
+	data: NavMenuType | NavMenuType[] | undefined,
+	basePath: string,
+	icon?: Component
+): NavMenuItemType[] => {
+	if (!data) return [];
+	const list = Array.isArray(data) ? data : [data];
+
+	return list.map((item) => ({
+		id: item.id.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+		label: item.label
+			? item.label.length > 20
+				? item.label.substring(0, 20) + '...'
+				: item.label
+			: item.id,
+		icon: item.icon || icon,
+		bgClass: item.bgClass || 'text-bg-main hover:bg-scitech-slate-hover',
+		href: item.href ? `${basePath}/${item.href}` : basePath,
+		badge: item.badge ?? null,
+		subMenu: [] // Sesuai dengan NavMenuItemType
+	}));
+}; /**
+ * Fungsi utama untuk menghasilkan menu navigasi dinamis
+ */
+export function generateDynamicNavMenu(data: dymaicDataType): NavMenuItemType[] {
+	const menu = navMenuItems.map((m) => ({ ...m }));
+
+	const kemahasiswaanMenu = menu.find((m) => m.id === 'kemahasiswaan');
+	if (kemahasiswaanMenu && kemahasiswaanMenu.subMenu) {
+		const prestasiAkademik = kemahasiswaanMenu.subMenu.find((c) => c.id === 'prestasi-akademik');
+		if (prestasiAkademik && data.academic) {
+			const subMenu: SubMenuItem[] = data.academic.map((i) => ({
+				id: i.id,
+				href: i.id,
+				label: i.name
+			}));
+			prestasiAkademik.subMenu = formatSubMenu(subMenu, prestasiAkademik.href, 'semester_id');
+		}
+
+		const prestasiNonAkademik = kemahasiswaanMenu.subMenu.find(
+			(c) => c.id === 'prestasi-non-akademik'
+		);
+		if (prestasiNonAkademik && data.nonAcademic) {
+			const subMenu: SubMenuItem[] = data.nonAcademic.map((i) => ({
+				id: i.id,
+				href: i.id,
+				label: i.name
+			}));
+			prestasiNonAkademik.subMenu = formatSubMenu(subMenu, prestasiNonAkademik.href, 'semester_id');
+		}
+
+		const ipkTertinggi = kemahasiswaanMenu.subMenu.find((c) => c.id === 'mahasiswa-ipk-tertinggi');
+		if (ipkTertinggi && data.gpa) {
+			const subMenu: SubMenuItem[] = data.gpa.map((i) => ({
+				id: i.id,
+				href: i.id,
+				label: i.name
+			}));
+			ipkTertinggi.subMenu = formatSubMenu(subMenu, ipkTertinggi.href, 'semester_id');
+		}
+	}
+
+	const curriculumMenu = menu.find((c) => c.id === 'kurikulum');
+	if (curriculumMenu && data.curriculums) {
+		// const kurikulumList = Array.isArray(data.curriculums) ? data.curriculums : [data.curriculums];
+
+		// // Map CurriculumDTO ke NavMenuType sebelum masuk ke formatNavbarMenu
+		// const navMenuInputs: NavMenuType[] = kurikulumList.map((item) => ({
+		// 	id: item.id,
+		// 	label: item.title,
+		// 	icon: CurrencyIcon ?? (() => null),
+		// 	badge: null,
+		// 	bgClass: 'text-bg-main hover:bg-scitech-slate-hover',
+		// 	href: item.id // Akan digabungkan dengan basePath di dalam formatNavbarMenu
+		// }));
+		//
+		// const formattedCurriculumMenus = formatNavbarMenu(navMenuInputs, '/kurikulum');
+		// const curriculumIndex = menu.findIndex((m) => m.id === 'kurikulum');
+		// if (curriculumIndex !== -1) {
+		// 	menu.splice(curriculumIndex, 1, ...formattedCurriculumMenus);
+		// } else {
+		// 	menu.push(...formattedCurriculumMenus);
+		// }
+		const newCurriculumSubMenus: SubMenuItem[] = data.curriculums.map((i) => ({
+			id: i.id,
+			// *Bgdar : nantik jika ada fitur lanjutan di kurikulum maka bisa buat dinamys
+			label: (i as any).title || (i as any).name || i.id,
+			href: `/kurikulum/kurikulums/${i.id}`
+		}));
+
+		// Gabungkan dengan sub-menu yang sudah ada sebelumnya (jika ada)
+		// Menggunakan operator spread (...) memastikan sub-menu lama tidak hilang
+		curriculumMenu.subMenu = [
+			...(curriculumMenu.subMenu || []),
+			...formatSubMenu(newCurriculumSubMenus, '/kurikulum/kurikulums')
+		];
+	}
+
+	return menu;
 }

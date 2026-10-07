@@ -71,6 +71,7 @@ npm run dev -- --open
 - admin : dataset baru utnuk berita yang bisa menambah kategory berita untuk di gunakan memilih berita
 - home : Fitu Berita yang di web sebelumnya berupa component berita yang selalu ada di setiap Layout yang selalu muncul di sebelah kiri , sekarang di ubah di namis sebelah kiri yang hanya muncul di dektop saat di click ke kiir , mobile dari bawah
 - nah di halaman /admin/home/profilProdi sekarang bsia menambhakan data secara dinamis dan menyesuikan data desan , sehingga data yang perlu di tampilkan di halaman depan bisa banyak
+- kurikulum sekarang bisa membuat kurikulum tersendiri dan akan otomatis akan update di navbar berdasarkan title
 
 ##### Admin panel
 

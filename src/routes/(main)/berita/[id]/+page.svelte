@@ -109,21 +109,7 @@
 				{/if}
 			</div>
 
-			<footer class="border-t border-border-color/10 pt-6">
-				<div class="flex items-center justify-between">
-					<span class="font-mono text-xs text-text-muted">
-						ID Artikel: <span class="font-bold text-text-main">{news.id}</span>
-					</span>
-
-					<a
-						href="/berita"
-						class="text-scitech-cyan hover:text-scitech-mint inline-flex items-center gap-2 text-xs font-bold transition-colors"
-					>
-						<ArrowLeft class="h-3.5 w-3.5" />
-						<span>Kembali ke Indeks Berita</span>
-					</a>
-				</div>
-			</footer>
+		
 		</article>
 	{:catch error}
 		<!-- Error State / 404 Not Found -->
