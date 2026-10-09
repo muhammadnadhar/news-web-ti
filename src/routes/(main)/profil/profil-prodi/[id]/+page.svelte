@@ -52,24 +52,24 @@
 <div class={`min-h-screen  px-4 py-8 text-text-main sm:px-6 lg:px-8 ${classTopSpace} `}>
 	<div class="mx-auto max-w-5xl space-y-8">
 		<div
-			class="relative overflow-hidden rounded-3xl border border-border-color/10 bg-bg-secondary/50 p-6 shadow-2xl backdrop-blur-xl sm:p-10"
+			class="relative overflow-hidden border border-border-color/10 bg-bg-secondary/50 p-6 shadow-2xl backdrop-blur-xl sm:p-10"
 		>
 			<div
-				class="bg-scitech-mint/10 pointer-events-none absolute -top-10 -right-10 h-48 w-48 rounded-full blur-3xl"
+				class="bg-scitech-mint/10 pointer-events-none absolute -top-10 -right-10 h-48 w-48 "
 			></div>
 			<div
-				class="bg-scitech-cyan/10 pointer-events-none absolute -bottom-10 -left-10 h-48 w-48 rounded-full blur-3xl"
+				class="bg-scitech-cyan/10 pointer-events-none absolute -bottom-10 -left-10 h-48 w-48  blur-3xl"
 			></div>
 
 			<div class="relative z-10 space-y-4">
 				<div
-					class="bg-scitech-mint/10 text-scitech-mint border-scitech-mint/20 inline-flex items-center gap-2 rounded-lg border px-3 py-1.5 text-xs font-semibold"
+					class="bg-scitech-mint/10 text-text-main border-scitech-mint/20 inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold"
 				>
 					<Building2 class="h-4 w-4" />
 					<span>Profil Program Studi</span>
 				</div>
 
-				<h1 class="text-2xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl">
+				<h1 class="text-2xl font-extrabold tracking-tight text-text-main sm:text-4xl lg:text-5xl">
 					{profilProdi.title}
 				</h1>
 
@@ -95,7 +95,7 @@
 		<!-- Galeri Gambar (Sesuai Display Instruction) -->
 		{#if profilProdi.images && profilProdi.images.length > 0}
 			<div
-				class="space-y-4 rounded-3xl border border-border-color/10 bg-bg-secondary/30 p-6 backdrop-blur-xl"
+				class="space-y-4  bg-bg-secondary p-6 backdrop-blur-xl"
 			>
 				<div
 					class="text-scitech-mint flex items-center gap-2 border-b border-border-color/10 pb-3 text-xs font-bold"
@@ -107,7 +107,7 @@
 				<div class={getLayoutClass(profilProdi.display_instruction)}>
 					{#each profilProdi.images as img, idx}
 						<div
-							class="group hover:border-scitech-mint/40 hover:shadow-scitech-mint/5 relative overflow-hidden rounded-2xl border border-border-color/10 bg-black/40 transition-all hover:shadow-lg"
+							class="group hover:border-scitech-mint/40 hover:shadow-scitech-mint/5 relative overflow-hidden border border-border-color/10 bg-black/40 transition-all hover:shadow-lg"
 						>
 							<!-- Visual Container -->
 							<div
@@ -139,7 +139,7 @@
 							<!-- Caption Box -->
 							{#if img.caption}
 								<div
-									class="bg-scitech-navy/80 flex items-start gap-2 border-t border-border-color/10 p-3 text-xs text-text-muted backdrop-blur-md"
+									class="bg-bg-primary-glare flex items-start gap-2 border-t border-border-color/10 p-3 text-xs text-text-main backdrop-blur-md"
 								>
 									<Tag class="text-scitech-mint mt-0.5 h-3.5 w-3.5 shrink-0" />
 									<span class="line-clamp-2 leading-relaxed">{img.caption}</span>
@@ -153,7 +153,7 @@
 
 		<!-- Konten / Deskripsi Utama -->
 		<div
-			class="rounded-3xl border border-border-color/10 bg-bg-secondary/50 p-6 shadow-2xl backdrop-blur-xl sm:p-8"
+			class=" bg-bg-secondary/50 p-6 shadow-2xl backdrop-blur-xl sm:p-8"
 		>
 			<div
 				class="prose-headings:text-scitech-mint prose-a:text-scitech-cyan prose max-w-none text-sm leading-relaxed text-text-main prose-invert sm:text-base prose-strong:text-white"

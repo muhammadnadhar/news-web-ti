@@ -99,7 +99,7 @@
 					: null}
 
 				<article
-					class="group bg-bg-secondary/40 hover:border-border-color/60 relative flex flex-col justify-between border border-border-color shadow-[6px_6px_0px_0px_rgba(0,0,0,0.4)] backdrop-blur-md transition-all duration-300 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,0.5)]"
+					class="group relative flex flex-col justify-between border border-border-color bg-bg-secondary/40 shadow-[6px_6px_0px_0px_rgba(0,0,0,0.4)] backdrop-blur-md transition-all duration-300 hover:-translate-x-1 hover:-translate-y-1 hover:border-border-color/60 hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,0.5)]"
 				>
 					<div
 						class="bg-scitech-navy relative h-56 w-full overflow-hidden border-b border-border-color"
@@ -115,7 +115,7 @@
 						>
 							<button
 								onclick={() => openModal(item)}
-								class="bg-scitech-mint text-scitech-navy hover:bg-scitech-mint-hover inline-flex items-center gap-2 border border-border-color px-4 py-2 text-xs font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,0.6)] transition-all active:scale-95"
+								class=" inline-flex items-center gap-2 border border-border-color bg-bg-primary px-4 py-2 text-xs font-bold text-text-main shadow-[4px_4px_0px_0px_rgba(0,0,0,0.6)] transition-all hover:bg-bg-primary/20 active:scale-95"
 							>
 								<Maximize2 class="h-4 w-4" />
 								<span>Lihat Foto</span>
@@ -232,7 +232,7 @@
 				>
 					{#if selectedMedia.description}
 						<p class="flex-1 text-xs leading-relaxed whitespace-pre-line text-slate-300">
-							{selectedMedia.description}
+							{@html selectedMedia.description}
 						</p>
 					{/if}
 

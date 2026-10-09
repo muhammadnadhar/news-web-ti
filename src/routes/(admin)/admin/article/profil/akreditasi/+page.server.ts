@@ -33,9 +33,6 @@ export const actions: Actions = {
 			image_url: (formData.get('image_url') as string)?.trim() || '',
 			image_public_id: (formData.get('image_public_id') as string) || null
 		};
-		console.info('id : ', values.id);
-
-		console.info('akreditasi : ', values.description);
 
 		if (!values.description) {
 			return fail(400, {

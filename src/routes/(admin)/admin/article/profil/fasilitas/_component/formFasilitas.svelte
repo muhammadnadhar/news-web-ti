@@ -89,10 +89,9 @@
 		try {
 			const formData = new FormData();
 			// Mengirimkan public_id sesuai ekspektasi server action
-			formData.append('image_public_id', imagePublicId);
+			formData.append('public_id', imagePublicId);
 
-			const endpoint = actionUrl ? `${actionUrl}?/deletePhoto` : '?/deletePhoto';
-			const response = await fetch(endpoint, {
+			const response = await fetch('?/deletePhoto', {
 				method: 'POST',
 				body: formData,
 				headers: {
@@ -159,7 +158,6 @@
 	use:enhance={handleSubmit}
 	class="mx-auto max-w-4xl space-y-6 rounded-2xl border border-border-color/10 bg-bg-secondary p-6 shadow-2xl backdrop-blur-md md:p-8"
 >
-	<!-- Header Form -->
 	<div class="flex items-center justify-between border-b border-border-color/10 pb-4">
 		<div>
 			<h2 class="text-xl font-bold text-text-main sm:text-2xl">
@@ -191,7 +189,6 @@
 	<input type="hidden" name="image_public_id" value={imagePublicId} />
 
 	<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-		<!-- 1. Nama Fasilitas -->
 		<div class="space-y-2 md:col-span-2">
 			<label
 				for="name"
@@ -210,7 +207,6 @@
 			/>
 		</div>
 
-		<!-- 2. Kategori -->
 		<div class="space-y-2">
 			<label
 				for="category"
@@ -235,7 +231,6 @@
 			</datalist>
 		</div>
 
-		<!-- 3. Merk & Tipe -->
 		<div class="space-y-2">
 			<label
 				for="brand_model"
@@ -268,13 +263,13 @@
 							type="button"
 							onclick={handleDeleteImage}
 							disabled={isDeletingImage}
-							class="hover:bg-scitech-error absolute top-1 right-1 rounded-full bg-black/60 p-1 text-text-main transition-all disabled:opacity-50"
+							class="absolute top-1 right-1 rounded-full p-1 text-text-main transition-all hover:bg-status-error disabled:opacity-50"
 							title="Hapus Gambar"
 						>
 							{#if isDeletingImage}
 								<Loader2 class="h-3.5 w-3.5 animate-spin" />
 							{:else}
-								<X class="h-3.5 w-3.5" />
+								<X class="h-3.5 w-3.5 " />
 							{/if}
 						</button>
 					</div>
@@ -310,7 +305,6 @@
 			</div>
 		</div>
 
-		<!-- 5. Link SOP -->
 		<div class="space-y-2 md:col-span-2">
 			<label class="text-scitech-mint block text-xs font-semibold tracking-wider uppercase">
 				Link SOP

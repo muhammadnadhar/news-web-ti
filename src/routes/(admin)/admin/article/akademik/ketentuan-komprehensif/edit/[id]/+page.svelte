@@ -4,11 +4,10 @@
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
-	// Gunakan data dari form jika ada error submit, atau data asli dari server
 	const valuesData = form?.values;
 </script>
 
-<div class="space-y-6 p-6 mx-auto">
+<div class="mx-auto space-y-6 p-6">
 	<h1 class="text-2xl font-black text-text-main md:text-3xl">Ubah Rekrutmen Asisten</h1>
 
 	<FormKetentuanKompre

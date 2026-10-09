@@ -9,7 +9,13 @@ import { getJabatanProdiList } from '$lib/repository/admin/dataset/jabatanProdi'
 import type { DosenPrimaryFormValue } from '$lib/types/values/admin/home';
 import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load: PageServerLoad = async ({ params, setHeaders }) => {
+	setHeaders({
+		// public cache
+		// cache 1 menit , state-while : jika data belum ada akan di ambil belakangan
+		'cache-control': 'public, max-age=60, stale-while-revalidate=30'
+	});
+
 	const { id } = params;
 
 	if (!id) {

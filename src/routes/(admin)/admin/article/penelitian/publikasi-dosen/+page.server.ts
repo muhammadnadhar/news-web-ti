@@ -8,7 +8,12 @@ import {
 	updateLecturerPublication
 } from '$lib/repository/admin/article/penelitian/publikasiDosen';
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ setHeaders }) => {
+	setHeaders({
+		// public cache
+		// cache 1 menit , state-while : jika data belum ada akan di ambil belakangan
+		'cache-control': 'public, max-age=60, stale-while-revalidate=30'
+	});
 	try {
 		// const rawList = await getAllLecturerPublications();
 

@@ -38,7 +38,6 @@
 	<title>Penelitian Dosen - Admin Portal</title>
 </svelte:head>
 
-<!-- Komponen Message Response -->
 {#if showMessage}
 	<Message
 		status={showMessage ? messageConfig.status : 'error'}
@@ -58,7 +57,7 @@
 	</div>
 
 	<div
-class="space-y-6 rounded-3xl border border-border-color/10 bg-bg-secondary/60 p-6 shadow-2xl sm:p-8"
+		class="space-y-6 rounded-3xl border border-border-color/10 bg-bg-secondary/60 p-6 shadow-2xl sm:p-8"
 	>
 		<div class="border-b border-border-color/10 pb-4">
 			<h2 class="text-scitech-mint text-sm font-bold sm:text-base">

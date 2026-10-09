@@ -12,12 +12,10 @@
 	import type { ResponseMessage } from '$lib/types/message';
 	import type { IpkTertinggiFormValues } from '$lib/types/values/admin/article';
 	import {
-		TrendingUp,
 		User,
 		GraduationCap,
 		Calendar,
 		Save,
-		Loader2,
 		Award,
 		Image as ImageIcon,
 		UploadCloudIcon,
@@ -141,7 +139,6 @@
 		</div>
 	</header>
 
-	<!-- Form Card -->
 	<div
 		class="rounded-2xl border border-bg-secondary-hover bg-bg-secondary p-6 shadow-2xl backdrop-blur-md md:p-8"
 	>

@@ -107,7 +107,6 @@
 {/if}
 
 <div class="space-y-8 p-6 lg:p-10">
-	<!-- PAGE HEADER -->
 	<div class="border-scitech-slate/20 flex items-center justify-between pb-4">
 		<div>
 			<h1 class="text-2xl font-bold tracking-tight text-text-main">Akreditasi</h1>
@@ -119,7 +118,7 @@
 			type="submit"
 			form="accreditation-form"
 			disabled={isSubmitting}
-			class="bg-bg-secondary text-text-main hover:bg-bg-secondary/20 inline-flex items-center gap-2 px-5 py-2.5 text-xs font-bold shadow-lg transition-all active:scale-95 disabled:opacity-50"
+			class="inline-flex items-center gap-2 bg-bg-secondary px-5 py-2.5 text-xs font-bold text-text-main shadow-lg transition-all hover:bg-bg-secondary/20 active:scale-95 disabled:opacity-50"
 		>
 			<Save class="h-4 w-4" />
 			<span>{isSubmitting ? 'Menyimpan...' : 'Simpan Perubahan'}</span>
@@ -155,7 +154,7 @@
 			<div class="grid grid-cols-1 gap-8 lg:grid-cols-12">
 				<div class="space-y-6 lg:col-span-5">
 					<div class="space-y-2">
-						<label for="title" class="text-xs font-medium bg-bg-primary/10 text-text-main">
+						<label for="title" class="bg-bg-primary/10 text-xs font-medium text-text-main">
 							Judul Akreditasi <span class="text-scitech-error">*</span>
 						</label>
 						<input
@@ -215,7 +214,7 @@
 							<img
 								src={previewUrl}
 								alt="Sertifikat Akreditasi"
-								class="max-h-[420px] w-auto rounded-lg object-contain shadow-md"
+								class="max-h-105 w-auto rounded-lg object-contain shadow-md"
 							/>
 						{:else}
 							<div class="flex flex-col items-center gap-2 text-center text-xs text-text-muted">
@@ -229,9 +228,7 @@
 		</div>
 
 		<!-- bagian bawah: isi akreditasi (form editor) -->
-		<div
-			class="border-border-color/20 bg-bg-secondary/10 space-y-3  p-6 shadow-xl"
-		>
+		<div class="space-y-3 border-border-color/20 bg-bg-secondary/10 p-6 shadow-xl">
 			<label for="description" class="block text-xs font-medium text-text-main">
 				Isi Akreditasi <span class="text-scitech-error">*</span>
 			</label>

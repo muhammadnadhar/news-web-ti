@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { classTopSpace } from '$lib/constants';
+	import { classShadowDown, classTopSpace } from '$lib/constants';
 	import EmptyData from '../../_components/emptyData.svelte';
 	import type { PageData } from './$types';
 	import { User, BookOpen, Calendar, Search, AlertCircle } from 'lucide-svelte';
@@ -40,13 +40,13 @@
 			</div>
 
 			{#if data.publications && data.publications.length > 0}
-				<div class="relative min-w-[260px]">
+				<div class="relative min-w-65">
 					<Search class="absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-text-muted" />
 					<input
 						type="text"
 						bind:value={searchQuery}
 						placeholder="Cari nama mahasiswa..."
-						class="bg-scitech-slate/60 focus:border-scitech-mint focus:ring-scitech-mint w-full rounded-xl border border-border-color py-2.5 pr-4 pl-10 text-xs text-text-main placeholder-text-muted transition-all outline-none focus:ring-1"
+						class="focus:border-scitech-mint focus:ring-scitech-mint w-full rounded-xl border border-border-color bg-bg-secondary/60 py-2.5 pr-4 pl-10 text-xs text-text-main placeholder-text-muted transition-all outline-none focus:ring-1"
 					/>
 				</div>
 			{/if}
@@ -65,7 +65,7 @@
 					: '-'}
 
 				<article
-					class="bg-scitech-slate/40 hover:border-scitech-mint/40 flex flex-col justify-between overflow-hidden rounded-2xl border border-border-color backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+					class={` ${classShadowDown} hover:border-scitech-mint/40 flex flex-col justify-between overflow-hidden border border-border-color bg-bg-secondary/40`}
 				>
 					{#if item.image_url}
 						<div

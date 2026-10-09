@@ -84,8 +84,8 @@ export const navMenuItems: NavMenuItemType[] = [
 				label: 'Mahasiswa IPK Tertinggi',
 				href: '/kemahasiswaan/ipk-tertinggi'
 			},
-			{ id: 'beasiswa', label: 'Beasiswa', href: '/kemahasiswaan/beasiswa' },
-			{ id: 'hima-ti', label: 'HIMA TI', href: '/kemahasiswaan/hima' }
+			{ id: 'beasiswa', label: 'Beasiswa', href: '/kemahasiswaan/beasiswa' }
+			// { id: 'hima-ti', label: 'HIMA TI', href: '/kemahasiswaan/hima' }
 		]
 	},
 	{

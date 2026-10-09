@@ -4,7 +4,13 @@ import {
 } from '$lib/repository/admin/article/profile/fasilitas';
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ url }) => {
+export const load: PageServerLoad = async ({ url, setHeaders }) => {
+	setHeaders({
+		// public cache
+		// cache 1 menit , state-while : jika data belum ada akan di ambil belakangan
+		'cache-control': 'public, max-age=60, stale-while-revalidate=30'
+	});
+
 	const page = Math.max(1, Number(url.searchParams.get('page')) || 1);
 	const limit = Math.max(1, Number(url.searchParams.get('limit')) || 8);
 	const search = url.searchParams.get('search') || undefined;

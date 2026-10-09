@@ -9,7 +9,13 @@ import type { ProfileDashboardFormValues } from '$lib/types/values/admin/home';
 import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
 import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load: PageServerLoad = async ({ params, setHeaders }) => {
+	setHeaders({
+		// public cache
+		// cache 1 menit , state-while : jika data belum ada akan di ambil belakangan
+		'cache-control': 'public, max-age=60, stale-while-revalidate=30'
+	});
+
 	const id = params.id;
 
 	if (!id) {

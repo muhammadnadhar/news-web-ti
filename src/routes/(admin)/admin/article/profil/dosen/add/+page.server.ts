@@ -80,16 +80,11 @@ export const actions: Actions = {
 		}
 
 		try {
-			const result = await deleteImageFromCloudinary(publicId);
-			return {
-				deleteSuccess: true,
-				result
-			};
+			await deleteImageFromCloudinary(publicId);
+			return successResponse('Berhasil di batalkan', 'Succcess');
 		} catch (err: any) {
 			console.error('Error deleting photo from Cloudinary:', err);
-			return fail(500, {
-				deleteError: err.message || 'Gagal menghapus foto dari Cloudinary.'
-			});
+			return fail(500, errorResponse('Gagal menghapus foto ', 'Gagal'));
 		}
 	}
 };

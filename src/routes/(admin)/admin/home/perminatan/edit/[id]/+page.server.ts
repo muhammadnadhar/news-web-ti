@@ -4,7 +4,13 @@ import type { PageServerLoad } from './$types';
 import type { PeminatanFormValues } from '$lib/types/values/admin/home';
 import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load: PageServerLoad = async ({ params, setHeaders }) => {
+	setHeaders({
+		// public cache
+		// cache 1 menit , state-while : jika data belum ada akan di ambil belakangan
+		'cache-control': 'public, max-age=60, stale-while-revalidate=30'
+	});
+
 	const peminatan = await getPerminatanTIById(params.id);
 
 	if (!peminatan) {

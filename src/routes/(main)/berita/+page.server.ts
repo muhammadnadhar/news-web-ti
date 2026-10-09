@@ -1,7 +1,13 @@
 import { getNewsBySlice, getTotalNewsCount } from '$lib/repository/admin/article/berita';
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = ({ url }) => {
+export const load: PageServerLoad = ({ url, setHeaders }) => {
+	setHeaders({
+		// public cache
+		// cache 1 menit , state-while : jika data belum ada akan di ambil belakangan
+		'cache-control': 'public, max-age=60, stale-while-revalidate=30'
+	});
+
 	// Ambil nomor halaman dari URL searchParam
 	const page = Math.max(1, Number(url.searchParams.get('page')) || 1);
 	// Tentukan limit per halaman

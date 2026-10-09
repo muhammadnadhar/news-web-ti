@@ -8,8 +8,13 @@ import {
 import { getAllLecturerStaff } from '$lib/repository/admin/article/profile/dosen&staff';
 import type { LecturerPublicationFormValues } from '$lib/types/values/admin/article';
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load: PageServerLoad = async ({ params, setHeaders }) => {
 	const { id } = params;
+	setHeaders({
+		// public cache
+		// cache 1 menit , state-while : jika data belum ada akan di ambil belakangan
+		'cache-control': 'public, max-age=60, stale-while-revalidate=30'
+	});
 
 	try {
 		let lecture = await getLecturerPublicationById(id);

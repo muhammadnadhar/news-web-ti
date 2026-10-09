@@ -70,7 +70,7 @@
 								<img
 									src={item.image_url}
 									alt={item.title}
-									class="mx-auto h-auto max-h-[500px] w-full object-contain"
+									class="mx-auto h-auto max-h-125 w-full object-contain"
 									loading="lazy"
 								/>
 
@@ -96,7 +96,7 @@
 									<span>Keterangan / Deskripsi</span>
 								</div>
 								<p class="text-sm leading-relaxed whitespace-pre-line text-slate-300">
-									{item.description}
+									{@html item.description}
 								</p>
 							</div>
 						{/if}

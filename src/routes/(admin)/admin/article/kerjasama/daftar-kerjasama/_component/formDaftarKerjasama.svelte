@@ -117,7 +117,7 @@
 					<span
 						class="rounded-full px-2.5 py-0.5 text-[10px] font-bold tracking-wider uppercase
 						{isEdit
-							? 'border border-amber-500/20 bg-amber-500/10 text-amber-400'
+							? 'border border-accent-yellow/20 bg-accent-yellow/10 text-accent-yellow'
 							: 'border border-accent-primary/20 bg-accent-primary/10 text-accent-primary'}"
 					>
 						{isEdit ? 'Mode Edit' : 'Baru'}

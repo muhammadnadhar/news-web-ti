@@ -27,7 +27,7 @@ export const load: PageServerLoad = async ({ params }) => {
 		ketentuan: {
 			id: recruitment.id,
 			title: recruitment.title,
-			imageUrl: recruitment.image_url,
+			image_url: recruitment.image_url,
 			description: recruitment.description
 		}
 	};

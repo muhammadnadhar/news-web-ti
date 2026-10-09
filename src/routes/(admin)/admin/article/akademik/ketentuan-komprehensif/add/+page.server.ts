@@ -14,11 +14,9 @@ export const actions: Actions = {
 		const values: KetentuanKomprehensifFormValues = {
 			title: formData.get('title')?.toString().trim() || '',
 			image_url: formData.get('image_url')?.toString().trim() || null,
-			publicId: formData.get('public_id')?.toString().trim() || null,
+			image_public_id: formData.get('public_id')?.toString().trim() || null,
 			description: formData.get('description')?.toString().trim() || null
 		};
-
-		console.info('Public ID yang diterima:', values.publicId);
 
 		if (!values.title) {
 			return fail(400, {
@@ -42,7 +40,7 @@ export const actions: Actions = {
 				values.title,
 				values.image_url,
 				values.description,
-				values.publicId
+				values.image_public_id
 			);
 
 			if (!success) {

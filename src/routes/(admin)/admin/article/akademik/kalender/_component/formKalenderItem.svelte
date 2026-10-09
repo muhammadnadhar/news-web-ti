@@ -1,6 +1,13 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { CheckCircle2, Save, Trash2, UploadCloud, XCircle } from 'lucide-svelte';
+	import {
+		CheckCircle2,
+		LoaderCircleIcon,
+		Save,
+		Trash2,
+		UploadCloud,
+		XCircle
+	} from 'lucide-svelte';
 	import FormEditor from '$lib/components/admin/formEditor.svelte';
 	import { CldUploadWidget } from 'svelte-cloudinary';
 	import {
@@ -279,7 +286,11 @@
 									class="absolute top-2 right-2 rounded-lg bg-rose-500/80 p-1.5 text-text-main opacity-0 transition-opacity group-hover:opacity-100 hover:bg-rose-600 disabled:opacity-50"
 									title="Hapus gambar dari Cloudinary"
 								>
-									<Trash2 class="h-3.5 w-3.5" />
+									{#if isDeletingPhoto}
+										<LoaderCircleIcon class="h-4 w-4 animate-spin" />
+									{:else}
+										<Trash2 class="h-3.5 w-3.5" />
+									{/if}
 								</button>
 							</div>
 						{/each}

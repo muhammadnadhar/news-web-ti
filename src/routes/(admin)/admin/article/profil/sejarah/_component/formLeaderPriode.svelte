@@ -129,7 +129,7 @@
 					<Calendar class="h-3.5 w-3.5" />
 				</div>
 				<span>Periode Jabatan</span>
-				<span class="font-bold text-rose-500">*</span>
+				<span class="font-bold text-status-error">*</span>
 			</label>
 			<div class="relative">
 				<input
@@ -198,7 +198,7 @@
 								type="button"
 								onclick={() => clearSelection('head')}
 								title="Hapus pilihan"
-								class="rounded-xl border border-border-color/10 bg-bg-primary p-2 text-text-main/50 transition-colors hover:border-rose-500/30 hover:bg-rose-500/10 hover:text-rose-500"
+								class="rounded-xl border border-border-color/10 bg-bg-primary p-2 text-text-main/50 transition-colors hover:border-status-error/30 hover:bg-status-error/10 hover:text-status-error"
 							>
 								<X class="h-4 w-4" />
 							</button>
@@ -246,7 +246,7 @@
 								<div
 									class="bg-scitech-mint absolute -right-0.5 -bottom-0.5 rounded-full p-0.5 text-bg-primary shadow"
 								>
-									<Check class="h-2.5 w-2.5 stroke-[3]" />
+									<Check class="h-2.5 w-2.5 stroke-3" />
 								</div>
 							</div>
 							<div class="min-w-0">

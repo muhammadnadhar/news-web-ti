@@ -10,8 +10,6 @@
 
 	let { recentNews = [], categories = [] }: Props = $props();
 
-  $inspect("data yg di tampilan  : ",recentNews,categories)
-
 	// State visibilitas drawer
 	let isOpen = $state(false);
 

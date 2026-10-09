@@ -79,7 +79,6 @@
 		isDeletingPhoto = true;
 
 		try {
-			console.info('Excecuis', photoPublicId);
 			const formData = new FormData();
 			formData.append('public_id', photoPublicId);
 

@@ -1,9 +1,20 @@
 import { fail, isRedirect, redirect } from '@sveltejs/kit';
-import type { Actions } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 import { findUserByUsernameOrEmail } from '$lib/repository/admin/userAdmin';
 import { sessionAdmin } from '$lib/constants';
 import { Argon2id } from 'oslo/password';
 import { errorResponse, warningResponse } from '$lib/helper/message';
+
+// karena gak ada data yang di panggil maka gak perlu
+// export const load: PageServerLoad = async ({ setHeaders }) => {
+//
+// setHeaders({
+// 		// public cache
+// 		// cache 1 menit , state-while : jika data belum ada akan di ambil belakangan
+// 		'cache-control':'no-store, must-revalidate'
+// 	});
+//
+// };
 
 export const actions: Actions = {
 	default: async ({ request, cookies }) => {

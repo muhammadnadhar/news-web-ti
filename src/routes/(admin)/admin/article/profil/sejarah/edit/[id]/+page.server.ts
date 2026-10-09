@@ -8,7 +8,13 @@ import { getAllLecturerStaff } from '$lib/repository/admin/article/profile/dosen
 import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
 import type { HistoryLeaderFormValues } from '$lib/types/values/admin/article';
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load: PageServerLoad = async ({ params, setHeaders }) => {
+	setHeaders({
+		// public cache
+		// cache 1 menit , state-while : jika data belum ada akan di ambil belakangan
+		'cache-control': 'public, max-age=60, stale-while-revalidate=30'
+	});
+
 	const { id } = params;
 
 	const historyLeader = await getHistoryLeaderById(id);

@@ -1,20 +1,29 @@
 import type { HighGpaStudentDTO } from '$lib/dto/admin/article/kemahasiswaan';
-import { getHighGpaSemesters, getHighGpaStudentsBySemesterId, getHighGpaStudentsBySemesterName } from '$lib/repository/admin/article/kemahasiswaan/ipkTertinggi';
+import {
+	getHighGpaSemesters,
+	getHighGpaStudentsBySemesterId,
+	getHighGpaStudentsBySemesterName
+} from '$lib/repository/admin/article/kemahasiswaan/ipkTertinggi';
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ url }) => {
-	// Membaca query parameter 'semester' atau 'semester_id' dari URL
-	const semesterParam =  url.searchParams.get('semester_id');
-  if (!semesterParam){
+export const load: PageServerLoad = async ({ url, setHeaders }) => {
+	setHeaders({
+		// public cache
+		// cache 1 menit , state-while : jika data belum ada akan di ambil belakangan
+		'cache-control': 'public, max-age=60, stale-while-revalidate=30'
+	});
 
-  }
+	// Membaca query parameter 'semester' atau 'semester_id' dari URL
+	const semesterParam = url.searchParams.get('semester_id');
+	if (!semesterParam) {
+	}
 
 	const gpaSemesters = await getHighGpaSemesters();
 
 	// Tentukan semester aktif (Gunakan parameter URL jika ada, atau semester paling awal dari list)
 	const activeSemester = semesterParam || gpaSemesters[0]?.semester_name || '';
 
-	let students : HighGpaStudentDTO[] = [];
+	let students: HighGpaStudentDTO[] = [];
 
 	if (activeSemester) {
 		// Cek apakah parameter berupa UUID (id) atau Nama Semester

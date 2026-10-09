@@ -6,7 +6,13 @@ import { getPrimaryDosenList } from '$lib/repository/admin/home/dosenPrimary';
 import { getAllPerminatanTI } from '$lib/repository/admin/home/tablePermitan';
 import { getAllProfilProdi } from '$lib/repository/admin/home/profilProdi';
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ setHeaders }) => {
+	setHeaders({
+		// public cache
+		// cache 1 menit , state-while : jika data belum ada akan di ambil belakangan
+		'cache-control': 'public, max-age=60, stale-while-revalidate=30'
+	});
+
 	try {
 		// Memanggil method untuk mengambil 10 berita terbaru
 		// const recentNews = await getRecentNews(10);

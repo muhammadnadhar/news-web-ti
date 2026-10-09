@@ -92,7 +92,7 @@ export interface KerjasamaFormValues {
 	id?: string;
 	institution_name: string;
 	logo_url: string | null;
-	public_id: string | null;
+	logo_public_id: string | null;
 }
 export interface DocumentationFormValues {
 	id?: string;

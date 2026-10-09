@@ -3,7 +3,7 @@
 
 	// Data ikon vektor garis (Komputer -> Orang -> Robot) & Label Teks
 	const items = [
-		{ id: 'person', label: 'Kamu' },
+		{ id: 'person', label: 'Human' },
 		{ id: 'computer', label: 'Build' },
 		{ id: 'robot', label: 'AI' }
 	];
@@ -20,7 +20,6 @@
 </script>
 
 <div class="flex flex-col items-center justify-center p-8">
-	<!-- container svg vector line drawing -->
 	<div class="relative flex h-20 w-20 items-center justify-center">
 		{#key currentIndex}
 			<svg
@@ -34,7 +33,7 @@
 				out:fade={{ duration: 250 }}
 			>
 				{#if items[currentIndex].id === 'computer'}
-					<!-- 1. VEKTOR KOMPUTER -->
+					<!--  VEKTOR KOMPUTER -->
 					<rect
 						x="2"
 						y="3"

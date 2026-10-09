@@ -187,7 +187,6 @@
 		{/if}
 
 		<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-			<!-- Nama Mahasiswa -->
 			<div class="space-y-2">
 				<label
 					for="student_name"

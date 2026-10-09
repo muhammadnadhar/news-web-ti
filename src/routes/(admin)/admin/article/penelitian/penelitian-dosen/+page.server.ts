@@ -7,7 +7,12 @@ import {
 import type { LecturerResearchFormValues } from '$lib/types/values/admin/article';
 import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ setHeaders }) => {
+	setHeaders({
+		// public cache
+		// cache 1 menit , state-while : jika data belum ada akan di ambil belakangan
+		'cache-control': 'public, max-age=60, stale-while-revalidate=30'
+	});
 	try {
 		const researchData = await getLecturerResearch();
 		return {

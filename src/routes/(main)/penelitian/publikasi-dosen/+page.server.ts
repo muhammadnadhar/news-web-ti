@@ -3,7 +3,13 @@ import type { PageServerLoad } from './$types';
 import { getAllLecturerPublications } from '$lib/repository/admin/article/penelitian/publikasiDosen';
 import { getAllLecturerStaff } from '$lib/repository/admin/article/profile/dosen&staff';
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ setHeaders }) => {
+	setHeaders({
+		// public cache
+		// cache 1 menit , state-while : jika data belum ada akan di ambil belakangan
+		'cache-control': 'public, max-age=60, stale-while-revalidate=30'
+	});
+
 	try {
 		return {
 			// Mengembalikan promise agar SvelteKit dapat melakukan streaming data & menampilkan loading

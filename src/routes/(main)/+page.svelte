@@ -13,9 +13,7 @@
 		ImageOffIcon,
 		PauseIcon,
 		PlayIcon,
-
 		UniversityIcon
-
 	} from 'lucide-svelte';
 	import fstImg from '$lib/assets/fst.webp';
 	import type { ProfileDashboardDTO } from '$lib/dto/admin/home.js';
@@ -24,6 +22,7 @@
 	let { data } = $props();
 
 	import uinLogo from '$lib/assets/uin-icon.webp';
+	import { actionLinks } from '$lib/data/dashboard';
 
 	// const images = [fstImg, uinFrontImg];
 	// let captions = $state([
@@ -162,7 +161,7 @@
 				{/if}
 			</div>
 			<div
-				class="absolute bottom-[8.5vh] left-2.5 z-40 flex w-auto transform-gpu flex-col gap-2.5 rounded-2xl border border-border-color bg-transparent p-2.5 shadow-md backdrop-blur-md transition-all sm:w-fit sm:flex-row sm:items-center sm:gap-2 sm:p-2"
+				class="absolute bottom-[8.5vh] z-40 flex w-screen transform-gpu flex-col gap-2.5 rounded-2xl border border-border-color bg-transparent p-2.5 shadow-md backdrop-blur-md transition-all sm:left-2.5 sm:w-fit sm:flex-row sm:items-center sm:gap-2 sm:p-2"
 			>
 				<a
 					href="#main"
@@ -172,34 +171,20 @@
 					<ArrowUpRight class="h-4 w-4 stroke-[2.5]" />
 				</a>
 
-				<div class="grid grid-cols-3 gap-2 sm:flex sm:items-center sm:gap-2">
-					<a
-						href="https://uinarraniry.siakadcloud.com/"
-						target="_blank"
-						rel="noopener noreferrer"
-						class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-border-color/60 bg-bg-secondary/50 px-3.5 py-2.5 text-xs font-medium text-text-main transition-all hover:border-border-color hover:bg-bg-secondary active:scale-95 sm:w-auto sm:px-4 sm:text-sm"
-					>
-						<BookOpen class="h-4 w-4 shrink-0 text-accent-cyan" />
-						<span class="truncate">Portal SIAKAD</span>
-					</a>
+				<div class="grid grid-cols-3 gap-2 sm:grid-cols-2 md:flex md:items-center md:gap-2">
+					{#each actionLinks as link (link.id)}
+						{@const IconComponent = link.icon}
+						<a
+							href={link.href}
+							target={link.external ? '_blank' : '_self'}
+							rel={link.external ? 'noopener noreferrer' : undefined}
+							class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-border-color/60 bg-bg-secondary/50 px-3.5 py-2.5 text-xs font-medium text-text-main transition-all hover:border-border-color hover:bg-bg-secondary active:scale-95 sm:w-auto sm:px-4 sm:text-sm"
+						>
+							<IconComponent class={`h-4 w-4 shrink-0 ${link.iconColorClass}`} />
+							<span class="truncate">{link.label}</span>
+						</a>
+					{/each}
 
-					<!-- Uin ar-raniry -->
-					<a
-						href="https://ar-raniry.ac.id/"
-						class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-border-color/60 bg-bg-secondary/50 px-3.5 py-2.5 text-xs font-medium text-text-main transition-all hover:border-border-color hover:bg-bg-secondary active:scale-95 sm:w-auto sm:px-4 sm:text-sm"
-					>
-						<GraduationCap class="h-4 w-4 shrink-0 text-accent-purple" />
-						<span class="truncate">UIN AR-raniry</span>
-					</a>
-
-					<!-- Fakultas Saintek -->
-					<a
-						href="https://fst.uin.ar-raniry.ac.id/"
-						class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-border-color/60 bg-bg-secondary/50 px-3.5 py-2.5 text-xs font-medium text-text-main transition-all hover:border-border-color hover:bg-bg-secondary active:scale-95 sm:w-auto sm:px-4 sm:text-sm"
-					>
-						<UniversityIcon class="h-4 w-4 shrink-0 text-accent-purple" />
-						<span class="truncate">SAINTEKS</span>
-					</a>
 					<button
 						type="button"
 						onclick={handleToggleAnimation}

@@ -1,6 +1,0 @@
-
-
-<div>
-
-COming Soon
-</div>

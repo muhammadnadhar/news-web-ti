@@ -4,14 +4,19 @@ import {
 	getCourseMapById,
 	updateCourseMap
 } from '$lib/repository/admin/article/kurikulum/petaMatakuliah';
-import { deleteCloudinaryImage, deleteImageFromCloudinary } from '$lib/helper/cloudinary';
+import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
 import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
 import type { CourseMapFormValues } from '$lib/types/values/admin/article';
 
 /**
  * Load function untuk mengambil data Peta Mata Kuliah berdasarkan ID dari URL
  */
-export const load: PageServerLoad = async ({ params }) => {
+export const load: PageServerLoad = async ({ params, setHeaders }) => {
+	setHeaders({
+		// public cache
+		// cache 1 menit , state-while : jika data belum ada akan di ambil belakangan
+		'cache-control': 'public, max-age=60, stale-while-revalidate=30'
+	});
 	const { id } = params;
 
 	//  Validasi ID tidak ada

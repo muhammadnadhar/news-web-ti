@@ -40,7 +40,7 @@ export const actions: Actions = {
 			});
 		}
 
-		// 3. Pengecekan panjang title untuk VARCHAR(255)
+		//Pengecekan panjang title untuk VARCHAR(255)
 		if (values.title.length > 255) {
 			return fail(400, {
 				...warningResponse('Judul terlalu panjang, maksimal 255 karakter.', 'warning'),
@@ -86,7 +86,6 @@ export const actions: Actions = {
 		if (!publicId) {
 			return fail(400, { ...errorResponse('Public Id tidak di temukan', 'Error') });
 		}
-		console.info('id : ', publicId);
 		try {
 			await deleteImageFromCloudinary(publicId);
 			return successResponse('Berhasil di batalkan', 'Succcess');

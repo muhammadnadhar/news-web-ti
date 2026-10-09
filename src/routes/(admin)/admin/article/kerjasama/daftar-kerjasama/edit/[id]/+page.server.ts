@@ -10,7 +10,12 @@ import { errorResponse, successResponse, warningResponse } from '$lib/helper/mes
 import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
 // import { deleteFromCloudinary } from '$lib/cloudinary/server'; // Tambahkan jika ada helper server Cloudinary
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load: PageServerLoad = async ({ params, setHeaders }) => {
+	setHeaders({
+		// public cache
+		// cache 1 menit , state-while : jika data belum ada akan di ambil belakangan
+		'cache-control': 'public, max-age=60, stale-while-revalidate=30'
+	});
 	const { id } = params;
 
 	if (!id) {

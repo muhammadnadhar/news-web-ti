@@ -1,8 +1,7 @@
-commit 15  finish desain #10 and debuger app 
-- update : update kurikulum OBE menjaid kurikulom yang nantinya bisa menamhaoan data di nama untk kurikulum apa saja
--  update : mengupdate utility funcitn untuk menghandle bagaimana data dynamic di tampilkan , untuk data kurikulum dan beasiswa dan ipk tertinggi
-- fix : penyesuian pada tampilan mobile untuk sidebar di admin , penyesuianya pada menu theme 
-- add : sedikit menambhakna link redirect untuk koneksi ke beberapa web alinya
-- add : update lagi bagian penelitian mahasiswa , di sini saya menambhakan agar bisa menambhakan gambar  , dan update halaman juga utama agar bisa menampilkan image mahasiswa
-- fix & update : pada menampilkan 5 berita terbaru , memperbaiki fungsi agar bisa di scroll di mobile dan update bentuk deisnanya 
--update : penyesuikan deisan pada navbar mobile agar bisa menampilakn dengan navbarnay dengan menamfaatkan scroll
+commit 16  finish desain #11 and debuger app 
+- update : update desain card penelitian mahasiwa dengan desain yg sama
+- update : sekarang menu external link di dashboard utama akan di pindhakan ke /data 
+- add ( performance ) : menambah header cache dalam memuat data agar tidak di ambil lagi dari database 
+- update : update desian pada halaman /profil/akreditasi dan beberapa halaman lainya , males juga nyatat wkwk 
+- update : perbaiki desain warna yang di luar context pada beberapa halaman lainya
+- add : menambha modal pada menu fasilitas agar bisa di lihat lebih detail

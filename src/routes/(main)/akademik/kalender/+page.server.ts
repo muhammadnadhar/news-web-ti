@@ -1,11 +1,13 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import {
-	getActiveAcademicCalendarWithImage,
-	getActiveAcademicCalendarWithImages
-} from '$lib/repository/admin/article/akedemik/kalender';
+import { getActiveAcademicCalendarWithImages } from '$lib/repository/admin/article/akedemik/kalender';
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ setHeaders }) => {
+	setHeaders({
+		// public cache
+		// cache 1 menit , state-while : jika data belum ada akan di ambil belakangan
+		'cache-control': 'public, max-age=60, stale-while-revalidate=30'
+	});
 	try {
 		// const activeCalendar = await getActiveAcademicCalendar();
 

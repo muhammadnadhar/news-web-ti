@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { classTopSpace } from '$lib/constants';
-import EmptyData from '../../_components/emptyData.svelte';
+	import EmptyData from '../../_components/emptyData.svelte';
 	import type { PageData } from './$types';
 	import { Award, Calendar, Maximize2, X, AlertCircle } from 'lucide-svelte';
 
@@ -20,15 +20,17 @@ import EmptyData from '../../_components/emptyData.svelte';
 	function closeModal() {
 		selectedImage = null;
 	}
+	const formattedDate = data?.accreditation.updated_at
+		? new Date(data.accreditation?.updated_at).toLocaleDateString('id-ID', {
+				day: 'numeric',
+				month: 'long',
+				year: 'numeric'
+			})
+		: '-';
 </script>
 
-<div class={ ` ${classTopSpace} mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8`}>
-	<div class="mb-10 border-b border-border-color/40 pb-6 text-center sm:text-left">
-		<div
-			class="bg-scitech-mint/10 text-scitech-mint mb-3 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold"
-		>
-			<span>Jaminan Mutu</span>
-		</div>
+<div class={` ${classTopSpace} mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8`}>
+	<div class="mb-10 pb-6 text-center sm:text-left">
 		<h1 class="text-3xl font-extrabold tracking-tight text-text-main sm:text-4xl">
 			Akreditasi Program Studi
 		</h1>
@@ -37,83 +39,58 @@ import EmptyData from '../../_components/emptyData.svelte';
 		</p>
 	</div>
 
-	<!-- daftar akreditasi -->
-	{#if data.accreditations && data.accreditations.length > 0}
-		<div class="space-y-12">
-			{#each data.accreditations as item, index (item.id)}
-				{@const formattedDate = item.updated_at
-					? new Date(item.updated_at).toLocaleDateString('id-ID', {
-							day: 'numeric',
-							month: 'long',
-							year: 'numeric'
-						})
-					: '-'}
-
-				<article
-					class="bg-scitech-slate/40 hover:border-scitech-mint/40 overflow-hidden rounded-2xl border border-border-color backdrop-blur-md transition-all duration-300"
-				>
-					<!-- Sub Header Item -->
+	{#if data?.accreditation}
+		<article
+			class="overflow-hidden rounded-3xl border border-border-color/10 bg-bg-secondary p-6 shadow-xl backdrop-blur-md transition-all duration-300 sm:p-8"
+		>
+			<div class="mb-6 flex items-center justify-between border-b border-border-color/10 pb-4">
+				<div class="flex items-center gap-2 text-xs font-semibold text-text-main/60">
 					<div
-						class="bg-scitech-navy/60 flex items-center justify-between border-b border-border-color/40 px-6 py-4 sm:px-8"
+						class="border-scitech-mint/20 bg-scitech-mint/10 text-scitech-mint flex h-6 w-6 items-center justify-center rounded-lg border"
 					>
-						<div class="flex items-center gap-2">
-							<span
-								class="bg-scitech-mint/10 text-scitech-mint flex h-7 w-7 items-center justify-center rounded-lg text-xs font-bold"
-							>
-								#{index + 1}
-							</span>
-							<h2 class="text-base font-bold text-text-main sm:text-lg">
-								Sertifikat & SK Akreditasi
-							</h2>
-						</div>
-						<div class="flex items-center gap-1.5 text-xs text-text-muted">
-							<Calendar class="text-scitech-cyan h-3.5 w-3.5" />
-							<span>Diperbarui: {formattedDate}</span>
-						</div>
+						<Calendar class="h-3.5 w-3.5" />
 					</div>
+					<span>Diperbarui: {formattedDate}</span>
+				</div>
+			</div>
 
-					<!-- Content Grid (Gambar + HTML Description) -->
-					<div class="p-6 sm:p-8">
-						<div class="grid grid-cols-1 gap-8 lg:grid-cols-12">
-							<!-- Kolom Kiri: Sertifikat Gambar (jika ada) -->
-							{#if item.image_url}
-								<div class="lg:col-span-5">
-									<div
-										class="group bg-scitech-navy relative overflow-hidden rounded-xl border border-border-color shadow-lg"
-									>
-										<img
-											src={item.image_url}
-											alt="Sertifikat Akreditasi"
-											class="h-auto w-full object-cover transition-transform duration-500 group-hover:scale-105"
-											loading="lazy"
-										/>
-										<!-- Overlay Tombol Zoom -->
-										<div
-											class="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-										>
-											<button
-												onclick={() => openModal(item.image_url!, 'Sertifikat Akreditasi')}
-												class="bg-scitech-mint text-scitech-navy inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold shadow-xl transition-transform hover:scale-105 active:scale-95"
-											>
-												<Maximize2 class="h-4 w-4" />
-												<span>Lihat Sertifikat</span>
-											</button>
-										</div>
-									</div>
-								</div>
-							{/if}
+			<!-- Konten Utama: Deskripsi di Atas, Gambar di Bawah -->
+			<div class="space-y-8">
+				<div class="prose max-w-none text-sm leading-relaxed text-text-main prose-invert">
+					{@html data?.accreditation.description}
+				</div>
 
-							<!-- Kolom Kanan/Full: Deskripsi Teks HTML -->
-							<div class={item.image_url ? 'lg:col-span-7' : 'lg:col-span-12'}>
-								<div class="prose-scitech prose max-w-none prose-invert">
-									{@html item.description}
-								</div>
+				{#if data.accreditation.image_url}
+					<div class="w-full">
+						<div
+							class="group relative overflow-hidden rounded-2xl border border-border-color/15 bg-bg-primary shadow-lg"
+						>
+							<img
+								src={data.accreditation.image_url}
+								alt="Sertifikat Akreditasi"
+								class="h-auto max-h-[500px] w-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+								loading="lazy"
+							/>
+
+							<!-- Overlay Tombol Zoom -->
+							<div
+								class="absolute inset-0 flex items-center justify-center bg-bg-primary/70 opacity-0 backdrop-blur-xs transition-opacity duration-300 group-hover:opacity-100"
+							>
+								<button
+									type="button"
+									onclick={() =>
+										openModal(data?.accreditation?.image_url!, 'Sertifikat Akreditasi')}
+									class="bg-scitech-mint inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold text-bg-primary shadow-xl transition-transform hover:scale-105 active:scale-95"
+								>
+									<Maximize2 class="h-4 w-4" />
+									<span>Lihat Sertifikat Penuh</span>
+								</button>
 							</div>
 						</div>
 					</div>
-				</article>
-			{/each}
-		</div>
+				{/if}
+			</div>
+		</article>
 	{:else}
 		<!-- EMPTY STATE -->
 		<EmptyData
@@ -141,7 +118,6 @@ import EmptyData from '../../_components/emptyData.svelte';
 		<div
 			class="bg-scitech-slate relative z-10 flex max-h-[90vh] max-w-4xl flex-col overflow-hidden rounded-2xl border border-border-color shadow-2xl"
 		>
-			<!-- Header Modal -->
 			<div
 				class="bg-scitech-navy flex items-center justify-between border-b border-border-color px-6 py-4"
 			>
@@ -155,7 +131,6 @@ import EmptyData from '../../_components/emptyData.svelte';
 				</button>
 			</div>
 
-			<!-- Preview Gambar -->
 			<div
 				class="bg-scitech-navy/80 flex max-h-[80vh] items-center justify-center overflow-auto p-4"
 			>

@@ -31,7 +31,6 @@ export async function getAccreditation(): Promise<AccreditationItemDTO | null> {
 export async function getPublicIdAccreditationById(id: string): Promise<string | null> {
 	const sql = `SELECT image_public_id FROM ${tableAccreditation} WHERE id = ? LIMIT 1`;
 	const rows = (await query(sql, [id])) as Array<{ image_public_id: string | null }>;
-
 	return rows[0]?.image_public_id ?? null;
 }
 

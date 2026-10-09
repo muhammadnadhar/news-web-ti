@@ -83,7 +83,7 @@
 				photoPublicId = '';
 				triggerMessage('success', 'Succes', 'Berhasil membatalkan image');
 			} else {
-				alert('Gagal menghapus gambar dari Cloudinary');
+				triggerMessage('error', 'Error', 'Gagal menghapus gambar dari Cloudinary');
 			}
 		} catch (err) {
 			console.error('Error deleting photo:', err);
@@ -129,7 +129,7 @@
 							type?: 'success' | 'error';
 						};
 						showMessage = true;
-						triggerMessage("success", result.type === 'success' ? 'Success' : 'Error', msg.message);
+						triggerMessage('success', result.type === 'success' ? 'Success' : 'Error', msg.message);
 					} else if (result.type === 'error') {
 						showMessage = true;
 						triggerMessage(

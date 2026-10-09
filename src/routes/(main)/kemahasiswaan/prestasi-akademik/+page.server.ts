@@ -1,21 +1,31 @@
-import { getAchievementSemesters, getStudentAchievementsBySemesterId, getStudentAchievementsBySemesterName } from '$lib/repository/admin/article/kemahasiswaan/mapres';
+import {
+	getAchievementSemesters,
+	getStudentAchievementsBySemesterId,
+	getStudentAchievementsBySemesterName
+} from '$lib/repository/admin/article/kemahasiswaan/mapres';
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import type { StudentAchievementDTO } from '$lib/dto/admin/article/kemahasiswaan';
 
 // guankan parameter
-export const load: PageServerLoad = async ({ url }) => {
+export const load: PageServerLoad = async ({ url, setHeaders }) => {
+	setHeaders({
+		// public cache
+		// cache 1 menit , state-while : jika data belum ada akan di ambil belakangan
+		'cache-control': 'public, max-age=60, stale-while-revalidate=30'
+	});
+
 	const semesterParam = url.searchParams.get('semester_id');
 
-  if (!semesterParam) {
-            error(404, { message: 'daftar Semester akademik tidak ada ' });
-  }
-	const academicSemesters = await getAchievementSemesters('y'); // data untuk Prestasi akademik 
+	if (!semesterParam) {
+		error(404, { message: 'daftar Semester akademik tidak ada ' });
+	}
+	const academicSemesters = await getAchievementSemesters('y'); // data untuk Prestasi akademik
 
 	// Tentukan semester yang aktif (Gunakan param URL, jika tidak ada gunakan semester terbaru)
 	const activeSemester = semesterParam || academicSemesters[0]?.name || '';
 
-	let achievements : StudentAchievementDTO[] = [];
+	let achievements: StudentAchievementDTO[] = [];
 
 	if (activeSemester) {
 		const isUuid = /^[0-9a-fA-F-]{36}$/.test(activeSemester);

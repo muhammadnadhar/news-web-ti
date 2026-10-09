@@ -174,7 +174,7 @@
 							pddiktiUrl = '';
 							photoUrl = '';
 							publicId = '';
-							category = 'dosen';
+							category = 'Dosen';
 							await update({ reset: true });
 						} else {
 							await update({ reset: false });
