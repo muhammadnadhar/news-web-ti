@@ -25,3 +25,8 @@ vite.config.ts.timestamp-*
 
 ./viewes-web/
 /viewes-web/
+
+
+# data gak di bawa , ada data default 
+./data/
+/data/

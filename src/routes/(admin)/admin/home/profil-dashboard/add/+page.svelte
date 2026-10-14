@@ -76,8 +76,8 @@
 
 	<form
 		method="POST"
-	action="?/create"
-  use:enhance={() => {
+		action="?/create"
+		use:enhance={() => {
 			isSubmitting = true;
 			showMessage = false;
 
@@ -184,7 +184,7 @@
 		<div class="flex items-center justify-end gap-3 border-t border-border-color pt-6">
 			<button
 				type="button"
-				onclick={() => goto('/admin/home')}
+				onclick={() => history.back()}
 				class="border border-border-color bg-bg-primary px-5 py-2.5 text-sm font-semibold text-text-main transition-all hover:bg-bg-secondary-hover active:scale-95"
 			>
 				Batal

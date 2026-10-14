@@ -14,6 +14,7 @@ import { fail } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
 import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
+import { getDosenWellcome } from '$lib/repository/admin/home/dosenWellcomeKaprodi';
 export const load: PageServerLoad = async () => {
 	// const [primaryDosenList, listPerminatan, listProfil, listProfileDashboard] = await Promise.all([
 	// 	getPrimaryDosenList(),
@@ -32,7 +33,8 @@ export const load: PageServerLoad = async () => {
 		primaryDosenList: getPrimaryDosenList(),
 		listPerminatan: getAllPerminatanTI(),
 		listProfil: getAllProfilProdi(),
-		listProfileDashboard: getAllProfileDashboards()
+		listProfileDashboard: getAllProfileDashboards(),
+    wellcomeKaprodi : getDosenWellcome(),
 	};
 };
 

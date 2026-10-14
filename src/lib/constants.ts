@@ -32,3 +32,8 @@ export const fgColors = [
 	{ name: 'Emerald Green', class: 'text-emerald-400' },
 	{ name: 'Amber Yellow', class: 'text-amber-400' }
 ];
+
+// Dinamyc UI
+export const DATAUI = './data';
+export const navbarJson = DATAUI + '/navbar.json';
+export const dashboardActionJson = DATAUI + '/dashboardActionJson.json';

@@ -39,6 +39,7 @@ import {
 } from './admin/dataset';
 import {
 	DosenPrimaryTableSeed,
+	DosenWellcomeTableSeed,
 	PerminatanTITableSeed,
 	ProfileDashboardTableSeed,
 	ProfilProdiTableSeed
@@ -103,6 +104,7 @@ try {
 	await DosenPrimaryTableSeed(); // ini punya forengkey ke LecturerStaffTableSeed
 	await JabatanProdiTableSeed(); // forengkey di table LecturerStaffTableSeed
 	await PerminatanTITableSeed();
+	await DosenWellcomeTableSeed(); // punya forengkey dari data di ambil LecturerStaffTableSeed
 	await ProfilProdiTableSeed();
 	await ProfileDashboardTableSeed();
 

@@ -17,13 +17,8 @@
 </svelte:head>
 
 <div class={`${classTopSpace} mx-auto max-w-7xl px-6 py-10 lg:px-12`}>
-	<div class="mb-8 border-b border-border-light pb-6">
+	<div class="mb-8 pb-6">
 		<div class="flex items-center gap-3">
-			<div
-				class="flex h-10 w-10 items-center justify-center border border-border-light bg-bg-secondary text-accent-primary"
-			>
-				<Trophy class="h-5 w-5" />
-			</div>
 			<div>
 				<h1 class="text-xl font-bold tracking-tight text-text-main sm:text-2xl">
 					Prestasi Akademik Mahasiswa

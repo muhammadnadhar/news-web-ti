@@ -8,11 +8,14 @@
 	import {
 		ArrowUpRight,
 		BookOpen,
+		Building2,
 		BuildingIcon,
+		CheckCircle2,
 		GraduationCap,
 		ImageOffIcon,
 		PauseIcon,
 		PlayIcon,
+		Sparkles,
 		UniversityIcon
 	} from 'lucide-svelte';
 	import fstImg from '$lib/assets/fst.webp';
@@ -22,7 +25,7 @@
 	let { data } = $props();
 
 	import uinLogo from '$lib/assets/uin-icon.webp';
-	import { actionLinks } from '$lib/data/dashboard';
+	import { iconMap } from '$lib/helper/icon.js';
 
 	// const images = [fstImg, uinFrontImg];
 	// let captions = $state([
@@ -161,7 +164,7 @@
 				{/if}
 			</div>
 			<div
-				class="absolute bottom-[8.5vh] z-40 flex w-screen transform-gpu flex-col gap-2.5 rounded-2xl border border-border-color bg-transparent p-2.5 shadow-md backdrop-blur-md transition-all sm:left-2.5 sm:w-fit sm:flex-row sm:items-center sm:gap-2 sm:p-2"
+				class="absolute bottom-[8.5vh] z-40 flex w-screen transform-gpu flex-col gap-2.5 rounded-2xl border border-border-color bg-transparent p-2.5 shadow-md backdrop-blur-md transition-all sm:left-2.5 sm:w-fit sm:flex-row sm:items-center sm:gap-2 sm:p-2 md:max-w-[80%] lg:max-w-[65%]"
 			>
 				<a
 					href="#main"
@@ -171,9 +174,11 @@
 					<ArrowUpRight class="h-4 w-4 stroke-[2.5]" />
 				</a>
 
-				<div class="grid grid-cols-3 gap-2 sm:grid-cols-2 md:flex md:items-center md:gap-2">
-					{#each actionLinks as link (link.id)}
-						{@const IconComponent = link.icon}
+				<div
+					class="grid w-full grid-cols-3 gap-2 sm:grid-cols-2 md:flex md:flex-wrap md:items-center md:gap-2"
+				>
+					{#each data.actionLink as link (link.id)}
+						{@const IconComponent = iconMap[link.icon] || BookOpen}
 						<a
 							href={link.href}
 							target={link.external ? '_blank' : '_self'}
@@ -204,8 +209,7 @@
 			</div>
 		</section>
 
-		<!-- Thin Vector Wave SVG -->
-		<!-- Vector Wave SVG (2 Layer + Accent Line) -->
+		<!-- Thin Vector Wave SVG Vector Wave SVG (2 Layer + Accent Line) -->
 		<div class="pointer-events-none absolute right-0 bottom-0 left-0 z-10">
 			<svg
 				class="h-20 w-full sm:h-32"
@@ -285,6 +289,108 @@
 	</div>
 </section>
 
+<!-- section sambutan ketua prodi -->
+<section class="relative w-full overflow-hidden bg-bg-secondary px-6 py-16 lg:px-16">
+	<div class="mx-auto max-w-7xl">
+		{#await data.wellcomeKaprodi}
+			<div class="flex h-100 w-full items-center justify-center">
+				<Spin />
+			</div>
+		{:then wellcomeKaprodi}
+			{#if !wellcomeKaprodi}
+				<div class="rounded-2xl border border-border-color bg-bg-secondary p-8 text-center">
+					<p class="text-xs text-text-muted">Data sambutan pimpinan belum tersedia.</p>
+				</div>
+			{:else}
+				<div class="grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-16">
+					<div class="relative flex justify-center lg:col-span-5">
+						<div
+							class="pointer-events-none absolute -top-4 -left-4 hidden h-16 w-16 border-t-2 border-l-2 border-accent-cyan sm:block"
+						></div>
+
+						<div
+							class="relative w-full max-w-md overflow-hidden rounded-2xl border border-border-color bg-bg-secondary shadow-2xl"
+						>
+							<img
+								src={wellcomeKaprodi.photo_url ||
+									'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=800'}
+								alt={wellcomeKaprodi.name || 'Pimpinan'}
+								class="h-[420px] w-full object-cover object-top sm:h-[480px]"
+							/>
+
+							<div
+								class="absolute inset-0 bg-gradient-to-t from-bg-primary/90 via-transparent to-transparent"
+							></div>
+						</div>
+
+						<div
+							class="absolute bottom-2 z-10 flex w-full max-w-md items-center justify-between gap-3 px-4"
+						>
+							<div
+								class="-translate-y-3 rounded-xl border border-border-color bg-accent-primary-dim/90 p-3.5 text-text-main opacity-70 shadow-xl backdrop-blur-md"
+							>
+								<div class="mb-1 flex items-center gap-2 text-accent-cyan">
+									<Building2 class="h-4 w-4 shrink-0" />
+									<span class="text-[11px] font-bold tracking-widest uppercase">KETUA PRODI</span>
+								</div>
+								<p class="text-[10px] leading-tight text-text-muted">Prodi Teknologi Informasi</p>
+								<div class="mt-2 flex gap-1">
+									<div class="h-1 w-5 rounded-full bg-accent-cyan"></div>
+									<div class="h-1 w-1.5 rounded-full bg-accent-cyan/40"></div>
+								</div>
+							</div>
+
+							<div class="space-y-0.5 text-right drop-shadow-md">
+								<div
+									class="font-serif text-xl tracking-widest text-text-muted/90 italic select-none sm:text-2xl"
+								>
+									{wellcomeKaprodi.name?.split(' ')[1] || 'Pimpinan'}
+								</div>
+								<div>
+									<h3 class="text-xs font-bold tracking-tight text-text-main sm:text-sm">
+										{wellcomeKaprodi.name}
+									</h3>
+									{#if wellcomeKaprodi.nidn}
+										<p class="text-[10px] text-text-muted sm:text-[11px]">
+											NIP. {wellcomeKaprodi.nidn}
+										</p>
+									{/if}
+								</div>
+							</div>
+						</div>
+
+						<!-- Aksen Dekorasi Sudut Kanan Bawah -->
+						<div
+							class="pointer-events-none absolute -right-4 -bottom-4 hidden h-16 w-16 border-r-2 border-b-2 border-accent-cyan sm:block"
+						></div>
+					</div>
+
+					<!-- SISI KANAN: Deskripsi Sambutan -->
+					<div class="space-y-6 lg:col-span-7">
+						<div class="flex items-center gap-3">
+							<div class="h-1 w-8 bg-accent-cyan"></div>
+							<span class="text-xs font-semibold tracking-widest text-accent-cyan uppercase">
+								{wellcomeKaprodi.title}
+							</span>
+						</div>
+
+						<div class="text-base leading-relaxed text-text-main sm:text-lg">
+							{@html wellcomeKaprodi.welcome_message}
+						</div>
+					</div>
+				</div>
+			{/if}
+		{:catch}
+			<!-- State Error Jika Gagal Memuat -->
+			<div
+				class="rounded-2xl border border-rose-500/30 bg-rose-500/10 p-6 text-center text-rose-300"
+			>
+				<p class="text-xs font-semibold">Gagal memuat data sambutan pimpinan.</p>
+			</div>
+		{/await}
+	</div>
+</section>
+
 <div id="main">
 	<NewsSection recentNews={data.recentNews} />
 </div>
@@ -295,6 +401,7 @@
 	listProfil={data.listProfil}
 />
 
+<!-- section vidio url  -->
 <section
 	class="relative w-full overflow-hidden border-y border-border-color bg-bg-secondary py-20 text-center"
 >

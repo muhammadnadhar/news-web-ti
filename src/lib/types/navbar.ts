@@ -10,7 +10,7 @@ export interface SubMenuItem {
 export interface NavMenuItemType {
 	id: string;
 	label: string;
-	icon: ComponentIcon | Component;
+	icon:  string;
 	bgClass: string;
 	badge?: number | null;
 	href?: string;

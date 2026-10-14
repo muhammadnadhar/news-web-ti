@@ -2,7 +2,7 @@ import type { CurriculumDTO, CurriculumNavDTO } from '$lib/dto/admin/article/kur
 console.error('Error deleting photo:', err);
 import type { SemesterDTO } from '$lib/dto/admin/dataset';
 
-export type dymaicDataType = {
+export type dynamicMenuType = {
 	academic?: SemesterDTO[];
 	nonAcademic?: SemesterDTO[];
 	gpa?: SemesterDTO[];

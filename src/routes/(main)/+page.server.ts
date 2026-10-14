@@ -5,6 +5,10 @@ import { getAllProfileDashboards } from '$lib/repository/admin/home/profileDashb
 import { getPrimaryDosenList } from '$lib/repository/admin/home/dosenPrimary';
 import { getAllPerminatanTI } from '$lib/repository/admin/home/tablePermitan';
 import { getAllProfilProdi } from '$lib/repository/admin/home/profilProdi';
+import { readJsonFile } from '$lib/repository/json/data';
+import { dashboardActionJson } from '$lib/constants';
+import { getDosenWellcome } from '$lib/repository/admin/home/dosenWellcomeKaprodi';
+import { actionDashboardLinks } from '$lib/data/dashboard';
 
 export const load: PageServerLoad = async ({ setHeaders }) => {
 	setHeaders({
@@ -27,13 +31,21 @@ export const load: PageServerLoad = async ({ setHeaders }) => {
 		// 	getAllProfilProdi()
 		// ]);
 
+    const actionLink = await readJsonFile<actionDashboardLinks>(dashboardActionJson);
+
+    console.info(actionLink)
+
 		return {
 			// ( promise ) handle scereaming data dengan loading
 			profileImgDashboard: getAllProfileDashboards(),
 			recentNews: getRecentNews(10),
 			listPrimaryDosen: getPrimaryDosenList(),
 			listPerminatan: getAllPerminatanTI(),
-			listProfil: getAllProfilProdi()
+			listProfil: getAllProfilProdi(),
+      wellcomeKaprodi : getDosenWellcome(),
+
+			// data UI
+			actionLink,
 		};
 	} catch (err) {
 		console.error('Error loading recent news:', err);

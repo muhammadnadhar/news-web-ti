@@ -1,7 +1,10 @@
-commit 16  finish desain #11 and debuger app 
-- update : update desain card penelitian mahasiwa dengan desain yg sama
-- update : sekarang menu external link di dashboard utama akan di pindhakan ke /data 
-- add ( performance ) : menambah header cache dalam memuat data agar tidak di ambil lagi dari database 
-- update : update desian pada halaman /profil/akreditasi dan beberapa halaman lainya , males juga nyatat wkwk 
-- update : perbaiki desain warna yang di luar context pada beberapa halaman lainya
-- add : menambha modal pada menu fasilitas agar bisa di lihat lebih detail
+commit 17  finish desain #12 and debuger app 
+- add : add config untuk Docker
+- add : function untuk meghnalde UI aplikasi , sekarang UI bisa di namis di atur dengan JSON 
+- update: penyesuianaya data json ada pada dhasboard link  , dan navbar bisa menambh link baru 
+- add : halaman konfigursi baru di admin yang menghandle data dinamis untuk jsonnya , sekarang bisa di edit secara manual dan dinamis
+- add & update : menambah menu Dropdown di FormEditor , sekarang menunya bisa dropdown
+- add : menambhakna table baru untk mengambil forengkey ke table dosenLecture untuk dosen kaProdi yang tampil di halaman depan ,sebagai dashboard sambutan ketua prodi
+- sekarang setiap data icon akan di menyimapn stringnya dan membinding dengan heleper icon ke fiel avalaibel icon 
+
+

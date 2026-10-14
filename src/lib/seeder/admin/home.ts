@@ -5,6 +5,7 @@ export const tableProfileDashboard = 'home_profileDashboard';
 export const tableDosenPrimary = 'home_dosenPrimary';
 export const tablePerminatanTI = 'home_perminatan';
 export const tableProfilProdi = 'home_profilProdi';
+export const tableWellcomeKaprodi = 'home_dosen_wellcome_kaprodi';
 
 /** seeder / create table profile dashboard */
 export async function ProfileDashboardTableSeed() {
@@ -19,6 +20,28 @@ export async function ProfileDashboardTableSeed() {
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         );
     `;
+	await query(sql);
+}
+
+/*
+ * Tabel untuk dosen sambutan (biasanya hanya 1 record aktif untuk sambutan pimpinan/prodi)
+ */
+export async function DosenWellcomeTableSeed() {
+	const sql = `
+CREATE TABLE IF NOT EXISTS  (
+    id VARCHAR(36) PRIMARY KEY ${tableWellcomeKaprodi}, -- ID unik baris sambutan
+    lecturer_staff_id VARCHAR(36) NOT NULL, -- Foreign Key ke tabel profile_lecturer_staff
+    title VARCHAR(150) NOT NULL, -- Judul sambutan (e.g. 'Sambutan Ketua Program Studi')
+    welcome_message TEXT NULL, -- Teks tambahan atau ringkasan sambutan khusus (opsional)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_dosen_sambutan_staff 
+        FOREIGN KEY (lecturer_staff_id) 
+        REFERENCES ${tableLecturerStaff}(id) 
+        ON DELETE CASCADE 
+        ON UPDATE CASCADE
+);
+`;
 	await query(sql);
 }
 

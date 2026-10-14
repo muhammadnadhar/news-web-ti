@@ -19,8 +19,6 @@
 		BuildingIcon,
 		ExternalLinkIcon,
 		Images,
-		Inbox,
-		Layers,
 		UserIcon,
 		UsersIcon
 	} from 'lucide-svelte';
@@ -115,7 +113,10 @@
 				</div>
 			{:else}
 				<!-- Empty State (Variabel Tema) -->
-        <EmptyData title={"Belum Ada Permintan TI"} description="	Data peminatan bidang keahlian belum ditambahkan. Silakan periksa kembali nanti." />
+				<EmptyData
+					title={'Belum Ada Permintan TI'}
+					description="	Data peminatan bidang keahlian belum ditambahkan. Silakan periksa kembali nanti."
+				/>
 			{/if}
 		{:catch error}
 			<!-- Error State (Status Error Tema) -->
@@ -181,7 +182,9 @@
 							{@const primaryImage = imageList[0]?.url || null}
 
 							<article
-								class="{getItemLayoutClass(instruction)} group relative transition-all duration-300
+								class="{getItemLayoutClass(
+									instruction
+								)} group relative my-5 transition-all duration-300
                 {isMergedCard
 									? 'w-full p-6 transition-colors hover:bg-bg-secondary-hover'
 									: isSplitLayout
@@ -292,10 +295,13 @@
 				</div>
 			{:else}
 				<!-- Modern Empty State -->
-			
-      <EmptyData title="Belum ada Informasi" description="	Saat ini belum tersedia profil informasi . Silakan periksa kembali nanti." /> 
-		{/if}
-    {:catch error}
+
+				<EmptyData
+					title="Belum ada Informasi"
+					description="	Saat ini belum tersedia profil informasi . Silakan periksa kembali nanti."
+				/>
+			{/if}
+		{:catch error}
 			<!-- Modern Error State -->
 			<div
 				class="mx-auto max-w-lg rounded-3xl border border-rose-500/30 bg-rose-950/20 p-10 text-center text-rose-300 shadow-xl backdrop-blur-xl"
@@ -344,8 +350,7 @@
 						<h2
 							class="group-title flex items-center gap-2 text-xl font-extrabold tracking-tight text-text-main sm:text-2xl"
 						>
-						
-					Dosen Teknologi Infromasi
+							Dosen Teknologi Infromasi
 						</h2>
 					</div>
 
@@ -445,7 +450,7 @@
 					<div class="mt-8 flex justify-center pt-4">
 						<button
 							onclick={() => goto('/profil/dosen-staff')}
-							class="group inline-flex items-center gap-2.5 rounded-2xl border border-border-color bg-bg-secondary px-6 py-3 text-sm font-bold text-text-main shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-accent-purple/50 hover:bg-bg-secondary-hover hover:text-accent-purple hover:shadow-xl hover:shadow-accent-purple/10"
+							class="group inline-flex items-center gap-2.5 border border-border-color bg-bg-secondary px-6 py-3 text-sm font-bold text-text-main shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-accent-purple/50 hover:bg-bg-secondary-hover hover:text-accent-purple hover:shadow-xl hover:shadow-accent-purple/10"
 						>
 							<span>Jelajahi Semua</span>
 							<ArrowRightIcon

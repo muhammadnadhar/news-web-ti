@@ -180,7 +180,7 @@
 	</div>
 
 	<div
-		class="rounded-2xl border border-border-color/10 bg-bg-secondary/50 p-6 shadow-2xl backdrop-blur-xl sm:p-8"
+		class="rounded-2xl border border-border-color/10 bg-bg-secondary/50 p-6 shadow-2xl sm:p-8"
 	>
 		<form
 			method="POST"

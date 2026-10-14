@@ -25,7 +25,8 @@
 		PinIcon,
 		Maximize2,
 		Trash2Icon,
-		CheckCircle2
+		CheckCircle2,
+		ChevronDown
 	} from 'lucide-svelte';
 	import { bgColors, fgColors } from '$lib/constants';
 	import { convertYouTubeUrlToEmbed } from '$lib/utils';
@@ -187,7 +188,7 @@
 		targetVideoWrapper = null;
 	}
 
-	// --- FUNGSI MANIPULASI GAMBAR ---
+	// --- fungsi manipulasi gambar ---
 	function setImageSize(sizeClass: string) {
 		if (!targetImage) return;
 		replaceClass(targetImage, /^(w-(full|auto|\d+)|max-w-\[?\w+\]?|h-auto)/, sizeClass);
@@ -569,6 +570,30 @@
 		}
 	}
 
+	// Fungsi untuk menyisipkan elemen Dropdown (Details/Summary) ke editor
+	function handleAddDropdown() {
+		saveSelection();
+		restoreSelection();
+
+		const dropdownHtml = `
+            <details class="my-4border border-border-color  p-4 shadow-sm transition-all group">
+                <summary class="cursor-pointer text-text-main select-none flex items-center justify-between outline-none">
+                    <span>Judul Dropdown Menu</span>
+                    <span class="text-xs  transition-transform group-open:rotate-180">
+
+                    <ChevronDown/>
+                    </span>
+                </summary>
+                <div class="mt-3 pt-3 border-t border-border-color text-xs text-text-muted leading-relaxed">
+                    <p>Tulis isi konten dropdown di sini...</p>
+                </div>
+            </details>
+            <p><br></p>
+        `;
+
+		format('insertHTML', dropdownHtml);
+	}
+
 	// --- Handler Pemicu Modal ---
 	function handleAddLink() {
 		saveSelection();
@@ -753,7 +778,7 @@
 						<LinkIcon class="h-4 w-4" />
 					</button>
 
-					<div class="mx-1 h-4 w-[1px] bg-bg-secondary-hover"></div>
+					<div class="w-1p mx-1 h-4 bg-bg-secondary-hover"></div>
 
 					<button
 						type="button"
@@ -772,7 +797,7 @@
 						<ListOrdered class="h-4 w-4" />
 					</button>
 
-					<div class="mx-1 h-4 w-[1px] bg-bg-secondary-hover"></div>
+					<div class="mx-1 h-4 w-1 bg-bg-secondary-hover"></div>
 
 					<button
 						type="button"
@@ -781,6 +806,15 @@
 						title="Outdent"
 					>
 						<Outdent class="h-4 w-4" />
+					</button>
+
+					<button
+						type="button"
+						onclick={handleAddDropdown}
+						class="flex items-center gap-1 rounded p-1.5 text-xs transition-colors hover:bg-bg-secondary hover:text-accent-primary"
+						title="Add Dropdown"
+					>
+						<ChevronDown />
 					</button>
 					<button
 						type="button"
@@ -1252,7 +1286,7 @@
 				>
 			</div>
 
-			<div class="my-1 h-[1px] bg-bg-secondary-hover"></div>
+			<div class="my-1 h-1 bg-bg-secondary-hover"></div>
 			<div class="px-1 text-[10px] font-semibold text-text-muted">Perataan (Align)</div>
 			<div class="grid grid-cols-3 gap-1 px-1">
 				<button

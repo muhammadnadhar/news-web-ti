@@ -452,7 +452,53 @@
 		{/await}
 	</section>
 
-	<!-- seksi 3: tabel profil prodi -->
+	<!-- section  sambutan kaprodi -->
+	<section class="my-10 w-full space-y-6">
+		<div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+			<div>
+				<h2 class="text-pure-white text-xl font-bold md:text-2xl">Sambutan Kaprodi</h2>
+				<p class="text-sm text-text-muted">
+					Kelola pesan sambutan pimpinan yang tampil di halaman utama
+				</p>
+			</div>
+			{@render actionButton('Atur Sambutan', () => goto(mergeNewPath('kaprodi')))}
+		</div>
+
+		{#await data.wellcomeKaprodi}
+			<SpinLoading />
+		{:then wellcomeKaprodi}
+			{#if !wellcomeKaprodi}
+				{@render emptyState(
+					'Belum ada Data Sambutan Pimpinan',
+					'Data sambutan belum ditemukan di sistem, silahkan tambahkan data sambutan baru.',
+					'Tambah Sambutan',
+					() => goto(mergeNewPath("kaprodi"))
+				)}
+			{:else}
+				<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+					<UserCard
+						id={wellcomeKaprodi.id}
+						title={wellcomeKaprodi.name ?? 'Pimpinan Prodi'}
+						subtitle={wellcomeKaprodi.title}
+						imageUrl={wellcomeKaprodi.photo_url || ''}
+						editUrl={mergeNewPath("kaprodi")}
+					/>
+				</div>
+			{/if}
+		{:catch error}
+			<div
+				class="flex items-center gap-3 rounded-2xl border border-rose-500/30 bg-rose-500/10 p-5 text-rose-300"
+			>
+				<AlertCircleIcon class="h-6 w-6 shrink-0 text-rose-400" />
+				<div>
+					<p class="font-semibold">Gagal Memuat Data Sambutan</p>
+					<p class="text-xs text-rose-300/80">{error.message}</p>
+				</div>
+			</div>
+		{/await}
+	</section>
+
+	<!-- seksi 4: tabel profil prodi -->
 	<section class="my-10 w-full space-y-6">
 		<div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 			<div>

@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte';
 	import Navbar from '$lib/components/navbar.svelte';
 	import MainFooter from './_components/mainFooter.svelte';
-	import { AlertCircle, BookOpenIcon, RefreshCwIcon, X } from 'lucide-svelte';
+	import { AlertCircle, RefreshCwIcon, X } from 'lucide-svelte';
 	import type { Snippet } from 'svelte';
 	import { Apptheme } from '$lib/global/theme';
 	import type { LayoutData } from '../$types';
@@ -14,7 +14,8 @@
 	import NewsQuickDrawer from '$lib/components/newsQuickDrawer.svelte';
 	import { invalidateAll } from '$app/navigation';
 	import Spin from '$lib/components/loading/spin.svelte';
-	import type { dymaicDataType } from '$lib/types/utils';
+	import type { dynamicMenuType } from '$lib/types/utils';
+	import type { NavMenuItemType } from '$lib/types/navbar';
 	interface Props {
 		data: LayoutData;
 		children: Snippet;
@@ -64,9 +65,23 @@
 	});
 
 	// Gabungkan navMenuItems statis dengan data dari server secara reaktif
-	const dynamicMenu: dymaicDataType = data.navData;
+	// const dynamicMenu: dymaicDataType = data.navData;
+	// const navMenuItems = await readJsonFile<NavMenuItemType[]>(navbarJson);
+	//	let dynamicNavMenu = $derived.by(() => generateDynamicNavMenu( navMenuItems, dynamicMenu));
 
-	let dynamicNavMenu = $derived.by(() => generateDynamicNavMenu(dynamicMenu));
+	let dynamicNavMenu = $derived.by(() => {
+		// Jika data.navMenus masih berupa Promise, kembalikan array kosong dulu atau state loading
+		if (data.navMenus && typeof data.navMenus.then === 'function') {
+			return []; // Sambil menunggu streaming selesai
+		}
+
+		// Jika sudah resolved, ambil datanya
+		const resolvedMenus: NavMenuItemType[] = data.navMenus || [];
+		const dynamicMenu: dynamicMenuType = data.navData;
+
+		// Gabungkan atau proses dengan generateDynamicNavMenu Anda
+		return generateDynamicNavMenu(resolvedMenus, dynamicMenu);
+	});
 </script>
 
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>

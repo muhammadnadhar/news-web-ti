@@ -4,6 +4,10 @@ import type { LayoutServerLoad } from './$types';
 import { getRecentNews } from '$lib/repository/admin/article/berita';
 import { getAllNewsCategories } from '$lib/repository/admin/dataset/beritaKategory';
 import { getCurriculumsNav } from '$lib/repository/admin/article/kurikulum/kurikulum';
+import { navbarJson } from '$lib/constants';
+import type { NavMenuItemType } from '$lib/types/navbar';
+import { readJsonFile } from '$lib/repository/json/data';
+import type { dynamicMenuType } from '$lib/types/utils';
 
 export const load: LayoutServerLoad = async () => {
 	// let academicSemesters: { semester: string }[] = [];
@@ -29,14 +33,20 @@ export const load: LayoutServerLoad = async () => {
 		// 	getHighGpaSemesters()
 		// ]);
 
+		const navData: dynamicMenuType = {
+			academic: results[0].status === 'fulfilled' ? results[0].value : [],
+			nonAcademic: results[1].status === 'fulfilled' ? results[1].value : [],
+			gpa: results[2].status === 'fulfilled' ? results[2].value : [],
+			curriculums: results[3].status === 'fulfilled' ? results[3].value : []
+		};
+
+    const navMenus = await  readJsonFile<NavMenuItemType[]>(navbarJson) || []; 
+
 		return {
 			// navItems: navMenuItems as NavMenuItemType[]
-			navData: {
-				academic: results[0].status === 'fulfilled' ? results[0].value : [],
-				nonAcademic: results[1].status === 'fulfilled' ? results[1].value : [],
-				gpa: results[2].status === 'fulfilled' ? results[2].value : [],
-				curriculums: results[3].status === 'fulfilled' ? results[3].value : []
-			},
+			navData,
+			// sekrang menu di simpan di file json di kirim oleh server
+			navMenus,
 
 			// data untuk berita
 			recentNews: results[4].status === 'fulfilled' ? results[4].value : [],

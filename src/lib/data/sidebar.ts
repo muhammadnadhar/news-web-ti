@@ -22,6 +22,16 @@ export const sidebarMenu: MenuCategory[] = [
 		]
 	},
 	{
+		category: 'DATA JSON FILE',
+		items: [
+			{
+				title: 'Data UI',
+				iconName: 'CalendarRange',
+				href: AdminUrl + '/data-ui'
+			}
+		]
+	},
+	{
 		category: 'DATASET',
 		items: [
 			{
@@ -125,13 +135,17 @@ export const sidebarMenu: MenuCategory[] = [
 						iconName: 'BookMarked',
 						href: AdminUrl + '/article/akademik/modul-praktikum'
 					}
-				] 
+				]
 			},
 			{
 				title: 'Kurikulum',
 				iconName: 'BookOpen',
 				children: [
-					{ title: 'Kurikulums', iconName: 'Layers', href: AdminUrl + '/article/kurikulum/kurikulums' },
+					{
+						title: 'Kurikulums',
+						iconName: 'Layers',
+						href: AdminUrl + '/article/kurikulum/kurikulums'
+					},
 					{
 						title: 'Daftar Mata Kuliah',
 						iconName: 'ListOrdered',

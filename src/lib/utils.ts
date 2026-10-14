@@ -1,11 +1,6 @@
 import { goto } from '$app/navigation';
-import type { ComponentType } from 'svelte';
-import type { CurriculumDTO } from './dto/admin/article/kurikulum';
-import type { SemesterDTO } from './dto/admin/dataset';
 import type { NavMenuItemType, NavMenuType, SubMenuItem } from './types/navbar';
-import type { MenuItem } from './types/sedebar';
-import type { dymaicDataType } from './types/utils';
-import { navMenuItems } from '$lib/data/navbar';
+import type { dynamicMenuType } from './types/utils';
 import { CurrencyIcon, type Component } from 'lucide-svelte';
 
 export function mergeNewPath(newPath: string): string {
@@ -151,7 +146,10 @@ const formatNavbarMenu = (
 }; /**
  * Fungsi utama untuk menghasilkan menu navigasi dinamis
  */
-export function generateDynamicNavMenu(data: dymaicDataType): NavMenuItemType[] {
+export function generateDynamicNavMenu(
+	navMenuItems: NavMenuItemType[],
+	data: dynamicMenuType
+): NavMenuItemType[] {
 	const menu = navMenuItems.map((m) => ({ ...m }));
 
 	const kemahasiswaanMenu = menu.find((m) => m.id === 'kemahasiswaan');

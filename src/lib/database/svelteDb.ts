@@ -4,7 +4,7 @@ import {
 	DB_USER, 
 	DB_PASSWORD, 
 	DB_DATABASE, 
-	DB_PORT 
+	DB_PORT
 } from '$env/static/private';
 
 

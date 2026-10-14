@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { fly, fade, slide } from 'svelte/transition';
 	import { backOut } from 'svelte/easing';
-	import { Menu, X, ChevronDown } from 'lucide-svelte';
+	import { Menu, X, ChevronDown, LinkIcon } from 'lucide-svelte';
 	import { type NavMenuItemType } from '$lib/types/navbar';
 
 	import ThemeActionBtn from './themeActionBtn.svelte';
 	import NavbarSub from './navbarSub.svelte';
+	import { iconMap } from '$lib/helper/icon';
 
 	interface Props {
 		navMenuItems: NavMenuItemType[];
@@ -74,6 +75,8 @@
 		class="bg-scitech-navy/80 flex items-center gap-3 rounded-2xl border border-border-color/10 p-2 shadow-2xl backdrop-blur-md"
 	>
 		{#each navMenuItems as item (item.id)}
+			{@const IconComponent = iconMap[item.icon] || LinkIcon}
+
 			<!-- Pembungkus Tombol & Submenu dengan event hover -->
 			<div
 				class="relative"
@@ -86,7 +89,7 @@
 					class="group relative flex items-center justify-center rounded-xl p-2.5 transition-all duration-200 {item.bgClass ??
 						''} {activeDesktopMenu?.id === item.id ? 'ring-scitech-mint scale-105 ring-2' : ''}"
 				>
-					<item.icon class="h-5 w-5 transition-transform group-hover:scale-110" />
+					<IconComponent class="h-5 w-5 transition-transform group-hover:scale-110" />
 
 					{#if item.badge}
 						<span
@@ -131,6 +134,7 @@
 		>
 			<div class="flex-1 space-y-2.5 overflow-y-auto">
 				{#each navMenuItems as item, index (item.id)}
+					{@const IconComponent = iconMap[item.icon] || LinkIcon}
 					<div
 						in:fly={{ y: 20, duration: 250, delay: index * 50, easing: backOut }}
 						out:fly={{ y: 15, duration: 150, delay: (navMenuItems.length - 1 - index) * 30 }}
@@ -145,7 +149,7 @@
 
 							<div class="flex items-center gap-2">
 								<div class="relative flex items-center justify-center">
-									<item.icon class="h-5 w-5 shrink-0" />
+									<IconComponent class="h-5 w-5 shrink-0" />
 									{#if item.badge}
 										<span
 											class="bg-scitech-error absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-bold text-text-main"

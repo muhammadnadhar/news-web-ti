@@ -9,3 +9,7 @@ PUBLIC_CLOUDINARY_CLOUD_NAME="isi_cloud_name"
 PUBLIC_CLOUDINARY_API_KEY="isi_api_key"
 CLOUDINARY_API_SECRET="isi_api_secret"
 PUBLIC_CLOUDINARY_UPLOAD_PRESET="settings_upload"
+
+
+# default untuk menmadakan folder 
+DATAUI=folder_json_ui_atau_default

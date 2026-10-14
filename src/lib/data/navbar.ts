@@ -6,7 +6,6 @@ import {
 	HandshakeIcon,
 	Building2Icon,
 	UsersIcon,
-	BookOpen,
 	BookOpenIcon
 } from 'lucide-svelte';
 
@@ -16,7 +15,7 @@ export const navMenuItems: NavMenuItemType[] = [
 	{
 		id: 'profil',
 		label: 'Profil',
-		icon: Building2Icon,
+		icon: 'Building2Icon',
 		bgClass: ' bg-text-main text-bg-primary hover:bg-scitech-mint hover:text-scitech-navy',
 		badge: null,
 		subMenu: [
@@ -35,7 +34,7 @@ export const navMenuItems: NavMenuItemType[] = [
 	{
 		id: 'akademik',
 		label: 'Akademik',
-		icon: GraduationCap,
+		icon: 'GraduationCap',
 		bgClass:
 			' bg-text-main text-bg-primary text-scitech-cyan hover:bg-scitech-cyan hover:text-scitech-navy',
 		badge: null,
@@ -63,7 +62,7 @@ export const navMenuItems: NavMenuItemType[] = [
 	{
 		id: 'kemahasiswaan',
 		label: 'Kemahasiswaan',
-		icon: UsersIcon,
+		icon: 'UsersIcon',
 
 		bgClass: '  text-bg-main hover:bg-scitech-slate-hover',
 
@@ -91,7 +90,7 @@ export const navMenuItems: NavMenuItemType[] = [
 	{
 		id: 'kurikulum',
 		label: 'Kurikulum',
-		icon: BookOpenIcon,
+		icon: 'BookOpenIcon',
 		bgClass:
 			'bg-text-main text-bg-primary text-scitech-cyan hover:bg-scitech-cyan hover:text-scitech-navy',
 		badge: null,
@@ -106,7 +105,7 @@ export const navMenuItems: NavMenuItemType[] = [
 	{
 		id: 'penelitian',
 		label: 'Penelitian',
-		icon: SearchIcon, // Anda bisa mengganti 'Search' atau 'BookOpen' sesuai kebutuhan ikon Anda
+		icon: 'SearchIcon', // Anda bisa mengganti 'Search' atau 'BookOpen' sesuai kebutuhan ikon Anda
 		bgClass: '  text-bg-main hover:bg-scitech-slate-hover',
 		badge: null,
 		subMenu: [
@@ -136,7 +135,7 @@ export const navMenuItems: NavMenuItemType[] = [
 	{
 		id: 'kerjasama',
 		label: 'Kerjasama',
-		icon: HandshakeIcon, // Anda bisa mengganti 'Handshake' dengan ikon lucide-react yang sesuai
+		icon: 'HandshakeIcon', // Anda bisa mengganti 'Handshake' dengan ikon lucide-react yang sesuai
 		bgClass: ' bg-text-main text-bg-primary hover:bg-scitech-purple hover:text-scitech-navy',
 		badge: null,
 		subMenu: [
@@ -155,7 +154,7 @@ export const navMenuItems: NavMenuItemType[] = [
 	{
 		id: 'berita',
 		label: 'Berita',
-		icon: Newspaper,
+		icon: 'Newspaper',
 		bgClass: ' bg-text-main text-bg-primary hover:bg-scitech-mint hover:text-scitech-navy',
 		// badge: 2, // suatu hari akan bermanfaat sebagai custome nitifikasi
 		badge: null,

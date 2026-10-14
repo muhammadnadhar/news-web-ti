@@ -7,7 +7,7 @@
 		item?: SubMenuItem;
 	}
 
-	let { item = [] }: Props = $props();
+	let { item }: Props = $props();
 
 	let activeNestedId = $state<string | null>(null);
 
@@ -24,11 +24,11 @@
 			class="mb-2 flex shrink-0 items-center justify-between border-b border-border-color/10 pb-4"
 		>
 			<div class="flex items-center gap-3">
-				<div
-					class="flex shrink-0 items-center justify-center rounded-xl border border-border-color/10 bg-bg-primary p-2"
-				>
-					<item.icon class="h-5 w-5 text-text-main" />
-				</div>
+				<!-- <div -->
+				<!-- 	class="flex shrink-0 items-center justify-center rounded-xl border border-border-color/10 bg-bg-primary p-2" -->
+				<!-- > -->
+				<!-- 	<item.icon class="h-5 w-5 text-text-main" /> -->
+				<!-- </div> -->
 				<div>
 					<h3 class="text-base font-bold tracking-wide text-text-main">{item.label}</h3>
 				</div>
