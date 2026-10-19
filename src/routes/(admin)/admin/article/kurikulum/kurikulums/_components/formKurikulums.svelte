@@ -34,11 +34,9 @@
 
 	let isSubmitting = $state(false);
 
-	// Local State
-	let descriptionContent = $state(valuesData?.description ?? initialData?.description ?? '');
+	let descriptionContent = $derived(valuesData?.description ?? initialData?.description ?? '');
 
-	// Gabungkan gambar yang sudah ada dengan gambar baru dari values/props
-	let imagesList = $state<ImageItem[]>(valuesData?.images ?? initialData?.images ?? []);
+	let imagesList = $derived<ImageItem[]>(valuesData?.images ?? initialData?.images ?? []);
 
 	let isDeletingPhoto = $state(false);
 

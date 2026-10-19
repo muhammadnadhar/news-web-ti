@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { classShadowDown, classTopSpace } from '$lib/constants';
+	import { formatDate } from '$lib/utils';
 	import EmptyData from '../../_components/emptyData.svelte';
 	import type { PageData } from './$types';
 	import { User, BookOpen, Calendar, Search, AlertCircle } from 'lucide-svelte';
@@ -56,13 +57,6 @@
 	{#if filteredPublications.length > 0}
 		<div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
 			{#each filteredPublications as item (item.id)}
-				{@const formattedDate = item.updated_at
-					? new Date(item.updated_at).toLocaleDateString('id-ID', {
-							day: 'numeric',
-							month: 'long',
-							year: 'numeric'
-						})
-					: '-'}
 
 				<article
 					class={` ${classShadowDown} hover:border-scitech-mint/40 flex flex-col justify-between overflow-hidden border border-border-color bg-bg-secondary/40`}
@@ -84,7 +78,6 @@
 						<!-- Informasi Mahasiswa -->
 						<div class="mb-5 flex items-center gap-3 border-b border-border-color/30 pb-4">
 							{#if !item.image_url}
-								<!-- Tampilkan Avatar Icon jika tidak ada image_url -->
 								<div
 									class="border-scitech-mint/20 bg-scitech-mint/10 text-scitech-mint flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border"
 								>
@@ -104,7 +97,7 @@
 							</div>
 						</div>
 
-						<div class="prose-scitech prose- prose max-w-none text-xs">
+						<div class=" max-w-none text-xs">
 							<span class="mb-2 block font-semibold text-text-main">Daftar Publikasi Jurnal:</span>
 							{@html item.journal_list}
 						</div>
@@ -115,20 +108,18 @@
 					>
 						<div class="flex items-center gap-1.5">
 							<Calendar class="text-scitech-cyan h-3.5 w-3.5" />
-							<span>Diperbarui: {formattedDate}</span>
+							<span>Diperbarui: {formatDate(item.updated_at)}</span>
 						</div>
 					</div>
 				</article>
 			{/each}
 		</div>
 	{:else if searchQuery}
-		<!-- empty state pencarian -->
 		<EmptyData
 			title="Mahasiswa Tidak Ditemukan"
 			description={`Tidak ada publikasi mahasiswa yang cocok dengan kata kunci ${searchQuery} `}
 		/>
 	{:else}
-		<!-- empty state data kosong -->
 		<EmptyData
 			title="Data Publikasi Mahasiswa Belum Tersedia"
 			description="				Belum ada data publikasi mahasiswa yang diunggah."

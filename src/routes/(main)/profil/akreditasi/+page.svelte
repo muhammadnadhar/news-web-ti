@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { classTopSpace } from '$lib/constants';
+	import { formatDate } from '$lib/utils';
 	import EmptyData from '../../_components/emptyData.svelte';
 	import type { PageData } from './$types';
 	import { Award, Calendar, Maximize2, X, AlertCircle } from 'lucide-svelte';
@@ -20,13 +21,7 @@
 	function closeModal() {
 		selectedImage = null;
 	}
-	const formattedDate = data?.accreditation.updated_at
-		? new Date(data.accreditation?.updated_at).toLocaleDateString('id-ID', {
-				day: 'numeric',
-				month: 'long',
-				year: 'numeric'
-			})
-		: '-';
+
 </script>
 
 <div class={` ${classTopSpace} mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8`}>
@@ -50,7 +45,7 @@
 					>
 						<Calendar class="h-3.5 w-3.5" />
 					</div>
-					<span>Diperbarui: {formattedDate}</span>
+					<span>Diperbarui: {formatDate(data.accreditation.updated_at) } </span>
 				</div>
 			</div>
 
@@ -68,11 +63,9 @@
 							<img
 								src={data.accreditation.image_url}
 								alt="Sertifikat Akreditasi"
-								class="h-auto max-h-[500px] w-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+								class="h-auto max-h-125 w-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
 								loading="lazy"
 							/>
-
-							<!-- Overlay Tombol Zoom -->
 							<div
 								class="absolute inset-0 flex items-center justify-center bg-bg-primary/70 opacity-0 backdrop-blur-xs transition-opacity duration-300 group-hover:opacity-100"
 							>

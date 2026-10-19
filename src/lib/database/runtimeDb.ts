@@ -28,7 +28,7 @@ export async function initializeDatabase(dbName: string) {
 
 //Buat pool utama yang akan digunakan oleh aplikasi Anda
 // Kita jalankan fungsi inisialisasi di atas sebelum pool digunakan, atau pastikan seeder memanggilnya
-export const dbName = process.env.DB_DATABASE || 'newsTi';
+export const dbName = process.env.DB_NAME || 'newsTi';
 
 export const pool = mysql.createPool({
   ...connectionConfig,

@@ -27,9 +27,9 @@
 
 	let isSubmitting = $state(false);
 	// Form state
-	let period = $state(valueData?.period ?? initialData?.period ?? '');
-	let headId = $state<string | null>(valueData?.head_id ?? initialData?.head_id ?? null);
-	let secretaryId = $state<string | null>(
+	let period = $derived(valueData?.period ?? initialData?.period ?? '');
+	let headId = $derived<string | null>(valueData?.head_id ?? initialData?.head_id ?? null);
+	let secretaryId = $derived<string | null>(
 		valueData?.secretary_id ?? initialData?.secretary_id ?? null
 	);
 
@@ -172,7 +172,7 @@
 								<div
 									class="bg-scitech-mint absolute -right-0.5 -bottom-0.5 rounded-full p-0.5 text-bg-primary shadow"
 								>
-									<Check class="h-2.5 w-2.5 stroke-[3]" />
+									<Check class="h-2.5 w-2.5 stroke-3" />
 								</div>
 							</div>
 							<div class="min-w-0">
@@ -316,7 +316,7 @@
 		</div>
 	</form>
 
-	<!-- ==================== MODAL PENCARIAN DOSEN & STAF ==================== -->
+	<!-- ==================== modal pencarian dosen & staf ==================== -->
 	{#if activePicker !== null}
 		<div
 			class="fixed inset-0 z-50 flex items-center justify-center bg-bg-primary/80 p-4 backdrop-blur-md transition-all"
@@ -420,7 +420,7 @@
 										<span
 											class="border-scitech-mint/30 bg-scitech-mint/20 text-scitech-mint flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold"
 										>
-											<Check class="h-3 w-3 stroke-[3]" /> Terpilih
+											<Check class="h-3 w-3 stroke-3" /> Terpilih
 										</span>
 									{:else if isDisabled}
 										<span

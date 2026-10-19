@@ -53,7 +53,7 @@
 				class="bg-scitech-mint/10 absolute -top-20 -left-20 h-64 w-64 rounded-full blur-3xl"
 			></div>
 			<div
-				class="absolute -right-20 -bottom-20 h-64 w-64 rounded-full bg-blue-500/10 blur-3xl"
+				class="absolute -right-20 -bottom-20 h-64 w-64 rounded-full bg-accent-blue/90 blur-3xl"
 			></div>
 
 			<div class="z-10 flex flex-col items-center justify-center text-center">
@@ -72,17 +72,7 @@
 					<p class="mt-2 text-sm text-slate-400">Silakan masuk dengan kredensial yang valid.</p>
 				</div>
 
-				<!-- Alert Error dari Action Server -->
-				{#if form?.error}
-					<div
-						class="bg-scitech-error/10 border-scitech-error/50 mb-6 flex items-center gap-3 rounded-xl border p-4 text-red-400"
-					>
-						<AlertCircle class="h-5 w-5 shrink-0" />
-						<p class="text-sm font-medium">{form.error}</p>
-					</div>
-				{/if}
-
-				<form
+					<form
 					method="POST"
 					use:enhance={() => {
 						isSubmitting = true;
@@ -133,7 +123,6 @@
 						</div>
 					</div>
 
-					<!-- Field Password -->
 					<div class="space-y-2">
 						<label for="password" class="text-sm font-medium text-slate-300"> Password </label>
 						<div class="relative">

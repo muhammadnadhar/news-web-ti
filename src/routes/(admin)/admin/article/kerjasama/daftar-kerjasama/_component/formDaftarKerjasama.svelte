@@ -27,9 +27,9 @@
 	const isEdit = $derived(!!initialData?.id);
 
 	// State lokal input form
-	let institutionName = $state(valueData?.institution_name ?? initialData?.institution_name ?? '');
-	let logoUrl = $state(valueData?.logo_url ?? initialData?.logo_url ?? '');
-	let photoPublicId = $state(valueData?.public_id ?? ''); // Simpan public_id dari Cloudinary jika diunggah baru
+	let institutionName = $derived(valueData?.institution_name ?? initialData?.institution_name ?? '');
+	let logoUrl = $derived(valueData?.logo_url ?? initialData?.logo_url ?? '');
+	let photoPublicId = $derived(valueData?.logo_public_id ?? ''); // Simpan public_id dari Cloudinary jika diunggah baru
 
 	let isSubmitting = $state(false);
 	let isDeletingPhoto = $state(false);
@@ -92,7 +92,6 @@
 	}
 </script>
 
-<!-- notifikasi pesan -->
 {#if showMessage}
 	<div class="mb-6">
 		<Message

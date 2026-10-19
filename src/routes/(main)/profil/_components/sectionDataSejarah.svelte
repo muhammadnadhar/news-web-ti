@@ -51,7 +51,6 @@
 </script>
 
 <div class="mx-auto max-w-7xl space-y-6">
-	<!-- HEADER SECTION -->
 	<div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 		<div>
 			<div class="flex items-center gap-2 font-mono text-xs text-scitech-mint">
@@ -66,7 +65,6 @@
 			</p>
 		</div>
 
-		<!-- ACTION BUTTONS -->
 		<div class="flex items-center gap-3">
 			{#if showSuccess}
 				<div

@@ -31,8 +31,8 @@
 	}: Props = $props();
 
 	// State lokal
-	let imageUrl = $state(valueData?.image_url ?? initialData?.image_url ?? '');
-	let publicId = $state(valueData?.image_public_id ?? initialData?.image_public_id ?? '');
+	let imageUrl = $derived(valueData?.image_url ?? initialData?.image_url ?? '');
+	let publicId = $derived(valueData?.image_public_id ?? initialData?.image_public_id ?? '');
 	let isSubmitting = $state(false);
 	let showMessage = $state(false);
 

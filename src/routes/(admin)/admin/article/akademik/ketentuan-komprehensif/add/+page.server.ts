@@ -10,7 +10,6 @@ export const actions: Actions = {
 	create: async ({ request }) => {
 		const formData = await request.formData();
 
-		//  Ekstraksi data input ke objek values bertipe KetentuanKomprehensifFormValues
 		const values: KetentuanKomprehensifFormValues = {
 			title: formData.get('title')?.toString().trim() || '',
 			image_url: formData.get('image_url')?.toString().trim() || null,

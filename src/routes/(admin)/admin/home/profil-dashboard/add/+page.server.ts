@@ -19,7 +19,6 @@ export const actions: Actions = {
 			image_public_id: (formData.get('image_public_id') as string)?.trim() || undefined
 		};
 
-		// Validasi Input Mandatory
 		if (!values.title || !values.imagePath) {
 			return fail(400, {
 				...warningResponse('Judul dan Gambar wajib diisi!', 'Validasi Gagal'),
@@ -43,7 +42,6 @@ export const actions: Actions = {
 			if (values.image_public_id) {
 				try {
 					await deleteImageFromCloudinary(values.image_public_id);
-					console.log(`Berhasil menghapus file orphan dari Cloudinary: ${values.image_public_id}`);
 				} catch (cleanupError) {
 					console.error('Gagal melakukan cleanup Cloudinary:', cleanupError);
 				}

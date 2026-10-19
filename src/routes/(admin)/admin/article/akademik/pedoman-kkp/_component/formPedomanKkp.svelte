@@ -28,10 +28,10 @@
 
 	// State lokal input form
 	// State lokal input form
-	let title = $state(valuesData?.title ?? initialData?.title ?? '');
-	let imageUrl = $state(valuesData?.image_url ?? initialData?.image_url ?? '');
-	let imagePublicId = $state(valuesData?.image_public_id ?? initialData?.image_public_id ?? '');
-	let description = $state(valuesData?.description ?? initialData?.description ?? '');
+	let title = $derived(valuesData?.title ?? initialData?.title ?? '');
+	let imageUrl = $derived(valuesData?.image_url ?? initialData?.image_url ?? '');
+	let imagePublicId = $derived(valuesData?.image_public_id ?? initialData?.image_public_id ?? '');
+	let description = $derived(valuesData?.description ?? initialData?.description ?? '');
 
 	let isSubmitting = $state(false);
 	let isDeletingImage = $state(false);

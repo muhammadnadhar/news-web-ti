@@ -10,13 +10,9 @@
 		BookOpen,
 		Building2,
 		BuildingIcon,
-		CheckCircle2,
-		GraduationCap,
 		ImageOffIcon,
 		PauseIcon,
-		PlayIcon,
-		Sparkles,
-		UniversityIcon
+		PlayIcon
 	} from 'lucide-svelte';
 	import fstImg from '$lib/assets/fst.webp';
 	import type { ProfileDashboardDTO } from '$lib/dto/admin/home.js';
@@ -45,8 +41,6 @@
 	function handleToggleAnimation() {
 		isPlaying = !isPlaying;
 	}
-
-	let currentItem = $derived(profileItems[currentIndex]);
 
 	// sementara aja | manual
 	let videoUrl = 'https://drive.google.com/file/d/1T2lsUdBBipXG_MS2Npwcu1rVlDqNWjxn/view?t=0.019';
@@ -128,7 +122,6 @@
 							class="pointer-events-none absolute inset-0 z-15 bg-black/20 backdrop-brightness-90"
 						></div>
 					{:else}
-						<!-- Fallback Kosong -->
 						<div
 							class="absolute inset-0 flex flex-col items-center justify-center bg-bg-secondary p-6 text-center"
 						>

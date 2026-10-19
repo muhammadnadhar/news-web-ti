@@ -58,7 +58,7 @@
 				<History class="h-4 w-4" />
 				<span>PROFIL // SEJARAH MANAGEMENT</span>
 			</div>
-			<h1 class="mt-1 text-xl font-bold tracking-tight text-white sm:text-2xl">
+			<h1 class="mt-1 text-xl font-bold tracking-tight text-text-main sm:text-2xl">
 				Kelola Data Sejarah
 			</h1>
 			<p class="text-xs text-text-muted">

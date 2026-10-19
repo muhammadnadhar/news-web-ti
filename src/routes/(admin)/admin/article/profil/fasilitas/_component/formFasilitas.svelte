@@ -7,8 +7,6 @@
 		upload_cloudinary_preset
 	} from '$lib/cloudinary/client';
 	import {
-		FileText,
-		Image as ImageIcon,
 		Save,
 		ArrowLeft,
 		Loader2,
@@ -44,15 +42,15 @@
 	}: Props = $props();
 
 	// Form field state
-	let name = $state(valuesData?.name ?? initialData?.name ?? '');
-	let category = $state(valuesData?.category ?? initialData?.category ?? '');
-	let brandModel = $state(valuesData?.brandModel ?? initialData?.brand_model ?? '');
-	let description = $state(valuesData?.description ?? initialData?.description ?? '');
+	let name = $derived(valuesData?.name ?? initialData?.name ?? '');
+	let category = $derived(valuesData?.category ?? initialData?.category ?? '');
+	let brandModel = $derived(valuesData?.brandModel ?? initialData?.brand_model ?? '');
+	let description = $derived(valuesData?.description ?? initialData?.description ?? '');
 
 	// Cloudinary States (URL & Public ID)
-	let imageUrl = $state(valuesData?.image_url ?? initialData?.image_url ?? '');
-	let imagePublicId = $state(valuesData?.image_public_id ?? initialData?.image_public_id ?? '');
-	let sopUrl = $state(valuesData?.sopLink ?? initialData?.sop_url ?? '');
+	let imageUrl = $derived(valuesData?.image_url ?? initialData?.image_url ?? '');
+	let imagePublicId = $derived(valuesData?.image_public_id ?? initialData?.image_public_id ?? '');
+	let sopUrl = $derived(valuesData?.sopLink ?? initialData?.sop_url ?? '');
 	let isDeletingImage = $state(false);
 
 	let showMessage = $state(false);
@@ -112,19 +110,6 @@
 			isDeletingImage = false;
 		}
 	}
-
-	// Handler Upload Cloudinary Dokumen SOP
-	function handleSopUploadSuccess(result: any) {
-		if (result?.info?.secure_url) {
-			sopUrl = result.info.secure_url;
-		}
-	}
-
-	// Ambil nama file dari URL SOP
-	let sopFileName = $derived(
-		sopUrl ? sopUrl.split('/').pop()?.split('?')[0] || 'Dokumen SOP Terlampir' : null
-	);
-
 	const handleSubmit: SubmitFunction = () => {
 		return async ({ result, update }) => {
 			if (result.type === 'success') {
@@ -250,9 +235,9 @@
 
 		<!-- Upload Gambar Fasilitas (Cloudinary Widget) -->
 		<div class="space-y-2 md:col-span-2">
-			<label class="text-scitech-mint block text-xs font-semibold tracking-wider uppercase">
+			<h4 class="text-scitech-mint block text-xs font-semibold tracking-wider uppercase">
 				Gambar Fasilitas
-			</label>
+			</h4>
 			<div class="flex flex-col gap-4 sm:flex-row sm:items-center">
 				{#if imageUrl}
 					<div
@@ -306,9 +291,9 @@
 		</div>
 
 		<div class="space-y-2 md:col-span-2">
-			<label class="text-scitech-mint block text-xs font-semibold tracking-wider uppercase">
+			<h4 class="text-scitech-mint block text-xs font-semibold tracking-wider uppercase">
 				Link SOP
-			</label>
+			</h4>
 			<div class="flex flex-col gap-3 sm:flex-row sm:items-center">
 				<input
 					type="text"

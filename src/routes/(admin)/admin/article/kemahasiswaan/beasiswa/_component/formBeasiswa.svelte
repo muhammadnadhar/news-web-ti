@@ -40,8 +40,8 @@
 	let showMessage = $state(false);
 
 	// State Image URL & Public ID Cloudinary
-	let imageUrl = $state(valueData?.image_url ?? initialData?.image_url ?? '');
-	let imagePublicId = $state(valueData?.image_public_id ?? initialData?.image_public_id ?? '');
+	let imageUrl = $derived(valueData?.image_url ?? initialData?.image_url ?? '');
+	let imagePublicId = $derived(valueData?.image_public_id ?? initialData?.image_public_id ?? '');
 
 	let messageConfig = $state<ResponseMessage>({
 		status: 'info',

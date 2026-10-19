@@ -39,13 +39,13 @@
 	const targetAction = $derived(actionUrl ?? (isEdit ? '?/update' : '?/create'));
 
 	// Initial State menggunakan Runes Svelte 5
-	let name = $state(initialData?.name ?? valuesData?.name ?? '');
-	let nidn = $state(initialData?.nidn ?? valuesData?.nidn ?? '');
-	let expertise = $state(initialData?.expertise ?? valuesData?.expertise ?? '');
-	let pddiktiUrl = $state(initialData?.pddikti_url ?? valuesData?.pddikti_url ?? '');
-	let photoUrl = $state(initialData?.photo_url ?? valuesData?.photo_url ?? '');
-	let publicId = $state(initialData?.photo_public_id ?? valuesData?.photo_public_id ?? '');
-	let category = $state(initialData?.role ?? valuesData?.category ?? 'dosen');
+	let name = $derived(initialData?.name ?? valuesData?.name ?? '');
+	let nidn = $derived(initialData?.nidn ?? valuesData?.nidn ?? '');
+	let expertise = $derived(initialData?.expertise ?? valuesData?.expertise ?? '');
+	let pddiktiUrl = $derived(initialData?.pddikti_url ?? valuesData?.pddikti_url ?? '');
+	let photoUrl = $derived(initialData?.photo_url ?? valuesData?.photo_url ?? '');
+	let publicId = $derived(initialData?.photo_public_id ?? valuesData?.photo_public_id ?? '');
+	let category = $derived(initialData?.role ?? valuesData?.category ?? 'dosen');
 
 	let isSubmitting = $state(false);
 	let isDeletingPhoto = $state(false);

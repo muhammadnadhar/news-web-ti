@@ -10,9 +10,8 @@
 	let formElement = $state<HTMLFormElement | null>(null);
 
 	// Local state terhubung dengan data dari server
-	let id = $state(form?.values.id ?? data?.visiMisi?.id ?? randomUUID());
-	let content = $state(form?.values.content ?? data?.visiMisi?.content ?? '');
-	let isSubmitting = $state(false);
+	let id = $derived(form?.values.id ?? data?.visiMisi?.id ?? randomUUID());
+	let content = $derived(form?.values.content ?? data?.visiMisi?.content ?? '');
 
 	function handleParentSubmit(editorData: string) {
 		content = editorData; // Sinkronisasi ulang (opsional karena sudah bind:value)

@@ -2,7 +2,7 @@ DB_HOST=
 DB_PORT=
 DB_USER=
 DB_PASSWORD=
-DB_DATABASE=newsTI
+DB_NAME=newsTI
 
 # cloudinary untuk penyimpana image 
 PUBLIC_CLOUDINARY_CLOUD_NAME="isi_cloud_name"

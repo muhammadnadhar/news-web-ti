@@ -25,11 +25,11 @@
 	let { form, initialData, valuesData, isEdit = false, actionUrl }: Props = $props();
 
 	// Inisialisasi state dari valuesData -> initialData -> default ('')
-	let title = $state(valuesData?.title ?? initialData?.title ?? '');
-	let selectedCategory = $state(valuesData?.category ?? initialData?.category_id ?? '');
-	let content = $state(valuesData?.content ?? initialData?.content ?? '');
-	let imageUrl = $state(valuesData?.image_url ?? initialData?.image_url ?? '');
-	let image_public_id = $state(valuesData?.imageId ?? initialData?.image_public_id ?? '');
+	let title = $derived(valuesData?.title ?? initialData?.title ?? '');
+	let selectedCategory = $derived(valuesData?.category ?? initialData?.category_id ?? '');
+	let content = $derived(valuesData?.content ?? initialData?.content ?? '');
+	let imageUrl = $derived(valuesData?.image_url ?? initialData?.image_url ?? '');
+	let image_public_id = $derived(valuesData?.imageId ?? initialData?.image_public_id ?? '');
 	let isSubmitting = $state(false);
 
 	// Ambil daftar opsi kategori dari initialData

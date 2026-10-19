@@ -15,7 +15,7 @@
 
 	// State Management
 	let titleInput = $state('Penelitian Dosen Prodi TI');
-	let descriptionContent = $state(
+	let descriptionContent = $derived(
 		form?.values?.description ?? data.researchData?.description ?? ''
 	);
 	let isSaving = $state(false);

@@ -25,9 +25,9 @@
 	let { valuesData, isEditMode = false, submitLabel, action, onCancel }: Props = $props();
 
 	// State lokal
-	let description = $state(valuesData?.description ?? '');
-	let imageUrl = $state(valuesData?.image_url || '');
-	let imagePublicId = $state(valuesData?.image_public_id || '');
+	let description = $derived(valuesData?.description ?? '');
+	let imageUrl = $derived(valuesData?.image_url || '');
+	let imagePublicId = $derived(valuesData?.image_public_id || '');
 	let isSubmitting = $state(false);
 	let isDeletingImage = $state(false);
 	let showMessage = $state(false);

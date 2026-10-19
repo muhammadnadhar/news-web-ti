@@ -32,10 +32,10 @@
 	}: Props = $props();
 
 	// State Lokal Svelte 5 Runes
-	let title = $state(valuesData?.title ?? '');
-	let imageUrl = $state(valuesData?.image_url ?? '');
-	let description = $state(valuesData?.description ?? '');
-	let photoPublicId = $state(valuesData?.image_public_id ?? ''); // Simpan public_id dari Cloudinary
+	let title = $derived(valuesData?.title ?? '');
+	let imageUrl = $derived(valuesData?.image_url ?? '');
+	let description = $derived(valuesData?.description ?? '');
+	let photoPublicId = $derived(valuesData?.image_public_id ?? ''); // Simpan public_id dari Cloudinary
 
 	let isSubmitting = $state(false);
 	let showMessage = $state(false);

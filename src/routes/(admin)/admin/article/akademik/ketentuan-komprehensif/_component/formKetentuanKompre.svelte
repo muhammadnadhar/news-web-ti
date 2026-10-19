@@ -32,12 +32,12 @@
 	}: Props = $props();
 
 	// Reactive States
-	let title = $state(valuesData?.title ?? initialData?.title ?? '');
-	let imageUrl = $state(valuesData?.image_url ?? initialData?.image_url ?? '');
-	let description = $state(valuesData?.description ?? initialData?.description ?? '');
-	let isSubmitting = $state(false);
+	let title = $derived(valuesData?.title ?? initialData?.title ?? '');
+	let imageUrl = $derived(valuesData?.image_url ?? initialData?.image_url ?? '');
+	let description = $derived(valuesData?.description ?? initialData?.description ?? '');
+	let isSubmitting = $derived(false);
 
-	let photoPublicId = $state(valuesData?.image_public_id ?? initialData?.image_public_id ?? ''); // Simpan public_id dari Cloudinary
+	let photoPublicId = $derived(valuesData?.image_public_id ?? initialData?.image_public_id ?? ''); // Simpan public_id dari Cloudinary
 	let isDeletingPhoto = $state(false);
 	let showMessage = $state(false);
 
@@ -123,11 +123,7 @@
 					isSubmitting = false;
 
 					if ((result.type === 'success' || result.type === 'failure') && result.data?.message) {
-						const msg = result.data.message as {
-							title?: string;
-							message?: string;
-							type?: 'success' | 'error';
-						};
+						const msg = result.data.message as ResponseMessage; 
 						showMessage = true;
 						triggerMessage('success', result.type === 'success' ? 'Success' : 'Error', msg.message);
 					} else if (result.type === 'error') {

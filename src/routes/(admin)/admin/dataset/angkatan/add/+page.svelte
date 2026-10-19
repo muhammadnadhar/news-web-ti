@@ -5,4 +5,4 @@
 	let { form }: { form: ActionData } = $props();
 </script>
 
-<FormAngkatan title="Tambah Angkatan Baru" valueData={form?.values} />
+<FormAngkatan title="Tambah Angkatan Baru" valueData={form?.values ??  null} />

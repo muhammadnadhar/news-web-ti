@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { classTopSpace } from '$lib/constants';
+	import { formatDate } from '$lib/utils';
 	import EmptyData from '../../_components/emptyData.svelte';
 	import type { PageData } from './$types';
 	import { BookMarked, Calendar, Maximize2, X, AlertCircle, FileCode } from 'lucide-svelte';
@@ -42,20 +43,14 @@
 	{#if data.modules && data.modules.length > 0}
 		<div class="space-y-12">
 			{#each data.modules as item, index (item.id)}
-				{@const formattedDate = item.updated_at
-					? new Date(item.updated_at).toLocaleDateString('id-ID', {
-							day: 'numeric',
-							month: 'long',
-							year: 'numeric'
-						})
-					: '-'}
+			
 
 				<article
 					class="bg-scitech-slate/40 hover:border-scitech-mint/40 overflow-hidden rounded-2xl border border-border-color backdrop-blur-md transition-all duration-300"
 				>
 					<!-- Sub Header Item -->
 					<div
-						class="bg-scitech-navy/60 flex flex-col gap-2 border-b border-border-color/40 px-6 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-8"
+						class="bg-bg-secondary/60 flex flex-col gap-2 border-b border-border-color/40 px-6 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-8"
 					>
 						<div class="flex items-center gap-3">
 							<span
@@ -67,7 +62,7 @@
 						</div>
 						<div class="flex items-center gap-1.5 self-start text-xs text-text-muted sm:self-auto">
 							<Calendar class="text-scitech-cyan h-3.5 w-3.5" />
-							<span>Dipublikasikan: {formattedDate}</span>
+							<span>Dipublikasikan: {formatDate(item.updated_at)}</span>
 						</div>
 					</div>
 

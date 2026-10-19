@@ -3,7 +3,7 @@
 	import Message from '$lib/components/admin/message.svelte';
 	import type { ResponseMessage } from '$lib/types/message';
 	import type { AngkatanFormValues } from '$lib/types/values/admin/dataset';
-	import { ArrowLeft, Save, Loader2Icon, Calendar } from 'lucide-svelte';
+	import {  Save, Loader2Icon, Calendar } from 'lucide-svelte';
 
 	let {
 		title = 'Tambah Angkatan Baru',

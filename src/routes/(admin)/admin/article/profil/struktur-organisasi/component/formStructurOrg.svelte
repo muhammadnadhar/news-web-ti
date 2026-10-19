@@ -1,9 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { goto } from '$app/navigation';
 	import { CldUploadWidget } from 'svelte-cloudinary';
 	import Message from '$lib/components/admin/message.svelte';
-	import { removeLastPath } from '$lib/utils';
 	import type { ActionData } from '.././$types';
 	import type { ResponseMessage } from '$lib/types/message';
 	import {
@@ -16,7 +14,6 @@
 		UploadCloud,
 		BookDashedIcon,
 		LoaderCircle,
-		X
 	} from 'lucide-svelte';
 	import FormEditor from '$lib/components/admin/formEditor.svelte';
 	import {
@@ -42,10 +39,10 @@
 	} = $props();
 
 	// State diinisialisasi berdasarkan data dari form (jika error) atau initialData
-	let title = $state(valuesData?.title ?? initialData?.title ?? '');
-	let imageUrl = $state(valuesData?.image_url ?? initialData?.image_url ?? '');
-	let photoPublicId = $state(valuesData?.image_public_id ?? initialData?.image_public_id ?? '');
-	let description = $state(valuesData?.description ?? initialData?.description ?? '');
+	let title = $derived(valuesData?.title ?? initialData?.title ?? '');
+	let imageUrl = $derived(valuesData?.image_url ?? initialData?.image_url ?? '');
+	let photoPublicId = $derived(valuesData?.image_public_id ?? initialData?.image_public_id ?? '');
+	let description = $derived(valuesData?.description ?? initialData?.description ?? '');
 
 	let editorRef = $state<any>(null);
 	let isSubmitting = $state(false);

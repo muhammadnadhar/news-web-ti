@@ -16,10 +16,10 @@
 	let { isEdit = false, initialData, action = '?/create', valuesData }: Props = $props();
 
 	// Local states
-	let title = $state(valuesData?.title ?? initialData?.title ?? '');
-	let description = $state(valuesData?.description ?? initialData?.description ?? '');
-	let isSubmitting = $state(false);
-	let showMessage = $state(false);
+	let title = $derived(valuesData?.title ?? initialData?.title ?? '');
+	let description = $derived(valuesData?.description ?? initialData?.description ?? '');
+	let isSubmitting = $derived(false);
+	let showMessage = $derived(false);
 
 	let messageConfig = $state<{
 		status: MessageStatus;

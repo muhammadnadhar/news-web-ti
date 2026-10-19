@@ -55,6 +55,24 @@ bun run dev -- --open
 npm run dev -- --open
 ```
 
+### Build
+
+> Build langsung untuk production
+
+```bash
+# menggunakan bun runtime
+bun run --bun build
+
+# mengguakna node js
+npm run build
+```
+
+Jaalanakna
+
+```bash
+npm run build
+```
+
 ### New Fiwture
 
 > beberapa fitur yg di tambhakan
@@ -72,6 +90,7 @@ npm run dev -- --open
 - home : Fitu Berita yang di web sebelumnya berupa component berita yang selalu ada di setiap Layout yang selalu muncul di sebelah kiri , sekarang di ubah di namis sebelah kiri yang hanya muncul di dektop saat di click ke kiir , mobile dari bawah
 - nah di halaman /admin/home/profilProdi sekarang bsia menambhakan data secara dinamis dan menyesuikan data desan , sehingga data yang perlu di tampilkan di halaman depan bisa banyak
 - kurikulum sekarang bisa membuat kurikulum tersendiri dan akan otomatis akan update di navbar berdasarkan title
+- di web sebelumnya untuk menu prestasi non-anademic , data kosong tidak di hanlde , melainkan di tampilkan langsung halaman kosong ke user , sekarang sudah di sesuiakan
 
 ##### Admin panel
 
@@ -103,6 +122,30 @@ npm run db:seed:npm:table
 bun run db:seed:bun:data
 
 ```
+
+### Docker
+
+> jika menggunakan atau menjalaakn dengn docker
+
+> Sesuikan `runtime` yang di gunakan dengan config di _**vite.config.js**_
+
+Build Image
+
+```bash
+docker compose up -d --build
+
+```
+
+Execusi Image nya
+
+```bash
+# web-berita-ti , nama image bisa di cek di docker-compose.yml
+docker run -d -p 3000:3000 --name web-berita-ti web-berita-ti
+```
+
+- sesuikan port untuk databasenya agar tidak bentrok 
+
+
 
 ### App Color
 

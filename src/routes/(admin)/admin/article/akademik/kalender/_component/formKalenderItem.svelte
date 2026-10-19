@@ -42,15 +42,15 @@
 	} = $props();
 
 	// Local State
-	let titleInput = $state(valuesData?.title ?? calendar.title ?? '');
-	let descriptionContent = $state(valuesData?.description ?? calendar.description ?? '');
+	let titleInput = $derived(valuesData?.title ?? calendar.title ?? '');
+	let descriptionContent = $derived(valuesData?.description ?? calendar.description ?? '');
 	let existingImages = $state<CalendarImageDTO[]>(
 		valuesData?.newImageUrls ?? calendar.images ?? []
 	);
 
 	//  Simpan URL beserta Public ID untuk gambar baru
 	let newUploadedImages = $state<{ url: string; public_id: string }[]>([]);
-	let isActive = $state(valuesData?.isActive ?? calendar?.is_active ?? true);
+	let isActive = $derived(valuesData?.isActive ?? calendar?.is_active ?? true);
 	let isDeletingPhoto = $state(false);
 
 	//  Handler saat Cloudinary sukses mengunggah gambar

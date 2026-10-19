@@ -1,26 +1,27 @@
-version: '3.8'
-
 services:
-  # Service Database (MariaDB)
   db:
     image: mariadb:10.11
     container_name: newsTi_mariadb
     restart: always
+    env_file:
+      - .env
     environment:
-      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${DB_PASSWORD}
       MARIADB_DATABASE: ${DB_NAME}
       MARIADB_USER: ${DB_USER}
       MARIADB_PASSWORD: ${DB_PASSWORD}
     volumes:
       - mariadb_data:/var/lib/mysql
     ports:
-      - '3306:3306' # Buka port jika IT UIN ingin memantau isi DB via DBeaver/Navicat
+      - '3310:3306'
 
   #  Service Aplikasi SvelteKit
   web:
     build: .
     container_name: newsTi_app
     restart: always
+    env_file:
+      - .env
     ports:
       - '3000:3000' # SvelteKit diakses internal/external lewat port 3000
     depends_on:
@@ -36,4 +37,4 @@ services:
       PUBLIC_CLOUDINARY_UPLOAD_PRESET: ${PUBLIC_CLOUDINARY_UPLOAD_PRESET}
 
 volumes:
-  mariadb_data: # Menyimpan data DB secara permanen di server fisik UIN agar tidak hilang saat container restart
+  mariadb_data:

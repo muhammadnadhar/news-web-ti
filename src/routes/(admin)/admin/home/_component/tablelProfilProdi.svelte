@@ -44,7 +44,7 @@
 						</td>
 
 						<!-- Judul & Tipe Layout -->
-						<td class="max-w-[200px] px-4 py-4">
+						<td class="max-w-50 px-4 py-4">
 							<p class="line-clamp-2 font-bold text-text-main">{profil.title}</p>
 							<span
 								class="mt-1 inline-flex items-center gap-1 border border-accent-primary/20 bg-accent-primary-dim px-2 py-0.5 text-[10px] font-medium text-accent-primary"
@@ -54,7 +54,6 @@
 							</span>
 						</td>
 
-						<!-- Loop Gambar & Caption -->
 						<td class="max-w-[320px] px-4 py-4">
 							{#if images.length > 0}
 								<div class="flex flex-wrap gap-2">
@@ -83,14 +82,12 @@
 							{/if}
 						</td>
 
-						<!-- Deskripsi Ringkas -->
-						<td class="max-w-[280px] px-4 py-4">
+						<td class="max-w-70 px-4 py-4">
 							<p class="line-clamp-3 leading-relaxed text-text-muted">
 								{stripHtml(profil.description) || '-'}
 							</p>
 						</td>
 
-						<!-- Aksi -->
 						<td class="px-4 py-4 text-right">
 							<div class="inline-flex items-center gap-2">
 								<a

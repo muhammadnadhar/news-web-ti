@@ -47,10 +47,9 @@
 		message: ''
 	});
 
-	// State listener for FormEditor (HTML/LONGTEXT string)
-	let journalListContent = $state(valuesData?.journal_list ?? initialData?.journal_list ?? '');
-	let imageUrl = $state(valuesData?.image_url ?? '');
-	let photoPublicId = $state(valuesData?.image_public_id ?? ''); // Simpan public_id dari Cloudinary
+	let journalListContent = $derived(valuesData?.journal_list ?? initialData?.journal_list ?? '');
+	let imageUrl = $derived(valuesData?.image_url ?? '');
+	let photoPublicId = $derived(valuesData?.image_public_id ?? ''); // Simpan public_id dari Cloudinary
 
 	function triggerMessage(status: ResponseMessage['status'], title: string, message: string) {
 		messageConfig = { status, title, message };

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { goto } from '$app/navigation';
 	import { CldUploadButton } from 'svelte-cloudinary';
 	import { LayoutDashboard, Trash2, ImageIcon, Upload, ArrowLeft } from 'lucide-svelte';
 	import Message from '$lib/components/admin/message.svelte';
@@ -16,14 +15,14 @@
 	let { data, form } = $props();
 
 	// State Svelte 5
-	let title = $state(data.profile?.title || '');
-	let isSubmitting = $state(false);
-	let isDeleting = $state(false);
-	let isDeletingPhoto = $state(false);
-	let showDeleteConfirm = $state(false);
+	let title = $derived(data.profile?.title || '');
+	let isSubmitting = $derived(false);
+	let isDeleting = $derived(false);
+	let isDeletingPhoto = $derived(false);
+	let showDeleteConfirm = $derived(false);
 
-	let imagePath = $state(form?.values?.image_path || data.profile?.image_path || '');
-	let image_public_id = $state(
+	let imagePath = $derived(form?.values?.imagePath || data.profile?.image_path || '');
+	let image_public_id = $derived(
 		form?.values?.image_public_id || data.profile?.image_public_id || ''
 	);
 
@@ -164,9 +163,9 @@
 
 		<!-- Field 2: Upload Gambar via Cloudinary -->
 		<div class="space-y-2">
-			<label class="block text-sm font-bold text-text-main">
+			<h5 class="block text-sm font-bold text-text-main">
 				Upload Gambar <span class="text-status-error">*</span>
-			</label>
+			</h5>
 
 			{#if imagePath}
 				<!-- Pratinjau Gambar -->
@@ -233,8 +232,6 @@
 			</button>
 		</div>
 	</form>
-</div>
-
 <!-- Modal Konfirmasi Hapus Data -->
 {#if showDeleteConfirm}
 	<div

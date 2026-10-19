@@ -33,7 +33,6 @@ export const load: PageServerLoad = async ({ setHeaders }) => {
 
     const actionLink = await readJsonFile<actionDashboardLinks>(dashboardActionJson);
 
-    console.info(actionLink)
 
 		return {
 			// ( promise ) handle scereaming data dengan loading

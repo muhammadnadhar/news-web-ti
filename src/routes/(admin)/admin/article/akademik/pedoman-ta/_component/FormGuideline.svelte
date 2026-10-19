@@ -2,7 +2,6 @@
 	import { enhance } from '$app/forms';
 	import { CldUploadWidget } from 'svelte-cloudinary';
 	import Message from '$lib/components/admin/message.svelte';
-	import { removeLastPath } from '$lib/utils';
 	import type { ResponseMessage } from '$lib/types/message';
 	import {
 		ArrowLeft,
@@ -39,7 +38,7 @@
 		isEdit?: boolean;
 	} = $props();
 
-	let photoPublicId = $state(valuesData?.image_public_id ?? initialData?.image_public_id ?? ''); // Simpan public_id dari Cloudinary
+	let photoPublicId = $derived(valuesData?.image_public_id ?? initialData?.image_public_id ?? ''); // Simpan public_id dari Cloudinary
 	let isDeletingPhoto = $state(false);
 
 	let isSubmitting = $state(false);
@@ -51,8 +50,8 @@
 	});
 
 	// State lokal untuk gambar dan deskripsi editor
-	let imageUrl = $state(valuesData?.image_url ?? initialData?.image_url ?? '');
-	let description = $state(valuesData?.description ?? initialData?.description ?? '');
+	let imageUrl = $derived(valuesData?.image_url ?? initialData?.image_url ?? '');
+	let description = $derived(valuesData?.description ?? initialData?.description ?? '');
 
 	// Fungsi untuk menghapus foto dari Cloudinary & mereset state
 	async function removeImage() {
@@ -208,7 +207,6 @@
 				/>
 			</div>
 
-			<!-- Field 2: Cloudinary Image Upload (Optional) -->
 			<div class="space-y-2">
 				<label for="image_url" class="flex items-center gap-2 text-xs font-semibold text-text-main">
 					<ImageIcon class="text-scitech-cyan h-4 w-4" />
@@ -254,7 +252,6 @@
 						options={getUploadOptions(folder_cloudinary_admin_article_akademik)}
 						onUpload={handleUpload}
 						let:open
-						let:isLoading
 						onSuccess={handleUploadSuccess}
 					>
 						<button

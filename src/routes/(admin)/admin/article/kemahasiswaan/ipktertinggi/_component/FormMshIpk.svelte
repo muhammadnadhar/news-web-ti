@@ -49,7 +49,7 @@
 	let isDeletingPhoto = $state(false);
 
 	// Default/prefilled value priority: form validation rerun > initialData > empty
-	let imgPreview = $state(valueData?.image_url ?? initialData?.image_url ?? '');
+	let imgPreview = $derived(valueData?.image_url ?? initialData?.image_url ?? '');
 
 	function handleUploadSuccess(result: any) {
 		if (result?.info?.secure_url) {
@@ -179,7 +179,6 @@
 				};
 			}}
 		>
-			<!-- Hidden ID Input saat Mode Edit -->
 			{#if isEdit && initialData?.id}
 				<input type="hidden" name="id" value={initialData.id} />
 			{/if}

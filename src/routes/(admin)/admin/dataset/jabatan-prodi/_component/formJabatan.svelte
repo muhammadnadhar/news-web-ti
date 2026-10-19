@@ -38,7 +38,6 @@
 </script>
 
 <div class="mx-auto max-w-3xl space-y-6">
-	<!-- Header & Navigation Bar -->
 	<div class="flex items-center justify-between border-b border-border-color/10 pb-4">
 		<div class="flex items-center gap-3">
 			<div>

@@ -3,7 +3,7 @@ import {
 	DB_HOST, 
 	DB_USER, 
 	DB_PASSWORD, 
-	DB_DATABASE, 
+	DB_NAME, 
 	DB_PORT
 } from '$env/static/private';
 
@@ -32,7 +32,7 @@ export async function initializeDatabase(dbName: string) {
 }
 
 // Nama database dari env
-export const dbName = DB_DATABASE || 'newsTi';
+export const dbName = DB_NAME || 'newsTi';
 
 // Pool utama aplikasi
 export const pool = mysql.createPool({

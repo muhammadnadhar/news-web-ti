@@ -1,10 +1,4 @@
-commit 17  finish desain #12 and debuger app 
-- add : add config untuk Docker
-- add : function untuk meghnalde UI aplikasi , sekarang UI bisa di namis di atur dengan JSON 
-- update: penyesuianaya data json ada pada dhasboard link  , dan navbar bisa menambh link baru 
-- add : halaman konfigursi baru di admin yang menghandle data dinamis untuk jsonnya , sekarang bisa di edit secara manual dan dinamis
-- add & update : menambah menu Dropdown di FormEditor , sekarang menunya bisa dropdown
-- add : menambhakna table baru untk mengambil forengkey ke table dosenLecture untuk dosen kaProdi yang tampil di halaman depan ,sebagai dashboard sambutan ketua prodi
-- sekarang setiap data icon akan di menyimapn stringnya dan membinding dengan heleper icon ke fiel avalaibel icon 
-
+commit 18  debuger app
+- update   : penyesuiannya docker konfigure
+- update : penyesuaina state pada data yang di kirim dari server atau data initial , mengguankan $derivel
 

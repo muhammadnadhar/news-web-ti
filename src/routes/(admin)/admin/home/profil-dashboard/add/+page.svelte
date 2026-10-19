@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { CldUploadButton, CldUploadWidget } from 'svelte-cloudinary';
+	import { CldUploadButton} from 'svelte-cloudinary';
 
 	import { Upload, Image as ImageIcon, LayoutDashboard, Trash2 } from 'lucide-svelte';
 	import Message from '$lib/components/admin/message.svelte';
@@ -11,13 +11,12 @@
 		upload_cloudinary_preset
 	} from '$lib/cloudinary/client.js';
 	import type { MessageStatus, ResponseMessage } from '$lib/types/message.js';
-	import { goto } from '$app/navigation';
 
 	let { form } = $props();
 
 	// State untuk URL/Path gambar hasil unggahan Cloudinary
-	let imagePath = $state(form?.values?.image_path || '');
-	let image_public_id = $state(form?.values?.image_public_id ?? '');
+	let imagePath = $derived(form?.values?.imagePath || '');
+	let image_public_id = $derived(form?.values?.image_public_id ?? '');
 	let isSubmitting = $state(false);
 
 	// Callback ketika unggahan ke Cloudinary berhasil
@@ -133,9 +132,9 @@
 
 		<!-- Field 2: Upload Gambar via svelte-cloudinary -->
 		<div class="space-y-2">
-			<label class="block text-sm font-bold text-text-main">
+			<h5 class="block text-sm font-bold text-text-main">
 				Upload Gambar <span class="text-status-error">*</span>
-			</label>
+			</h5>
 
 			{#if imagePath}
 				<div

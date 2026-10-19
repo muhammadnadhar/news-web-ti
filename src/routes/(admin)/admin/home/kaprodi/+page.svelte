@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { Save, ArrowLeft, Loader2, UserCheck, MessageSquare } from 'lucide-svelte';
+	import { Save,  Loader2, UserCheck} from 'lucide-svelte';
 	import type { ActionData, PageData } from './$types';
 	import Message from '$lib/components/admin/message.svelte';
 	import { type MessageStatus, type ResponseMessage } from '$lib/types/message';
@@ -9,9 +9,9 @@
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
 	// State lokal form diinisialisasi dari data server (jika ada)
-	let selectedStaffId = $state(data.sambutan?.lecturer_staff_id || '');
-	let title = $state(data.sambutan?.title || 'Sambutan Ketua Program Studi');
-	let welcomeMessage = $state(data.sambutan?.welcome_message || '');
+	let selectedStaffId = $derived(data.sambutan?.lecturer_staff_id || '');
+	let title = $derived(data.sambutan?.title || 'Sambutan Ketua Program Studi');
+	let welcomeMessage = $derived(data.sambutan?.welcome_message || '');
 	let isSubmitting = $state(false);
 
 	let showMessage = $state(false);
@@ -28,7 +28,7 @@
 
 	$effect(() => {
 		if (form?.message) {
-			triggerMessage(form.message.status, form.message.title, form.message.text);
+			triggerMessage(form.message?.status, form.message.title, form.message.text);
 		}
 	});
 </script>
@@ -122,10 +122,11 @@
 
 				<!-- Judul Sambutan -->
 				<div>
-					<label class="text-11p mb-1.5 block font-semibold text-text-muted uppercase">
+					<label for="title" class="text-11p mb-1.5 block font-semibold text-text-muted uppercase">
 						Judul / Sub-Judul Sambutan
 					</label>
 					<input
+          id="title"
 						type="text"
 						name="title"
 						bind:value={title}
@@ -146,7 +147,6 @@
 				</div>
 			</div>
 
-			<!-- Tombol Simpan -->
 			<div class="flex items-center justify-end gap-3.5 pt-5">
 				<button
 					type="button"

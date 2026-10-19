@@ -27,7 +27,6 @@
 		</p>
 	</div>
 
-	<!-- bagian 1: konten sejarah utama -->
 	{#if data.historyContent}
 		<section class="mb-16">
 			<div
