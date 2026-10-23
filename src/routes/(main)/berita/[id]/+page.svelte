@@ -92,13 +92,13 @@
 
 			{#if news.image_url}
 				<div class="overflow-hidden border border-border-color/10 bg-black/40">
-					<img src={news.image_url} alt={news.title} class="max-h-[480px] w-full object-cover" />
+					<img src={news.image_url} alt={news.title} class="max-h-120 w-full object-cover" />
 				</div>
 			{/if}
 
 			<!-- Isi Konten Berita -->
 			<div
-				class="prose max-w-none space-y-4 text-sm leading-relaxed text-text-main prose-invert sm:text-base"
+				class="prose max-w-none space-y-4 text-sm leading-relaxed text-text-main sm:text-base"
 			>
 				{#if news.content.includes('<')}
 					{@html news.content}

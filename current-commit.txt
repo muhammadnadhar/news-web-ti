@@ -1,4 +1,3 @@
-commit 18  debuger app
-- update   : penyesuiannya docker konfigure
-- update : penyesuaina state pada data yang di kirim dari server atau data initial , mengguankan $derivel
-
+commit 19  debuger app & update desain 
+- update : update utility tools yang menggunakan windows , jika objekc windows undifind
+- update : log dari server sudah bisa di bagian menu ui di admin

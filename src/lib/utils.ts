@@ -5,7 +5,7 @@ import { CurrencyIcon, type Component } from 'lucide-svelte';
 
 export function mergeNewPath(newPath: string): string {
 	// Ambil URL saat ini
-	const url = new URL(window.location.href);
+const url = typeof window !== 'undefined' ? new URL(window.location.href) : { searchParams: new URLSearchParams() };
 	//  Gabungkan path lama dengan path baru, lalu bersihkan garis miring ganda (//)
 	const cleanPath = `${url.pathname}/${newPath}`.replace(/\/+/g, '/');
 	//  Update pathname tanpa merusak search params atau hash
@@ -19,7 +19,8 @@ export function mergeNewPath(newPath: string): string {
  */
 export function removeLastPath(): string {
 	// if (!browser) return '';
-	const url = new URL(window.location.href);
+const url = typeof window !== 'undefined' ? new URL(window.location.href) : { searchParams: new URLSearchParams() };
+
 	const pathSegments = url.pathname.split('/');
 	// Hapus elemen terakhir dari array jika path tidak kosong
 	if (pathSegments.length > 1) {

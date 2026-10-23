@@ -5,7 +5,6 @@
 <div class="flex min-h-[75vh] items-center justify-center">
 	<!-- wrapper utama (flex col & center) -->
 	<div class="group relative flex flex-col items-center text-center">
-		<!-- ambient glow effect -->
 		<div
 			class="from-scitech-mint/30 via-scitech-cyan/20 to-scitech-mint/30 absolute -inset-8 animate-pulse rounded-full bg-gradient-to-tr opacity-80 blur-3xl transition duration-700 group-hover:opacity-100"
 		></div>

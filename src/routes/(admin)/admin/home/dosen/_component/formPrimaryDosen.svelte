@@ -143,7 +143,6 @@
 				<span>2. Pilih Dosen / Staff</span>
 			</h3>
 
-			<!-- Search Box -->
 			<div class="relative">
 				<input
 					type="text"
@@ -215,7 +214,6 @@
 			</div>
 		{/if}
 
-		<!-- Actions -->
 		<div class="flex items-center justify-end gap-3 border-t border-border-light pt-4">
 			<button
 				type="button"
@@ -228,7 +226,7 @@
 			<button
 				type="submit"
 				disabled={isSubmitting || !selectedLecturerId || !selectedPosition}
-				class="inline-flex items-center gap-2 rounded-xl bg-accent-blue px-5 py-2.5 text-xs font-bold text-white shadow-md transition-all hover:bg-accent-blue-hover focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+				class="inline-flex items-center gap-2 rounded-xl bg-accent-blue px-5 py-2.5 text-xs font-bold text-text-main shadow-md transition-all hover:bg-accent-blue-hover focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
 			>
 				{#if isSubmitting}
 					<span>Memproses...</span>

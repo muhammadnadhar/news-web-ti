@@ -43,7 +43,6 @@ export const actions: Actions = {
 						return existingItem;
 					});
 
-					// 2. Tambahkan item baru jika ada ID yang belum ada di data lama
 					const brandNewItems = Array.from(incomingMap.values());
 
 					return [...updatedLinks, ...brandNewItems];
@@ -53,11 +52,8 @@ export const actions: Actions = {
 		} catch (err: any) {
 			console.error('Error updating Action Links:', err);
 			return fail(500, {
-				message: {
-					type: 'error',
-					text: err.message || 'Gagal menyimpan perubahan action links ke file JSON.'
-				},
-				values: { actionLinks } as DataUIFormValues
+        ...errorResponse("Gagal menyimpan perubahan Action link ke file","Gagal"),
+					values: { actionLinks } as DataUIFormValues
 			});
 		}
 

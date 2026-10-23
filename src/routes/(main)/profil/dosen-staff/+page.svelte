@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { User, GraduationCap, ChevronRight, Search } from 'lucide-svelte';
-	import type { LecturerStaffItemDTO } from '$lib/types/admin/article/profile';
 	import EmptyData from '../../_components/emptyData.svelte';
 	import { classTopSpace } from '$lib/constants';
 	import { mergeNewPath } from '$lib/utils.js';
+	import type { LecturerStaffItemDTO } from '$lib/dto/admin/article/profile.js';
 
 	let { data } = $props();
 

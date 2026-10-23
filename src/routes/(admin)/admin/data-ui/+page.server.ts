@@ -11,7 +11,7 @@ import type { NavMenuItemType } from '$lib/types/navbar';
 import { navMenuItems } from '$lib/data/navbar';
 import { actionDashboardLinks } from '$lib/data/dashboard';
 import { fail } from '@sveltejs/kit';
-import { warningResponse } from '$lib/helper/message';
+import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
 
 export const load: PageServerLoad = async ({ setHeaders }) => {
 	setHeaders({
@@ -41,11 +41,8 @@ export const actions: Actions = {
 
 		if (!idToDelete) {
 			return fail(400, {
-				message: {
-					status: 'error',
-					title: 'Gagal',
-					message: 'ID menu yang akan dihapus tidak valid.'
-				}
+				
+        ...errorResponse('ID menu yang akan dihapus tidak valid.',"Gagal")
 			});
 		}
 
@@ -70,20 +67,13 @@ export const actions: Actions = {
 
 			return {
 				success: true,
-				message: {
-					status: 'success',
-					title: 'Berhasil',
-					message: 'Item menu berhasil dihapus.'
-				}
-			};
+        ...successResponse("Item Berhasil di hapus","Berhasil"),
+				};
 		} catch (error) {
 			console.error('[deleteNavbarItem Action Error]:', error);
 			return fail(500, {
-				message: {
-					status: 'error',
-					title: 'Kesalahan Sistem',
-					message: 'Gagal menghapus item menu dari file JSON.'
-				}
+        ...errorResponse("Gagal menghapus Item menu dari file","Gagal"),
+		
 			});
 		}
 	},
@@ -114,20 +104,13 @@ export const actions: Actions = {
 
 			return {
 				success: true,
-				message: {
-					status: 'success',
-					title: 'Berhasil',
-					message: 'Action Link berhasil dihapus.'
-				}
+        ...successResponse("Action Link Berhasil Di Hapus","Berhasil"),
 			};
 		} catch (error) {
 			console.error('[deleteActionLink Action Error]:', error);
 			return fail(500, {
-				message: {
-					status: 'error',
-					title: 'Kesalahan Sistem',
-					message: 'Gagal menghapus Action Link dari file JSON.'
-				}
+        ... errorResponse("Gagal menghapus Action Link dari file ","Error"),
+			
 			});
 		}
 	}

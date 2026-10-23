@@ -1,5 +1,5 @@
 import { navbarJson } from '$lib/constants';
-import { successResponse, warningResponse } from '$lib/helper/message';
+import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
 import { writeJsonFile } from '$lib/repository/json/data';
 import type { NavMenuItemType } from '$lib/types/navbar';
 import type { DataUIFormValues } from '$lib/types/values/dataui';
@@ -21,10 +21,7 @@ export const actions: Actions = {
 			navMenus = JSON.parse(dataString);
 		} catch {
 			return fail(400, {
-				message: {
-					type: 'error',
-					text: 'Format data Navbar tidak valid (JSON parse error).'
-				},
+        ...errorResponse("Fotmat data Navbar tidak valid","error"),
 				values: { navMenus: null } as DataUIFormValues
 			});
 		}

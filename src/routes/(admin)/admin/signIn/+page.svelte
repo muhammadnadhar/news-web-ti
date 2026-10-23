@@ -53,7 +53,7 @@
 				class="bg-scitech-mint/10 absolute -top-20 -left-20 h-64 w-64 rounded-full blur-3xl"
 			></div>
 			<div
-				class="absolute -right-20 -bottom-20 h-64 w-64 rounded-full bg-accent-blue/90 blur-3xl"
+				class="absolute -right-20 -bottom-20 h-64 w-64 rounded-full bg-accent-blue/10 blur-3xl"
 			></div>
 
 			<div class="z-10 flex flex-col items-center justify-center text-center">
