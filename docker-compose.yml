@@ -52,6 +52,9 @@ services:
       DATABASE_URL: 'mysql://${DB_USER}:${DB_PASSWORD}@db:3306/${DB_NAME}'
       PORT: 3000
 
+      # origine yg di percaya untuksekarang
+     #  ORIGIN: 'https://ti.fst.ar-raniry.ac.id/'
+
       DB_HOST: 'db'
       DATABASE_HOST: 'db'
       DB_PORT: 3306

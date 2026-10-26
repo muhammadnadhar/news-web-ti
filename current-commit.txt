@@ -1,3 +1,2 @@
-commit 19  debuger app & update desain 
-- update : update utility tools yang menggunakan windows , jika objekc windows undifind
-- update : log dari server sudah bisa di bagian menu ui di admin
+commit 20  debuger app 
+- add : menabahkan trust origine agar tidak ada pemblokiran dari csrf

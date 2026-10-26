@@ -5,6 +5,16 @@ import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 export default {
 	preprocess: vitePreprocess(),
 	kit: {
-		adapter: adapter()
+		adapter: adapter(),
+
+    csrf : {
+			checkOrigin: true, 
+      // untuk sekarang menandakna secara langsung
+      trustedOrigins: [
+				'http://localhost:3000',
+				'http://127.0.0.1:3000',
+				'https://ti.fst.ar-raniry.ac.id/'
+			]
+    }
 	}
 };
