@@ -134,6 +134,9 @@ Build Image
 ```bash
 docker compose up -d --build
 
+# menjaalna secara bersih 
+docker compose down && docker compose up -d --build --force-recreate
+
 ```
 
 Execusi Image nya

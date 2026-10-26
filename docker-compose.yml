@@ -14,10 +14,30 @@ services:
       - mariadb_data:/var/lib/mysql
     ports:
       - '3310:3306'
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      timeout: 5s
+      retries: 5
+      interval: 5s
 
   #  Service Aplikasi SvelteKit
   web:
-    build: .
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      # Meneruskan variabel dari .env luar ke dalam proses build
+      args:
+        - DATAUI=${DATAUI}
+        - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
+        - PUBLIC_CLOUDINARY_CLOUD_NAME=${PUBLIC_CLOUDINARY_CLOUD_NAME}
+        - PUBLIC_CLOUDINARY_API_KEY=${PUBLIC_CLOUDINARY_API_KEY}
+        - PUBLIC_CLOUDINARY_UPLOAD_PRESET=${PUBLIC_CLOUDINARY_UPLOAD_PRESET}
+
+        - DB_HOST=db
+        - DB_USER=${DB_USER}
+        - DB_PASSWORD=${DB_PASSWORD}
+        - DB_NAME=${DB_NAME}
+        - DB_PORT=3306
     container_name: newsTi_app
     restart: always
     env_file:
@@ -25,11 +45,20 @@ services:
     ports:
       - '3000:3000' # SvelteKit diakses internal/external lewat port 3000
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
       # Koneksi database mengarah ke service 'db' di atas
       DATABASE_URL: 'mysql://${DB_USER}:${DB_PASSWORD}@db:3306/${DB_NAME}'
       PORT: 3000
+
+      DB_HOST: 'db'
+      DATABASE_HOST: 'db'
+      DB_PORT: 3306
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+
       # Cloudinary & Config Eksternal lainnya diambil dari file .env
       PUBLIC_CLOUDINARY_CLOUD_NAME: ${PUBLIC_CLOUDINARY_CLOUD_NAME}
       PUBLIC_CLOUDINARY_API_KEY: ${PUBLIC_CLOUDINARY_API_KEY}

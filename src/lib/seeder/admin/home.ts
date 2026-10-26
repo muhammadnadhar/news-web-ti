@@ -28,8 +28,8 @@ export async function ProfileDashboardTableSeed() {
  */
 export async function DosenWellcomeTableSeed() {
 	const sql = `
-CREATE TABLE IF NOT EXISTS  (
-    id VARCHAR(36) PRIMARY KEY ${tableWellcomeKaprodi}, -- ID unik baris sambutan
+CREATE TABLE IF NOT EXISTS ${tableWellcomeKaprodi} (
+    id VARCHAR(36) PRIMARY KEY, -- ID unik baris sambutan
     lecturer_staff_id VARCHAR(36) NOT NULL, -- Foreign Key ke tabel profile_lecturer_staff
     title VARCHAR(150) NOT NULL, -- Judul sambutan (e.g. 'Sambutan Ketua Program Studi')
     welcome_message TEXT NULL, -- Teks tambahan atau ringkasan sambutan khusus (opsional)

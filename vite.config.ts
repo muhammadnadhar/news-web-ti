@@ -1,6 +1,6 @@
 import tailwindcss from '@tailwindcss/vite';
-// import adapter from '@sveltejs/adapter-auto'; // tidak support auto
-// import adapter from '@sveltejs/adapter-node'; // jika menggunakna node js
+// import adapter from '@sveltejs/adapter-auto'; // tidak support auto 
+// import adapter from '@sveltejs/adapter-node'; // jika menggunakna node js 
 import adapter from 'svelte-adapter-bun';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
