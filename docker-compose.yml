@@ -39,6 +39,7 @@ services:
         - DB_NAME=${DB_NAME}
         - DB_PORT=3306
     container_name: newsTi_app
+    image: bgdar/web-ti:latest
     restart: always
     env_file:
       - .env
@@ -53,7 +54,11 @@ services:
       PORT: 3000
 
       # origine yg di percaya untuksekarang
-     #  ORIGIN: 'https://ti.fst.ar-raniry.ac.id/'
+      ORIGIN: 'https://ti.fst.ar-raniry.ac.id/'
+      # ORIGIN: "http://localhost:3000"
+      
+      # HOST_HEADER: 'host'
+      # PROTOCOL_HEADER: 'x-forwarded-proto'
 
       DB_HOST: 'db'
       DATABASE_HOST: 'db'

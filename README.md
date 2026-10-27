@@ -148,6 +148,22 @@ docker run -d -p 3000:3000 --name web-berita-ti web-berita-ti
 
 - sesuikan port untuk databasenya agar tidak bentrok 
 
+##### menyimapn ke Docker Hub 
+
+simpan di <https://hub.docker.com/repository/docker/bgdar/web-ti/general>
+
+```bash
+# build ulang image 
+docker compose build --no-cache web
+
+# berikan tag 
+docker tag web-berita-ti-web bgdar/web-ti:latest
+
+# simpan 
+docker push bgdar/web-ti:latest
+
+```
+
 
 
 ### App Color
