@@ -17,8 +17,7 @@
 	} from 'lucide-svelte';
 	import type { PageData, Actions } from './$types';
 	import { CldUploadWidget } from 'svelte-cloudinary';
-	import type { MessageStatus } from '$lib/components/admin/message.svelte';
-	import Message from '$lib/components/admin/message.svelte';
+	import Message, { type MessageStatus } from '$lib/components/notif/message.svelte';
 	import Spin from '$lib/components/loading/spin.svelte';
 	import {
 		folder_cloudinary_admin_user,

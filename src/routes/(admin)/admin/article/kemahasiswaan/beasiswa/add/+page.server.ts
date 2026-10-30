@@ -27,12 +27,12 @@ export const actions: Actions = {
 			});
 		}
 
-		if (!values.image_url) {
-			return fail(400, {
-				...warningResponse('Foto wajib diisi.', 'Image Warning'),
-				values
-			});
-		}
+		// if (!values.image_url) {
+		// 	return fail(400, {
+		// 		...warningResponse('Foto wajib diisi.', 'Image Warning'),
+		// 		values
+		// 	});
+		// }
 
 		if (!values.scholarship_name) {
 			return fail(400, {
@@ -82,8 +82,7 @@ export const actions: Actions = {
 		// Redirect ke halaman daftar Beasiswa Kemahasiswaan
 		// throw redirect(303, '/admin/kemahasiswaan/beasiswa');
 		return {
-			...successResponse('Berhasil menyimpan data mahasiswa Baru', 'Success'),
-			values
+			...successResponse('Berhasil menyimpan data mahasiswa Baru', 'Success')
 		};
 	},
 

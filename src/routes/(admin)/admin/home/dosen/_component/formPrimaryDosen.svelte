@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { UserCheck, User, Send, Search, CheckCircle2, Award } from 'lucide-svelte';
-	import Message from '$lib/components/admin/message.svelte';
 	import SelectJabatan from '../../../dataset/jabatan-prodi/_component/selectJabatan.svelte';
 	import type { MessageStatus, ResponseMessage } from '$lib/types/message';
 	import type { LecturerStaffItemDTO } from '$lib/dto/admin/article/profile';
+	import Message from '$lib/components/notif/message.svelte';
 
 	interface Position {
 		id: string;
@@ -34,8 +34,8 @@
 		idPrimary = ''
 	}: Props = $props();
 
-	let selectedLecturerId = $state(initialLecturerId);
-	let selectedPosition = $state(initialPosition);
+	let selectedLecturerId = $derived(initialLecturerId);
+	let selectedPosition = $derived(initialPosition);
 	let searchQuery = $state('');
 	let isSubmitting = $state(false);
 	let messageConfig = $state<ResponseMessage>({

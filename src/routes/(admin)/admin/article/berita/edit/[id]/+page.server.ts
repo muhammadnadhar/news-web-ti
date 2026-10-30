@@ -26,16 +26,16 @@ export const load: PageServerLoad = async ({ params }) => {
 		return warningResponse('Berita tidak di temukan', 'Tidak Di temukan');
 	}
 
-	// Format data agar sesuai dengan prop initialData pada FormBerita.svelte
 	return {
 		berita: {
-			id: berita.id,
 			title: berita.title,
 			categories: categories,
 
 			category: berita.category_id, // Disesuaikan dengan value option pada select kategori
 			content: berita.content,
-			imageUrl: berita.image_url
+			image_url: berita.image_url,
+			image_public_id: berita.image_public_id,
+			published_at: berita.published_at
 		}
 	};
 };
@@ -48,13 +48,16 @@ export const actions: Actions = {
 		const newsId = params.id;
 		const formData = await request.formData();
 
+		const publishedAtStr = formData.get('published_at')?.toString().trim();
 		//  Ekstraksi data & susun langsung ke objek values bertipe NewsFormValues
 		const values: NewsFormValues = {
 			title: formData.get('title')?.toString().trim() || '',
 			category: formData.get('category')?.toString().trim() || '',
 			content: formData.get('content')?.toString().trim() || '',
 			image_url: formData.get('imageUrl')?.toString().trim() || null,
-			imageId: formData.get('image_public_id')?.toString().trim() || null
+			imageId: formData.get('image_public_id')?.toString().trim() || null,
+
+			publishedAt: publishedAtStr ? new Date(publishedAtStr) : new Date()
 		};
 
 		if (!values.title || !values.category || !values.content) {
@@ -77,7 +80,8 @@ export const actions: Actions = {
 				category_id: values.category,
 				content: values.content,
 				image_url: values.image_url,
-				image_public_id: values.imageId
+				image_public_id: values.imageId,
+				published_at: values.publishedAt
 			});
 
 			if (!isUpdated) {

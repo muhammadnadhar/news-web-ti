@@ -1,9 +1,8 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import Message from '$lib/components/admin/message.svelte';
+	import Message from '$lib/components/notif/message.svelte';
 	import type { ResponseMessage } from '$lib/types/message';
 	import {
-		ArrowLeft,
 		GraduationCap,
 		User,
 		Link as LinkIcon,
@@ -11,10 +10,7 @@
 		Loader2Icon,
 		BookOpen
 	} from 'lucide-svelte';
-	import type {
-		LecturerPublicationDTO,
-		LecturerResearchDTO
-	} from '$lib/dto/admin/article/penelitian';
+	import type { LecturerPublicationDTO } from '$lib/dto/admin/article/penelitian';
 	import type { LecturerPublicationFormValues } from '$lib/types/values/admin/article';
 	import type { LecturerStaffItemDTO } from '$lib/dto/admin/article/profile';
 

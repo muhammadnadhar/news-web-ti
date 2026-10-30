@@ -9,7 +9,7 @@
 		upload_cloudinary_preset
 	} from '$lib/cloudinary/client';
 	import FormEditor from '$lib/components/admin/formEditor.svelte';
-	import Message from '$lib/components/admin/message.svelte';
+	import Message from '$lib/components/notif/message.svelte';
 	import TableContent from '$lib/components/admin/tableContent.svelte';
 	import TableSkeleton from '$lib/components/loading/tableSkeleton.svelte';
 	import type { HistoryLeadersDTO } from '$lib/dto/admin/article/profile.js';
@@ -23,13 +23,13 @@
 	let { data, form } = $props();
 
 	// State Form Kiri (Konten Sejarah)
-	let contentId = $state(data.historyContent?.id ?? crypto.randomUUID());
-	let title = $state(data.historyContent?.title ?? form?.values?.title ?? 'Sejarah');
-	let description = $state(data.historyContent?.description ?? form?.values?.description ?? '');
-	let imageUrl = $state(data.historyContent?.image_url ?? null);
-	let imagePublicId = $state(data.historyContent?.image_public_id ?? null);
+	let contentId = $derived(data.historyContent?.id ?? crypto.randomUUID());
+	let title = $derived(data.historyContent?.title ?? form?.values?.title ?? 'Sejarah');
+	let description = $derived(data.historyContent?.description ?? form?.values?.description ?? '');
+	let imageUrl = $derived(data.historyContent?.image_url ?? null);
+	let imagePublicId = $derived(data.historyContent?.image_public_id ?? null);
 	let selectedFile = $state<File | null>(null);
-	let previewUrl = $state<string | null>(data.historyContent?.image_url ?? null);
+	let previewUrl = $derived<string | null>(data.historyContent?.image_url ?? null);
 
 	function handleUploadSuccess(result: any) {
 		if (result?.info?.secure_url) {

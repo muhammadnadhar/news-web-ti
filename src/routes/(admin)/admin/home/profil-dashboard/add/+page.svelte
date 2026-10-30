@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { CldUploadButton} from 'svelte-cloudinary';
+	import { CldUploadButton } from 'svelte-cloudinary';
 
-	import { Upload, Image as ImageIcon, LayoutDashboard, Trash2 } from 'lucide-svelte';
-	import Message from '$lib/components/admin/message.svelte';
+	import { Upload, Image as ImageIcon, LayoutDashboard, Trash2, Loader2 } from 'lucide-svelte';
+	import Message from '$lib/components/notif/message.svelte';
 	import {
 		folder_cloudinary_admin_home_profilDashboard,
 		getUploadConfig,
@@ -11,6 +11,8 @@
 		upload_cloudinary_preset
 	} from '$lib/cloudinary/client.js';
 	import type { MessageStatus, ResponseMessage } from '$lib/types/message.js';
+	import AlertModal from '$lib/components/notif/alertModal.svelte';
+	import { beforeNavigate } from '$app/navigation';
 
 	let { form } = $props();
 
@@ -18,6 +20,10 @@
 	let imagePath = $derived(form?.values?.imagePath || '');
 	let image_public_id = $derived(form?.values?.image_public_id ?? '');
 	let isSubmitting = $state(false);
+	let isDeletingImage = $state(false);
+
+	let isAlern = $state(false);
+	let isSuccesAlert = $state(false);
 
 	// Callback ketika unggahan ke Cloudinary berhasil
 	function handleUploadSuccess(result: any) {
@@ -33,8 +39,35 @@
 		}
 	}
 
-	function handleRemoveImage() {
-		imagePath = '';
+	async function handleRemoveImage() {
+		if (!image_public_id) {
+			imagePath = '';
+			return;
+		}
+
+		isDeletingImage = true;
+		const formData = new FormData();
+		formData.append('public_id', image_public_id);
+
+		try {
+			const response = await fetch('?/deletePhoto', {
+				method: 'POST',
+				body: formData
+			});
+
+			if (response.ok) {
+				imagePath = '';
+				image_public_id = '';
+				triggerMessage('success', 'Berhasil', 'Foto dokumentasi berhasil dihapus.');
+			} else {
+				triggerMessage('error', 'Gagal', 'Gagal menghapus foto dari server.');
+			}
+		} catch (err) {
+			console.error('Error deleting photo:', err);
+			triggerMessage('error', 'Kesalahan', 'Terjadi kesalahan saat menghapus foto.');
+		} finally {
+			isDeletingImage = false;
+		}
 	}
 
 	let showMessage = $state(false);
@@ -49,6 +82,45 @@
 		messageConfig = { status, title, message };
 		showMessage = true;
 	}
+
+	const handleCloseModalAlernt = () => {
+		isAlern = false;
+	};
+	const handleErrorClose = () => {
+		isSuccesAlert = false;
+		isAlern = false;
+		triggerMessage('info', 'Ada Kesalahan', ' Silahkan Batalkan upload / hapus di cloudinary');
+	};
+
+	const handleSuccesAlernt = async () => {
+		isSuccesAlert = true;
+		try {
+			await handleRemoveImage();
+			imagePath = '';
+
+			triggerMessage('success', 'Berhasil', 'Gambar berhasil dibersihkan.');
+		} catch (error) {
+			console.error('Gagal membersihkan gambar:', error);
+			triggerMessage('error', 'Gagal', 'Terjadi kesalahan saat membersihkan gambar.');
+		} finally {
+			isAlern = false; // Pastikan modal tertutup
+		}
+	};
+
+	// Intersepsi navigasi sebelum terjadi
+	beforeNavigate((navigation) => {
+		// Cek apakah target URL berbeda dengan URL saat ini
+		const isDifferentUrl = navigation.to?.url.pathname !== navigation.from?.url.pathname;
+
+		if (!isSuccesAlert && isDifferentUrl && imagePath !== '' && imagePath.length > 0) {
+			// Batalkan perpindahan halaman
+			navigation.cancel();
+
+			// Tampilkan alert pemberitahuan
+			isAlern = true;
+			isSuccesAlert = false;
+		}
+	});
 </script>
 
 <div class="mx-auto max-w-3xl space-y-6">
@@ -150,8 +222,13 @@
 						onclick={handleRemoveImage}
 						class="mt-3 inline-flex items-center gap-1.5 border border-status-error/30 bg-status-error/10 px-3 py-2 text-xs font-bold text-status-error transition-all hover:bg-status-error/20 active:scale-95"
 					>
-						<Trash2 class="h-3.5 w-3.5" />
-						<span>Hapus Gambar</span>
+						{#if isDeletingImage}
+							<Loader2 class="h-4 w-4 animate-spin" />
+							<span>Menghapus Gambar...</span>
+						{:else}
+							<Trash2 class="h-4 w-4" />
+							<span>Hapus Gambar</span>
+						{/if}
 					</button>
 				</div>
 			{:else}
@@ -200,3 +277,19 @@
 		</div>
 	</form>
 </div>
+
+<!-- Modla peringatan jika image sudha di upload  -->
+<AlertModal
+	isOpen={isAlern}
+	title="Peringatan Gambar Upload"
+	subtitle="Hapus Gambar Sebelumnya atau manual di Cloudinary"
+	variant="warning"
+	confirmText="Hapus Gambar"
+	onClose={handleCloseModalAlernt}
+	onSuccess={() => {
+		handleSuccesAlernt();
+	}}
+	onError={() => {
+		handleErrorClose();
+	}}
+/>

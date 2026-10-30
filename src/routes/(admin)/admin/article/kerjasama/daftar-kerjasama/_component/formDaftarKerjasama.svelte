@@ -8,31 +8,84 @@
 		getUploadOptions,
 		upload_cloudinary_preset
 	} from '$lib/cloudinary/client';
-	import Message, { type MessageStatus } from '$lib/components/admin/message.svelte';
+	import Message, { type MessageStatus } from '$lib/components/notif/message.svelte';
 	import type { ResponseMessage } from '$lib/types/message';
 	import type { PartnershipDTO } from '$lib/dto/admin/article/kerjasama';
-	import { goto } from '$app/navigation';
+	import { beforeNavigate, goto } from '$app/navigation';
 	import type { KerjasamaFormValues } from '$lib/types/values/admin/article';
+	import AlertModal from '$lib/components/notif/alertModal.svelte';
 
 	interface Props {
 		initialData?: PartnershipDTO | null;
 		valueData: KerjasamaFormValues;
+		isModalAlert?: boolean;
 		actionUrl?: string;
 		backUrl?: string;
 	}
 
-	let { initialData = null, valueData, actionUrl = '', backUrl }: Props = $props();
+	let {
+		initialData = null,
+		isModalAlert = false,
+		valueData,
+		actionUrl = '',
+		backUrl
+	}: Props = $props();
 
 	// Deteksi mode Edit
 	const isEdit = $derived(!!initialData?.id);
 
 	// State lokal input form
-	let institutionName = $derived(valueData?.institution_name ?? initialData?.institution_name ?? '');
+	let institutionName = $derived(
+		valueData?.institution_name ?? initialData?.institution_name ?? ''
+	);
 	let logoUrl = $derived(valueData?.logo_url ?? initialData?.logo_url ?? '');
 	let photoPublicId = $derived(valueData?.logo_public_id ?? ''); // Simpan public_id dari Cloudinary jika diunggah baru
 
 	let isSubmitting = $state(false);
 	let isDeletingPhoto = $state(false);
+	let isAlern = $state(false);
+	let isSuccesAlert = $state(false);
+
+	const handleCloseModalAlernt = () => {
+		isAlern = false;
+	};
+	const handleErrorClose = () => {
+		isSuccesAlert = false;
+		isAlern = false;
+		triggerMessage('info', 'Di batalkan', 'Silahkan setujuin penghapusan image');
+	};
+
+	const handleSuccesAlernt = async () => {
+		isSuccesAlert = true;
+		try {
+			await removeLogo();
+			logoUrl = '';
+
+			triggerMessage('success', 'Berhasil', 'Gambar berhasil dibersihkan.');
+		} catch (error) {
+			console.error('Gagal membersihkan gambar:', error);
+			triggerMessage('error', 'Gagal', 'Terjadi kesalahan saat membersihkan gambar.');
+		} finally {
+			isAlern = false; // Pastikan modal tertutup
+		}
+	};
+
+	// Intersepsi navigasi sebelum terjadi
+	beforeNavigate((navigation) => {
+		if (!isModalAlert) return;
+
+		// Cek apakah target URL berbeda dengan URL saat ini
+		const isDifferentUrl = navigation.to?.url.pathname !== navigation.from?.url.pathname;
+
+		if (!isSuccesAlert && isDifferentUrl && logoUrl !== '' && logoUrl.length > 0) {
+			// Batalkan perpindahan halaman
+			navigation.cancel();
+
+			// Tampilkan alert pemberitahuan
+			isAlern = true;
+			isSuccesAlert = false;
+		}
+	});
 
 	// Message State
 	let showMessage = $state(false);
@@ -97,7 +150,7 @@
 		<Message
 			status={showMessage ? messageConfig.status : 'error'}
 			title={showMessage ? messageConfig.title : 'Gagal'}
-			message={showMessage ? messageConfig.message : form?.message || ''}
+			message={messageConfig.message}
 			dismissible={true}
 			timeout={5000}
 			onclose={() => (showMessage = false)}
@@ -208,13 +261,16 @@
 
 			<!-- Upload Logo Mitra (Cloudinary Widget) -->
 			<div class="space-y-2">
-				<label class="block text-xs font-medium text-text-muted"> Logo Instansi / Mitra </label>
+				<label for="logo-url" class="block text-xs font-medium text-text-muted">
+					Logo Instansi / Mitra
+				</label>
 
 				<div
 					class="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border-light bg-bg-primary p-6 text-center"
 				>
 					{#if logoUrl}
 						<div
+							id="logo-url"
 							class="relative flex h-32 w-48 items-center justify-center overflow-hidden rounded-xl border border-border-light bg-bg-secondary/5 p-2 shadow-md"
 						>
 							<img
@@ -291,3 +347,22 @@
 		</form>
 	</div>
 </div>
+
+<!-- Modla peringatan jika image sudha di upload  -->
+
+{#if isModalAlert}
+	<AlertModal
+		isOpen={isAlern}
+		title="Peringatan Gambar Upload"
+		subtitle="Hapus Gambar Sebelumnya atau manual di Cloudinary"
+		variant="warning"
+		confirmText="Hapus Gambar"
+		onClose={handleCloseModalAlernt}
+		onSuccess={() => {
+			handleSuccesAlernt();
+		}}
+		onError={() => {
+			handleErrorClose();
+		}}
+	/>
+{/if}

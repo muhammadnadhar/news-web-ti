@@ -1,4 +1,4 @@
-import { fail, redirect } from '@sveltejs/kit';
+import { fail } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import type { UserAdminDTO } from '$lib/dto/admin/userAdmin';
 import { checkUserExists, createUserAdmin } from '$lib/repository/admin/userAdmin';
@@ -17,7 +17,7 @@ export const actions: Actions = {
 			username: (data.get('username') as string)?.trim() || '',
 			email: (data.get('email') as string)?.trim() || '',
 			password: (data.get('password') as string) || '',
-			role: (data.get('role') as string)?.trim() || '',
+			role: (data.get('role') as string)?.trim() || 'Supervisor',
 			status: (data.get('status') as string)?.trim() || 'Active'
 		};
 

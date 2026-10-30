@@ -5,18 +5,17 @@
 	import { gotoEdit, mergeNewPath } from '$lib/utils';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import type { PedomanKkpDTO } from '$lib/dto/admin/article/akademik.js';
+	//	import type { PedomanKkpDTO } from '$lib/dto/admin/article/akademik.js';
 	import type { MessageStatus, ResponseMessage } from '$lib/types/message.js';
-	import Message from '$lib/components/admin/message.svelte';
 	import type { CurriculumDTO } from '$lib/dto/admin/article/kurikulum.js';
-	import type { CurrencyIcon } from 'lucide-svelte';
+	import Message from '$lib/components/notif/message.svelte';
 
 	let { data } = $props();
 
 	let showMessage = $state(false);
 
 	// Sync local state
-	let rawPedomanList = $derived<PedomanKkpDTO[]>(data.rawPedomanList || []);
+	// let rawPedomanList = $derived<PedomanKkpDTO[]>(data.rawPedomanList || []);
 
 	let messageConfig = $state<ResponseMessage>({
 		status: 'info',
@@ -74,7 +73,6 @@
 	}
 </script>
 
-<!-- Alert / Toast Notification -->
 {#if showMessage}
 	<Message
 		status={messageConfig.status}
@@ -99,7 +97,7 @@
 	{:then rawList}
 		<TableContent
 			title="Data Kurikulums"
-			addButtonLabel="+ Pedoman KKP"
+			addButtonLabel="Tambah Kurikulum Baru"
 			data={mapCurriculumToTableContent(rawList)}
 			onAdd={() => goto(mergeNewPath('add'))}
 			onEdit={(data) => gotoEdit(data.id, page.url.pathname)}

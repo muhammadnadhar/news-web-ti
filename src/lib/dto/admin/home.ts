@@ -46,15 +46,13 @@ export interface ProfilProdiItemDTO {
 	updated_at?: Date | string;
 }
 
-
-
 export interface DosenWellcomeDTO {
-    id: string;
-    lecturer_staff_id: string;
-    title: string;
-    welcome_message: string;
-    // Data hasil JOIN dari LecturerStaffItemDTO
-    name?: string;
-    nidn?: string;
-    photo_url?: string;
+	id: string;
+	lecturer_staff_id: string;
+	title: string;
+	welcome_message: string;
+	// Data hasil JOIN dari LecturerStaffItemDTO
+	name?: string;
+	nidn?: string;
+	photo_url?: string;
 }

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { classTopSpace } from '$lib/constants';
-	import type { PageData } from './$types';
 	import { Calendar, Clock, FileText, ArrowLeft, Image as ImageIcon } from 'lucide-svelte';
 
 	const { data } = $props();
@@ -8,7 +7,7 @@
 	const { curriculum } = data;
 
 	let sliderContainer: HTMLDivElement;
-	let activeImageIndex = 0;
+	let activeImageIndex = $state(0);
 
 	// Sinkronisasi indikator titik saat pengguna menggeser slider secara manual (scroll)
 	function handleScroll() {
@@ -109,7 +108,7 @@
 					>
 						{#each curriculum.images as img, i (i)}
 							<div
-								class="relative flex w-full flex-shrink-0 snap-center items-center justify-center bg-black/40 p-2 sm:p-4"
+								class="relative flex w-full shrink-0 snap-center items-center justify-center bg-black/40 p-2 sm:p-4"
 							>
 								<img
 									src={img?.url || img}

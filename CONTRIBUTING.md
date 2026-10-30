@@ -6,6 +6,10 @@ Terima kasih telah meluangkan waktu untuk berkontribusi dalam proyek ini! Kami s
 
 > Boleh menggunakan `ai` , _tapi_ perhatikan structur code dan pastikan fitur yang mau di tambhakan jalan dengan lancar dan juga tidak **MENGHANCURKAN FITUR YANG LAIN**
 
+Perhatian :
+
+- Kebanyakan Halaman di **admin** menggunakan `Method` dan `Constan variabel` dan `data` di **src/lib/...**
+
 ### Kirim PR
 
 1. Fork repo ini

@@ -19,7 +19,6 @@ export const load: PageServerLoad = async ({ params, setHeaders }) => {
 	});
 	const { id } = params;
 
-	//  Validasi ID tidak ada
 	if (!id) {
 		return {
 			courseMap: null,
@@ -30,7 +29,6 @@ export const load: PageServerLoad = async ({ params, setHeaders }) => {
 	try {
 		const courseMap = await getCourseMapById(id);
 
-		//  Validasi data tidak ditemukan
 		if (!courseMap) {
 			return {
 				courseMap: null,
@@ -38,7 +36,6 @@ export const load: PageServerLoad = async ({ params, setHeaders }) => {
 			};
 		}
 
-		// Return sukses data map
 		return {
 			courseMap
 		};

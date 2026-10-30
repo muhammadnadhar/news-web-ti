@@ -3,8 +3,8 @@
 	import { Bell, CameraIcon, ExternalLinkIcon, GitBranchPlusIcon, User } from 'lucide-svelte';
 	// import { navigating } from '$app/stores'; // depecrate
 	import { navigating } from '$app/state';
-	import { goto } from '$app/navigation';
 	import Spin from '$lib/components/loading/spin.svelte';
+	import BtnProfilAction from './user/_component/btnProfilAction.svelte';
 
 	let { children } = $props();
 
@@ -43,7 +43,6 @@
 <div
 	class="bg-scitech-navy selection:bg-scitech-mint selection:text-scitech-navy flex min-h-screen flex-col text-text-main antialiased lg:flex-row"
 >
-	<!-- Sidebar Navigation -->
 	<Sidebar />
 
 	<div class="flex min-h-screen min-w-0 flex-1 flex-col">
@@ -66,45 +65,23 @@
 					<span class="bg-scitech-mint absolute top-1.5 right-1.5 h-2 w-2 rounded-full"></span>
 				</button>
 
-				<!-- Profile Badge -->
-				<button
-					onclick={() => goto('/admin/user/profil')}
-					class="flex items-center gap-3 border-l border-border-color pl-4 hover:cursor-pointer"
-				>
-					<div class="text-right">
-						<span class="block text-xs font-bold text-text-main">Profile</span>
-						<span class="text-scitech-mint block font-mono text-[10px]">Detailt</span>
-					</div>
-
-					<div
-						class="from-scitech-mint to-scitech-cyan h-9 w-9 rounded-xl bg-gradient-to-tr p-0.5 shadow-md"
-					>
-						<div
-							class="bg-scitech-navy flex h-full w-full items-center justify-center overflow-hidden rounded-[10px]"
-						>
-							<User class="text-scitech-mint h-5 w-5" />
-						</div>
-					</div>
-				</button>
+				<BtnProfilAction />
 			</div>
 		</header>
 
-		<!-- jika masih navigasi  -->
 		{#if showLoading}
 			<Spin />
+		{:else}
+			<main class="flex-1 p-4 sm:p-8">
+				{@render children()}
+			</main>
 		{/if}
-		<!-- Page Content Slot -->
-		<main class="flex-1 p-4 sm:p-8">
-			{@render children()}
-		</main>
-
 		<footer
 			class="relative z-20 border-t border-border-color bg-bg-secondary/95 px-4 py-6 font-mono text-xs text-text-muted sm:px-8"
 		>
 			<div
 				class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 sm:flex-row sm:gap-6"
 			>
-				<!-- Copyright Text -->
 				<div class="text-center sm:text-left">
 					<p class="font-semibold text-text-main">
 						© 2026 <span class="text-scitech-mint">Prodi TI UIN Ar-Raniry</span> Banda Aceh.

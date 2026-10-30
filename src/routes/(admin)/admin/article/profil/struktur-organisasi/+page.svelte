@@ -5,7 +5,7 @@
 	import type { TableContentType } from '$lib/types/tableContent.js';
 	import type { OrgStructureItemDTO } from '$lib/dto/admin/article/profile.js';
 	import TableSkeleton from '$lib/components/loading/tableSkeleton.svelte';
-	import Message from '$lib/components/admin/message.svelte';
+	import Message from '$lib/components/notif/message.svelte';
 	import type { ResponseMessage } from '$lib/types/message.js';
 
 	let { data } = $props();

@@ -1,8 +1,5 @@
 <script lang="ts">
-	import { ArrowLeft } from 'lucide-svelte';
 	import FormKalenderItem from '../_component/formKalenderItem.svelte';
-	import { goto } from '$app/navigation';
-	import { mergeNewPath } from '$lib/utils.js';
 
 	import type { ActionData } from './$types';
 
@@ -22,6 +19,7 @@
 		valuesData={form?.values}
 		submitLabel="Simpan Kalender Baru"
 		isBack={true}
+		isModalAlert={true}
 		calendar={{
 			id: '',
 			title: '',

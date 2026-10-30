@@ -5,8 +5,15 @@
 	let { form }: { form: ActionData } = $props();
 </script>
 
-<div class="space-y-6 p-6 ">
-	<h1 class="text-2xl font-black text-center text-text-main md:text-3xl">Tambah Ketentuan Koprehensif</h1>
+<div class="space-y-6 p-6">
+	<h1 class="text-center text-2xl font-black text-text-main md:text-3xl">
+		Tambah Ketentuan Koprehensif
+	</h1>
 
-	<FormKetentuanKompre action="?/create" valuesData={form?.values} isEdit={false} />
+	<FormKetentuanKompre
+		action="?/create"
+		isModalAlert={true}
+		valuesData={form?.values}
+		isEdit={false}
+	/>
 </div>

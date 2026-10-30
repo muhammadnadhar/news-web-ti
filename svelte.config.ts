@@ -7,14 +7,16 @@ export default {
 	kit: {
 		adapter: adapter(),
 
-    csrf : {
-			checkOrigin: true, 
-      // untuk sekarang menandakna secara langsung
-      trustedOrigins: [
+		csrf: {
+			// checkOrigin: true,
+
+			checkOrigin: process.env.NODE_ENV === 'production',
+			//    // untuk sekarang menandakna secara langsung
+			trustedOrigins: [
 				'http://localhost:3000',
 				'http://127.0.0.1:3000',
 				'https://ti.fst.ar-raniry.ac.id/'
 			]
-    }
+		}
 	}
 };

@@ -1,22 +1,12 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
-	import { invalidateAll } from '$app/navigation';
 	import type { ResponseMessage } from '$lib/types/message';
 	//
 	// semua desian Halaman yang mengguakanTable akan memanggil Compoennt ini
 	//
 
 	import type { TableContentType, tableItem } from '$lib/types/tableContent';
-	import {
-		ArrowUpDown,
-		Edit3,
-		Trash2,
-		AlertTriangle,
-		X,
-		Search,
-		Plus,
-		Loader2Icon
-	} from 'lucide-svelte';
+	import { ArrowUpDown, Edit3, Trash2, Search, Plus } from 'lucide-svelte';
+	import AlertModal from '../notif/alertModal.svelte';
 
 	let {
 		title = '',
@@ -337,162 +327,22 @@
 <!-- --------------------------------MODAL----------------------  -->
 
 <!-- Modal Alert Konfirmasi Hapus -->
-{#if itemToDelete}
-	<div
-		class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-md transition-opacity"
-	>
-		<div
-			class="relative w-full max-w-md overflow-hidden rounded-3xl border border-border-light bg-bg-secondary p-6 text-text-main shadow-2xl transition-all sm:p-7"
-		>
-			<!-- Background Glow Accent (Red Warning Glow) -->
-			<div
-				class="pointer-events-none absolute -top-12 -right-12 h-32 w-32 rounded-full bg-status-error/10 blur-2xl"
-			></div>
-
-			<!-- Header Modal & Icon Badge -->
-			<div class="flex items-start justify-between gap-4">
-				<div class="flex items-center gap-3.5">
-					<div
-						class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-status-error/20 bg-status-error/10 text-status-error shadow-sm"
-					>
-						<AlertTriangle class="h-5 w-5" />
-					</div>
-					<div>
-						<h3 class="text-base font-bold text-text-main sm:text-lg">Konfirmasi Hapus</h3>
-						<p class="text-xs text-text-muted">Tindakan ini memerlukan verifikasi Anda</p>
-					</div>
-				</div>
-
-				<button
-					type="button"
-					onclick={closeDeleteModal}
-					disabled={isSubmitting}
-					class="flex h-8 w-8 items-center justify-center rounded-full border border-border-color bg-bg-primary text-text-muted transition-colors hover:bg-bg-secondary-hover hover:text-text-main disabled:opacity-50"
-					aria-label="Tutup modal"
-				>
-					<X class="h-4 w-4" />
-				</button>
-			</div>
-
-			<!-- Form Hapus Server Action -->
-			<form
-				method="POST"
-				action={deleteAction}
-				use:enhance={() => {
-					isSubmitting = true;
-					return async ({ result }) => {
-						if (result.type === 'success') {
-							// 1. Tunggu hingga SvelteKit selesai memuat ulang data tabel terbaru
-							await invalidateAll();
-
-							onDeleteSuccess?.(
-								(result.data as ResponseMessage) ?? {
-									status: 'success',
-									title: 'Berhasil',
-									message: 'Data berhasil dihapus.'
-								}
-							);
-
-							//  Tutup modal SETELAH data tabel ter-update
-							isSubmitting = false;
-							closeDeleteModal();
-						} else if (result.type === 'failure') {
-							isSubmitting = false;
-							closeDeleteModal();
-							onDeleteError?.(
-								(result.data as ResponseMessage) ?? {
-									status: 'error',
-									title: 'Gagal',
-									message: 'Gagal menghapus data.'
-								}
-							);
-						} else {
-							isSubmitting = false;
-							closeDeleteModal();
-							onDeleteError?.({
-								status: 'error',
-								title: 'Kesalahan Sistem',
-								message: 'Terjadi kesalahan sistem saat menghapus data.'
-							});
-						}
-					};
-				}}
-				class="mt-5 space-y-5"
-			>
-				<input type="hidden" name="id" value={itemToDelete.id} />
-
-				<!-- Detail Data yang Dihapus -->
-				<div class="space-y-3">
-					<p class="text-xs leading-relaxed text-text-muted sm:text-sm">
-						Apakah Anda yakin ingin menghapus data berikut?
-					</p>
-
-					{#if itemTitle}
-						<div class="rounded-2xl border border-border-color bg-bg-primary p-3.5">
-							<span class="block text-[10px] font-semibold tracking-wider text-text-muted uppercase"
-								>Target Data</span
-							>
-							<span class="text-sm font-semibold break-all text-text-main">{itemTitle}</span>
-						</div>
-					{/if}
-
-					<!-- Peringatan Akses/Dampak -->
-					<div
-						class="flex items-start gap-2.5 rounded-xl border border-status-error/20 bg-status-error/10 p-3 text-xs leading-relaxed text-status-error"
-					>
-						<AlertTriangle class="mt-0.5 h-4 w-4 shrink-0" />
-						<span>Tindakan ini permanen. Data yang dihapus tidak dapat dipulihkan kembali.</span>
-					</div>
-				</div>
-
-				<!-- Form Action Buttons -->
-				<div class="flex items-center justify-end gap-3 border-t border-border-color pt-4">
-					<button
-						type="button"
-						onclick={closeDeleteModal}
-						disabled={isSubmitting}
-						class="rounded-xl border border-border-color bg-bg-primary px-4 py-2.5 text-xs font-semibold text-text-muted transition-all hover:bg-bg-secondary-hover hover:text-text-main active:scale-95 disabled:opacity-50"
-					>
-						Batal
-					</button>
-
-					<button
-						type="submit"
-						disabled={isSubmitting}
-						class="inline-flex items-center gap-2 rounded-xl bg-status-error px-5 py-2.5 text-xs font-bold text-text-main shadow-lg shadow-status-error/20 transition-all hover:opacity-90 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
-					>
-						{#if isSubmitting}
-							<Loader2Icon class="h-4 w-4 animate-spin" />
-							<span>Menghapus data...</span>
-						{:else}
-							<Trash2 class="h-4 w-4" />
-							<span>Hapus Data</span>
-						{/if}
-					</button>
-				</div>
-			</form>
-		</div>
-	</div>
-{/if}
-
-<!-- contoh penggunaan  / ubah dahulu ke TbaleContentType-->
-<!---->
-<!-- <script lang="ts"> -->
-<!-- 	import DataTable from '$lib/components/DataTable.svelte'; -->
-<!-- 	import type { TableContentType } from '$lib/types/table'; -->
-<!---->
-<!-- 	let dataPeriode: TableContentType[] = [ -->
-<!-- 		{ id: 1, items: [{ colomn: 'Periode', row: 'Periode 2018 - 2021' }] }, -->
-<!-- 		{ id: 2, items: [{ colomn: 'Periode', row: 'Periode 2020 - 2022' }] }, -->
-<!-- 		{ id: 3, items: [{ colomn: 'Periode', row: 'Periode 2022 - 2024' }] } -->
-<!-- 	]; -->
-<!-- </script> -->
-<!---->
-<!-- <DataTable -->
-<!-- 	title="Data Sejarah Pimpinan Jurusan" -->
-<!-- 	addButtonLabel="+ Periode" -->
-<!-- 	data={dataPeriode} -->
-<!-- 	onAdd={() => alert('Tambah Periode')} -->
-<!-- 	onEdit={(item) => console.log('Edit', item)} -->
-<!-- 	onDelete={(item) => console.log('Delete', item)} -->
-<!-- /> -->
+<AlertModal
+	isOpen={itemToDelete ? true : false}
+	title="Konfirmasi Hapus"
+	subtitle="Tindakan ini memerlukan verifikasi Anda"
+	itemToDelete={itemToDelete?.id}
+	nameItemToDelete={'id'}
+	itemTitle={itemTitle.toString()}
+	{deleteAction}
+	isDeleteAction={true}
+	variant="error"
+	confirmText="Hapus Data"
+	onClose={closeDeleteModal}
+	onSuccess={(res: ResponseMessage) => {
+		onDeleteSuccess?.(res);
+	}}
+	onError={(err: ResponseMessage) => {
+		onDeleteError?.(err);
+	}}
+/>

@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { Save,  Loader2, UserCheck} from 'lucide-svelte';
+	import { Save, Loader2, UserCheck } from 'lucide-svelte';
 	import type { ActionData, PageData } from './$types';
-	import Message from '$lib/components/admin/message.svelte';
 	import { type MessageStatus, type ResponseMessage } from '$lib/types/message';
 	import FormEditor from '$lib/components/admin/formEditor.svelte';
+	import Message from '$lib/components/notif/message.svelte';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
@@ -126,7 +126,7 @@
 						Judul / Sub-Judul Sambutan
 					</label>
 					<input
-          id="title"
+						id="title"
 						type="text"
 						name="title"
 						bind:value={title}
@@ -137,7 +137,7 @@
 				</div>
 
 				<div class="space-y-2">
-					<input type="hidden" name="welcome_message" value={welcomeMessage} />
+					<input type="hidden" name="welcome_message" value={JSON.stringify(welcomeMessage)} />
 					<FormEditor
 						title="Isi Teks Sambutan"
 						label="Deskripsi / Text Sambutan"

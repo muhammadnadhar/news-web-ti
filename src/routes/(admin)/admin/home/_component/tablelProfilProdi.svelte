@@ -38,12 +38,10 @@
 				{#each listProfil as profil, index (profil.id)}
 					{@const images = profil.images ?? []}
 					<tr class="transition-colors hover:bg-bg-primary/50">
-						<!-- Nomor -->
 						<td class="px-4 py-4 font-semibold text-text-muted">
 							{index + 1}
 						</td>
 
-						<!-- Judul & Tipe Layout -->
 						<td class="max-w-50 px-4 py-4">
 							<p class="line-clamp-2 font-bold text-text-main">{profil.title}</p>
 							<span

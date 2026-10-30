@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Loader2, Plus } from 'lucide-svelte';
+	import {  Plus } from 'lucide-svelte';
 	import FormKalenderItem from './_component/formKalenderItem.svelte';
 	import { goto } from '$app/navigation';
 	import { mergeNewPath } from '$lib/utils.js';

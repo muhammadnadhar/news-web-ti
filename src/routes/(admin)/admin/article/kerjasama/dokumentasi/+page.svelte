@@ -1,25 +1,18 @@
 <script lang="ts">
-	import { Sparkles, X, Save, CameraIcon, AlertCircle } from 'lucide-svelte';
+	import { CameraIcon, AlertCircle } from 'lucide-svelte';
 	import TableContent from '$lib/components/admin/tableContent.svelte';
 	import type { TableContentType } from '$lib/types/tableContent';
 	import { gotoEdit, mergeNewPath } from '$lib/utils';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import type { ResponseMessage } from '$lib/types/message.js';
-	import Message from '$lib/components/admin/message.svelte';
+	import Message from '$lib/components/notif/message.svelte';
 	import type { ActivityDocumentationDTO } from '$lib/dto/admin/article/kerjasama.js';
 	import TableSkeleton from '$lib/components/loading/tableSkeleton.svelte';
 
 	let { data } = $props();
 
-	// State Management Modal & Form
-	let isModalOpen = $state(false);
-	let isEditMode = $state(false);
-	let selectedId = $state('');
-	let titleInput = $state('');
-	let imageUrlInput = $state('');
-	let descriptionInput = $state('');
-	let eventDateInput = $state('');
+
 
 	// Sync local state dengan data server
 	//let documentationList = $derived<TableContentType[]>(data.documentationList || []);
@@ -46,39 +39,6 @@
 		}));
 	}
 
-	// Modal Handlers
-	function openAddModal() {
-		isEditMode = false;
-		selectedId = '';
-		titleInput = '';
-		imageUrlInput = '';
-		descriptionInput = '';
-		eventDateInput = '';
-		isModalOpen = true;
-	}
-
-	function openEditModal(item: TableContentType) {
-		isEditMode = true;
-		selectedId = item.id;
-
-		const rawData = rawDocumentationList.find((d) => d.id === item.id);
-		if (rawData) {
-			titleInput = rawData.title;
-			imageUrlInput = rawData.image_url;
-			descriptionInput = rawData.description || '';
-			eventDateInput = rawData.event_date
-				? new Date(rawData.event_date).toISOString().split('T')[0]
-				: '';
-		} else {
-			const nameCol = item.items.find((col) => col.colomn === 'Nama');
-			titleInput = nameCol ? String(nameCol.row) : '';
-			imageUrlInput = '';
-			descriptionInput = '';
-			eventDateInput = '';
-		}
-
-		isModalOpen = true;
-	}
 
 	let showMessage = $state(false);
 	let messageConfig = $state<ResponseMessage>({
@@ -92,14 +52,7 @@
 		showMessage = true;
 	}
 
-	function closeModal() {
-		isModalOpen = false;
-		selectedId = '';
-		titleInput = '';
-		imageUrlInput = '';
-		descriptionInput = '';
-		eventDateInput = '';
-	}
+
 </script>
 
 <svelte:head>
@@ -146,7 +99,7 @@
 
 	<!-- Component TableContent dengan Loading & Error State -->
 	{#await data.documentationList}
-		<TableSkeleton columnsCount={4} showTitle={true} title="Memuat data dokumentasi kegiatan..." />
+		<TableSkeleton columnsCount={4} rowCount={2} />
 	{:then docList}
 		<TableContent
 			title="Daftar Dokumentasi Kegiatan"

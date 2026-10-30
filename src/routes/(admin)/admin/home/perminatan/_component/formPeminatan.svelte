@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { Save, AlertCircle } from 'lucide-svelte';
-	import type { MessageStatus } from '$lib/components/admin/message.svelte';
-	import Message from '$lib/components/admin/message.svelte';
+	import { Save } from 'lucide-svelte';
+	import Message, { type MessageStatus } from '$lib/components/notif/message.svelte';
 	import type { PerminatanTIItemDTO } from '$lib/dto/admin/home';
 	import type { PeminatanFormValues } from '$lib/types/values/admin/home';
 

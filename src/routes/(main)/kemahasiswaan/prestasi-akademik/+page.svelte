@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import { Trophy, Calendar, GraduationCap, User } from 'lucide-svelte';
+	import { Trophy, Calendar, GraduationCap, User, Maximize, X } from 'lucide-svelte';
 	import EmptyData from '../../_components/emptyData.svelte';
 	import { classTopSpace } from '$lib/constants';
 
@@ -10,6 +10,17 @@
 	let achievements = $derived(data.achievements);
 	let selectedSemester = $derived(data.selectedSemester);
 	let semesters = $derived(data.semesters);
+
+	// State untuk Modal Preview Sampul Buku / Pedoman
+	let selectedImage = $state<{ url: string; title: string } | null>(null);
+
+	function openModal(url: string, title: string) {
+		selectedImage = { url, title };
+	}
+
+	function closeModal() {
+		selectedImage = null;
+	}
 </script>
 
 <svelte:head>
@@ -70,7 +81,20 @@
 									src={item.image_url}
 									alt={item.achievement_name}
 									class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+									loading="lazy"
 								/>
+
+								<div
+									class="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+								>
+									<button
+										onclick={() => openModal(item.image_url!, item.student_name)}
+										class="inline-flex items-center gap-2 rounded-xl bg-bg-primary px-4 py-2 text-xs font-bold text-text-main shadow-xl transition-transform hover:scale-105 active:scale-95"
+									>
+										<Maximize class="h-4 w-4" />
+										<span>Lihat Sampul</span>
+									</button>
+								</div>
 							{:else}
 								<div class="flex h-full w-full items-center justify-center text-text-muted">
 									<Trophy class="h-10 w-10 opacity-30" />
@@ -118,3 +142,47 @@
 		</div>
 	{/if}
 </div>
+
+<!-- MODAL PREVIEW SAMPUL -->
+{#if selectedImage}
+	<div
+		class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
+		role="dialog"
+		aria-modal="true"
+	>
+		<button
+			onclick={closeModal}
+			class="absolute inset-0 h-full w-full cursor-default"
+			aria-label="Tutup Pratinjau"
+		></button>
+
+		<div
+			class="relative z-10 flex max-h-[90vh] max-w-3xl flex-col overflow-hidden rounded-2xl border border-border-color bg-bg-secondary shadow-2xl"
+		>
+			<div
+				class="bg-scitech-navy flex items-center justify-between border-b border-border-color px-6 py-4"
+			>
+				<h3 class="line-clamp-1 text-sm font-bold text-text-main sm:text-base">
+					{selectedImage.title}
+				</h3>
+				<button
+					onclick={closeModal}
+					class="rounded-lg p-1.5 text-text-muted transition-colors hover:bg-white/10 hover:text-text-main"
+					aria-label="Tutup Modal"
+				>
+					<X class="h-5 w-5" />
+				</button>
+			</div>
+
+			<div
+				class="bg-scitech-navy/80 flex max-h-[80vh] items-center justify-center overflow-auto p-4"
+			>
+				<img
+					src={selectedImage.url}
+					alt={selectedImage.title}
+					class="h-auto max-w-full rounded-lg object-contain"
+				/>
+			</div>
+		</div>
+	</div>
+{/if}

@@ -23,6 +23,10 @@
 	}
 </script>
 
+<head>
+	<title> Module Praktikum </title>
+</head>
+
 <div class={` ${classTopSpace} mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8`}>
 	<div class="mb-10 border-b border-border-color/40 pb-6 text-center sm:text-left">
 		<div
@@ -43,14 +47,12 @@
 	{#if data.modules && data.modules.length > 0}
 		<div class="space-y-12">
 			{#each data.modules as item, index (item.id)}
-			
-
 				<article
 					class="bg-scitech-slate/40 hover:border-scitech-mint/40 overflow-hidden rounded-2xl border border-border-color backdrop-blur-md transition-all duration-300"
 				>
 					<!-- Sub Header Item -->
 					<div
-						class="bg-bg-secondary/60 flex flex-col gap-2 border-b border-border-color/40 px-6 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-8"
+						class="flex flex-col gap-2 border-b border-border-color/40 bg-bg-secondary/60 px-6 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-8"
 					>
 						<div class="flex items-center gap-3">
 							<span

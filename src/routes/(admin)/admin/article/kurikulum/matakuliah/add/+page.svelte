@@ -11,6 +11,7 @@
 <FormCourceMap
 	curAction={'?/create'}
 	valueData={form?.values}
+	isModalAlert={true}
 	formError={form?.message}
 	isEditMode={false}
 	submitLabel="Simpan Peta MK"

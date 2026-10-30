@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { classTopSpace } from '$lib/constants';
 	import type { CourseMapDTO } from '$lib/dto/admin/article/kurikulum';
+	import { formatDate } from '$lib/utils';
 	import EmptyData from '../../_components/emptyData.svelte';
 	import type { PageData } from './$types';
-	import { Map, Calendar, Maximize2, X, AlertCircle, FolderOpen } from 'lucide-svelte';
+	import { Calendar, Maximize2, X, FolderOpen } from 'lucide-svelte';
 
 	interface Props {
 		data: PageData;
@@ -25,7 +26,6 @@
 
 <section class={`mx-auto ${classTopSpace} max-w-7xl px-4 py-12 sm:px-6 lg:px-8`}>
 	<div class="mb-10 pb-6 text-center sm:text-left">
-	
 		<h1 class="text-3xl font-extrabold tracking-tight text-text-main sm:text-4xl">
 			Peta Mata Kuliah
 		</h1>
@@ -37,18 +37,9 @@
 	{#if data.courseMaps && data.courseMaps.length > 0}
 		<div class="grid grid-cols-1 gap-8 md:grid-cols-2">
 			{#each data.courseMaps as item (item.id)}
-				{@const formattedDate = item.created_at
-					? new Date(item.created_at).toLocaleDateString('id-ID', {
-							day: 'numeric',
-							month: 'long',
-							year: 'numeric'
-						})
-					: '-'}
-
 				<article
 					class="group hover:border-scitech-mint/60 relative flex flex-col justify-between border border-border-color bg-bg-secondary/40 shadow-[6px_6px_0px_0px_rgba(0,0,0,0.4)] backdrop-blur-md transition-all duration-300 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,0.5)]"
 				>
-					<!-- Preview Gambar -->
 					<div
 						class="bg-scitech-navy relative h-64 w-full overflow-hidden border-b border-border-color sm:h-80"
 					>
@@ -72,12 +63,11 @@
 						</div>
 					</div>
 
-					<!-- Informasi Card -->
 					<div class="flex flex-1 flex-col justify-between p-6">
 						<div>
 							<div class="mb-2 flex items-center gap-1.5 text-xs text-text-muted">
 								<Calendar class="text-scitech-cyan h-3.5 w-3.5" />
-								<span>Diterbitkan: {formattedDate}</span>
+								<span>Diterbitkan: {formatDate(item.created_at)}</span>
 							</div>
 							<h2
 								class="group-hover:text-scitech-mint text-lg font-bold text-text-main transition-colors sm:text-xl"
@@ -86,15 +76,16 @@
 							</h2>
 						</div>
 
-						<div class="mt-4 border-t border-border-color/40 pt-4">
-							<button
-								onclick={() => openModal(item)}
-								class="bg-scitech-navy/70 text-scitech-mint hover:text-scitech-navy inline-flex w-full items-center justify-center gap-2 border border-border-color px-3 py-2 text-xs font-bold transition-all hover:bg-bg-secondary hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,0.5)] active:scale-95"
-							>
-								<span>Lihat Ukuran Penuh</span>
-								<Maximize2 class="h-3.5 w-3.5" />
-							</button>
-						</div>
+						<!-- saya matikan karena sudah ada di tengah  -->
+						<!-- <div class="mt-4 border-t border-border-color/40 pt-4"> -->
+						<!-- 	<button -->
+						<!-- 		onclick={() => openModal(item)} -->
+						<!-- 		class="bg-scitech-navy/70 text-scitech-mint hover:text-scitech-navy inline-flex w-full items-center justify-center gap-2 border border-border-color px-3 py-2 text-xs font-bold transition-all hover:bg-bg-secondary hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,0.5)] active:scale-95" -->
+						<!-- 	> -->
+						<!-- 		<span>Lihat Ukuran Penuh</span> -->
+						<!-- 		<Maximize2 class="h-3.5 w-3.5" /> -->
+						<!-- 	</button> -->
+						<!-- </div> -->
 					</div>
 				</article>
 			{/each}

@@ -8,18 +8,15 @@
 	let imagesList = $derived(calendar?.images ?? []);
 
 	// State gambar utama yang dipilih
-	let selectedImage = $state<string | null>(imagesList[0]?.image_url ?? null);
+	let selectedImage = $derived<string | null>(imagesList[0]?.image_url ?? null);
 
 	// Sinkronkan selectedImage jika prop calendar diperbarui
 	$effect(() => {
 		selectedImage = imagesList[0]?.image_url ?? null;
 	});
-
-	$inspect(calendar);
 </script>
 
 <article class="relative flex flex-col border border-border-color bg-bg-secondary/50 p-6 sm:p-8">
-	<!-- Header Item: Judul & Badge Status -->
 	<div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
 		<div>
 			<div
@@ -34,12 +31,10 @@
 		</div>
 	</div>
 
-	<!-- Deskripsi -->
 	{#if calendar?.description}
 		<div
 			class="mt-5 border border-border-color bg-bg-primary shadow-[4px_4px_0px_0px_rgba(0,0,0,0.4)]"
 		>
-			<!-- Header Panel Deskripsi -->
 			<div
 				class="bg-scitech-navy text-scitech-mint flex items-center justify-between border-b border-border-color px-4 py-2.5 text-xs font-bold tracking-wider uppercase"
 			>
@@ -73,12 +68,12 @@
 				>
 					<!-- Container dalam dengan overflow-hidden dan relative anchor yang presisi -->
 					<div
-						class="relative flex max-h-[500px] w-full items-center justify-center overflow-hidden bg-black/40"
+						class="relative flex max-h-125 w-full items-center justify-center overflow-hidden bg-black/40"
 					>
 						<img
 							src={selectedImage}
 							alt={calendar?.title ?? 'Kalender'}
-							class="h-auto max-h-[500px] w-full object-contain"
+							class="h-auto max-h-125 w-full object-contain"
 						/>
 
 						<!-- Tombol Buka Ukuran Penuh dikunci aman di dalam bingkai -->
@@ -102,7 +97,7 @@
 						<button
 							type="button"
 							onclick={() => (selectedImage = img.image_url)}
-							class={`relative h-20 w-28 flex-shrink-0 overflow-hidden border transition-all ${
+							class={`relative h-20 w-28 shrink-0 overflow-hidden border transition-all ${
 								selectedImage === img.image_url
 									? 'border-scitech-mint ring-scitech-mint/30 shadow-[3px_3px_0px_0px_rgba(0,0,0,0.4)] ring-2'
 									: 'border-border-color opacity-60 hover:opacity-100'

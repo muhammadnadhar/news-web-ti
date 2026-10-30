@@ -5,4 +5,9 @@
 	let { form }: { form: ActionData } = $props();
 </script>
 
-<FormProfilProdi isEdit={false} actionUrl="?/create" valuesData={form?.values} />
+<FormProfilProdi
+	isEdit={false}
+	isModalAlert={true}
+	actionUrl="?/create"
+	valuesData={form?.values}
+/>

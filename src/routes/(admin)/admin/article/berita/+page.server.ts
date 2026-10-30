@@ -60,7 +60,6 @@ export const actions: Actions = {
 		if (!publicId) {
 			return fail(400, { ...errorResponse('Public Id tidak di temukan', 'Error') });
 		}
-		console.info('id : ', publicId);
 		try {
 			await deleteImageFromCloudinary(publicId);
 			return successResponse('Berhasil di batalkan', 'Succcess');

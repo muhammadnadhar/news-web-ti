@@ -2,23 +2,18 @@
 	import TableContent from '$lib/components/admin/tableContent.svelte';
 	import type { TableContentType } from '$lib/types/tableContent';
 	import TableSkeleton from '$lib/components/loading/tableSkeleton.svelte';
-	import { gotoEdit, mergeNewPath } from '$lib/utils.js';
+	import { formatDate, gotoEdit, mergeNewPath } from '$lib/utils.js';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import type { ResponseMessage } from '$lib/types/message.js';
-	import Message from '$lib/components/admin/message.svelte';
 	import type { PedomanTaDTO } from '$lib/dto/admin/article/akademik.js';
+	import Message from '$lib/components/notif/message.svelte';
 
 	let { data } = $props();
 
 	// State Management
 	let searchQuery = $state('');
-	let isModalOpen = $state(false);
-	let isEditMode = $state(false);
-	let selectedId = $state('');
-	let titleInput = $state('');
-	let descriptionContent = $state('');
-	let currentImageUrl = $state<string | null>(null);
+
 
 	// Sync local state
 	let pedomanList = $derived<TableContentType[]>(data.pedomanList || []);
@@ -38,12 +33,7 @@
 				{
 					colomn: 'Tanggal Dibuat',
 					row: item.created_at
-						? new Date(item.created_at).toLocaleDateString('id-ID', {
-								day: 'numeric',
-								month: 'short',
-								year: 'numeric'
-							})
-						: '-'
+						? formatDate(item.created_at)						: '-'
 				}
 			]
 		}));
@@ -68,43 +58,7 @@
 		)
 	);
 
-	// Modal Handlers
-	function openAddModal() {
-		isEditMode = false;
-		selectedId = '';
-		titleInput = '';
-		descriptionContent = '';
-		currentImageUrl = null;
-		isModalOpen = true;
-	}
 
-	function openEditModal(item: TableContentType) {
-		isEditMode = true;
-		selectedId = item.id;
-
-		const rawData = rawPedomanList.find((p) => p.id === item.id);
-		if (rawData) {
-			titleInput = rawData.title;
-			descriptionContent = rawData.description || '';
-			currentImageUrl = rawData.image_url;
-		} else {
-			const titleCol = item.items.find((col) => col.colomn === 'Judul');
-			const descCol = item.items.find((col) => col.colomn === 'Description');
-			titleInput = titleCol ? String(titleCol.row) : '';
-			descriptionContent = descCol ? String(descCol.row) : '';
-			currentImageUrl = null;
-		}
-
-		isModalOpen = true;
-	}
-
-	function closeModal() {
-		isModalOpen = false;
-		selectedId = '';
-		titleInput = '';
-		descriptionContent = '';
-		currentImageUrl = null;
-	}
 </script>
 
 <!-- Alert / Toast Notification -->
@@ -130,11 +84,9 @@
 		<h1 class="text-2xl font-extrabold tracking-tight text-text-main sm:text-3xl">Pedoman TA</h1>
 	</div>
 
-	<!-- Component TableContent -->
 
-	<!-- Component TableContent -->
 	{#await data.pedomanList}
-		<TableSkeleton showTitle={true} title="Memuat Data Kerjasama..." columnsCount={2} />
+		<TableSkeleton rowCount={2}  columnsCount={2} />
 	{:then rawList}
 		<TableContent
 			title="Data Pedoman Tugas Akhir"

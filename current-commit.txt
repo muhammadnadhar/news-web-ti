@@ -1,2 +1,15 @@
-commit 20  debuger app 
-- add : menabahkan trust origine agar tidak ada pemblokiran dari csrf
+commit 21  update desain app dan debuger app dan menambahkan lapisan keamanan  dan menambhakan Fitur PWA ( mobile app )
+- update : meng update dan mengubah beberapa structure desian agar sesuia dan tidak menggangu component FormEditor ( khusu ke sini )
+- update : di sini beberapa halaman ( beasiswa , mapres ) mengizinkan kalau image boleh kosong 
+- add : menambahkan beberapa fiture modal sampul image pada halaman yang memiliki image agar bisa di lihat lebih detail
+- update : desian di halaman pedomant Ta di ganti dari grid ke flex colomn atas bawah
+- add : menambah penaganan error di +errro.svelte utnuk 502 atau bad gateway 
+- fix : perbaikan JSON.parse untuk data description <FormEditor> yang di kirim client agar di ubah ke string dahulu  
+- add : mobile bisa click juga banner icon uin utama
+- update : sekarang Message comaponent di pisah ke notif folder dan menambah modal component   baru  yang menghandle berbagai bentuk modal 
+- add : fitur keamanan baru saat admin user memasukan image , jika sempat pergi atau kembali atau batal , maka akan ada notifikasi untuk menghapus gambar tersebut 
+- add : menambhakan beberapa file config untuk PWA ( mobile )
+- fix : memperbaiki sidebar /admin saat bagian mobile sudah ada profile dan bisa di click
+- update : berita utama sekarang range nya adalah 6 untuk setiap pagination
+
+

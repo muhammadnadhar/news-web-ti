@@ -3,7 +3,7 @@
 	import { formatDate } from '$lib/utils';
 	import EmptyData from '../../_components/emptyData.svelte';
 	import type { PageData } from './$types';
-	import { Award, Calendar, Maximize2, X, AlertCircle } from 'lucide-svelte';
+	import { Calendar, Maximize2, X } from 'lucide-svelte';
 
 	interface Props {
 		data: PageData;
@@ -21,7 +21,6 @@
 	function closeModal() {
 		selectedImage = null;
 	}
-
 </script>
 
 <div class={` ${classTopSpace} mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8`}>
@@ -45,7 +44,7 @@
 					>
 						<Calendar class="h-3.5 w-3.5" />
 					</div>
-					<span>Diperbarui: {formatDate(data.accreditation.updated_at) } </span>
+					<span>Diperbarui: {formatDate(data.accreditation.updated_at)} </span>
 				</div>
 			</div>
 
@@ -101,7 +100,6 @@
 		role="dialog"
 		aria-modal="true"
 	>
-		<!-- Overlay Background to Close -->
 		<button
 			onclick={closeModal}
 			class="absolute inset-0 h-full w-full cursor-default"

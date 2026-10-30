@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Loader2, CalendarX } from 'lucide-svelte';
+	import { Loader2 } from 'lucide-svelte';
 	import FormAcademic from './_components/formAcademic.svelte';
 	import { classTopSpace } from '$lib/constants.js';
 	import EmptyData from '../../_components/emptyData.svelte';

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import FormEditor from '$lib/components/admin/formEditor.svelte';
-	import Message from '$lib/components/admin/message.svelte';
+	import Message from '$lib/components/notif/message.svelte';
 	import { randomUUID } from '$lib/crypto.js';
 	import type { MessageStatus, ResponseMessage } from '$lib/types/message.js';
 
@@ -10,8 +10,10 @@
 	let formElement = $state<HTMLFormElement | null>(null);
 
 	// Local state terhubung dengan data dari server
-	let id = $derived(form?.values.id ?? data?.visiMisi?.id ?? randomUUID());
-	let content = $derived(form?.values.content ?? data?.visiMisi?.content ?? '');
+	let id = $derived(form?.values?.id ?? data?.visiMisi?.id ?? randomUUID());
+	let content = $derived(form?.values?.content ?? data?.visiMisi?.content ?? '');
+
+	let showMessage = $state(false);
 
 	function handleParentSubmit(editorData: string) {
 		content = editorData; // Sinkronisasi ulang (opsional karena sudah bind:value)
@@ -27,7 +29,6 @@
 		title: '',
 		message: ''
 	});
-	let showMessage = $state(false);
 
 	function triggerMessage(status: MessageStatus, title: string, message: string) {
 		messageConfig = { status, title, message };
@@ -49,56 +50,57 @@
 {/if}
 
 <div class="space-y-6 p-6 lg:p-10">
-    <div class="border-b-2 border-border-color/20 pb-4">
-        <h1 class="text-2xl font-bold tracking-tight text-text-main">Visi Misi</h1>
-    </div>
+	<div class="border-b-2 border-border-color/20 pb-4">
+		<h1 class="text-2xl font-bold tracking-tight text-text-main">Visi Misi</h1>
+	</div>
 
-    <div class="relative bg-bg-secondary border border-border-color/30 border-t-4 border-t-scitech-mint p-6 lg:p-8 shadow-2xl">
-        
-        <div class="absolute top-0 right-0 h-2 w-2 bg-scitech-mint"></div>
+	<div
+		class="border-t-scitech-mint relative border border-t-4 border-border-color/30 bg-bg-secondary p-6 shadow-2xl lg:p-8"
+	>
+		<div class="bg-scitech-mint absolute top-0 right-0 h-2 w-2"></div>
 
-        <h2 class="text-scitech-mint mb-6 text-xs font-bold uppercase tracking-widest">
-           Form Ubah Data Visi Misi
-        </h2>
+		<h2 class="text-scitech-mint mb-6 text-xs font-bold tracking-widest uppercase">
+			Form Ubah Data Visi Misi
+		</h2>
 
-        <form
-            bind:this={formElement}
-            method="POST"
-            use:enhance={() => {
-                isSubmitting = true;
-                return async ({ result, update }) => {
-                    isSubmitting = false;
+		<form
+			bind:this={formElement}
+			method="POST"
+			use:enhance={() => {
+				return async ({ result, update }) => {
+					if (result.type === 'success') {
+						triggerMessage('success', 'Berhasil', 'Data Visi Misi berhasil disimpan!');
+					} else if (result.type === 'failure') {
+						triggerMessage(
+							'error',
+							'Gagal',
+							(result.data?.message as string) || 'Gagal menyimpan data.'
+						);
+					}
 
-                    if (result.type === 'success') {
-                        triggerMessage('success', 'Berhasil', 'Data Visi Misi berhasil disimpan!');
-                    } else if (result.type === 'failure') {
-                        triggerMessage(
-                            'error',
-                            'Gagal',
-                            (result.data?.message as string) || 'Gagal menyimpan data.'
-                        );
-                    }
+					await update({ reset: false });
+				};
+			}}
+			class="space-y-6"
+		>
+			<!-- Hidden Input ID -->
+			<input type="hidden" name="id" value={id} />
+			<input type="hidden" name="content" value={JSON.stringify(content)} />
 
-                    await update({ reset: false });
-                };
-            }}
-            class="space-y-6"
-        >
-            <!-- Hidden Input ID -->
-            <input type="hidden" name="id" value={id} />
-            <input type="hidden" name="content" value={content} />
+			<div class="space-y-2">
+				<label
+					for="content"
+					class="block text-xs font-semibold tracking-wider text-text-main uppercase"
+				>
+					Isi Visi Misi<span class="text-scitech-error ml-1">*</span>
+				</label>
 
-            <div class="space-y-2">
-                <label for="content" class="text-xs font-semibold uppercase tracking-wider text-text-main block">
-                    Isi Visi Misi<span class="text-scitech-error ml-1">*</span>
-                </label>
-
-                <!-- Component Editor (Pastikan komponen editor di dalam juga diatur agar tidak memiliki border-radius jika ingin konsisten total) -->
-                <div class="border border-border-color/30 bg-bg-primary/50 p-1">
-                    <FormEditor bind:value={content} onSave={handleParentSubmit} />
-                </div>
-            </div>
-       	<!-- {#if form?.message} -->
+				<!-- Component Editor (Pastikan komponen editor di dalam juga diatur agar tidak memiliki border-radius jika ingin konsisten total) -->
+				<div class="border border-border-color/30 bg-bg-primary/50 p-1">
+					<FormEditor bind:value={content} onSave={handleParentSubmit} />
+				</div>
+			</div>
+			<!-- {#if form?.message} -->
 			<!-- 	<p class="text-xs {form?.success ? 'text-scitech-mint' : 'text-scitech-error'}"> -->
 			<!-- 		{form.message} -->
 			<!-- 	</p> -->
@@ -114,6 +116,6 @@
 			<!-- 		<Send class="h-5 w-5" /> -->
 			<!-- 	</button> -->
 			<!-- </div> -->
-       </form>
-    </div>
+		</form>
+	</div>
 </div>

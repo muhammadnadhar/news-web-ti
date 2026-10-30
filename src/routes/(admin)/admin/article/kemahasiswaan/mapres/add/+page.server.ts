@@ -66,12 +66,12 @@ export const actions: Actions = {
 			});
 		}
 
-		if (!values.image_url) {
-			return fail(400, {
-				...warningResponse('Gambar wajib diunggah/diisi.', 'Validasi Gagal'),
-				values
-			});
-		}
+		// if (!values.image_url) {
+		// 	return fail(400, {
+		// 		...warningResponse('Gambar wajib diunggah/diisi.', 'Validasi Gagal'),
+		// 		values
+		// 	});
+		// }
 
 		if (values.is_academic !== 'y' && values.is_academic !== 'n') {
 			return fail(400, {
@@ -83,7 +83,7 @@ export const actions: Actions = {
 			});
 		}
 
-		const id = crypto.randomUUID();
+		const id = randomUUID();
 
 		try {
 			await createStudentAchievement(
@@ -98,8 +98,8 @@ export const actions: Actions = {
 			);
 
 			return {
-				...successResponse('Data Prestasi Mahasiswa berhasil disimpan!', 'Success'),
-				values
+				...successResponse('Data Prestasi Mahasiswa berhasil disimpan!', 'Success')
+				// values
 			};
 		} catch (err: any) {
 			console.error('Error creating student achievement:', err);

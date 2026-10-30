@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import Message from '$lib/components/admin/message.svelte';
 	import TableContent from '$lib/components/admin/tableContent.svelte';
 	import TableSkeleton from '$lib/components/loading/tableSkeleton.svelte';
+	import Message from '$lib/components/notif/message.svelte';
 	import type { NewsCategoryDTO } from '$lib/dto/admin/dataset.js';
 	import type { ResponseMessage } from '$lib/types/message.js';
 	import type { TableContentType } from '$lib/types/tableContent.js';
@@ -68,8 +68,7 @@
 	/>
 {/if}
 
-<div class="min-h-screen bg-bg-primary p-6 text-[var(--color-text-main)] transition-colors">
-	<!-- Header Page -->
+<div class="min-h-screen bg-bg-primary p-6 text-text-main transition-colors">
 	<div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 		<div>
 			<h1 class="text-2xl font-bold tracking-tight text-[var(--color-text-main)]">

@@ -20,7 +20,7 @@
 	import { goto, invalidateAll } from '$app/navigation';
 	import { page } from '$app/state';
 	import { Author } from '$lib/constants';
-	import Message from '$lib/components/admin/message.svelte';
+	import Message from '$lib/components/notif/message.svelte';
 	import type { ResponseMessage } from '$lib/types/message';
 
 	let { data }: { data: PageData } = $props();

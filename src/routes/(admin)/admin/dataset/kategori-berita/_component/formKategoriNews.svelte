@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { ArrowLeft, Tag, Link as LinkIcon, Save, Loader2Icon } from 'lucide-svelte';
+	import { Tag, Link as LinkIcon, Save, Loader2Icon } from 'lucide-svelte';
 
-	import Message from '$lib/components/admin/message.svelte';
+	import Message from '$lib/components/notif/message.svelte';
 	import type { MessageStatus } from '$lib/types/message';
 
 	// Props / State
@@ -22,8 +22,8 @@
 	});
 
 	// Field state || sekaligus default data jika di edit
-	let name = $state(valuesData?.name ?? data?.kategori?.name ?? '');
-	let slug = $state(valuesData?.slug ?? data?.kategori?.slug ?? '');
+	let name = $derived(valuesData?.name ?? data?.kategori?.name ?? '');
+	let slug = $derived(valuesData?.slug ?? data?.kategori?.slug ?? '');
 
 	// Utility Helper untuk Trigger Message
 	function triggerMessage(status: MessageStatus, title: string, message: string) {

@@ -1,9 +1,9 @@
 import { fail } from '@sveltejs/kit';
 import type { Actions } from './$types';
-import { randomUUID } from 'node:crypto';
 import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
 import { createNewsCategory } from '$lib/repository/admin/dataset/beritaKategory';
 import type { KategoriBeritaFormValues } from '$lib/types/values/admin/dataset';
+import { randomUUID } from '$lib/crypto';
 
 export const actions: Actions = {
 	save: async ({ request }) => {

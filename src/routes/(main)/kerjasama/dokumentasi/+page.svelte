@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import { Camera, Search, Maximize2, Calendar, AlertCircle, X, ExternalLink } from 'lucide-svelte';
+	import { Camera, Search, Maximize2, Calendar, X, ExternalLink } from 'lucide-svelte';
 	interface Props {
 		data: PageData;
 	}

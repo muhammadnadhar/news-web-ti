@@ -14,6 +14,7 @@
 
 	<FormKurikulums
 		action="?/create"
+		isModalAlert={true}
 		valuesData={form?.values}
 		submitLabel="Simpan Kurikulum Baru"
 		isBack={true}

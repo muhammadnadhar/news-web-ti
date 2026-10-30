@@ -22,6 +22,10 @@
 	}
 </script>
 
+<head>
+	<title> Ketentuan Kompre </title>
+</head>
+
 <div class={`${classTopSpace} mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8`}>
 	<div class="mb-10 border-b border-border-color/40 pb-6 text-center sm:text-left">
 		<div

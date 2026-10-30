@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
-	import Message from '$lib/components/admin/message.svelte';
+	import Message from '$lib/components/notif/message.svelte';
 	import { removeLastPath } from '$lib/utils';
 	import type { ResponseMessage } from '$lib/types/message';
 	import { ArrowLeft, Save, Loader2Icon, Briefcase } from 'lucide-svelte';

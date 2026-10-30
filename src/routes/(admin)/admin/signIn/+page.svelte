@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { Mail, Lock, LogIn, AlertCircle } from 'lucide-svelte';
+	import { Mail, Lock, LogIn } from 'lucide-svelte';
 	import type { ActionData } from './$types';
 
 	import uinIcon from '$lib/assets/favicon.svg'; // Sesuaikan path
 	import type { MessageStatus } from '$lib/types/message';
 	import { goto } from '$app/navigation';
-	import Message from '$lib/components/admin/message.svelte';
+	import Message from '$lib/components/notif/message.svelte';
 
 	let { form }: { form: ActionData } = $props();
 	let isSubmitting = $state(false);
@@ -72,7 +72,7 @@
 					<p class="mt-2 text-sm text-slate-400">Silakan masuk dengan kredensial yang valid.</p>
 				</div>
 
-					<form
+				<form
 					method="POST"
 					use:enhance={() => {
 						isSubmitting = true;

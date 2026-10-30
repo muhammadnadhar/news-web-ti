@@ -2,7 +2,7 @@
 	import { enhance } from '$app/forms';
 	import { CldUploadButton } from 'svelte-cloudinary';
 	import { LayoutDashboard, Trash2, ImageIcon, Upload, ArrowLeft } from 'lucide-svelte';
-	import Message from '$lib/components/admin/message.svelte';
+	import Message from '$lib/components/notif/message.svelte';
 
 	// Type Definitions untuk Message State
 	type MessageStatus = 'success' | 'error' | 'info' | 'warning';
@@ -113,125 +113,124 @@
 
 <div class="mx-auto max-w-3xl space-y-6">
 	<div class="flex items-center justify-between gap-4">
-	
-				<h1 class="text-xl font-bold text-text-main md:text-2xl">Edit Profile Dashboard</h1>
-				<p class="text-sm text-text-muted">Perbarui atau hapus banner/gambar profile dashboard.</p>
-		</div>
-
-		<!-- Tombol Trigger Modal Hapus -->
-		<button
-			type="button"
-			onclick={() => (showDeleteConfirm = true)}
-			class="inline-flex items-center gap-2 border border-status-error/40 bg-status-error/10 px-4 py-2.5 text-sm font-bold text-status-error shadow-[3px_3px_0px_0px_rgba(0,0,0,0.3)] transition-all hover:bg-status-error/20 active:scale-95"
-		>
-			<Trash2 class="h-4 w-4" />
-			<span class="hidden sm:inline">Hapus Data</span>
-		</button>
+		<h1 class="text-xl font-bold text-text-main md:text-2xl">Edit Profile Dashboard</h1>
+		<p class="text-sm text-text-muted">Perbarui atau hapus banner/gambar profile dashboard.</p>
 	</div>
 
-	<!-- Form Update Container -->
-	<form
-		method="POST"
-		action="?/update"
-		use:enhance={() => {
-			isSubmitting = true;
-			return async ({ update }) => {
-				isSubmitting = false;
-				await update();
-			};
-		}}
-		class="space-y-6 border border-border-color bg-bg-secondary p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,0.4)] md:p-8"
+	<!-- Tombol Trigger Modal Hapus -->
+	<button
+		type="button"
+		onclick={() => (showDeleteConfirm = true)}
+		class="inline-flex items-center gap-2 border border-status-error/40 bg-status-error/10 px-4 py-2.5 text-sm font-bold text-status-error shadow-[3px_3px_0px_0px_rgba(0,0,0,0.3)] transition-all hover:bg-status-error/20 active:scale-95"
 	>
-		<input type="hidden" name="image_path" value={imagePath} />
-		<input type="hidden" name="image_public_id" value={image_public_id} />
+		<Trash2 class="h-4 w-4" />
+		<span class="hidden sm:inline">Hapus Data</span>
+	</button>
+</div>
 
-		<!-- Field 1: Profile Text -->
-		<div class="space-y-2">
-			<label for="title" class="block text-sm font-bold text-text-main">
-				Profile Text <span class="text-status-error">*</span>
-			</label>
-			<input
-				type="text"
-				id="title"
-				name="title"
-				required
-				bind:value={title}
-				placeholder="Contoh: Banner Dashboard Utama"
-				class="w-full border border-border-color bg-bg-primary px-4 py-3 text-sm text-text-main transition-all placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
-			/>
-		</div>
+<!-- Form Update Container -->
+<form
+	method="POST"
+	action="?/update"
+	use:enhance={() => {
+		isSubmitting = true;
+		return async ({ update }) => {
+			isSubmitting = false;
+			await update();
+		};
+	}}
+	class="space-y-6 border border-border-color bg-bg-secondary p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,0.4)] md:p-8"
+>
+	<input type="hidden" name="image_path" value={imagePath} />
+	<input type="hidden" name="image_public_id" value={image_public_id} />
 
-		<!-- Field 2: Upload Gambar via Cloudinary -->
-		<div class="space-y-2">
-			<h5 class="block text-sm font-bold text-text-main">
-				Upload Gambar <span class="text-status-error">*</span>
-			</h5>
+	<!-- Field 1: Profile Text -->
+	<div class="space-y-2">
+		<label for="title" class="block text-sm font-bold text-text-main">
+			Profile Text <span class="text-status-error">*</span>
+		</label>
+		<input
+			type="text"
+			id="title"
+			name="title"
+			required
+			bind:value={title}
+			placeholder="Contoh: Banner Dashboard Utama"
+			class="w-full border border-border-color bg-bg-primary px-4 py-3 text-sm text-text-main transition-all placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
+		/>
+	</div>
 
-			{#if imagePath}
-				<!-- Pratinjau Gambar -->
-				<div
-					class="relative flex flex-col items-center justify-center border border-border-color bg-bg-primary p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)]"
-				>
-					<img
-						src={imagePath}
-						alt="Preview Profile Dashboard"
-						class="max-h-56 border border-border-color object-contain"
-					/>
-					<button
-						type="button"
-						onclick={handleRemoveImage}
-						disabled={isDeletingPhoto}
-						class="mt-3 inline-flex items-center gap-1.5 border border-status-error/30 bg-status-error/10 px-3 py-2 text-xs font-bold text-status-error transition-all hover:bg-status-error/20 active:scale-95 disabled:opacity-50"
-					>
-						<Trash2 class="h-3.5 w-3.5" />
-						<span>{isDeletingPhoto ? 'Menghapus...' : 'Hapus/Ganti Gambar'}</span>
-					</button>
-				</div>
-			{:else}
-				<!-- Dropzone Box Upload Gambar -->
-				<div
-					class="flex w-full flex-col items-center justify-center border-2 border-dashed border-border-color bg-bg-primary p-6 text-center transition-all hover:bg-bg-primary-glare"
-				>
-					<div
-						class="mb-3 flex h-12 w-12 items-center justify-center border border-border-color bg-bg-secondary text-accent-primary shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]"
-					>
-						<ImageIcon class="h-6 w-6" />
-					</div>
-					<p class="mb-3 text-xs text-text-muted">Format yang didukung: PNG, JPG, WEBP atau SVG</p>
+	<!-- Field 2: Upload Gambar via Cloudinary -->
+	<div class="space-y-2">
+		<h5 class="block text-sm font-bold text-text-main">
+			Upload Gambar <span class="text-status-error">*</span>
+		</h5>
 
-					<CldUploadButton
-						uploadPreset="preset_anda"
-						options={{ maxFiles: 1 }}
-						onSuccess={handleUploadSuccess}
-						class="inline-flex items-center gap-2 border border-border-color bg-accent-primary px-4 py-2 text-xs font-bold text-text-dark shadow-[3px_3px_0px_0px_rgba(0,0,0,0.4)] transition-all hover:bg-accent-primary-hover active:scale-95"
-					>
-						<Upload class="h-4 w-4" />
-						<span>Unggah Gambar Baru</span>
-					</CldUploadButton>
-				</div>
-			{/if}
-		</div>
-
-		<!-- Action Buttons -->
-		<div class="flex items-center justify-end gap-3 border-t border-border-color pt-6">
-			<button
-				type="button"
-				onclick={() => history.back()}
-				class="border border-border-color bg-bg-primary px-5 py-2.5 text-sm font-semibold text-text-main transition-all hover:bg-bg-secondary-hover active:scale-95"
+		{#if imagePath}
+			<!-- Pratinjau Gambar -->
+			<div
+				class="relative flex flex-col items-center justify-center border border-border-color bg-bg-primary p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)]"
 			>
-				Batal
-			</button>
-
-			<button
-				type="submit"
-				disabled={isSubmitting || !imagePath}
-				class="inline-flex items-center gap-2 border border-border-color bg-accent-primary px-6 py-2.5 text-sm font-bold text-text-dark shadow-[4px_4px_0px_0px_rgba(0,0,0,0.4)] transition-all hover:bg-accent-primary-hover active:scale-95 disabled:opacity-50"
+				<img
+					src={imagePath}
+					alt="Preview Profile Dashboard"
+					class="max-h-56 border border-border-color object-contain"
+				/>
+				<button
+					type="button"
+					onclick={handleRemoveImage}
+					disabled={isDeletingPhoto}
+					class="mt-3 inline-flex items-center gap-1.5 border border-status-error/30 bg-status-error/10 px-3 py-2 text-xs font-bold text-status-error transition-all hover:bg-status-error/20 active:scale-95 disabled:opacity-50"
+				>
+					<Trash2 class="h-3.5 w-3.5" />
+					<span>{isDeletingPhoto ? 'Menghapus...' : 'Hapus/Ganti Gambar'}</span>
+				</button>
+			</div>
+		{:else}
+			<!-- Dropzone Box Upload Gambar -->
+			<div
+				class="flex w-full flex-col items-center justify-center border-2 border-dashed border-border-color bg-bg-primary p-6 text-center transition-all hover:bg-bg-primary-glare"
 			>
-				<LayoutDashboard class="h-4 w-4" />
-				<span>{isSubmitting ? 'Menyimpan...' : 'Perbarui Data'}</span>
-			</button>
-		</div>
-	</form>
+				<div
+					class="mb-3 flex h-12 w-12 items-center justify-center border border-border-color bg-bg-secondary text-accent-primary shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]"
+				>
+					<ImageIcon class="h-6 w-6" />
+				</div>
+				<p class="mb-3 text-xs text-text-muted">Format yang didukung: PNG, JPG, WEBP atau SVG</p>
+
+				<CldUploadButton
+					uploadPreset="preset_anda"
+					options={{ maxFiles: 1 }}
+					onSuccess={handleUploadSuccess}
+					class="inline-flex items-center gap-2 border border-border-color bg-accent-primary px-4 py-2 text-xs font-bold text-text-dark shadow-[3px_3px_0px_0px_rgba(0,0,0,0.4)] transition-all hover:bg-accent-primary-hover active:scale-95"
+				>
+					<Upload class="h-4 w-4" />
+					<span>Unggah Gambar Baru</span>
+				</CldUploadButton>
+			</div>
+		{/if}
+	</div>
+
+	<!-- Action Buttons -->
+	<div class="flex items-center justify-end gap-3 border-t border-border-color pt-6">
+		<button
+			type="button"
+			onclick={() => history.back()}
+			class="border border-border-color bg-bg-primary px-5 py-2.5 text-sm font-semibold text-text-main transition-all hover:bg-bg-secondary-hover active:scale-95"
+		>
+			Batal
+		</button>
+
+		<button
+			type="submit"
+			disabled={isSubmitting || !imagePath}
+			class="inline-flex items-center gap-2 border border-border-color bg-accent-primary px-6 py-2.5 text-sm font-bold text-text-dark shadow-[4px_4px_0px_0px_rgba(0,0,0,0.4)] transition-all hover:bg-accent-primary-hover active:scale-95 disabled:opacity-50"
+		>
+			<LayoutDashboard class="h-4 w-4" />
+			<span>{isSubmitting ? 'Menyimpan...' : 'Perbarui Data'}</span>
+		</button>
+	</div>
+</form>
 <!-- Modal Konfirmasi Hapus Data -->
 {#if showDeleteConfirm}
 	<div

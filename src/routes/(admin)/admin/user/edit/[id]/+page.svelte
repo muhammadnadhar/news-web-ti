@@ -11,7 +11,7 @@
 
 <div class="min-h-screen p-4 text-text-main md:p-8">
 	<div class="mx-auto max-w-4xl space-y-6">
-		<div class="border-scitech-slate/20 flex items-center justify-between border-b pb-4">
+		<div class="border-scitech-slate/20 flex items-center justify-between pb-4">
 			<div class="flex items-center gap-3">
 				<div>
 					<h1 class="text-2xl font-bold tracking-tight text-text-main">Edit Pengguna</h1>

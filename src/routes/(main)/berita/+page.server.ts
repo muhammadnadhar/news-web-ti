@@ -11,7 +11,7 @@ export const load: PageServerLoad = ({ url, setHeaders }) => {
 	// Ambil nomor halaman dari URL searchParam
 	const page = Math.max(1, Number(url.searchParams.get('page')) || 1);
 	// Tentukan limit per halaman
-	const limit = Math.max(1, Number(url.searchParams.get('limit')) || 5);
+	const limit = Math.max(1, Number(url.searchParams.get('limit')) || 6);
 
 	const from = (page - 1) * limit;
 	const to = from + limit;

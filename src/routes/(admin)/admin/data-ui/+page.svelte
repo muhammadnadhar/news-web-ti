@@ -7,7 +7,6 @@
 		Laptop,
 		Library,
 		ArrowUpRight,
-		Loader2,
 		Trash,
 		Trash2
 	} from 'lucide-svelte';
@@ -17,7 +16,7 @@
 	import { goto } from '$app/navigation';
 	import { navMenuItems } from '$lib/data/navbar';
 	import { enhance } from '$app/forms';
-	import Message from '$lib/components/admin/message.svelte';
+	import Message from '$lib/components/notif/message.svelte';
 	import type { ResponseMessage } from '$lib/types/message';
 	import { actionDashboardLinks } from '$lib/data/dashboard';
 	import { classShadowDown } from '$lib/constants';

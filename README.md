@@ -33,7 +33,9 @@ News TI ( UIN Ar-Raniry )
 - `tsx` : typescrip yang akan di gunakan di
 - `bun` : runtime yang di gunakan di projek ini
 - `svelte-cloudinary` : koneksi ke cloudinary untuk menyimpan file gambar
-= `olso` : for password auth , menggunakan `Argon`
+- `olso` : for password auth , menggunakan `Argon`
+- `@vite-pwa/sveltekit` & `workbox-window` : plugin untuk menjalanakna aplikasi di **Mobile** dengan PWD ( Progressive Web App )
+
 <br>
 
 ### Start
@@ -91,6 +93,7 @@ npm run build
 - nah di halaman /admin/home/profilProdi sekarang bsia menambhakan data secara dinamis dan menyesuikan data desan , sehingga data yang perlu di tampilkan di halaman depan bisa banyak
 - kurikulum sekarang bisa membuat kurikulum tersendiri dan akan otomatis akan update di navbar berdasarkan title
 - di web sebelumnya untuk menu prestasi non-anademic , data kosong tidak di hanlde , melainkan di tampilkan langsung halaman kosong ke user , sekarang sudah di sesuiakan
+- fitur : mobile aplikasi ( web view )
 
 ##### Admin panel
 
@@ -134,7 +137,7 @@ Build Image
 ```bash
 docker compose up -d --build
 
-# menjaalna secara bersih 
+# menjaalna secara bersih
 docker compose down && docker compose up -d --build --force-recreate
 
 ```
@@ -146,25 +149,55 @@ Execusi Image nya
 docker run -d -p 3000:3000 --name web-berita-ti web-berita-ti
 ```
 
-- sesuikan port untuk databasenya agar tidak bentrok 
+#### Database
 
-##### menyimapn ke Docker Hub 
+```bash
+# masuk ke container database ( maria db )
+sudo docker exec -it newsTi_mariadb mariadb -u root -p
+```
+
+Bakup ( expot dan import )
+
+```bash
+# bakup atau export data
+sudo docker exec newsTi_mariadb mariadb-dump -u root -p$(grep DB_PASSWORD .env | cut -d '=' -f2) --all-databases > backup_$(date +%Y-%m-%d_%H%M).sql
+
+# import data bakup ke database
+sudo docker exec -i newsTi_mariadb mariadb -u root -p$(grep DB_PASSWORD .env | cut -d '=' -f2) < nama_file_backup.sql
+```
+
+- sesuikan port untuk databasenya agar tidak bentrok
+
+##### menyimapn ke Docker Hub
 
 simpan di <https://hub.docker.com/repository/docker/bgdar/web-ti/general>
 
 ```bash
-# build ulang image 
+# build ulang image
 docker compose build --no-cache web
 
-# berikan tag 
+# berikan tag
 docker tag web-berita-ti-web bgdar/web-ti:latest
 
-# simpan 
+# simpan
 docker push bgdar/web-ti:latest
 
 ```
 
+### Mobile App
 
+##### PWA ( Progressive Web App )
+
+> sekarang aplikasi mendukung pwa untuk di gunakan langsung/diinstall selayaknya aplikasi mobile tapi tetap web
+
+untuk Installasi perhatikan Gambar di bawah ini
+
+<table>
+  <tr>
+    <td><img src="pwa-1.jpeg" alt="menu download" width="100%"/></td>
+    <td><img src="pwa-2.jpeg" alt="pintasan / install " width="100%"/></td>
+  </tr>
+</table>
 
 ### App Color
 

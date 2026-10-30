@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import Message from '$lib/components/admin/message.svelte';
+	import Message from '$lib/components/notif/message.svelte';
 	import type { HistoryLeadersDTO, LecturerStaffItemDTO } from '$lib/dto/admin/article/profile';
 	import type { ResponseMessage } from '$lib/types/message';
 	import type { HistoryLeaderFormValues } from '$lib/types/values/admin/article';
 	import { parsePhotoToUrl } from '$lib/utils.js';
-	import { Calendar, Check, Search, ShieldAlert, User, UserPlus, X } from 'lucide-svelte';
+	import { Calendar, Check, Search, User, UserPlus, X } from 'lucide-svelte';
 
 	type Props = {
 		lecturers: LecturerStaffItemDTO[];

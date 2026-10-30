@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { CldUploadWidget } from 'svelte-cloudinary';
-	import Message from '$lib/components/admin/message.svelte';
 	import type { ResponseMessage } from '$lib/types/message';
 	import {
 		Building2,
@@ -28,22 +27,27 @@
 	import type { DisplayInstructionType } from '$lib/types/home';
 	import { getInstructionOptions } from '$lib/data/home';
 	import type { ProfilProdiFormValues } from '$lib/types/values/admin/home';
+	import Message from '$lib/components/notif/message.svelte';
+	import AlertModal from '$lib/components/notif/alertModal.svelte';
+	import { beforeNavigate } from '$app/navigation';
 
 	let {
 		isEdit = false,
 		actionUrl = isEdit ? '?/update' : '?/create',
 		initialData = null,
+		isModalAlert = false,
 		valuesData
 	}: {
 		isEdit?: boolean;
 		actionUrl?: string;
+		isModalAlert?: boolean;
 		valuesData: ProfilProdiFormValues | null;
 		initialData?: ProfilProdiItemDTO | null;
 	} = $props();
 
 	// Inisialisasi state judul & deskripsi
-	let title = $state(valuesData?.title ?? initialData?.title ?? '');
-	let description = $state(valuesData?.description ?? initialData?.description ?? '');
+	let title = $derived(valuesData?.title ?? initialData?.title ?? '');
+	let description = $derived(valuesData?.description ?? initialData?.description ?? '');
 
 	// Helper untuk mengekstrak nama asli file dari Cloudinary public_id atau URL
 	function extractOriginalName(publicId?: string | null, url?: string | null): string {
@@ -60,14 +64,16 @@
 	}
 
 	// Mengambil data awal array gambar
-	let rawImages = valuesData?.images
-		? typeof valuesData?.images === 'string'
-			? JSON.parse(valuesData?.images)
-			: valuesData?.images
-		: (initialData?.images ?? []);
+	let rawImages = $derived(
+		valuesData?.images
+			? typeof valuesData?.images === 'string'
+				? JSON.parse(valuesData?.images)
+				: valuesData?.images
+			: (initialData?.images ?? [])
+	);
 
 	// State Array Gambar (ImageItem[]) dengan pengisian caption default jika belum diisi
-	let images = $state<ImageItem[]>(
+	let images = $derived<ImageItem[]>(
 		rawImages.map((img: ImageItem) => ({
 			...img,
 			caption: img.caption || extractOriginalName(img.public_id, img.url)
@@ -85,8 +91,11 @@
 		message: ''
 	});
 
+	let isAlern = $state(false);
+	let isSuccesAlert = $state(false);
+
 	// State untuk menyimpan tipe instruksi yang dipilih
-	let displayInstruction = $state<DisplayInstructionType | string>(
+	let displayInstruction = $derived<DisplayInstructionType | string>(
 		initialData?.display_instruction || 'FLEX_CENTER'
 	);
 
@@ -146,9 +155,52 @@
 			images = images.filter((_, i) => i !== index);
 		}
 	}
+
+	const handleCloseModalAlernt = () => {
+		isAlern = false;
+	};
+	const handleErrorClose = () => {
+		isSuccesAlert = false;
+		isAlern = false;
+		triggerMessage('info', 'Ada Kesalahan', ' Silahkan Batalkan upload / hapus di cloudinary');
+	};
+
+	const handleSuccesAlernt = async () => {
+		isSuccesAlert = true;
+		try {
+			// loop untuk mengahpus / membersihkan semua image
+
+			for (let i = images.length - 1; i >= 0; i--) {
+				await removePhoto(i);
+			}
+
+			triggerMessage('success', 'Berhasil', 'Gambar berhasil dibersihkan.');
+		} catch (error) {
+			console.error('Gagal membersihkan gambar:', error);
+			triggerMessage('error', 'Gagal', 'Terjadi kesalahan saat membersihkan gambar.');
+		} finally {
+			isAlern = false; // Pastikan modal tertutup
+		}
+	};
+
+	// Intersepsi navigasi sebelum terjadi
+	beforeNavigate((navigation) => {
+		if (!isModalAlert) return;
+
+		const isDifferentUrl = navigation.to?.url.pathname !== navigation.from?.url.pathname;
+
+		// Cek jika belum sukses, beda URL, dan gambar ada isinya
+		if (!isSuccesAlert && isDifferentUrl && images && images.length > 0) {
+			// Batalkan perpindahan halaman
+			navigation.cancel();
+
+			// Tampilkan alert modal peringatan
+			isAlern = true;
+			isSuccesAlert = false;
+		}
+	});
 </script>
 
-<!-- Message Toast -->
 {#if showMessage}
 	<Message
 		status={showMessage ? messageConfig.status : 'error'}
@@ -179,9 +231,7 @@
 		</div>
 	</div>
 
-	<div
-		class="rounded-2xl border border-border-color/10 bg-bg-secondary/50 p-6 shadow-2xl sm:p-8"
-	>
+	<div class="rounded-2xl border border-border-color/10 bg-bg-secondary/50 p-6 shadow-2xl sm:p-8">
 		<form
 			method="POST"
 			action={actionUrl}
@@ -235,12 +285,11 @@
 			<input type="hidden" name="images" value={JSON.stringify(images)} />
 			<input type="hidden" name="display_instruction" value={displayInstruction} />
 
-			<!-- Field: Judul -->
 			<div class="space-y-2">
 				<label for="title" class="flex items-center gap-2 text-xs font-semibold text-text-main">
 					<FileText class="text-scitech-cyan h-4 w-4" />
 					<span>Judul Profil Prodi</span>
-					<span class="text-red-400">*</span>
+					<span class="text-status-error/20">*</span>
 				</label>
 
 				<input
@@ -251,7 +300,7 @@
 					placeholder="Contoh: Visi dan Misi Program Studi Teknologi Informasi"
 					required
 					disabled={isSubmitting}
-					class="bg-scitech-navy focus:border-scitech-mint focus:ring-scitech-mint/20 w-full rounded-xl border border-border-color/10 px-4 py-3 text-xs text-text-main placeholder-text-muted transition-all focus:ring-2 focus:outline-none disabled:opacity-50"
+					class="focus:border-scitech-mint focus:ring-scitech-mint/20 w-full rounded-xl border border-border-color/10 bg-bg-primary px-4 py-3 text-xs text-text-main placeholder-text-muted transition-all focus:ring-2 focus:outline-none disabled:opacity-50"
 				/>
 			</div>
 
@@ -287,7 +336,7 @@
 										type="button"
 										onclick={() => removePhoto(idx)}
 										disabled={deletingIndex === idx || isSubmitting}
-										class="absolute top-1.5 right-1.5 rounded-lg bg-red-600/80 p-1.5 text-text-main backdrop-blur-md transition-all hover:bg-red-600 active:scale-95 disabled:opacity-50"
+										class="absolute top-1.5 right-1.5 rounded-lg bg-status-error/80 p-1.5 text-text-main backdrop-blur-md transition-all hover:bg-status-error/60 active:scale-95 disabled:opacity-50"
 										title="Hapus gambar ini"
 									>
 										{#if deletingIndex === idx}
@@ -311,7 +360,7 @@
 										bind:value={images[idx].caption}
 										placeholder={fallbackName}
 										disabled={isSubmitting}
-										class="bg-scitech-navy focus:border-scitech-mint focus:ring-scitech-mint/30 w-full rounded-lg border border-border-color/10 px-2.5 py-1.5 text-[11px] text-text-main placeholder-text-muted/50 transition-colors focus:ring-1 focus:outline-none disabled:opacity-50"
+										class="focus:border-scitech-mint focus:ring-scitech-mint/30 w-full rounded-lg border border-border-color/10 bg-bg-primary px-2.5 py-1.5 text-[11px] text-text-main placeholder-text-muted/50 transition-colors focus:ring-1 focus:outline-none disabled:opacity-50"
 									/>
 								</div>
 							</div>
@@ -427,7 +476,7 @@
 					<span>Deskripsi / Konten Lengkap Profil Prodi</span>
 				</label>
 
-				<input type="hidden" name="description" value={description} />
+				<input type="hidden" name="description" value={JSON.stringify(description)} />
 
 				<FormEditor
 					title="Editor Konten Profil Prodi"
@@ -466,3 +515,21 @@
 		</form>
 	</div>
 </div>
+
+<!-- Modla peringatan jika image sudha di upload  -->
+{#if isModalAlert}
+	<AlertModal
+		isOpen={isAlern}
+		title="Peringatan Gambar Upload"
+		subtitle="Hapus Gambar Sebelumnya atau manual di Cloudinary"
+		variant="warning"
+		confirmText="Hapus Gambar"
+		onClose={handleCloseModalAlernt}
+		onSuccess={() => {
+			handleSuccesAlernt();
+		}}
+		onError={() => {
+			handleErrorClose();
+		}}
+	/>
+{/if}

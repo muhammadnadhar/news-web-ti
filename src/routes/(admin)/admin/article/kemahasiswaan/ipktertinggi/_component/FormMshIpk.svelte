@@ -1,15 +1,17 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { beforeNavigate } from '$app/navigation';
 	import {
 		getUploadConfig,
 		folder_cloudinary_admin_article_kemahasiswaan,
 		getUploadOptions,
 		upload_cloudinary_preset
 	} from '$lib/cloudinary/client';
-	import Message, { type MessageStatus } from '$lib/components/admin/message.svelte';
+	import AlertModal from '$lib/components/notif/alertModal.svelte';
+	import Message from '$lib/components/notif/message.svelte';
 	import type { HighGpaStudentDTO } from '$lib/dto/admin/article/kemahasiswaan';
 	import type { AngkatanDTO, SemesterDTO } from '$lib/dto/admin/dataset';
-	import type { ResponseMessage } from '$lib/types/message';
+	import type { MessageStatus, ResponseMessage } from '$lib/types/message';
 	import type { IpkTertinggiFormValues } from '$lib/types/values/admin/article';
 	import {
 		User,
@@ -30,12 +32,14 @@
 		angkatanList = [],
 		semesterList = [],
 		valueData,
+		isModalAlert = false,
 		isEdit = false,
 		action = '?/save'
 	}: {
 		valueData?: IpkTertinggiFormValues | null;
 		initialData?: HighGpaStudentDTO | null;
 
+		isModalAlert?: boolean;
 		angkatanList: AngkatanDTO[];
 		semesterList: SemesterDTO[];
 		isEdit?: boolean;
@@ -50,6 +54,50 @@
 
 	// Default/prefilled value priority: form validation rerun > initialData > empty
 	let imgPreview = $derived(valueData?.image_url ?? initialData?.image_url ?? '');
+
+	let isAlern = $state(false);
+	let isSuccesAlert = $state(false);
+
+	const handleCloseModalAlernt = () => {
+		isAlern = false;
+	};
+	const handleErrorClose = () => {
+		isSuccesAlert = false;
+		isAlern = false;
+		triggerMessage('info', 'Di batalkan', 'Silahkan setujuin penghapusan image');
+	};
+
+	const handleSuccesAlernt = async () => {
+		isSuccesAlert = true;
+		try {
+			await removeImage();
+			imgPreview = '';
+
+			triggerMessage('success', 'Berhasil', 'Gambar berhasil dibersihkan.');
+		} catch (error) {
+			console.error('Gagal membersihkan gambar:', error);
+			triggerMessage('error', 'Gagal', 'Terjadi kesalahan saat membersihkan gambar.');
+		} finally {
+			isAlern = false; // Pastikan modal tertutup
+		}
+	};
+
+	// Intersepsi navigasi sebelum terjadi
+	beforeNavigate((navigation) => {
+		if (!isModalAlert) return;
+
+		// Cek apakah target URL berbeda dengan URL saat ini
+		const isDifferentUrl = navigation.to?.url.pathname !== navigation.from?.url.pathname;
+
+		if (!isSuccesAlert && isDifferentUrl && imgPreview !== '' && imgPreview.length > 0) {
+			// Batalkan perpindahan halaman
+			navigation.cancel();
+
+			// Tampilkan alert pemberitahuan
+			isAlern = true;
+			isSuccesAlert = false;
+		}
+	});
 
 	function handleUploadSuccess(result: any) {
 		if (result?.info?.secure_url) {
@@ -186,7 +234,7 @@
 			<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
 				<div class="space-y-2 md:col-span-2">
 					<label for="student_name" class="block text-sm font-semibold text-text-main">
-						Nama Mahasiswa <span class="text-amber-400">*</span>
+						Nama Mahasiswa <span class="text-accent-yellow-/40">*</span>
 					</label>
 					<div class="relative rounded-xl shadow-sm">
 						<div
@@ -251,13 +299,13 @@
 							name="angkatan_id"
 							required
 							disabled={isSubmitting}
-							class="block w-full rounded-xl border border-bg-secondary-hover bg-bg-primary py-2.5 pr-4 pl-10 text-sm text-text-main transition-all outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 disabled:opacity-50"
+							class="block w-full rounded-xl border border-bg-secondary-hover bg-bg-primary py-2.5 pr-4 pl-10 text-sm text-text-main transition-all outline-none focus:border-accent-yellow/40 focus:ring-2 focus:ring-accent-yellow/20 disabled:opacity-50"
 						>
 							<option value="">-- Pilih Angkatan --</option>
 							{#each angkatanList as angkatan}
 								{@const selectedId = valueData?.angkatan_id ?? initialData?.angkatan_id}
 								<option value={angkatan.id} selected={String(selectedId) === String(angkatan.id)}>
-									{angkatan.year || angkatan.nama || angkatan.id}
+									{angkatan.year || angkatan.id}
 								</option>
 							{/each}
 						</select>
@@ -267,7 +315,7 @@
 				<!-- Semester -->
 				<div class="space-y-2 md:col-span-2">
 					<label for="semester_id" class="block text-sm font-semibold text-text-main">
-						Semester <span class="text-amber-400">*</span>
+						Semester <span class="text-accent-yellow/40">*</span>
 					</label>
 					<div class="relative rounded-xl shadow-sm">
 						<div
@@ -280,13 +328,13 @@
 							name="semester_id"
 							required
 							disabled={isSubmitting}
-							class="block w-full rounded-xl border border-bg-secondary-hover bg-bg-primary py-2.5 pr-4 pl-10 text-sm text-text-main transition-all outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 disabled:opacity-50"
+							class="block w-full rounded-xl border border-bg-secondary-hover bg-bg-primary py-2.5 pr-4 pl-10 text-sm text-text-main transition-all outline-none focus:border-accent-yellow/40 focus:ring-2 focus:ring-amber-400/20 disabled:opacity-50"
 						>
 							<option value="">-- Pilih Semester --</option>
 							{#each semesterList as semester}
 								{@const selectedId = valueData?.semester_id ?? initialData?.semester_id}
 								<option value={semester.id} selected={String(selectedId) === String(semester.id)}>
-									{semester.name || semester.nama || semester.id}
+									{semester.name || semester.id}
 								</option>
 							{/each}
 						</select>
@@ -392,3 +440,22 @@
 		</form>
 	</div>
 </div>
+
+<!-- Modla peringatan jika image sudha di upload  -->
+
+{#if isModalAlert}
+	<AlertModal
+		isOpen={isAlern}
+		title="Peringatan Gambar Upload"
+		subtitle="Hapus Gambar Sebelumnya atau manual di Cloudinary"
+		variant="warning"
+		confirmText="Hapus Gambar"
+		onClose={handleCloseModalAlernt}
+		onSuccess={() => {
+			handleSuccesAlernt();
+		}}
+		onError={() => {
+			handleErrorClose();
+		}}
+	/>
+{/if}

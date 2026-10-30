@@ -8,14 +8,18 @@
 		getUploadOptions,
 		upload_cloudinary_preset
 	} from '$lib/cloudinary/client';
-	import Message, { type MessageStatus } from '$lib/components/admin/message.svelte';
+	import Message, { type MessageStatus } from '$lib/components/notif/message.svelte';
 	import type { CourseMapDTO } from '$lib/dto/admin/article/kurikulum';
 	import type { CourseMapFormValues } from '$lib/types/values/admin/article';
+	import AlertModal from '$lib/components/notif/alertModal.svelte';
+	import type { ResponseMessage } from '$lib/types/message';
+	import { beforeNavigate } from '$app/navigation';
 
 	interface Props {
 		initialData?: CourseMapDTO | null;
 		valueData: CourseMapFormValues | undefined;
 		isEditMode?: boolean;
+		isModalAlert?: boolean;
 		submitLabel?: string;
 		curAction?: string;
 		onCancel?: () => void;
@@ -24,6 +28,7 @@
 	let {
 		initialData = null,
 		valueData,
+		isModalAlert = false,
 		isEditMode = false,
 		submitLabel,
 		curAction = '?/default',
@@ -36,15 +41,13 @@
 	let isSubmitting = $state(false);
 	let showMessage = $state(false);
 
-	let messageConfig = $state<{
-		status: MessageStatus;
-		title: string;
-		message: string;
-	}>({
+	let messageConfig = $state<ResponseMessage>({
 		status: 'info',
 		title: '',
 		message: ''
 	});
+	let isAlern = $state(false);
+	let isSuccesAlert = $state(false);
 
 	function triggerMessage(status: MessageStatus, title: string, message: string) {
 		messageConfig = { status, title, message };
@@ -115,6 +118,46 @@
 			isDeletingPhoto = false;
 		}
 	}
+	const handleCloseModalAlernt = () => {
+		isAlern = false;
+	};
+	const handleErrorClose = () => {
+		isSuccesAlert = false;
+		isAlern = false;
+		triggerMessage('info', 'Ada Kesalahan', ' Silahkan Batalkan upload / hapus di cloudinary');
+	};
+
+	const handleSuccesAlernt = async () => {
+		isSuccesAlert = true;
+		try {
+			await removeImage();
+			imageUrl = '';
+
+			triggerMessage('success', 'Berhasil', 'Gambar berhasil dibersihkan.');
+		} catch (error) {
+			console.error('Gagal membersihkan gambar:', error);
+			triggerMessage('error', 'Gagal', 'Terjadi kesalahan saat membersihkan gambar.');
+		} finally {
+			isAlern = false; // Pastikan modal tertutup
+		}
+	};
+
+	// Intersepsi navigasi sebelum terjadi
+	beforeNavigate((navigation) => {
+		if (!isModalAlert) return;
+
+		// Cek apakah target URL berbeda dengan URL saat ini
+		const isDifferentUrl = navigation.to?.url.pathname !== navigation.from?.url.pathname;
+
+		if (!isSuccesAlert && isDifferentUrl && imageUrl !== '' && imageUrl.length > 0) {
+			// Batalkan perpindahan halaman
+			navigation.cancel();
+
+			// Tampilkan alert pemberitahuan
+			isAlern = true;
+			isSuccesAlert = false;
+		}
+	});
 </script>
 
 <div class="mx-auto max-w-4xl p-4 sm:p-6 lg:p-8">
@@ -138,8 +181,6 @@
 		</div>
 	{/if}
 
-
-
 	<div class="rounded-2xl border border-border-color bg-bg-secondary p-6 shadow-sm">
 		<form
 			method="POST"
@@ -154,7 +195,7 @@
 					if (result.type === 'success') {
 						triggerMessage(
 							'success',
-							(result?.data. title as string) || 'Berhasil',
+							(result?.data.title as string) || 'Berhasil',
 							(result?.data.message as string) || 'Data Peta Mata Kuliah berhasil disimpan.'
 						);
 
@@ -220,7 +261,7 @@
 							type="button"
 							onclick={removeImage}
 							disabled={isDeletingPhoto}
-							class="mt-3 inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-status-error/20 bg-status-error0/10 px-3 py-2 text-xs font-semibold text-status transition-all hover:bg-status-error/20 disabled:opacity-50"
+							class="bg-status-error0/10 text-status mt-3 inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-status-error/20 px-3 py-2 text-xs font-semibold transition-all hover:bg-status-error/20 disabled:opacity-50"
 						>
 							{#if isDeletingPhoto}
 								<LoaderCircleIcon class="h-3.5 w-3.5 animate-spin" />
@@ -288,3 +329,21 @@
 		</form>
 	</div>
 </div>
+
+<!-- Modla peringatan jika image sudha di upload  -->
+{#if isModalAlert}
+	<AlertModal
+		isOpen={isAlern}
+		title="Peringatan Gambar Upload"
+		subtitle="Hapus Gambar Sebelumnya atau manual di Cloudinary"
+		variant="warning"
+		confirmText="Hapus Gambar"
+		onClose={handleCloseModalAlernt}
+		onSuccess={() => {
+			handleSuccesAlernt();
+		}}
+		onError={() => {
+			handleErrorClose();
+		}}
+	/>
+{/if}

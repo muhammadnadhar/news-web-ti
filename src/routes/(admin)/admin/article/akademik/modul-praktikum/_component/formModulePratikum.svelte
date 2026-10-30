@@ -2,7 +2,7 @@
 	import { enhance } from '$app/forms';
 	import { CldUploadWidget } from 'svelte-cloudinary';
 	import FormEditor from '$lib/components/admin/formEditor.svelte';
-	import Message, { type MessageStatus } from '$lib/components/admin/message.svelte';
+	import Message, { type MessageStatus } from '$lib/components/notif/message.svelte';
 	import {
 		folder_cloudinary_admin_article_akademik,
 		getUploadConfig,
@@ -12,6 +12,8 @@
 	import { UploadCloud, Save, Plus, ImageIcon, X, Trash2, LoaderCircleIcon } from 'lucide-svelte';
 	import type { ResponseMessage } from '$lib/types/message';
 	import type { ModulPraktikumFormValues } from '$lib/types/values/admin/article';
+	import { beforeNavigate } from '$app/navigation';
+	import AlertModal from '$lib/components/notif/alertModal.svelte';
 
 	interface Props {
 		valuesData?: Partial<ModulPraktikumFormValues> | null;
@@ -20,6 +22,7 @@
 		submitLabel?: string;
 		onCancel?: () => void;
 		action?: string;
+		isModalAlert?: boolean;
 	}
 
 	let {
@@ -27,6 +30,7 @@
 		formError = null,
 		isEditMode = false,
 		submitLabel,
+		isModalAlert = false,
 		onCancel,
 		action
 	}: Props = $props();
@@ -35,8 +39,7 @@
 	let title = $derived(valuesData?.title ?? '');
 	let imageUrl = $derived(valuesData?.image_url ?? '');
 	let description = $derived(valuesData?.description ?? '');
-	let photoPublicId = $derived(valuesData?.image_public_id ?? ''); // Simpan public_id dari Cloudinary
-
+	let photoPublicId = $derived(valuesData?.image_public_id ?? '');
 	let isSubmitting = $state(false);
 	let showMessage = $state(false);
 
@@ -45,6 +48,8 @@
 		title: '',
 		message: ''
 	});
+	let isAlern = $state(false);
+	let isSuccesAlert = $state(false);
 
 	let isDeletingPhoto = $state(false);
 
@@ -59,6 +64,47 @@
 			title = valuesData.title ?? '';
 			imageUrl = valuesData.image_url ?? '';
 			description = valuesData.description ?? '';
+		}
+	});
+
+	const handleCloseModalAlernt = () => {
+		isAlern = false;
+	};
+	const handleErrorClose = () => {
+		isSuccesAlert = false;
+		isAlern = false;
+		triggerMessage('info', 'Ada Kesalahan', ' Silahkan Batalkan upload / hapus di cloudinary');
+	};
+
+	const handleSuccesAlernt = async () => {
+		isSuccesAlert = true;
+		try {
+			await removeImage();
+			imageUrl = '';
+
+			triggerMessage('success', 'Berhasil', 'Gambar berhasil dibersihkan.');
+		} catch (error) {
+			console.error('Gagal membersihkan gambar:', error);
+			triggerMessage('error', 'Gagal', 'Terjadi kesalahan saat membersihkan gambar.');
+		} finally {
+			isAlern = false; // Pastikan modal tertutup
+		}
+	};
+
+	// Intersepsi navigasi sebelum terjadi
+	beforeNavigate((navigation) => {
+		if (!isModalAlert) return;
+
+		// Cek apakah target URL berbeda dengan URL saat ini
+		const isDifferentUrl = navigation.to?.url.pathname !== navigation.from?.url.pathname;
+
+		if (!isSuccesAlert && isDifferentUrl && imageUrl !== '' && imageUrl.length > 0) {
+			// Batalkan perpindahan halaman
+			navigation.cancel();
+
+			// Tampilkan alert pemberitahuan
+			isAlern = true;
+			isSuccesAlert = false;
 		}
 	});
 
@@ -84,7 +130,6 @@
 		isDeletingPhoto = true;
 
 		try {
-			console.info('Excecuis', photoPublicId);
 			const formData = new FormData();
 			formData.append('public_id', photoPublicId);
 
@@ -300,3 +345,21 @@
 		</form>
 	</div>
 </div>
+
+<!-- Modla peringatan jika image sudha di upload  -->
+{#if isModalAlert}
+	<AlertModal
+		isOpen={isAlern}
+		title="Peringatan Gambar Upload"
+		subtitle="Hapus Gambar Sebelumnya atau manual di Cloudinary"
+		variant="warning"
+		confirmText="Hapus Gambar"
+		onClose={handleCloseModalAlernt}
+		onSuccess={() => {
+			handleSuccesAlernt();
+		}}
+		onError={() => {
+			handleErrorClose();
+		}}
+	/>
+{/if}

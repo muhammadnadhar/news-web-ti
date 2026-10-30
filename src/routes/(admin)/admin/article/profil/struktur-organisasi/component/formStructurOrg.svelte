@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { CldUploadWidget } from 'svelte-cloudinary';
-	import Message from '$lib/components/admin/message.svelte';
+	import Message from '$lib/components/notif/message.svelte';
 	import type { ActionData } from '.././$types';
 	import type { ResponseMessage } from '$lib/types/message';
 	import {
@@ -13,7 +13,7 @@
 		FileText,
 		UploadCloud,
 		BookDashedIcon,
-		LoaderCircle,
+		LoaderCircle
 	} from 'lucide-svelte';
 	import FormEditor from '$lib/components/admin/formEditor.svelte';
 	import {
@@ -24,15 +24,18 @@
 	} from '$lib/cloudinary/client';
 	import type { OrgStructureFormValues } from '$lib/types/values/admin/article';
 	import type { OrgStructureItemDTO } from '$lib/dto/admin/article/profile';
+	import AlertModal from '$lib/components/notif/alertModal.svelte';
 
 	let {
 		isEdit = false,
 		actionUrl = isEdit ? '?/update' : '?/create',
 		initialData = null,
+		isModalAlert = false,
 		valuesData
 	}: {
 		isEdit?: boolean;
 		actionUrl?: string;
+		isModalAlert?: boolean;
 		initialData?: OrgStructureItemDTO | null;
 		valuesData: OrgStructureFormValues | null;
 		form?: ActionData | null;
@@ -98,6 +101,49 @@
 			isDeletingPhoto = false;
 		}
 	}
+	let isAlern = $state(false);
+	let isSuccesAlert = $state(false);
+
+	const handleCloseModalAlernt = () => {
+		isAlern = false;
+	};
+	const handleErrorClose = () => {
+		isSuccesAlert = false;
+		isAlern = false;
+		triggerMessage('info', 'Ada Kesalahan', ' Silahkan Batalkan upload / hapus di cloudinary');
+	};
+
+	const handleSuccesAlernt = async () => {
+		isSuccesAlert = true;
+		try {
+			await removeImage();
+			imageUrl = '';
+
+			triggerMessage('success', 'Berhasil', 'Gambar berhasil dibersihkan.');
+		} catch (error) {
+			console.error('Gagal membersihkan gambar:', error);
+			triggerMessage('error', 'Gagal', 'Terjadi kesalahan saat membersihkan gambar.');
+		} finally {
+			isAlern = false; // Pastikan modal tertutup
+		}
+	};
+
+	// Intersepsi navigasi sebelum terjadi
+	beforeNavigate((navigation) => {
+		if (!isModalAlert) return;
+
+		// Cek apakah target URL berbeda dengan URL saat ini
+		const isDifferentUrl = navigation.to?.url.pathname !== navigation.from?.url.pathname;
+
+		if (!isSuccesAlert && isDifferentUrl && imageUrl !== '' && imageUrl.length > 0) {
+			// Batalkan perpindahan halaman
+			navigation.cancel();
+
+			// Tampilkan alert pemberitahuan
+			isAlern = true;
+			isSuccesAlert = false;
+		}
+	});
 </script>
 
 <div class="mx-auto max-w-4xl space-y-6">
@@ -328,3 +374,21 @@
 		</form>
 	</div>
 </div>
+
+<!-- Modla peringatan jika image sudha di upload  -->
+{#if isModalAlert}
+	<AlertModal
+		isOpen={isAlern}
+		title="Peringatan Gambar Upload"
+		subtitle="Hapus Gambar Sebelumnya atau manual di Cloudinary"
+		variant="warning"
+		confirmText="Hapus Gambar"
+		onClose={handleCloseModalAlernt}
+		onSuccess={() => {
+			handleSuccesAlernt();
+		}}
+		onError={() => {
+			handleErrorClose();
+		}}
+	/>
+{/if}

@@ -18,18 +18,27 @@
 		getUploadOptions,
 		upload_cloudinary_preset
 	} from '$lib/cloudinary/client';
+	import Message from '$lib/components/notif/message.svelte';
 	import { type MessageStatus, type ResponseMessage } from '$lib/types/message';
-	import Message from '$lib/components/admin/message.svelte';
 	import type { BeasiswaFormValues } from '$lib/types/values/admin/article';
+	import { beforeNavigate } from '$app/navigation';
+	import AlertModal from '$lib/components/notif/alertModal.svelte';
 
 	interface Props {
 		initialData?: ScholarshipDTO | null; // Null saat Add, terisi saat Edit
 		action?: string; // Target URL Form Action (misal: '?/create' atau '?/update')
+		isModalAlert?: boolean;
 		valueData: BeasiswaFormValues;
 		onCancel?: () => void; // Event Handler opsional tombol Batal
 	}
 
-	let { initialData = null, valueData, action = '', onCancel }: Props = $props();
+	let {
+		initialData = null,
+		isModalAlert = false,
+		valueData,
+		action = '',
+		onCancel
+	}: Props = $props();
 
 	// Mode Edit terdeteksi jika initialData memiliki ID
 	let isEdit = $derived(!!initialData?.id);
@@ -38,6 +47,9 @@
 
 	// State Alert / Message
 	let showMessage = $state(false);
+
+	let isAlern = $state(false);
+	let isSuccesAlert = $state(false);
 
 	// State Image URL & Public ID Cloudinary
 	let imageUrl = $derived(valueData?.image_url ?? initialData?.image_url ?? '');
@@ -53,6 +65,47 @@
 		messageConfig = { status, title, message };
 		showMessage = true;
 	}
+
+	const handleCloseModalAlernt = () => {
+		isAlern = false;
+	};
+	const handleErrorClose = () => {
+		isSuccesAlert = false;
+		isAlern = false;
+		triggerMessage('info', 'Di batalkan', 'Silahkan setujuin penghapusan image');
+	};
+
+	const handleSuccesAlernt = async () => {
+		isSuccesAlert = true;
+		try {
+			await removeImage();
+			imageUrl = '';
+
+			triggerMessage('success', 'Berhasil', 'Gambar berhasil dibersihkan.');
+		} catch (error) {
+			console.error('Gagal membersihkan gambar:', error);
+			triggerMessage('error', 'Gagal', 'Terjadi kesalahan saat membersihkan gambar.');
+		} finally {
+			isAlern = false; // Pastikan modal tertutup
+		}
+	};
+
+	// Intersepsi navigasi sebelum terjadi
+	beforeNavigate((navigation) => {
+		if (!isModalAlert) return;
+
+		// Cek apakah target URL berbeda dengan URL saat ini
+		const isDifferentUrl = navigation.to?.url.pathname !== navigation.from?.url.pathname;
+
+		if (!isSuccesAlert && isDifferentUrl && imageUrl !== '' && imageUrl.length > 0) {
+			// Batalkan perpindahan halaman
+			navigation.cancel();
+
+			// Tampilkan alert pemberitahuan
+			isAlern = true;
+			isSuccesAlert = false;
+		}
+	});
 
 	async function removeImage() {
 		if (!imagePublicId) {
@@ -320,3 +373,21 @@
 		</div>
 	</form>
 </div>
+
+<!-- Modla peringatan jika image sudha di upload  -->
+{#if isModalAlert}
+	<AlertModal
+		isOpen={isAlern}
+		title="Peringatan Gambar Upload"
+		subtitle="Hapus Gambar Sebelumnya atau manual di Cloudinary"
+		variant="warning"
+		confirmText="Hapus Gambar"
+		onClose={handleCloseModalAlernt}
+		onSuccess={() => {
+			handleSuccesAlernt();
+		}}
+		onError={() => {
+			handleErrorClose();
+		}}
+	/>
+{/if}

@@ -30,3 +30,7 @@ vite.config.ts.timestamp-*
 # data gak di bawa , ada data default 
 ./data/
 /data/
+
+
+# PWA temporary dev directory
+/dev-dist

@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import Message from '$lib/components/admin/message.svelte';
+	import Message from '$lib/components/notif/message.svelte';
 	import type { ResponseMessage } from '$lib/types/message';
 	import type { AngkatanFormValues } from '$lib/types/values/admin/dataset';
-	import {  Save, Loader2Icon, Calendar } from 'lucide-svelte';
+	import { Save, Loader2Icon, Calendar } from 'lucide-svelte';
 
 	let {
 		title = 'Tambah Angkatan Baru',
@@ -37,24 +37,23 @@
 	}
 </script>
 
-	<!-- Alert Message Component -->
-	{#if showMessage}
-		<Message
-			status={messageConfig.status}
-			title={messageConfig.title}
-			message={messageConfig.message}
-			dismissible={true}
-			timeout={4000}
-			onclose={() => (showMessage = false)}
-		/>
-	{/if}
-
+<!-- Alert Message Component -->
+{#if showMessage}
+	<Message
+		status={messageConfig.status}
+		title={messageConfig.title}
+		message={messageConfig.message}
+		dismissible={true}
+		timeout={4000}
+		onclose={() => (showMessage = false)}
+	/>
+{/if}
 
 <div class="mx-auto max-w-3xl space-y-6">
 	<div class="flex items-center justify-between border-b border-border-color/10 pb-4">
 		<div class="flex items-center gap-3">
 			<div>
-				<h1 class="text-text-main text-lg font-bold tracking-wide sm:text-xl">{title}</h1>
+				<h1 class="text-lg font-bold tracking-wide text-text-main sm:text-xl">{title}</h1>
 				<p class="text-xs text-text-muted">
 					Isi formulir di bawah ini untuk mengelola data angkatan.
 				</p>
@@ -62,10 +61,8 @@
 		</div>
 	</div>
 
-
-
 	<div
-		class="bg-bg-secondary/50 rounded-2xl border border-border-color/10 p-6 shadow-2xl backdrop-blur-xl sm:p-8"
+		class="rounded-2xl border border-border-color/10 bg-bg-secondary/50 p-6 shadow-2xl backdrop-blur-xl sm:p-8"
 	>
 		<form
 			method="POST"
@@ -128,7 +125,7 @@
 						step="1"
 						required
 						disabled={isSubmitting}
-						class="bg-bg-primary focus:border-scitech-mint focus:ring-scitech-mint/20 w-full rounded-xl border border-border-color/10 px-4 py-3 text-xs text-text-main placeholder-text-muted transition-all focus:ring-2 focus:outline-none disabled:opacity-50"
+						class="focus:border-scitech-mint focus:ring-scitech-mint/20 w-full rounded-xl border border-border-color/10 bg-bg-primary px-4 py-3 text-xs text-text-main placeholder-text-muted transition-all focus:ring-2 focus:outline-none disabled:opacity-50"
 					/>
 				</div>
 

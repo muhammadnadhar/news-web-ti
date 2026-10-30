@@ -2,12 +2,12 @@
 	import TableContent from '$lib/components/admin/tableContent.svelte';
 	import type { TableContentType } from '$lib/types/tableContent';
 	import TableSkeleton from '$lib/components/loading/tableSkeleton.svelte';
-	import { gotoEdit, mergeNewPath } from '$lib/utils';
+	import { formatDate, gotoEdit, mergeNewPath } from '$lib/utils';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import type { PedomanKkpDTO } from '$lib/dto/admin/article/akademik.js';
 	import type { MessageStatus, ResponseMessage } from '$lib/types/message.js';
-	import Message from '$lib/components/admin/message.svelte';
+	import Message from '$lib/components/notif/message.svelte';
 
 	let { data } = $props();
 
@@ -28,19 +28,13 @@
 				{
 					colomn: 'Tanggal Dibuat',
 					row: item.created_at
-						? new Date(item.created_at).toLocaleDateString('id-ID', {
-								day: 'numeric',
-								month: 'short',
-								year: 'numeric'
-							})
-						: '-'
+						?	formatDate(item.created_at)		: '-'
 				}
 			]
 		}));
 	}
 
 	// Sync local state
-	let rawPedomanList = $derived<PedomanKkpDTO[]>(data.rawPedomanList || []);
 
 	let messageConfig = $state<ResponseMessage>({
 		status: 'info',
@@ -71,9 +65,8 @@
 		<h1 class="text-2xl font-extrabold tracking-tight text-text-main sm:text-3xl">Pedoman KKP</h1>
 	</div>
 
-	<!-- Component TableContent -->
 	{#await data.rawPedomanList}
-		<TableSkeleton showTitle={true} title="Memuat Data Kerjasama..." columnsCount={4} />
+		<TableSkeleton rowCount={2} columnsCount={4} />
 	{:then rawList}
 		<TableContent
 			title="Data Pedoman Kuliah Kerja Praktek"

@@ -9,7 +9,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import type { StudentPublicationDTO } from '$lib/dto/admin/article/penelitian.js';
-	import Message from '$lib/components/admin/message.svelte';
+	import Message from '$lib/components/notif/message.svelte';
 	import type { MessageStatus, ResponseMessage } from '$lib/types/message.js';
 
 	let { data } = $props();

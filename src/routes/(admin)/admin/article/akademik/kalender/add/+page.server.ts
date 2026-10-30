@@ -1,4 +1,4 @@
-import { fail, redirect } from '@sveltejs/kit';
+import { fail } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
 import { randomUUID } from '$lib/crypto';

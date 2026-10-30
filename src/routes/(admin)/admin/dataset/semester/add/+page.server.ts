@@ -1,9 +1,9 @@
-import { fail, redirect } from '@sveltejs/kit';
+import { fail} from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { createSemester } from '$lib/repository/admin/dataset/semester';
-import { randomUUID } from '$lib/crypto';
 import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
 import type { SemesterFormValues } from '$lib/types/values/admin/dataset';
+import { randomUUID } from '$lib/crypto';
 
 export const actions: Actions = {
 	default: async ({ request }) => {
@@ -12,7 +12,7 @@ export const actions: Actions = {
 		const isActiveCheckbox = formData.get('is_active');
 
 		const values: SemesterFormValues = {
-			id: (formData.get('id') as string)?.trim() || crypto.randomUUID(),
+			id: (formData.get('id') as string)?.trim() || randomUUID(),
 			name: formData.get('name')?.toString().trim() || '',
 			academicYear: formData.get('academic_year')?.toString().trim() || '',
 			isActive: isActiveCheckbox === 'on' || isActiveCheckbox === 'true' || isActiveCheckbox === 'y'

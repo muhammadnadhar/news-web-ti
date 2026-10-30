@@ -1,3 +1,4 @@
+import { randomUUID } from '$lib/crypto';
 import type { ImageItem } from '$lib/dto/admin/home';
 import { deleteImageFromCloudinary } from '$lib/helper/cloudinary';
 import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
@@ -21,7 +22,7 @@ export const actions: Actions = {
 
 		// Ekstraksi data ke objek values bertipe ProfilProdiFormValues
 		const values: ProfilProdiFormValues = {
-			id: (formData.get('id') as string)?.trim() || crypto.randomUUID(),
+			id: (formData.get('id') as string)?.trim(),
 			title: formData.get('title')?.toString().trim() || '',
 			description: formData.get('description')?.toString().trim() || '',
 			displayInstruction: formData.get('display_instruction')?.toString().trim() || 'FLEX_CENTER',
@@ -38,7 +39,7 @@ export const actions: Actions = {
 
 		try {
 			await addProfilProdi({
-				id: values.id,
+				id: values.id ?? randomUUID(),
 				title: values.title,
 				description: values.description,
 				display_instruction: values.displayInstruction,

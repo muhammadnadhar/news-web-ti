@@ -83,7 +83,7 @@ export const actions: Actions = {
 
 		try {
 			// Generasi UUID jika ID belum ada
-			const calendarId = values.id || crypto.randomUUID();
+			const calendarId = values.id || randomUUID();
 
 			await saveAcademicCalendar(
 				calendarId,

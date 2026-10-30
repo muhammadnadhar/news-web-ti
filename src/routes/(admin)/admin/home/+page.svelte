@@ -1,16 +1,16 @@
 <script lang="ts">
 	import UserCard from '$lib/components/admin/userCard.svelte';
-	import { AlertCircleIcon, LayoutDashboard, PencilIcon, PlusIcon, UserPlus } from 'lucide-svelte';
+	import { AlertCircleIcon, LayoutDashboard, PencilIcon, PlusIcon } from 'lucide-svelte';
 	import type { PageData } from './$types';
 	import { goto, invalidateAll } from '$app/navigation';
-	import { gotoEdit, mergeNewPath } from '$lib/utils';
-	import type { MessageStatus } from '$lib/components/admin/message.svelte';
-	import Message from '$lib/components/admin/message.svelte';
+	import { mergeNewPath } from '$lib/utils';
 	import { page } from '$app/state';
-	import type { ResponseMessage } from '$lib/types/message';
+	import type { MessageStatus, ResponseMessage } from '$lib/types/message';
 	import SpinLoading from '$lib/components/loading/spin.svelte';
 	import { deserialize } from '$app/forms';
 	import TablelProfilProdi from './_component/tablelProfilProdi.svelte';
+	import Message from '$lib/components/notif/message.svelte';
+	import AlertModal from '$lib/components/notif/alertModal.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -25,155 +25,144 @@
 		messageConfig = { status, title, message };
 		showMessage = true;
 	}
+	// State untuk mengontrol modal
+	let openModal = $state(false);
+	let activeDeleteAction = $state<() => void | Promise<void>>(() => {});
+	let activeItemTitle = $state('');
 
-	function handleDeleteprofileProdi(id: string) {
-		return () => {
-			const isConfirmed = confirm('Apakah Anda yakin ingin menghapus data ini?');
-			if (!isConfirmed) return;
+	// Fungsi universal untuk membuka modal dengan aksi dan judul tertentu
+	const handleOpenModal = (title: string, deleteAction: () => void) => {
+		activeItemTitle = title;
+		activeDeleteAction = deleteAction;
+		openModal = true;
+	};
 
-			(async () => {
-				try {
-					const formData = new FormData();
-					formData.append('id', id);
+	async function handleDeleteprofileProdi(id: string) {
+		try {
+			const formData = new FormData();
+			formData.append('id', id);
 
-					const response = await fetch('?/deleteProfileDashboard', {
-						method: 'POST',
-						body: formData
-					});
+			const response = await fetch('?/deleteProfileDashboard', {
+				method: 'POST',
+				body: formData
+			});
 
-					const result = deserialize(await response.text());
+			const result = deserialize(await response.text());
 
-					if (result.type === 'success') {
-						triggerMessage(
-							'success',
-							'Berhasil',
-							(result.data as { message?: string })?.message || 'Data berhasil dihapus'
-						);
-						await invalidateAll();
-					} else {
-						triggerMessage(
-							'error',
-							'Gagal',
-							(result.data as { message?: string })?.message || 'Gagal menghapus data'
-						);
-					}
-				} catch (error) {
-					console.error('Error deleting profile:', error);
-					triggerMessage('error', 'Kesalahan', 'Terjadi kesalahan pada jaringan/server');
-				}
-			})();
-		};
+			if (result.type === 'success') {
+				triggerMessage(
+					'success',
+					'Berhasil',
+					(result.data as { message?: string })?.message || 'Data berhasil dihapus'
+				);
+				await invalidateAll();
+			} else {
+				triggerMessage(
+					'error',
+					'Gagal',
+					(result.data as { message?: string })?.message || 'Gagal menghapus data'
+				);
+			}
+		} catch (error) {
+			console.error('Error deleting profile:', error);
+			triggerMessage('error', 'Kesalahan', 'Terjadi kesalahan pada jaringan/server');
+		}
 	}
 
-	function handleDeleteDosenPrimary(id: string): void {
-		const isConfirmed = confirm('Apakah Anda yakin ingin menghapus dosen ini?');
-		if (!isConfirmed) return;
+	async function handleDeleteDosenPrimary(id: string) {
+		try {
+			const formData = new FormData();
+			formData.append('id', id);
 
-		(async () => {
-			try {
-				const formData = new FormData();
-				formData.append('id', id);
+			const response = await fetch('?/deleteDosenPrimary', {
+				method: 'POST',
+				body: formData
+			});
 
-				const response = await fetch('?/deleteDosenPrimary', {
-					method: 'POST',
-					body: formData
-				});
+			const result = deserialize(await response.text());
 
-				const result = deserialize(await response.text());
-
-				if (result.type === 'success') {
-					triggerMessage(
-						'success',
-						'Berhasil',
-						(result.data as { message?: string })?.message || 'Dosen berhasil dihapus'
-					);
-					await invalidateAll();
-				} else {
-					triggerMessage(
-						'error',
-						'Gagal',
-						(result.data as { message?: string })?.message || 'Gagal menghapus dosen'
-					);
-				}
-			} catch (error) {
-				console.error('Error deleting dosen primary:', error);
-				triggerMessage('error', 'Kesalahan', 'Terjadi kesalahan pada jaringan/server');
+			if (result.type === 'success') {
+				triggerMessage(
+					'success',
+					'Berhasil',
+					(result.data as { message?: string })?.message || 'Dosen berhasil dihapus'
+				);
+				await invalidateAll();
+			} else {
+				triggerMessage(
+					'error',
+					'Gagal',
+					(result.data as { message?: string })?.message || 'Gagal menghapus dosen'
+				);
 			}
-		})();
+		} catch (error) {
+			console.error('Error deleting dosen primary:', error);
+			triggerMessage('error', 'Kesalahan', 'Terjadi kesalahan pada jaringan/server');
+		}
 	}
 
-	function handleDeletePerminatanTI(id: string): void {
-		const isConfirmed = confirm('Apakah Anda yakin ingin menghapus data perminatan ini?');
-		if (!isConfirmed) return;
+	async function handleDeletePerminatanTI(id: string) {
+		try {
+			const formData = new FormData();
+			formData.append('id', id);
 
-		(async () => {
-			try {
-				const formData = new FormData();
-				formData.append('id', id);
+			const response = await fetch('?/deletePerminatanTI', {
+				method: 'POST',
+				body: formData
+			});
 
-				const response = await fetch('?/deletePerminatanTI', {
-					method: 'POST',
-					body: formData
-				});
+			const result = deserialize(await response.text());
 
-				const result = deserialize(await response.text());
-
-				if (result.type === 'success') {
-					triggerMessage(
-						'success',
-						'Berhasil',
-						(result.data as { message?: string })?.message || 'Perminatan TI berhasil dihapus'
-					);
-					await invalidateAll();
-				} else {
-					triggerMessage(
-						'error',
-						'Gagal',
-						(result.data as { message?: string })?.message || 'Gagal menghapus perminatan TI'
-					);
-				}
-			} catch (error) {
-				console.error('Error deleting perminatan TI:', error);
-				triggerMessage('error', 'Kesalahan', 'Terjadi kesalahan pada jaringan/server');
+			if (result.type === 'success') {
+				triggerMessage(
+					'success',
+					'Berhasil',
+					(result.data as { message?: string })?.message || 'Perminatan TI berhasil dihapus'
+				);
+				await invalidateAll();
+			} else {
+				triggerMessage(
+					'error',
+					'Gagal',
+					(result.data as { message?: string })?.message || 'Gagal menghapus perminatan TI'
+				);
 			}
-		})();
+		} catch (error) {
+			console.error('Error deleting perminatan TI:', error);
+			triggerMessage('error', 'Kesalahan', 'Terjadi kesalahan pada jaringan/server');
+		}
 	}
 
-	function handleDeleteProfileProdiItem(id: string): void {
-		const isConfirmed = confirm('Apakah Anda yakin ingin menghapus item profil prodi ini?');
-		if (!isConfirmed) return;
+	async function handleDeleteProfileProdiItem(id: string) {
+		try {
+			const formData = new FormData();
+			formData.append('id', id);
 
-		(async () => {
-			try {
-				const formData = new FormData();
-				formData.append('id', id);
+			const response = await fetch('?/deleteProfileProdiItem', {
+				method: 'POST',
+				body: formData
+			});
 
-				const response = await fetch('?/deleteProfileProdiItem', {
-					method: 'POST',
-					body: formData
-				});
+			const result = deserialize(await response.text());
 
-				const result = deserialize(await response.text());
-
-				if (result.type === 'success') {
-					triggerMessage(
-						'success',
-						'Berhasil',
-						(result.data as { message?: string })?.message || 'Item profil prodi berhasil dihapus'
-					);
-					await invalidateAll();
-				} else {
-					triggerMessage(
-						'error',
-						'Gagal',
-						(result.data as { message?: string })?.message || 'Gagal menghapus item profil prodi'
-					);
-				}
-			} catch (error) {
-				console.error('Error deleting profile prodi item:', error);
-				triggerMessage('error', 'Kesalahan', 'Terjadi kesalahan pada jaringan/server');
+			if (result.type === 'success') {
+				triggerMessage(
+					'success',
+					'Berhasil',
+					(result.data as { message?: string })?.message || 'Item profil prodi berhasil dihapus'
+				);
+				await invalidateAll();
+			} else {
+				triggerMessage(
+					'error',
+					'Gagal',
+					(result.data as { message?: string })?.message || 'Gagal menghapus item profil prodi'
+				);
 			}
-		})();
+		} catch (error) {
+			console.error('Error deleting profile prodi item:', error);
+			triggerMessage('error', 'Kesalahan', 'Terjadi kesalahan pada jaringan/server');
+		}
 	}
 </script>
 
@@ -289,7 +278,10 @@
 							id={item.id}
 							description={item.title}
 							editUrl={mergeNewPath(`profil-dashboard/edit/${item.id}`)}
-							onDelete={handleDeleteprofileProdi(item.id)}
+							onDelete={() =>
+								handleOpenModal(item.title || 'Data Dashboard', async () => {
+									await handleDeleteprofileProdi(item.id);
+								})}
 						/>
 					{/each}
 				</div>
@@ -339,7 +331,10 @@
 							subtitle={dosen.position}
 							imageUrl={dosen.photo_url || ''}
 							editUrl={mergeNewPath(`/dosen/edit/${dosen.primary_id ?? index}`)}
-							onDelete={() => handleDeleteDosenPrimary(dosen.primary_id || dosen.lecturer_staff_id)}
+							onDelete={() =>
+								handleOpenModal(dosen.name || 'Data Dosen Primary', async () => {
+									await handleDeleteDosenPrimary(dosen.primary_id || dosen.lecturer_staff_id);
+								})}
 						/>
 					{/each}
 				</div>
@@ -427,7 +422,10 @@
 
 								<button
 									type="button"
-									onclick={() => handleDeletePerminatanTI(item.id)}
+									onclick={() =>
+										handleOpenModal(item.title || 'Data Peminatan TI', async () => {
+											await handleDeletePerminatanTI(item.id);
+										})}
 									class="inline-flex items-center gap-1.5 border border-border-color bg-status-error px-3 py-1.5 text-xs font-bold text-text-dark shadow-[3px_3px_0px_0px_rgba(0,0,0,0.4)] transition-all hover:bg-status-error/30 active:scale-95"
 									title="Edit Peminatan"
 								>
@@ -472,7 +470,7 @@
 					'Belum ada Data Sambutan Pimpinan',
 					'Data sambutan belum ditemukan di sistem, silahkan tambahkan data sambutan baru.',
 					'Tambah Sambutan',
-					() => goto(mergeNewPath("kaprodi"))
+					() => goto(mergeNewPath('kaprodi'))
 				)}
 			{:else}
 				<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -481,7 +479,7 @@
 						title={wellcomeKaprodi.name ?? 'Pimpinan Prodi'}
 						subtitle={wellcomeKaprodi.title}
 						imageUrl={wellcomeKaprodi.photo_url || ''}
-						editUrl={mergeNewPath("kaprodi")}
+						editUrl={mergeNewPath('kaprodi')}
 					/>
 				</div>
 			{/if}
@@ -525,7 +523,10 @@
 				<TablelProfilProdi
 					{listProfil}
 					pageUrlPathname={page.url.pathname}
-					onDelete={handleDeleteProfileProdiItem}
+					onDelete={(id) =>
+						handleOpenModal('Data Profil Prodi', async () => {
+							await handleDeleteProfileProdiItem(id);
+						})}
 				/>
 			{/if}
 		{:catch error}
@@ -541,3 +542,27 @@
 		{/await}
 	</section>
 </div>
+
+<!-- Popup  -->
+<!-- Popup Alert Modal Konfirmasi -->
+<AlertModal
+	isOpen={openModal}
+	title="Konfirmasi Hapus"
+	subtitle="Tindakan ini memerlukan verifikasi Anda"
+	message="Apakah Anda yakin ingin menghapus data berikut?"
+	itemTitle={activeItemTitle}
+	variant="error"
+	confirmText="Hapus Data"
+	cancelText="Batal"
+	onClose={() => {
+		//  Reset state openModal agar bisa dibuka kembali di kemudian hari
+		openModal = false;
+	}}
+	onSuccess={async () => {
+		// Eksekusi fungsi hapus dan tunggu hingga selesai
+		if (typeof activeDeleteAction === 'function') {
+			await activeDeleteAction();
+		}
+		openModal = false;
+	}}
+/>

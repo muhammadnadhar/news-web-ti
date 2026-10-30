@@ -6,8 +6,8 @@
 	import TableSkeleton from '$lib/components/loading/tableSkeleton.svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import { gotoEdit } from '$lib/utils';
-	import Message from '$lib/components/admin/message.svelte';
+	import { formatDate, gotoEdit } from '$lib/utils';
+	import Message from '$lib/components/notif/message.svelte';
 	import type { ResponseMessage } from '$lib/types/message';
 
 	let { data }: { data: PageData } = $props();
@@ -17,16 +17,6 @@
 	 */
 	function mapNewsToTableContent(items: NewsItemDTO[] = []): TableContentType[] {
 		return items.map((item) => {
-			// Format tanggal ke format Indonesia (contoh "22 September 2026")
-
-			const formattedDate = item.published_at
-				? new Date(item.published_at).toLocaleDateString('id-ID', {
-						day: 'numeric',
-						month: 'long',
-						year: 'numeric'
-					})
-				: '-';
-
 			return {
 				id: item.id,
 				items: [
@@ -35,11 +25,18 @@
 						row: item.title || '-',
 						isHtml: false
 					},
+
 					{
-						colomn: 'Description',
-						row: item.content || '-',
-						isHtml: true
+						colomn: 'priview',
+						row: item.image_url,
+						isImage: true
 					},
+					// Description terlalu panjang , jadi matikan aja
+					//	{
+					//		colomn: 'Description',
+					//		row: item.content || '-',
+					//			isHtml: true
+					//		},
 					{
 						colomn: 'Kategori',
 						row: item.category_name || '-',
@@ -47,7 +44,7 @@
 					},
 					{
 						colomn: 'Tanggal Publikasi',
-						row: formattedDate,
+						row: formatDate(item.published_at),
 						isHtml: false
 					}
 				]
@@ -73,7 +70,6 @@
 	}
 </script>
 
-<!-- alert / toast notification -->
 {#if showMessage}
 	<Message
 		status={messageConfig.status}
@@ -85,11 +81,10 @@
 	/>
 {/if}
 
-<div class="min-h-screen bg-bg-primary p-6 text-[var(--color-text-main)] transition-colors">
-	<!-- Header Page -->
+<div class="min-h-screen bg-bg-primary p-6 text-text-main transition-colors">
 	<div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 		<div>
-			<h1 class="text-2xl font-bold tracking-tight text-[var(--color-text-main)]">Berita</h1>
+			<h1 class="text-2xl font-bold tracking-tight text-text-main">Berita</h1>
 			<p class="mt-1 text-sm text-text-muted">
 				Kelola daftar berita, seminar, dan pengumuman prodi.
 			</p>
@@ -97,7 +92,7 @@
 	</div>
 
 	{#await data.news}
-		<TableSkeleton showTitle={true} title="Memuat Data Berita..." columnsCount={4} />
+		<TableSkeleton rowCount={3} columnsCount={4} />
 	{:then rawList}
 		<TableContent
 			title="Daftar Berita"

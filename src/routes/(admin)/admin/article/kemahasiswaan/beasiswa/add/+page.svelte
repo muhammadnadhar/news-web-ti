@@ -7,5 +7,5 @@
 
 <div class="container">
 	<!-- Cukup panggil komponen tanpa initialData -->
-	<FormBeasiswa valueData={form?.values} action="?/create" />
+	<FormBeasiswa isModalAlert={true} valueData={form?.values} action="?/create" />
 </div>

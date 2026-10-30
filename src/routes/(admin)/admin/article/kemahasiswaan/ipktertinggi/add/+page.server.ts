@@ -6,6 +6,7 @@ import { createHighGpaStudent } from '$lib/repository/admin/article/kemahasiswaa
 import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
 import { cloudinary } from '$lib/cloudinary/server';
 import type { IpkTertinggiFormValues } from '$lib/types/values/admin/article';
+import { randomUUID } from '$lib/crypto';
 
 export const load: PageServerLoad = async () => {
 	try {
@@ -63,7 +64,7 @@ export const actions: Actions = {
 			});
 		}
 
-		const id = crypto.randomUUID();
+		const id = randomUUID();
 
 		try {
 			await createHighGpaStudent(
@@ -77,8 +78,8 @@ export const actions: Actions = {
 			);
 
 			return {
-				...successResponse('Data Mahasiswa IPK Tertinggi berhasil disimpan!', 'Berhasil'),
-				values
+				...successResponse('Data Mahasiswa IPK Tertinggi berhasil disimpan!', 'Berhasil')
+				// values
 			};
 		} catch (err: any) {
 			console.error('Error creating high GPA student:', err);

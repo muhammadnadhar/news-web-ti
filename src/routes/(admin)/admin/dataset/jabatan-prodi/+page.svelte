@@ -2,7 +2,6 @@
 	import { Briefcase, Plus, Edit2, Trash2, X, Check, Loader2 } from 'lucide-svelte';
 	import type { PageData, ActionData } from './$types';
 	import TableContent from '$lib/components/admin/tableContent.svelte';
-	import Message from '$lib/components/admin/message.svelte';
 	import type { MessageStatus, ResponseMessage } from '$lib/types/message';
 	import type { TableContentType } from '$lib/types/tableContent';
 	import TableSkeleton from '$lib/components/loading/tableSkeleton.svelte';
@@ -10,6 +9,7 @@
 	import { gotoEdit, mergeNewPath } from '$lib/utils';
 	import { page } from '$app/state';
 	import type { JabatanProdiDTO } from '$lib/dto/admin/dataset';
+	import Message from '$lib/components/notif/message.svelte';
 
 	interface Props {
 		data: PageData;

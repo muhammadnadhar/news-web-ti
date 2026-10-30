@@ -20,17 +20,16 @@ export const load: PageServerLoad = async () => {
 export const actions: Actions = {
 	create: async ({ request }) => {
 		const formData = await request.formData();
-
+		const publishedAtStr = formData.get('published_at')?.toString().trim();
 		// Ekstraksi data & susun langsung ke tipe NewsFormValues
 		const values: NewsFormValues = {
 			title: formData.get('title')?.toString().trim() || '',
 			category: formData.get('category')?.toString().trim() || '',
 			content: formData.get('content')?.toString().trim() || '',
 			image_url: formData.get('imageUrl')?.toString().trim() || null,
-			imageId: formData.get('image_public_id')?.toString().trim() || null
+			imageId: formData.get('image_public_id')?.toString().trim() || null,
+			publishedAt: publishedAtStr ? new Date(publishedAtStr) : new Date()
 		};
-
-		console.info('data  : ', values);
 
 		//Pengecekan kolom wajib diisi
 		if (!values.title || !values.category || !values.content) {
@@ -58,7 +57,7 @@ export const actions: Actions = {
 				content: values.content,
 				image_url: values.image_url,
 				image_public_id: values.imageId,
-				published_at: new Date()
+				published_at: values.publishedAt
 			});
 
 			if (!isCreated) {

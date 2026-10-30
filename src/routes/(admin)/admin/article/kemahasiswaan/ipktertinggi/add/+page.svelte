@@ -8,6 +8,7 @@
 <FormMshIpk
 	valueData={form?.values}
 	action="?/create"
+	isModalAlert={true}
 	angkatanList={data.angkatanList}
 	semesterList={data.semesterList}
 	isEdit={false}

@@ -3,7 +3,7 @@
 	import type { TableContentType } from '$lib/types/tableContent';
 	import TableSkeleton from '$lib/components/loading/tableSkeleton.svelte';
 	import type { ResponseMessage } from '$lib/types/message.js';
-	import Message from '$lib/components/admin/message.svelte';
+	import Message from '$lib/components/notif/message.svelte';
 	import { gotoEdit, mergeNewPath } from '$lib/utils.js';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
@@ -120,7 +120,7 @@
 	<!-- 	onEdit={openEditModal} -->
 	<!-- /> -->
 	{#await data.rawScholarshipList}
-		<TableSkeleton columnsCount={4} showTitle={true} title={'loading data ipk tertinggi'} />
+		<TableSkeleton columnsCount={4} rowCount={2} />
 	{:then rawList}
 		<TableContent
 			title="Beasiswa "

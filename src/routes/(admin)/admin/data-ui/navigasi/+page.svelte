@@ -3,7 +3,7 @@
 	import { Plus, Trash2, Save, ArrowLeft, Loader2, Check } from 'lucide-svelte';
 	import type { ActionData, PageData } from './$types';
 	import type { NavMenuItemType } from '$lib/types/navbar';
-	import Message from '$lib/components/admin/message.svelte';
+	import Message from '$lib/components/notif/message.svelte';
 	import { type ResponseMessage, type MessageStatus } from '$lib/types/message';
 	import { availableIcons } from '$lib/data/icon';
 
@@ -61,7 +61,7 @@
 
 	$effect(() => {
 		if (form?.message) {
-			triggerMessage(form.message.status, form.message.title, form.message.message);
+			triggerMessage(form.status, form.title, form.message);
 		}
 	});
 </script>
@@ -103,23 +103,29 @@
 			action="?/updateNavbar"
 			use:enhance={() => {
 				isSubmitting = true;
+
 				return async ({ result, update }) => {
 					isSubmitting = false;
-					if (result.type === 'success') {
-						const resData = (result.data as any)?.message ?? {
-							status: 'success',
-							title: 'Berhasil',
-							message: 'Navbar menu berhasil diperbarui!'
-						};
-						triggerMessage(resData.status, resData.title, resData.text || resData.message);
+
+					// Pengelolaan resData yang disamakan polanya
+					const resData =
+						result.type === 'success' || result.type === 'failure'
+							? (result.data as ResponseMessage | undefined)
+							: undefined;
+
+					if (result.type === 'success' || resData?.status === 'success') {
+						triggerMessage(
+							resData?.status || 'success',
+							resData?.title || 'Berhasil',
+							resData?.message || resData?.text || 'Navbar menu berhasil diperbarui!'
+						);
 						await update({ reset: false });
-					} else if (result.type === 'failure') {
-						const resData = (result.data as any)?.message ?? {
-							status: 'error',
-							title: 'Gagal',
-							message: 'Gagal menyimpan data navbar.'
-						};
-						triggerMessage(resData.status, resData.title, resData.text || resData.message);
+					} else if (resData?.status === 'error' || result.type === 'failure') {
+						triggerMessage(
+							resData?.status || 'error',
+							resData?.title || 'Gagal',
+							resData?.message || resData?.text || 'Gagal menyimpan data navbar.'
+						);
 						await update();
 					} else {
 						triggerMessage(
@@ -150,11 +156,14 @@
 					>
 						<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
 							<div>
-								<label class="text-11 mb-1 block font-semibold text-text-muted uppercase"
+								<label
+									for="label"
+									class="text-11 mb-1 block font-semibold text-text-muted uppercase"
 									>Label Menu</label
 								>
 								<input
 									type="text"
+									id="label"
 									bind:value={menu.label}
 									placeholder="Contoh: Beranda"
 									required
@@ -162,11 +171,14 @@
 								/>
 							</div>
 							<div>
-								<label class="mb-1 block text-[11px] font-semibold text-text-muted uppercase"
+								<label
+									for="link"
+									class="mb-1 block text-[11px] font-semibold text-text-muted uppercase"
 									>URL / Href
 								</label>
 								<div class="flex items-center gap-2">
 									<input
+										id="link"
 										type="text"
 										bind:value={menu.href}
 										placeholder="/dashboard"

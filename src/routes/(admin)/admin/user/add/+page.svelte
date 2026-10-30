@@ -12,7 +12,6 @@
 
 <div class="min-h-screen p-4 text-text-main md:p-8">
 	<div class="mx-auto max-w-4xl space-y-6">
-		<!-- Header Page -->
 		<div class="border-scitech-slate/20 flex items-center justify-between pb-4">
 			<div class="flex items-center gap-3">
 				<div>

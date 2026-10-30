@@ -1,8 +1,9 @@
 <script lang="ts">
-	import { classShadowDown, classTopSpace } from '$lib/constants';
+	import { classTopSpace } from '$lib/constants';
+	import { formatDate } from '$lib/utils';
 	import EmptyData from '../../_components/emptyData.svelte';
 	import type { PageData } from './$types';
-	import { BookOpen, Calendar, Maximize2, X, AlertCircle, FileText } from 'lucide-svelte';
+	import { BookOpen, Calendar, Maximize2, X, FileText } from 'lucide-svelte';
 
 	interface Props {
 		data: PageData;
@@ -22,6 +23,10 @@
 	}
 </script>
 
+<head>
+	<title> Pedoman Ta </title>
+</head>
+
 <div class={` ${classTopSpace} mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8`}>
 	<div class="mb-10 border-b border-border-color/40 pb-6 text-center sm:text-left">
 		<div
@@ -31,31 +36,21 @@
 			<span>Panduan Akademik</span>
 		</div>
 		<h1 class="text-3xl font-extrabold tracking-tight text-text-main sm:text-4xl">
-			Pedoman Tugas Akhir / Skripsi
+			Pedoman Tugas Akhir
 		</h1>
 		<p class="mt-2 text-sm text-text-muted">
 			Petunjuk teknis, regulasi, dan acuan tata cara penyusunan Tugas Akhir bagi mahasiswa.
 		</p>
 	</div>
 
-	<!-- DAFTAR PEDOMAN TA -->
 	{#if data.pedomanList && data.pedomanList.length > 0}
-		<div class="grid grid-cols-1 gap-8 md:grid-cols-2">
+		<div class=" flex flex-col gap-10">
 			{#each data.pedomanList as item (item.id)}
-				{@const formattedDate = item.updated_at
-					? new Date(item.updated_at).toLocaleDateString('id-ID', {
-							day: 'numeric',
-							month: 'long',
-							year: 'numeric'
-						})
-					: '-'}
-
 				<article
-					class={`bg-scitech-slate/40 hover:border-scitech-mint/40 flex flex-col justify-between overflow-hidden rounded-2xl border border-border-color  backdrop-blur-md ${classShadowDown} `}
+					class="flex flex-col justify-between overflow-hidden border border-border-color bg-bg-secondary/40 backdrop-blur-md hover:border-border-color/40"
 				>
 					<div class="p-6 sm:p-8">
-						<!-- Sampul Pedoman (Jika Ada) -->
-						{#if item.image_url}
+						{#if item.image_url && item.image_url.length > 0}
 							<div
 								class="group bg-scitech-navy relative mb-6 overflow-hidden rounded-xl border border-border-color"
 							>
@@ -72,7 +67,7 @@
 								>
 									<button
 										onclick={() => openModal(item.image_url!, item.title)}
-										class="bg-scitech-mint text-scitech-navy inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold shadow-xl transition-transform hover:scale-105 active:scale-95"
+										class="inline-flex items-center gap-2 rounded-xl bg-bg-primary px-4 py-2 text-xs font-bold text-text-main shadow-xl transition-transform hover:scale-105 active:scale-95"
 									>
 										<Maximize2 class="h-4 w-4" />
 										<span>Lihat Sampul</span>
@@ -85,33 +80,33 @@
 
 						<div class="mt-2 mb-4 flex items-center gap-1.5 text-xs text-text-muted">
 							<Calendar class="text-scitech-cyan h-3.5 w-3.5" />
-							<span>Pembaruan: {formattedDate}</span>
+							<span>Pembaruan: {formatDate(item.updated_at)}</span>
 						</div>
 
-						<!-- Description -->
 						{#if item.description}
 							<div class="mt-4 border-t border-border-color/30 pt-4">
-								<p class="line-clamp-6 text-sm leading-relaxed whitespace-pre-line text-slate-300">
+								<!-- Menggunakan div agar aman menampung tag HTML kompleks (p, a, strong, dll) -->
+								<div
+									class="description-content line-clamp-6 space-y-2 text-sm leading-relaxed whitespace-pre-line text-slate-300"
+								>
 									{@html item.description}
-								</p>
+								</div>
 							</div>
 						{/if}
 					</div>
 
-					<!-- Footer Card -->
-					<div
-						class="bg-scitech-navy/50 flex items-center justify-between border-t border-border-color/40 px-6 py-3.5 text-xs text-text-muted sm:px-8"
-					>
-						<span class="text-scitech-mint flex items-center gap-1.5 font-medium">
-							<FileText class="h-4 w-4" />
-							Dokumen Acuan
-						</span>
-					</div>
+					<!-- <div -->
+					<!-- 	class="bg-scitech-navy/50 flex items-center justify-between border-t border-border-color/40 px-6 py-3.5 text-xs text-text-muted sm:px-8" -->
+					<!-- > -->
+					<!-- 	<span class="text-scitech-mint flex items-center gap-1.5 font-medium"> -->
+					<!-- 		<FileText class="h-4 w-4" /> -->
+					<!-- 		Dokumen Acuan -->
+					<!-- 	</span> -->
+					<!-- </div> -->
 				</article>
 			{/each}
 		</div>
 	{:else}
-		<!-- EMPTY STATE -->
 		<EmptyData
 			title="Pedoman TA Belum Tersedia"
 			description="Belum ada buku atau dokumen pedoman Tugas Akhir yang dipublikasikan. Silakan hubungi koordinator TA."
@@ -135,7 +130,6 @@
 		<div
 			class="bg-scitech-slate relative z-10 flex max-h-[90vh] max-w-3xl flex-col overflow-hidden rounded-2xl border border-border-color shadow-2xl"
 		>
-			<!-- Header Modal -->
 			<div
 				class="bg-scitech-navy flex items-center justify-between border-b border-border-color px-6 py-4"
 			>
@@ -151,7 +145,6 @@
 				</button>
 			</div>
 
-			<!-- Gambar Sampul -->
 			<div
 				class="bg-scitech-navy/80 flex max-h-[80vh] items-center justify-center overflow-auto p-4"
 			>
@@ -164,3 +157,23 @@
 		</div>
 	</div>
 {/if}
+
+<style>
+	/* Styling khusus untuk elemen HTML di dalam deskripsi */
+	:global(.description-content a) {
+		color: var(--color-accent-cyan, #06b6d4); /* Warna cyan khas tema */
+		text-decoration: underline;
+		text-underline-offset: 3px;
+		font-weight: 500;
+		transition: color 0.2s ease;
+	}
+
+	:global(.description-content a:hover) {
+		color: var(--color-accent-primary, #3b82f6); /* Berubah saat di-hover */
+	}
+
+	:global(.description-content strong) {
+		color: #f8fafc; /* Membuat teks tebal lebih kontras/terang */
+		font-weight: 600;
+	}
+</style>

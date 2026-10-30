@@ -1,5 +1,5 @@
-import { fail, redirect } from '@sveltejs/kit';
-import type { PageServerLoad, Actions } from './$types';
+import { fail } from '@sveltejs/kit';
+import type { Actions } from './$types';
 import { errorResponse, successResponse, warningResponse } from '$lib/helper/message';
 import { randomUUID } from '$lib/crypto';
 import { createFacility } from '$lib/repository/admin/article/profile/fasilitas';
@@ -11,7 +11,6 @@ export const actions: Actions = {
 	create: async ({ request }) => {
 		const formData = await request.formData();
 
-		// Ekstraksi data ke objek values terstruktur bertipe FasilitasFormValues
 		const values: FasilitasFormValues = {
 			name: formData.get('name')?.toString().trim() || '',
 			category: formData.get('category')?.toString().trim() || '',

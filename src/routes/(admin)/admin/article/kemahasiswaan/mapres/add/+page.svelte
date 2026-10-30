@@ -9,5 +9,6 @@
 	angkatanList={data.angkatanList}
 	semesterList={data.semesterList}
 	action="?/create"
+	isModalAlert={true}
 	valueData={form?.values}
 />

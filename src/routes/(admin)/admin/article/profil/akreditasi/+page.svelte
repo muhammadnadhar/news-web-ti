@@ -7,7 +7,7 @@
 		upload_cloudinary_preset
 	} from '$lib/cloudinary/client';
 	import FormEditor from '$lib/components/admin/formEditor.svelte';
-	import Message from '$lib/components/admin/message.svelte';
+	import Message from '$lib/components/notif/message.svelte';
 	import type { ResponseMessage } from '$lib/types/message.js';
 	import { FileCheck2, Loader2, Save, Trash2, UploadIcon } from 'lucide-svelte';
 	import { CldUploadButton } from 'svelte-cloudinary';
@@ -16,18 +16,18 @@
 	let { data, form } = $props();
 
 	// Local States (Svelte 5 Runes)
-	let title = $state(data?.accreditation?.title ?? 'Akreditasi');
-	let description = $state(form?.values?.description ?? data?.accreditation?.description ?? '');
-	let imageUrl = $state<string | null>(
-		form?.values.image_url ?? data?.accreditation?.image_url ?? null
+	let title = $state('Akreditasi');
+	let description = $derived(form?.values?.description ?? data?.accreditation?.description ?? '');
+	let imageUrl = $derived<string | null>(
+		form?.values?.image_url ?? data?.accreditation?.image_url ?? null
 	);
-	let previewUrl = $state<string | null>(
-		form?.values.image_url ?? data?.accreditation?.image_url ?? null
+	let previewUrl = $derived<string | null>(
+		form?.values?.image_url ?? data?.accreditation?.image_url ?? null
 	);
 	let isSubmitting = $state(false);
 
 	// State tambahan untuk menyimpan Public ID Cloudinary & status hapus
-	let publicId = $state<string | null>(form?.values?.image_public_id ?? null);
+	let publicId = $derived<string | null>(form?.values?.image_public_id ?? null);
 	let isDeleting = $state(false);
 
 	// State untuk Pesan/Notifikasi

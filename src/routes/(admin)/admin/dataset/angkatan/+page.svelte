@@ -6,8 +6,8 @@
 	import TableSkeleton from '$lib/components/loading/tableSkeleton.svelte';
 	import { page } from '$app/state';
 	import type { ResponseMessage } from '$lib/types/message.js';
-	import Message from '$lib/components/admin/message.svelte';
 	import type { AngkatanDTO } from '$lib/dto/admin/dataset.js';
+	import Message from '$lib/components/notif/message.svelte';
 
 	// Data Angkatan sesuai Gambar 2
 	let { data } = $props();
@@ -186,37 +186,36 @@
 	<!-- 		{/each} -->
 	<!-- 	</tbody> -->
 	<!-- </table> -->
-<!-- pindahkan ke table sekarang -->
+	<!-- pindahkan ke table sekarang -->
 
-{#await data.angkatanList}
-	<TableSkeleton showTitle={true} title="Memuat Data Kerjasama..." columnsCount={2} />
-{:then rawList}
-	<TableContent
-		title="Data Angkatan Teknologi Informasi"
-		addButtonLabel="+ Angkatan"
-		data={mapAngkatanToTableContent(rawList)}
-		onAdd={() => goto(mergeNewPath('add'))}
-		onEdit={(data) => gotoEdit(data.id, page.url.pathname)}
-		deleteAction="?/delete"
-		onDeleteSuccess={(res) =>
-			triggerMessage(
-				res?.status ?? 'success',
-				res?.title ?? 'Berhasil',
-				res?.message ?? 'Data angkatan berhasil dihapus.'
-			)}
-		onDeleteError={(res) =>
-			triggerMessage(
-				res?.status ?? 'error',
-				res?.title ?? 'Gagal',
-				res?.message ?? 'Gagal menghapus data angkatan.'
-			)}
-	/>
-{:catch error}
-	<div class="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-400">
-		Gagal memuat data kerjasama: {error.message}
-	</div>
-{/await}
-
+	{#await data.angkatanList}
+		<TableSkeleton showTitle={true} title="Memuat Data Kerjasama..." columnsCount={2} />
+	{:then rawList}
+		<TableContent
+			title="Data Angkatan Teknologi Informasi"
+			addButtonLabel="+ Angkatan"
+			data={mapAngkatanToTableContent(rawList)}
+			onAdd={() => goto(mergeNewPath('add'))}
+			onEdit={(data) => gotoEdit(data.id, page.url.pathname)}
+			deleteAction="?/delete"
+			onDeleteSuccess={(res) =>
+				triggerMessage(
+					res?.status ?? 'success',
+					res?.title ?? 'Berhasil',
+					res?.message ?? 'Data angkatan berhasil dihapus.'
+				)}
+			onDeleteError={(res) =>
+				triggerMessage(
+					res?.status ?? 'error',
+					res?.title ?? 'Gagal',
+					res?.message ?? 'Gagal menghapus data angkatan.'
+				)}
+		/>
+	{:catch error}
+		<div class="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-400">
+			Gagal memuat data kerjasama: {error.message}
+		</div>
+	{/await}
 </div>
 
 <!-- Pagination Footer -->

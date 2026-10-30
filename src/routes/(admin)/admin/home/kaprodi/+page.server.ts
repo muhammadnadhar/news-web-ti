@@ -2,10 +2,10 @@ import { fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import {
 	getDosenWellcome,
-	getDosenWellcomeById,
 	upsertDosenWellcome
 } from '$lib/repository/admin/home/dosenWellcomeKaprodi';
 import { getAllLecturerStaff } from '$lib/repository/admin/article/profile/dosen&staff';
+import { successResponse, warningResponse } from '$lib/helper/message';
 
 export const load: PageServerLoad = async () => {
 	const sambutan = await getDosenWellcome(); // alngsung ambil aja ini yg paling 1 p
@@ -21,11 +21,11 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const lecturer_staff_id = formData.get('lecturer_staff_id')?.toString();
 		const title = formData.get('title')?.toString();
-		const welcome_message = formData.get('welcome_message')?.toString();
+		const welcome_message: string | undefined = formData.get('welcome_message')?.toString();
 
 		if (!lecturer_staff_id || !title || !welcome_message) {
 			return fail(400, {
-				message: { status: 'error', title: 'Validasi Gagal', text: 'Semua kolom wajib diisi!' }
+				...warningResponse('Semua kolom wajib di Isi', 'Validasi gagal ')
 			});
 		}
 
@@ -37,8 +37,8 @@ export const actions: Actions = {
 			});
 
 			return {
-				success: true,
-				message: { status: 'success', title: 'Berhasil', text: 'Data Wellcome berhasil disimpan.' }
+				...successResponse('Data Sambutan kaprodi berhasil di simpan'),
+				success: true
 			};
 		} catch (error) {
 			console.error(error);

@@ -6,6 +6,7 @@
 
 <FormModulePratikum
 	action="?/create"
+	isModalAlert={true}
 	isEditMode={false}
 	valuesData={form?.values}
 	submitLabel="Tambah Modul Baru"

@@ -6,7 +6,7 @@
 	<!-- wrapper utama (flex col & center) -->
 	<div class="group relative flex flex-col items-center text-center">
 		<div
-			class="from-scitech-mint/30 via-scitech-cyan/20 to-scitech-mint/30 absolute -inset-8 animate-pulse rounded-full bg-gradient-to-tr opacity-80 blur-3xl transition duration-700 group-hover:opacity-100"
+			class="from-scitech-mint/30 via-scitech-cyan/20 to-scitech-mint/30 absolute -inset-8 animate-pulse rounded-full bg-linear-to-tr opacity-80 blur-3xl transition duration-700 group-hover:opacity-100"
 		></div>
 
 		<div

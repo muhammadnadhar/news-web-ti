@@ -11,6 +11,11 @@
 
 <div class="bg-color-bg-primary min-h-screen p-4 text-text-main md:p-8">
 	<div class="mx-auto max-w-4xl space-y-6">
-		<FormDosenStaff valuesData={form?.values} isEdit={false} actionUrl="?/create" />
+		<FormDosenStaff
+			valuesData={form?.values}
+			isEdit={false}
+			isModalAlert={true}
+			actionUrl="?/create"
+		/>
 	</div>
 </div>

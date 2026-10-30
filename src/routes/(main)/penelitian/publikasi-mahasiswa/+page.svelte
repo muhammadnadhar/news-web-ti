@@ -3,7 +3,7 @@
 	import { formatDate } from '$lib/utils';
 	import EmptyData from '../../_components/emptyData.svelte';
 	import type { PageData } from './$types';
-	import { User, BookOpen, Calendar, Search, AlertCircle } from 'lucide-svelte';
+	import { User, BookOpen, Calendar, Search } from 'lucide-svelte';
 
 	interface Props {
 		data: PageData;
@@ -57,7 +57,6 @@
 	{#if filteredPublications.length > 0}
 		<div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
 			{#each filteredPublications as item (item.id)}
-
 				<article
 					class={` ${classShadowDown} hover:border-scitech-mint/40 flex flex-col justify-between overflow-hidden border border-border-color bg-bg-secondary/40`}
 				>
@@ -75,7 +74,6 @@
 					{/if}
 
 					<div class="p-6">
-						<!-- Informasi Mahasiswa -->
 						<div class="mb-5 flex items-center gap-3 border-b border-border-color/30 pb-4">
 							{#if !item.image_url}
 								<div
@@ -97,18 +95,20 @@
 							</div>
 						</div>
 
-						<div class=" max-w-none text-xs">
+						<div class="prose-links max-w-none text-xs">
 							<span class="mb-2 block font-semibold text-text-main">Daftar Publikasi Jurnal:</span>
-							{@html item.journal_list}
+							<div class="journal-content">
+								{@html item.journal_list}
+							</div>
 						</div>
-					</div>
 
-					<div
-						class="bg-scitech-navy/40 flex items-center justify-between border-t border-border-color/30 px-6 py-3 text-[11px] text-text-muted"
-					>
-						<div class="flex items-center gap-1.5">
-							<Calendar class="text-scitech-cyan h-3.5 w-3.5" />
-							<span>Diperbarui: {formatDate(item.updated_at)}</span>
+						<div
+							class="bg-scitech-navy/40 flex items-center justify-between border-t border-border-color/30 px-6 py-3 text-[11px] text-text-muted"
+						>
+							<div class="flex items-center gap-1.5">
+								<Calendar class="text-scitech-cyan h-3.5 w-3.5" />
+								<span>Diperbarui: {formatDate(item.updated_at)}</span>
+							</div>
 						</div>
 					</div>
 				</article>
@@ -128,31 +128,17 @@
 </div>
 
 <style>
-	/* Styling typography untuk tag <ul> <li> <a> di dalam journal_list */
-	:global(.prose ul) {
-		list-style-type: disc;
-		padding-left: 1.25rem;
-		margin-top: 0.25rem;
-		margin-bottom: 0.5rem;
-		color: #cbd5e1;
-	}
-	:global(.prose ol) {
-		list-style-type: decimal;
-		padding-left: 1.25rem;
-		margin-top: 0.25rem;
-		margin-bottom: 0.5rem;
-		color: #cbd5e1;
-	}
-	:global(.prose li) {
-		margin-bottom: 0.5rem;
-		line-height: 1.6;
-	}
-	:global(.prose a) {
-		color: #38bdf8;
+	/* Menata tag <a> secara otomatis di dalam konten HTML ter-render */
+	:global(.journal-content a) {
+		color: var(--color-accent-cyan, #06b6d4); /* Warna cyan khas tema Anda */
 		text-decoration: underline;
-		word-break: break-all;
+		text-underline-offset: 4px;
+		font-weight: 500;
+		transition: color 0.2s ease;
 	}
-	:global(.prose a:hover) {
-		color: #2dd4bf;
+
+	:global(.journal-content a:hover) {
+		color: var(--color-accent-primary, #3b82f6); /* Warna saat kursor diarahkan (hover) */
+		text-decoration-thickness: 2px;
 	}
 </style>

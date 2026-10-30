@@ -7,7 +7,7 @@
 	import TableSkeleton from '$lib/components/loading/tableSkeleton.svelte';
 	import type { MessageStatus, ResponseMessage } from '$lib/types/message.js';
 	import type { SemesterDTO } from '$lib/dto/admin/dataset.js';
-	import Message from '$lib/components/admin/message.svelte';
+	import Message from '$lib/components/notif/message.svelte';
 
 	let { data } = $props();
 

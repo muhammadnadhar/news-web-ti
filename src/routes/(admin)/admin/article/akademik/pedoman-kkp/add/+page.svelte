@@ -5,4 +5,4 @@
 	let { form }: { form: ActionData } = $props();
 </script>
 
-<FormPedomanKkp actionUrl="?/create" {form} />
+<FormPedomanKkp actionUrl="?/create" isModalAlert={true} {form} />

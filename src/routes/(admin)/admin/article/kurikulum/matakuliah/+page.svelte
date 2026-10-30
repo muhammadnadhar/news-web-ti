@@ -3,10 +3,10 @@
 	import TableContent from '$lib/components/admin/tableContent.svelte';
 	import type { TableContentType } from '$lib/types/tableContent';
 	import { gotoEdit, mergeNewPath } from '$lib/utils.js';
-	import { goto, invalidateAll } from '$app/navigation';
+	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import TableSkeleton from '$lib/components/loading/tableSkeleton.svelte';
-	import Message, { type MessageStatus } from '$lib/components/admin/message.svelte';
+	import Message, { type MessageStatus } from '$lib/components/notif/message.svelte';
 	import type { ResponseMessage } from '$lib/types/message';
 	import type { CourseMapDTO } from '$lib/dto/admin/article/kurikulum';
 
@@ -20,18 +20,6 @@
 
 	// State Komponen Message Popup
 
-	let selectedItem = $state<TableContentType | null>(null);
-	let messageState = $state<{
-		show: boolean;
-		type: 'confirm' | 'success' | 'error';
-		title: string;
-		message: string;
-	}>({
-		show: false,
-		type: 'confirm',
-		title: '',
-		message: ''
-	});
 
 	let messageConfig = $state<ResponseMessage>({
 		status: 'info',
@@ -40,11 +28,7 @@
 	});
 	let showMessage = $state(false);
 
-	// Derived Title untuk Modal Hapus dari Item Terpilih
-	let itemTitle = $derived(
-		(selectedItem?.items.find((i) => i.colomn === 'Judul Matakuliah / Kurikulum')?.row as string) ||
-			''
-	);
+
 
 	/* Mapper untuk mengonversi data CourseMapDTO dari database
 	 * ke format TableContentType yang dibutuhkan oleh komponen TableContent.
@@ -71,18 +55,7 @@
 		showMessage = true;
 	}
 
-	// Triggered saat tombol hapus di tabel diklik
-	function openDeleteModal(item: TableContentType) {
-		selectedItem = item;
-		messageState = {
-			show: true,
-			type: 'confirm',
-			title: 'Konfirmasi Hapus',
-			message: 'Apakah Anda yakin ingin menghapus data peta mata kuliah ini?'
-		};
-	}
-
-
+	
 </script>
 
 {#if showMessage}
@@ -106,7 +79,7 @@
 
 	<!-- Component TableContent -->
 	{#await data.rawCourseMapList}
-		<TableSkeleton showTitle={true} title="Memuat Data Kerjasama..." columnsCount={4} />
+		<TableSkeleton rowCount={3}  columnsCount={4} />
 	{:then rawList}
 		<TableContent
 			title="Peta Mata kuliha"

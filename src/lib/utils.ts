@@ -84,6 +84,24 @@ export function formatDate(date?: Date | string | null): string | null {
 	}).format(d);
 }
 
+/**
+ * Memformat objek Date atau string tanggal ke dalam format string standar 
+ * yang kompatibel dengan elemen HTML <input type="datetime-local"> (YYYY-MM-DDTHH:mm).
+ * 
+ * @param date - Objek Date atau string tanggal yang ingin diformat
+ * @returns String tanggal dan waktu dalam format lokal ISO tanpa zona waktu (YYYY-MM-DDTHH:mm)
+ */
+export function formatDateTimeLocal(date: Date): string {
+    const d = new Date(date);
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    const year = d.getFullYear();
+    const month = pad(d.getMonth() + 1);
+    const day = pad(d.getDate());
+    const hours = pad(d.getHours());
+    const minutes = pad(d.getMinutes());
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
 export function stripHtml(html: string): string {
 	if (!html) return '';
 	return html.replace(/<[^>]*>?/gm, '');

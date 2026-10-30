@@ -2,7 +2,7 @@
 	import { enhance } from '$app/forms';
 	import { Send } from 'lucide-svelte';
 	import FormEditor from '$lib/components/admin/formEditor.svelte';
-	import Message from '$lib/components/admin/message.svelte';
+	import Message from '$lib/components/notif/message.svelte';
 	import type { ResponseMessage } from '$lib/types/message';
 	import type { PageData, ActionData } from './$types';
 

@@ -3,13 +3,7 @@
 	import { classShadowDown, classTopSpace } from '$lib/constants';
 	import EmptyData from '../../_components/emptyData.svelte';
 	import type { PageData } from './$types';
-	import {
-		GraduationCap,
-		ExternalLink,
-		BookOpen,
-		UserCheck,
-		Search
-	} from 'lucide-svelte';
+	import { GraduationCap, ExternalLink, BookOpen, UserCheck, Search } from 'lucide-svelte';
 
 	interface Props {
 		data: PageData;
@@ -38,7 +32,7 @@
 			</div>
 
 			<!-- Input Pencarian Dosen -->
-			<div class="relative min-w-[260px]">
+			<div class="relative min-w-65">
 				<Search class="absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-text-muted" />
 				<input
 					type="text"
@@ -62,7 +56,7 @@
 			<div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
 				{#each filteredPublications as item (item.id)}
 					<article
-						class={` ${classShadowDown} s flex flex-col justify-between overflow-hidden rounded-3xl border border-bg-secondary-hover bg-bg-secondary p-6 hover:border-accent-yellow/40 hover:shadow-xl`}
+						class={` ${classShadowDown} s flex flex-col justify-between overflow-hidden border border-bg-secondary-hover bg-bg-secondary p-6 hover:border-accent-yellow/40 hover:shadow-xl`}
 					>
 						<div>
 							<div
@@ -72,12 +66,12 @@
 									<img
 										src={item.photo_url}
 										alt={item.lecturer_name}
-										class="h-20 w-20 flex-shrink-0 rounded-2xl object-cover shadow-md ring-2 ring-accent-yellow/30"
+										class="h-20 w-20 shrink-0 object-cover shadow-md ring-2 ring-accent-yellow/30"
 										onerror={(e) => ((e.currentTarget as HTMLImageElement).style.display = 'none')}
 									/>
 								{:else}
 									<div
-										class="flex h-20 w-20 flex-shrink-0 items-center justify-center rounded-2xl border border-accent-yellow/20 bg-accent-yellow/10 text-accent-yellow shadow-sm"
+										class="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl border border-accent-yellow/20 bg-accent-yellow/10 text-accent-yellow shadow-sm"
 									>
 										<UserCheck class="h-8 w-8" />
 									</div>
@@ -113,7 +107,7 @@
 										href={item.sinta_link}
 										target="_blank"
 										rel="noopener noreferrer"
-										class="inline-flex items-center justify-between rounded-2xl border border-accent-yellow/30 bg-accent-yellow/10 px-4 py-2.5 text-xs font-semibold text-accent-yellow transition-colors hover:bg-accent-yellow/20"
+										class="inline-flex items-center justify-between border border-accent-yellow/30 bg-accent-yellow/10 px-4 py-2.5 text-xs font-semibold text-accent-yellow transition-colors hover:bg-accent-yellow/20"
 									>
 										<span class="flex items-center gap-2">
 											<BookOpen class="h-4 w-4" />
@@ -123,7 +117,7 @@
 									</a>
 								{:else}
 									<div
-										class="rounded-2xl border border-bg-secondary-hover bg-bg-primary/50 px-4 py-2.5 text-xs text-text-muted"
+										class=" border border-bg-secondary-hover bg-bg-primary/50 px-4 py-2.5 text-xs text-text-muted"
 									>
 										SINTA: Tidak tersedia
 									</div>
@@ -135,7 +129,7 @@
 										href={item.scholar_link}
 										target="_blank"
 										rel="noopener noreferrer"
-										class="inline-flex items-center justify-between rounded-2xl border border-accent-blue/30 bg-accent-blue/10 px-4 py-2.5 text-xs font-semibold text-accent-blue transition-colors hover:bg-accent-blue/20"
+										class="inline-flex items-center justify-between border border-accent-blue/30 bg-accent-blue/10 px-4 py-2.5 text-xs font-semibold text-accent-blue transition-colors hover:bg-accent-blue/20"
 									>
 										<span class="flex items-center gap-2">
 											<GraduationCap class="h-4 w-4" />
@@ -145,7 +139,7 @@
 									</a>
 								{:else}
 									<div
-										class="rounded-2xl border border-bg-secondary-hover bg-bg-primary/50 px-4 py-2.5 text-xs text-text-muted"
+										class=" border border-bg-secondary-hover bg-bg-primary/50 px-4 py-2.5 text-xs text-text-muted"
 									>
 										Scholar: Tidak tersedia
 									</div>

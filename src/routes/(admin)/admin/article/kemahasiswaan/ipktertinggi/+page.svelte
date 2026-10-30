@@ -4,11 +4,11 @@
 	import TableContent from '$lib/components/admin/tableContent.svelte';
 	import type { TableContentType } from '$lib/types/tableContent';
 	import TableSkeleton from '$lib/components/loading/tableSkeleton.svelte';
-	import { gotoEdit, mergeNewPath } from '$lib/utils.js';
+	import { formatDate, gotoEdit, mergeNewPath } from '$lib/utils.js';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import type { ResponseMessage } from '$lib/types/message.js';
-	import Message from '$lib/components/admin/message.svelte';
+	import Message from '$lib/components/notif/message.svelte';
 	import type { HighGpaStudentDTO } from '$lib/dto/admin/article/kemahasiswaan.js';
 
 	let { data } = $props();
@@ -44,12 +44,7 @@
 				{
 					colomn: 'Tanggal Dibuat',
 					row: item.created_at
-						? new Date(item.created_at).toLocaleDateString('id-ID', {
-								day: 'numeric',
-								month: 'short',
-								year: 'numeric'
-							})
-						: '-'
+						? 	formatDate(item.created_at)		: '-'
 				}
 			]
 		}));

@@ -3,7 +3,7 @@
 	import { Plus, Trash2, Save, ArrowLeft, Loader2, CheckIcon } from 'lucide-svelte';
 	import type { ActionData, PageData } from './$types';
 	import type { DashboardActionLink } from '$lib/types/dashboard';
-	import Message from '$lib/components/admin/message.svelte';
+	import Message from '$lib/components/notif/message.svelte';
 	import { type ResponseMessage, type MessageStatus } from '$lib/types/message';
 	import { availableIcons, availableIconColors } from '$lib/data/icon';
 	import { randomUUID } from '$lib/crypto';
@@ -67,7 +67,7 @@
 
 	$effect(() => {
 		if (form?.message) {
-			triggerMessage(form.message.status, form.message.title, form.message.message);
+			triggerMessage(form.status, form.title, form.message);
 		}
 	});
 </script>
@@ -118,7 +118,7 @@
 							title: 'Berhasil',
 							message: 'Action links berhasil diperbarui!'
 						};
-						triggerMessage(resData.status, resData.title, resData.text || resData.message);
+						triggerMessage(resData.status, resData.title, resData.title || resData.message);
 						await update({ reset: false });
 					} else if (result.type === 'failure') {
 						const resData = (result.data as any)?.message ?? {

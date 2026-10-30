@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import Message, { type MessageStatus } from '$lib/components/admin/message.svelte';
+	import Message, { type MessageStatus } from '$lib/components/notif/message.svelte';
 	import type { SemesterDTO } from '$lib/dto/admin/dataset';
 	import type { ResponseMessage } from '$lib/types/message';
 	import type { SemesterFormValues } from '$lib/types/values/admin/dataset';

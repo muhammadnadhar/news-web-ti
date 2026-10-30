@@ -4,7 +4,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import type { ResponseMessage } from '$lib/types/message.js';
-	import Message from '$lib/components/admin/message.svelte';
+	import Message from '$lib/components/notif/message.svelte';
 	import type { FacilityEntity } from '$lib/dto/admin/article/profile.js';
 	import type { TableContentType } from '$lib/types/tableContent.js';
 	import { gotoEdit, mergeNewPath } from '$lib/utils.js';

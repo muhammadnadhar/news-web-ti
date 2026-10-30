@@ -46,6 +46,12 @@
 					subtitle: 'Halaman atau data admin yang Anda cari tidak tersedia.',
 					icon: FileQuestion
 				};
+			case 502:
+				return {
+					title: 'Bad Gateway (502 / Server Restart)',
+					subtitle: 'Server backend sedang memuat ulang atau mengalami gangguan koneksi sementara.',
+					icon: ServerCrash
+				};
 			case 500:
 			default:
 				return {
@@ -68,16 +74,14 @@
 <div
 	class="flex min-h-screen items-center justify-center bg-bg-primary p-4 font-sans text-text-main"
 >
-	<!-- Card Error 3D Neobrutalist -->
 	<div
 		class="w-full max-w-lg border border-border-light bg-bg-secondary p-8 text-center shadow-[6px_6px_0px_0px_rgba(0,0,0,0.4)] sm:p-10"
 	>
-		<!-- Icon & Badge Header -->
 		<div class="mb-6 inline-flex flex-col items-center justify-center">
 			<div
 				class="mb-4 inline-flex items-center justify-center border border-border-light bg-bg-primary p-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,0.3)]"
 			>
-				<svelte:component this={errorMeta.icon} class="h-10 w-10 text-status-error" />
+				<errorMeta.icon class="h-10 w-10 text-status-error" />
 			</div>
 
 			<span
@@ -87,7 +91,6 @@
 			</span>
 		</div>
 
-		<!-- Title & Subtitle -->
 		<h1 class="mb-2 text-xl font-black text-text-main sm:text-2xl">
 			{errorMeta.title}
 		</h1>
@@ -95,7 +98,6 @@
 			{errorMeta.subtitle}
 		</p>
 
-		<!-- Detail Pesan Error (Jika Ada) -->
 		{#if message}
 			<div
 				class="mb-8 flex items-start gap-3 border border-border-light bg-bg-primary p-3.5 text-left shadow-[3px_3px_0px_0px_rgba(0,0,0,0.3)]"
@@ -124,7 +126,7 @@
 
 			{#if status === 401}
 				<a
-					href="/login"
+					href="/admin/singIn"
 					class="inline-flex w-full items-center justify-center gap-2 border border-border-light bg-accent-primary px-5 py-2.5 text-sm font-bold text-text-dark shadow-[4px_4px_0px_0px_rgba(0,0,0,0.4)] transition-all hover:bg-accent-primary-hover active:scale-95 sm:w-auto"
 				>
 					<LogIn class="h-4 w-4" />
@@ -141,14 +143,13 @@
 			{/if}
 		</div>
 
-		<!-- Footer Link -->
 		<div class="mt-8 border-t border-border-light pt-6">
 			<a
 				href="/"
 				class="inline-flex items-center gap-1.5 text-xs font-bold text-text-muted transition-colors hover:text-text-main"
 			>
 				<ArrowLeft class="h-3.5 w-3.5" />
-				<span>Kembali ke Halaman Publik</span>
+				<span>Kembali ke dashboard utama</span>
 			</a>
 		</div>
 	</div>

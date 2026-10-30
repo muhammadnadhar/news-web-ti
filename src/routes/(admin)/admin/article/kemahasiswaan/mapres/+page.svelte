@@ -7,20 +7,12 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import type { StudentAchievementDTO } from '$lib/dto/admin/article/kemahasiswaan.js';
-	import Message from '$lib/components/admin/message.svelte';
+	import Message from '$lib/components/notif/message.svelte';
 	import type { MessageStatus, ResponseMessage } from '$lib/types/message.js';
 
 	let { data } = $props();
 
-	// State Management Modal & Form
-	let isModalOpen = $state(false);
-	let isEditMode = $state(false);
-	let selectedId = $state('');
-	let studentNameInput = $state('');
-	let isAcademicInput = $state<'y' | 'n'>('y');
-	let batchYearInput = $state('');
-	let semesterInput = $state('');
-	let achievementNameInput = $state('');
+
 
 	let messageConfig = $state<ResponseMessage>({
 		status: 'info',
@@ -71,54 +63,7 @@
 		showMessage = true;
 	}
 
-	// Modal Handlers
-	function openAddModal() {
-		isEditMode = false;
-		selectedId = '';
-		studentNameInput = '';
-		isAcademicInput = 'y';
-		batchYearInput = '';
-		semesterInput = '';
-		achievementNameInput = '';
-		isModalOpen = true;
-	}
 
-	function openEditModal(item: TableContentType) {
-		isEditMode = true;
-		selectedId = item.id;
-
-		const rawData = rawAchievementList.find((s) => s.id === item.id);
-		if (rawData) {
-			studentNameInput = rawData.student_name;
-			isAcademicInput = rawData.is_academic;
-			batchYearInput = rawData.batch_year;
-			semesterInput = rawData.semester;
-			achievementNameInput = rawData.achievement_name;
-		} else {
-			const nameCol = item.items.find((col) => col.colomn === 'Nama');
-			const batchCol = item.items.find((col) => col.colomn === 'Angkatan');
-			const semCol = item.items.find((col) => col.colomn === 'Semester');
-			const achCol = item.items.find((col) => col.colomn === 'Prestasi');
-
-			studentNameInput = nameCol ? String(nameCol.row) : '';
-			batchYearInput = batchCol ? String(batchCol.row) : '';
-			semesterInput = semCol ? String(semCol.row) : '';
-			achievementNameInput = achCol ? String(achCol.row) : '';
-			isAcademicInput = 'y';
-		}
-
-		isModalOpen = true;
-	}
-
-	function closeModal() {
-		isModalOpen = false;
-		selectedId = '';
-		studentNameInput = '';
-		isAcademicInput = 'y';
-		batchYearInput = '';
-		semesterInput = '';
-		achievementNameInput = '';
-	}
 </script>
 
 {#if showMessage}
@@ -150,7 +95,7 @@
 	<!-- Component TableContent -->
 
 	{#await data.rawAchievementList}
-		<TableSkeleton showTitle={true} title="Memuat Data Mahasiswa Prestasi..." columnsCount={4} />
+		<TableSkeleton rowCount={2} columnsCount={4} />
 	{:then rawList}
 		<TableContent
 			title="Data Mahasiswa Prestasi"

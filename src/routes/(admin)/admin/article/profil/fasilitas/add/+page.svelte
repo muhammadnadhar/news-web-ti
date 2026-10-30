@@ -1,7 +1,7 @@
 <script lang="ts">
 	import FormFasilitas from '../_component/formFasilitas.svelte';
 
-	let { form, data } = $props();
+	let { form } = $props();
 </script>
 
 <svelte:head>
@@ -11,6 +11,7 @@
 <FormFasilitas
 	valuesData={form?.values}
 	onCancel={() => history.back()}
+	isModalAlert={true}
 	isEditing={false}
 	actionUrl="?/create"
 />

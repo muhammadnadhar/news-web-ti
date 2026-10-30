@@ -11,6 +11,7 @@
 
 <FormDocActivity
 	valuesData={form?.values}
+	isModalAlert={true}
 	action="?/create"
 	isEditMode={false}
 	submitLabel="Simpan Dokumentasi"

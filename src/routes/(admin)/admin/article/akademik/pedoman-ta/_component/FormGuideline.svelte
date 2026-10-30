@@ -1,10 +1,8 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { CldUploadWidget } from 'svelte-cloudinary';
-	import Message from '$lib/components/admin/message.svelte';
 	import type { ResponseMessage } from '$lib/types/message';
 	import {
-		ArrowLeft,
 		BookOpen,
 		FileText,
 		Image as ImageIcon,
@@ -23,17 +21,22 @@
 	} from '$lib/cloudinary/client';
 	import type { PedomanTaFormValues } from '$lib/types/values/admin/article';
 	import type { PedomanTaDTO } from '$lib/dto/admin/article/akademik';
+	import Message from '$lib/components/notif/message.svelte';
+	import { beforeNavigate } from '$app/navigation';
+	import AlertModal from '$lib/components/notif/alertModal.svelte';
 
 	let {
 		form,
 		valuesData,
 		isEdit = false,
+		isModalAlert = false,
 		action,
 		initialData
 	}: {
 		form: any;
 		valuesData?: PedomanTaFormValues | null;
 		initialData?: PedomanTaDTO | null;
+		isModalAlert?: boolean;
 		action?: string;
 		isEdit?: boolean;
 	} = $props();
@@ -48,6 +51,8 @@
 		title: '',
 		message: ''
 	});
+	let isAlern = $state(false);
+	let isSuccesAlert = $state(false);
 
 	// State lokal untuk gambar dan deskripsi editor
 	let imageUrl = $derived(valuesData?.image_url ?? initialData?.image_url ?? '');
@@ -108,11 +113,51 @@
 			}
 		}
 	}
-
 	function triggerMessage(status: ResponseMessage['status'], title: string, message: string) {
 		messageConfig = { status, title, message };
 		showMessage = true;
 	}
+
+	const handleCloseModalAlernt = () => {
+		isAlern = false;
+	};
+	const handleErrorClose = () => {
+		isSuccesAlert = false;
+		isAlern = false;
+		triggerMessage('info', 'Ada Kesalahan', ' Silahkan Batalkan upload / hapus di cloudinary');
+	};
+
+	const handleSuccesAlernt = async () => {
+		isSuccesAlert = true;
+		try {
+			await removeImage();
+			imageUrl = '';
+
+			triggerMessage('success', 'Berhasil', 'Gambar berhasil dibersihkan.');
+		} catch (error) {
+			console.error('Gagal membersihkan gambar:', error);
+			triggerMessage('error', 'Gagal', 'Terjadi kesalahan saat membersihkan gambar.');
+		} finally {
+			isAlern = false; // Pastikan modal tertutup
+		}
+	};
+
+	// Intersepsi navigasi sebelum terjadi
+	beforeNavigate((navigation) => {
+		if (!isModalAlert) return;
+
+		// Cek apakah target URL berbeda dengan URL saat ini
+		const isDifferentUrl = navigation.to?.url.pathname !== navigation.from?.url.pathname;
+
+		if (!isSuccesAlert && isDifferentUrl && imageUrl !== '' && imageUrl.length > 0) {
+			// Batalkan perpindahan halaman
+			navigation.cancel();
+
+			// Tampilkan alert pemberitahuan
+			isAlern = true;
+			isSuccesAlert = false;
+		}
+	});
 </script>
 
 <div class="mx-auto max-w-3xl md:space-y-6">
@@ -147,9 +192,7 @@
 	{/if}
 
 	<!-- Glassmorphism Form Card -->
-	<div
-		class="rounded-2xl border border-white/10 bg-bg-secondary/50 p-6 shadow-2xl backdrop-blur-xl sm:p-8"
-	>
+	<div class="rounded-2xl border border-border-color/10 bg-bg-secondary/50 p-6 shadow-2xl sm:p-8">
 		<form
 			method="POST"
 			{action}
@@ -325,3 +368,21 @@
 		</form>
 	</div>
 </div>
+
+<!-- Modla peringatan jika image sudha di upload  -->
+{#if isModalAlert}
+	<AlertModal
+		isOpen={isAlern}
+		title="Peringatan Gambar Upload"
+		subtitle="Hapus Gambar Sebelumnya atau manual di Cloudinary"
+		variant="warning"
+		confirmText="Hapus Gambar"
+		onClose={handleCloseModalAlernt}
+		onSuccess={() => {
+			handleSuccesAlernt();
+		}}
+		onError={() => {
+			handleErrorClose();
+		}}
+	/>
+{/if}

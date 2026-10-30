@@ -6,6 +6,7 @@ export interface NewsFormValues {
 	content: string;
 	image_url: string | null;
 	imageId: string | null; // atau image_public_id sesuai standar penamaan Anda
+	publishedAt: string | Date;
 }
 
 // ------- Profile ----------

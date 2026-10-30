@@ -19,7 +19,7 @@ export async function createNews(id: string, data: CreateNewsData): Promise<bool
 		data.content,
 		data.image_url || null,
 		data.image_public_id || null,
-		data.published_at || new Date()
+		data.published_at
 	];
 
 	const result = (await query(sql, params)) as any;

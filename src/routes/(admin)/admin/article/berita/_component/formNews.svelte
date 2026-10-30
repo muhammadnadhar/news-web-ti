@@ -7,22 +7,33 @@
 		getUploadOptions,
 		upload_cloudinary_preset
 	} from '$lib/cloudinary/client';
-	import Message from '$lib/components/admin/message.svelte';
 	import type { ResponseMessage } from '$lib/types/message';
 	import FormEditor from '$lib/components/admin/formEditor.svelte';
 	import { LoaderCircle, Trash2 } from 'lucide-svelte';
 	import type { NewsItemDTO } from '$lib/dto/admin/article/berita';
 	import type { NewsFormValues } from '$lib/types/values/admin/article';
+	import Message from '$lib/components/notif/message.svelte';
+	import AlertModal from '$lib/components/notif/alertModal.svelte';
+	import { beforeNavigate } from '$app/navigation';
+	import { formatDateTimeLocal } from '$lib/utils';
 
 	interface Props {
 		form?: any;
 		initialData: NewsItemDTO;
 		valuesData?: NewsFormValues;
 		isEdit?: boolean;
+		isModalAlert?: boolean;
 		actionUrl?: string;
 	}
 
-	let { form, initialData, valuesData, isEdit = false, actionUrl }: Props = $props();
+	let {
+		form,
+		initialData,
+		isModalAlert = false,
+		valuesData,
+		isEdit = false,
+		actionUrl
+	}: Props = $props();
 
 	// Inisialisasi state dari valuesData -> initialData -> default ('')
 	let title = $derived(valuesData?.title ?? initialData?.title ?? '');
@@ -30,7 +41,17 @@
 	let content = $derived(valuesData?.content ?? initialData?.content ?? '');
 	let imageUrl = $derived(valuesData?.image_url ?? initialData?.image_url ?? '');
 	let image_public_id = $derived(valuesData?.imageId ?? initialData?.image_public_id ?? '');
+	let publishedAt = $derived(
+		formatDateTimeLocal(
+			(valuesData?.publishedAt ?? initialData?.published_at)
+				? new Date(initialData.published_at)
+				: new Date()
+		)
+	);
+
 	let isSubmitting = $state(false);
+	let isAlern = $state(false);
+	let isSuccesAlert = $state(false);
 
 	// Ambil daftar opsi kategori dari initialData
 	let categoriesList = $derived(initialData?.categories ?? []);
@@ -56,6 +77,49 @@
 		}
 	});
 
+	const handleCloseModalAlernt = () => {
+		isAlern = false;
+	};
+	const handleErrorClose = () => {
+		isSuccesAlert = false;
+		isAlern = false;
+		triggerMessage('info', 'Ada Kesalahan', ' Silahkan Batalkan upload / hapus di cloudinary');
+	};
+
+	const handleSuccesAlernt = async () => {
+		isSuccesAlert = true;
+
+		console.info('Succes close trigger');
+		try {
+			await removeImage();
+			imageUrl = '';
+
+			triggerMessage('success', 'Berhasil', 'Gambar berhasil dibersihkan.');
+		} catch (error) {
+			console.error('Gagal membersihkan gambar:', error);
+			triggerMessage('error', 'Gagal', 'Terjadi kesalahan saat membersihkan gambar.');
+		} finally {
+			isAlern = false; // Pastikan modal tertutup
+		}
+	};
+
+	// Intersepsi navigasi sebelum terjadi
+	beforeNavigate((navigation) => {
+		if (!isModalAlert) return;
+
+		// Cek apakah target URL berbeda dengan URL saat ini
+		const isDifferentUrl = navigation.to?.url.pathname !== navigation.from?.url.pathname;
+
+		if (!isSuccesAlert && isDifferentUrl && imageUrl !== '' && imageUrl.length > 0) {
+			// Batalkan perpindahan halaman
+			navigation.cancel();
+
+			// Tampilkan alert pemberitahuan
+			isAlern = true;
+			isSuccesAlert = false;
+		}
+	});
+
 	// Handler saat unggah ke Cloudinary berhasil
 	function handleUpload(result: any) {
 		if (result?.event === 'success') {
@@ -70,7 +134,6 @@
 		}
 	}
 
-	let photoPublicId = $state(''); // Simpan public_id dari Cloudinary
 	let isDeletingPhoto = $state(false);
 
 	// State untuk Pesan/Notifikasi
@@ -90,8 +153,14 @@
 
 	// Fungsi untuk menghapus foto dari Cloudinary & mereset state
 	async function removeImage() {
-		if (!photoPublicId) {
+		if (!image_public_id) {
 			imageUrl = '';
+
+			triggerMessage(
+				'error',
+				'Terjaidi Kesalahan Id image tidak ada , silahkan hapus manual di cloudinary',
+				'Kesalahan'
+			);
 			return;
 		}
 
@@ -99,7 +168,7 @@
 
 		try {
 			const formData = new FormData();
-			formData.append('public_id', photoPublicId);
+			formData.append('public_id', image_public_id);
 
 			// Panggil named action '?/deletePhoto'
 			const response = await fetch(`?/deletePhoto`, {
@@ -109,7 +178,7 @@
 
 			if (response.ok) {
 				imageUrl = '';
-				photoPublicId = '';
+				image_public_id = '';
 				triggerMessage('success', 'Berhasil', 'Berhasil mengahpus data dari Cloudinary');
 			} else {
 				triggerMessage('error', 'Gagal', 'Gagal menghapus gambar dari cloudinary');
@@ -199,6 +268,23 @@
 					placeholder="Masukkan judul berita"
 					class="w-full rounded-md border border-border-light bg-bg-primary px-3 py-2 text-sm text-text-main transition-colors focus:border-accent-primary focus:outline-none"
 				/>
+			</div>
+
+			<!-- Tanggal Publikasi -->
+			<div class="space-y-2">
+				<label for="published_at" class="block text-sm font-medium text-text-muted">
+					Tanggal & Waktu Publikasi
+				</label>
+				<input
+					type="datetime-local"
+					id="published_at"
+					name="published_at"
+					bind:value={publishedAt}
+					class="w-full rounded-md border border-border-light bg-bg-primary px-3 py-2 text-sm text-text-main transition-colors focus:border-accent-primary focus:outline-none"
+				/>
+				<span class="text-xs text-text-muted">
+					Biarkan atau ubah sesuai keinginan. Jika kosong/default akan menggunakan waktu saat ini.
+				</span>
 			</div>
 
 			<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -295,34 +381,6 @@
 					label={'Isi Berita'}
 					showSaveButton={false}
 				/>
-				<!-- <div class="overflow-hidden rounded-md border border-border-light bg-bg-primary"> -->
-				<!-- 	<div -->
-				<!-- 		class="flex flex-wrap gap-2 border-b border-border-light bg-bg-primary-glare p-2 text-sm text-text-muted" -->
-				<!-- 	> -->
-				<!-- 		<span -->
-				<!-- 			class="cursor-pointer rounded border border-border-light bg-bg-secondary px-2 py-1" -->
-				<!-- 		> -->
-				<!-- 			Paragraph ▾ -->
-				<!-- 		</span> -->
-				<!-- 		<button type="button" class="px-2 py-1 font-bold hover:text-text-main">B</button> -->
-				<!-- 		<button type="button" class="px-2 py-1 italic hover:text-text-main">I</button> -->
-				<!-- 		<button type="button" class="px-2 py-1 hover:text-text-main">🔗</button> -->
-				<!-- 		<button type="button" class="px-2 py-1 hover:text-text-main">≡</button> -->
-				<!-- 		<button type="button" class="px-2 py-1 hover:text-text-main">🖼</button> -->
-				<!-- 		<button type="button" class="px-2 py-1 hover:text-text-main">“ ”</button> -->
-				<!-- 		<button type="button" class="px-2 py-1 hover:text-text-main">📊 ▾</button> -->
-				<!-- 	</div> -->
-				<!---->
-				<!-- 	<textarea -->
-				<!-- 		id="content" -->
-				<!-- 		name="content" -->
-				<!-- 		rows="8" -->
-				<!-- 		bind:value={content} -->
-				<!-- 		placeholder="Masukkan Deskripsi/Isi Berita" -->
-				<!-- 		required -->
-				<!-- 		class="w-full resize-y border-none bg-bg-primary p-3 text-sm text-text-main focus:outline-none" -->
-				<!-- 	></textarea> -->
-				<!-- </div> -->
 			</div>
 
 			<div class="flex gap-3">
@@ -363,3 +421,21 @@
 		</form>
 	</div>
 </div>
+
+<!-- Modla peringatan jika image sudha di upload  -->
+{#if isModalAlert}
+	<AlertModal
+		isOpen={isAlern}
+		title="Peringatan Gambar Upload"
+		subtitle="Hapus Gambar Sebelumnya atau manual di Cloudinary"
+		variant="warning"
+		confirmText="Hapus Gambar"
+		onClose={handleCloseModalAlernt}
+		onSuccess={() => {
+			handleSuccesAlernt();
+		}}
+		onError={() => {
+			handleErrorClose();
+		}}
+	/>
+{/if}

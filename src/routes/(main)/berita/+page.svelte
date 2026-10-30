@@ -7,6 +7,7 @@
 	import BtnFloatPagination from '$lib/components/admin/btnFloatPagination.svelte';
 	import Spin from '$lib/components/loading/spin.svelte';
 	import EmptyData from '../_components/emptyData.svelte';
+	import { formatDate } from '$lib/utils';
 
 	let { data }: { data: PageData } = $props();
 
@@ -16,17 +17,11 @@
 		searchParams.set('page', newPage.toString());
 		goto(`?${searchParams.toString()}`);
 	}
-
-	// Helper format tanggal
-	function formatDate(dateString: Date | string) {
-		if (!dateString) return '-';
-		return new Date(dateString).toLocaleDateString('id-ID', {
-			day: 'numeric',
-			month: 'short',
-			year: 'numeric'
-		});
-	}
 </script>
+
+<head>
+	<title> Berita </title>
+</head>
 
 <div class={` ${classTopSpace} mx-auto max-w-7xl px-4 py-8 pb-32 sm:px-6`}>
 	<div class="mb-8 border-b border-border-color/10 pb-6">

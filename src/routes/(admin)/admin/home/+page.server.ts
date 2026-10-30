@@ -22,7 +22,6 @@ export const load: PageServerLoad = async () => {
 	// 	getAllProfilProdi(),
 	// 	getAllProfileDashboards()
 	// ]);
-	console.table(await getAllProfileDashboards());
 	return {
 		// primaryDosenList,
 		// listPerminatan,
@@ -34,7 +33,7 @@ export const load: PageServerLoad = async () => {
 		listPerminatan: getAllPerminatanTI(),
 		listProfil: getAllProfilProdi(),
 		listProfileDashboard: getAllProfileDashboards(),
-    wellcomeKaprodi : getDosenWellcome(),
+		wellcomeKaprodi: getDosenWellcome()
 	};
 };
 

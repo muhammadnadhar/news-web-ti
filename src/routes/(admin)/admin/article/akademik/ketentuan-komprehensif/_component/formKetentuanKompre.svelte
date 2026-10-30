@@ -2,7 +2,6 @@
 	import { enhance } from '$app/forms';
 	import { CldUploadWidget } from 'svelte-cloudinary';
 	import FormEditor from '$lib/components/admin/formEditor.svelte';
-	import Message from '$lib/components/admin/message.svelte';
 	import { UploadCloud, Save, Loader2, Trash2, LoaderCircle } from 'lucide-svelte';
 	import {
 		folder_cloudinary_admin_article_akademik,
@@ -13,6 +12,9 @@
 	import type { ResponseMessage } from '$lib/types/message';
 	import type { KetentuanKomprehensifFormValues } from '$lib/types/values/admin/article';
 	import type { KetentuanKompreDTO } from '$lib/dto/admin/article/akademik';
+	import Message from '$lib/components/notif/message.svelte';
+	import AlertModal from '$lib/components/notif/alertModal.svelte';
+	import { beforeNavigate } from '$app/navigation';
 
 	// Props interface
 	interface Props {
@@ -20,6 +22,7 @@
 		initialData?: KetentuanKompreDTO | null;
 		action?: string;
 		isEdit?: boolean;
+		isModalAlert?: boolean;
 		submitButtonText?: string;
 	}
 
@@ -27,6 +30,7 @@
 		valuesData,
 		isEdit = false,
 		action,
+		isModalAlert = false,
 		initialData,
 		submitButtonText = isEdit ? 'Perbarui Data' : 'Simpan Rekrutmen'
 	}: Props = $props();
@@ -46,6 +50,32 @@
 		title: '',
 		message: ''
 	});
+	let isAlern = $state(false);
+	let isSuccesAlert = $state(false);
+
+	const handleCloseModalAlernt = () => {
+		isAlern = false;
+	};
+	const handleErrorClose = () => {
+		isSuccesAlert = false;
+		isAlern = false;
+		triggerMessage('info', 'Ada Kesalahan', ' Silahkan Batalkan upload / hapus di cloudinary');
+	};
+
+	const handleSuccesAlernt = async () => {
+		isSuccesAlert = true;
+		try {
+			await removeImage();
+			imageUrl = '';
+
+			triggerMessage('success', 'Berhasil', 'Gambar berhasil dibersihkan.');
+		} catch (error) {
+			console.error('Gagal membersihkan gambar:', error);
+			triggerMessage('error', 'Gagal', 'Terjadi kesalahan saat membersihkan gambar.');
+		} finally {
+			isAlern = false; // Pastikan modal tertutup
+		}
+	};
 
 	// Handlers
 	function handleUploadSuccess(result: any) {
@@ -95,6 +125,23 @@
 		messageConfig = { status, title, message };
 		showMessage = true;
 	}
+
+	// Intersepsi navigasi sebelum terjadi
+	beforeNavigate((navigation) => {
+		if (!isModalAlert) return;
+
+		// Cek apakah target URL berbeda dengan URL saat ini
+		const isDifferentUrl = navigation.to?.url.pathname !== navigation.from?.url.pathname;
+
+		if (!isSuccesAlert && isDifferentUrl && imageUrl !== '' && imageUrl.length > 0) {
+			// Batalkan perpindahan halaman
+			navigation.cancel();
+
+			// Tampilkan alert pemberitahuan
+			isAlern = true;
+			isSuccesAlert = false;
+		}
+	});
 </script>
 
 <!-- Message Helper Component -->
@@ -110,7 +157,6 @@
 {/if}
 
 <div class="mx-auto w-full max-w-5xl space-y-6">
-	<!-- Form Card 3D Neobrutalist -->
 	<div class="border border-border-light bg-bg-secondary p-6 md:p-8">
 		<form
 			{action}
@@ -123,7 +169,7 @@
 					isSubmitting = false;
 
 					if ((result.type === 'success' || result.type === 'failure') && result.data?.message) {
-						const msg = result.data.message as ResponseMessage; 
+						const msg = result.data.message as ResponseMessage;
 						showMessage = true;
 						triggerMessage('success', result.type === 'success' ? 'Success' : 'Error', msg.message);
 					} else if (result.type === 'error') {
@@ -251,3 +297,22 @@
 		</form>
 	</div>
 </div>
+
+<!-- Modla peringatan jika image sudha di upload  -->
+
+{#if isModalAlert}
+	<AlertModal
+		isOpen={isAlern}
+		title="Peringatan Gambar Upload"
+		subtitle="Hapus Gambar Sebelumnya atau manual di Cloudinary"
+		variant="warning"
+		confirmText="Hapus Gambar"
+		onClose={handleCloseModalAlernt}
+		onSuccess={() => {
+			handleSuccesAlernt();
+		}}
+		onError={() => {
+			handleErrorClose();
+		}}
+	/>
+{/if}

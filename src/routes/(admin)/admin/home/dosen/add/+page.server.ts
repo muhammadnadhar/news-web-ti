@@ -1,11 +1,11 @@
 import { fail, redirect, type Actions } from '@sveltejs/kit';
-import { randomUUID } from 'crypto';
 import type { PageServerLoad } from './$types';
 import { getAllLecturerStaff } from '$lib/repository/admin/article/profile/dosen&staff';
 import { getJabatanProdiList } from '$lib/repository/admin/dataset/jabatanProdi';
 import { createDosenPrimary } from '$lib/repository/admin/home/dosenPrimary';
 import { successResponse, warningResponse } from '$lib/helper/message';
 import type { DosenPrimaryFormValue } from '$lib/types/values/admin/home';
+import { randomUUID } from '$lib/crypto';
 
 export const load: PageServerLoad = async () => {
 	try {

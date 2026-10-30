@@ -7,7 +7,7 @@
 	import { page } from '$app/state';
 	import type { KetentuanKompreDTO } from '$lib/dto/admin/article/akademik.js';
 	import type { MessageStatus, ResponseMessage } from '$lib/types/message.js';
-	import Message from '$lib/components/admin/message.svelte';
+	import Message from '$lib/components/notif/message.svelte';
 
 	let { data } = $props();
 

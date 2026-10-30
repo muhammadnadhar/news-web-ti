@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { classTopSpace } from '$lib/constants';
+	import { formatDate } from '$lib/utils';
 	import EmptyData from '../../_components/emptyData.svelte';
 	import type { PageData } from './$types';
 	import { Network, Calendar, Maximize2, X, AlertCircle, FileText } from 'lucide-svelte';
@@ -42,14 +43,6 @@
 	{#if data.orgStructures && data.orgStructures.length > 0}
 		<div class="space-y-12">
 			{#each data.orgStructures as item (item.id)}
-				{@const formattedDate = item.created_at
-					? new Date(item.created_at).toLocaleDateString('id-ID', {
-							day: 'numeric',
-							month: 'long',
-							year: 'numeric'
-						})
-					: '-'}
-
 				<article
 					class="bg-scitech-slate/40 hover:border-scitech-mint/40 overflow-hidden rounded-2xl border border-border-color backdrop-blur-md transition-all duration-300"
 				>
@@ -57,12 +50,11 @@
 						<h2 class="text-xl font-bold text-text-main sm:text-2xl">{item.title}</h2>
 						<div class="mt-1.5 flex items-center gap-1.5 text-xs text-text-muted">
 							<Calendar class="text-scitech-cyan h-3.5 w-3.5" />
-							<span>Diperbarui: {formattedDate}</span>
+							<span>Diperbarui: {formatDate(item.created_at)}</span>
 						</div>
 					</div>
 
 					<div class="p-6 sm:p-8">
-						<!-- Gambar Bagan Organisasi -->
 						{#if item.image_url}
 							<div
 								class="group bg-scitech-navy relative mb-6 overflow-hidden rounded-xl border border-border-color"
@@ -79,7 +71,7 @@
 								>
 									<button
 										onclick={() => openModal(item.image_url!, item.title)}
-										class="bg-scitech-mint text-scitech-navy inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold shadow-xl transition-transform hover:scale-105 active:scale-95"
+										class="inline-flex items-center gap-2 rounded-xl bg-bg-primary px-4 py-2.5 text-xs font-bold text-text-main shadow-xl transition-transform hover:scale-105 active:scale-95"
 									>
 										<Maximize2 class="h-4 w-4" />
 										<span>Perbesar Bagan</span>

@@ -2,32 +2,39 @@
 	import { enhance } from '$app/forms';
 	import { CldUploadWidget } from 'svelte-cloudinary';
 	import FormEditor from '$lib/components/admin/formEditor.svelte';
-	import Message, { type MessageStatus } from '$lib/components/admin/message.svelte';
+	import Message, { type MessageStatus } from '$lib/components/notif/message.svelte';
 	import {
 		folder_cloudinary_admin_article_akademik,
 		getUploadConfig,
 		getUploadOptions,
 		upload_cloudinary_preset
 	} from '$lib/cloudinary/client';
-	import { UploadCloud, ArrowLeft, Image as ImageIcon, Trash2, Save, Loader2 } from 'lucide-svelte';
+	import { UploadCloud, Image as Trash2, Save, Loader2 } from 'lucide-svelte';
 	import type { ResponseMessage } from '$lib/types/message';
 	import type { PedomanKkpDTO } from '$lib/dto/admin/article/akademik';
 	import type { PedomanKkpFormValues } from '$lib/types/values/admin/article';
+	import { beforeNavigate } from '$app/navigation';
+	import AlertModal from '$lib/components/notif/alertModal.svelte';
 
 	interface Props {
 		initialData?: PedomanKkpDTO | null;
 		form?: any;
+		isModalAlert?: boolean;
 		valuesData?: PedomanKkpFormValues;
 		actionUrl?: string;
 	}
 
-	let { initialData = null, form = null, actionUrl = '', valuesData }: Props = $props();
+	let {
+		initialData = null,
+		form = null,
+		isModalAlert = false,
+		actionUrl = '',
+		valuesData
+	}: Props = $props();
 
 	// Deteksi mode Edit vs Tambah
 	const isEdit = $derived(!!initialData?.id);
 
-	// State lokal input form
-	// State lokal input form
 	let title = $derived(valuesData?.title ?? initialData?.title ?? '');
 	let imageUrl = $derived(valuesData?.image_url ?? initialData?.image_url ?? '');
 	let imagePublicId = $derived(valuesData?.image_public_id ?? initialData?.image_public_id ?? '');
@@ -42,6 +49,8 @@
 		title: '',
 		message: ''
 	});
+	let isAlern = $state(false);
+	let isSuccesAlert = $state(false);
 
 	function triggerMessage(status: MessageStatus, titleMsg: string, message: string) {
 		messageConfig = { status, title: titleMsg, message };
@@ -89,6 +98,47 @@
 			isDeletingImage = false;
 		}
 	}
+
+	const handleCloseModalAlernt = () => {
+		isAlern = false;
+	};
+	const handleErrorClose = () => {
+		isSuccesAlert = false;
+		isAlern = false;
+		triggerMessage('info', 'Ada Kesalahan', ' Silahkan Batalkan upload / hapus di cloudinary');
+	};
+
+	const handleSuccesAlernt = async () => {
+		isSuccesAlert = true;
+		try {
+			await removeImage();
+			imageUrl = '';
+
+			triggerMessage('success', 'Berhasil', 'Gambar berhasil dibersihkan.');
+		} catch (error) {
+			console.error('Gagal membersihkan gambar:', error);
+			triggerMessage('error', 'Gagal', 'Terjadi kesalahan saat membersihkan gambar.');
+		} finally {
+			isAlern = false; // Pastikan modal tertutup
+		}
+	};
+
+	// Intersepsi navigasi sebelum terjadi
+	beforeNavigate((navigation) => {
+		if (!isModalAlert) return;
+
+		// Cek apakah target URL berbeda dengan URL saat ini
+		const isDifferentUrl = navigation.to?.url.pathname !== navigation.from?.url.pathname;
+
+		if (!isSuccesAlert && isDifferentUrl && imageUrl !== '' && imageUrl.length > 0) {
+			// Batalkan perpindahan halaman
+			navigation.cancel();
+
+			// Tampilkan alert pemberitahuan
+			isAlern = true;
+			isSuccesAlert = false;
+		}
+	});
 </script>
 
 <!-- alert / toast notification -->
@@ -116,7 +166,7 @@
 					<span
 						class="rounded-full px-2.5 py-0.5 text-[10px] font-bold tracking-wider uppercase
                         {isEdit
-							? 'border border-accent-yellow/20 bg-accent-yellow/10 text-amber-400'
+							? 'border border-accent-yellow/20 bg-accent-yellow/10 text-accent-yellow/40'
 							: 'bg-scitech-mint/10 text-scitech-mint border-scitech-mint/20 border'}"
 					>
 						{isEdit ? 'Mode Edit' : 'Baru'}
@@ -199,7 +249,7 @@
 			</div>
 
 			<div class="space-y-2">
-				<label class="block text-xs font-bold tracking-wider text-text-main uppercase">
+				<label for="sampul" class="block text-xs font-bold tracking-wider text-text-main uppercase">
 					Foto Sampul / Banner Pedoman
 				</label>
 				<input type="hidden" name="image_url" value={imageUrl} />
@@ -207,6 +257,7 @@
 
 				{#if imageUrl}
 					<div
+						id="sampul"
 						class="group relative max-w-md overflow-hidden rounded-2xl border border-border-color/20 bg-bg-primary/40 p-2"
 					>
 						<img
@@ -298,3 +349,21 @@
 		</form>
 	</div>
 </div>
+
+<!-- Modla peringatan jika image sudha di upload  -->
+{#if isModalAlert}
+	<AlertModal
+		isOpen={isAlern}
+		title="Peringatan Gambar Upload"
+		subtitle="Hapus Gambar Sebelumnya atau manual di Cloudinary"
+		variant="warning"
+		confirmText="Hapus Gambar"
+		onClose={handleCloseModalAlernt}
+		onSuccess={() => {
+			handleSuccesAlernt();
+		}}
+		onError={() => {
+			handleErrorClose();
+		}}
+	/>
+{/if}

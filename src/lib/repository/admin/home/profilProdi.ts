@@ -63,9 +63,8 @@ export async function getPublicIdProfilProdiById(id: string): Promise<string | n
 
 /** create / add profil prodi */
 export async function addProfilProdi(
-	data: Omit<ProfilProdiItemDTO, 'id' | 'created_at' | 'updated_at'>
+	data: Omit<ProfilProdiItemDTO, 'created_at' | 'updated_at'>
 ): Promise<string> {
-	const id = crypto.randomUUID();
 	const imagesJson = JSON.stringify(data.images ?? []);
 	const displayInstruction = data.display_instruction ?? 'FLEX_CENTER';
 
@@ -73,8 +72,8 @@ export async function addProfilProdi(
         INSERT INTO ${tableProfilProdi} (id, title, description, images_json, display_instruction)
         VALUES (?, ?, ?, ?, ?)
     `;
-	await query(sql, [id, data.title, data.description, imagesJson, displayInstruction]);
-	return id;
+	await query(sql, [data.id, data.title, data.description, imagesJson, displayInstruction]);
+	return data.id;
 }
 
 /** UPDATE PROFIL PRODI */

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import Message from '$lib/components/admin/message.svelte';
+	import Message from '$lib/components/notif/message.svelte';
 	import TableContent from '$lib/components/admin/tableContent.svelte';
 	import TableSkeleton from '$lib/components/loading/tableSkeleton.svelte';
 	import type { LecturerStaffItemDTO } from '$lib/dto/admin/article/profile.js';
